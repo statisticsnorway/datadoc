@@ -12,6 +12,9 @@ requests = "^2.27.1"
 pyarrow = "^8.0.0"
 
 [tool.poetry.dev-dependencies]
+jupyter = "^1.0.0"
+ipykernel = "^6.13.0"
+notebook = "^6.4.11"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

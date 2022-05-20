@@ -18,7 +18,7 @@ class DataDocGui:
         self.dataset = dataset
         self.datadoc_meta = DataDocMetadata(self.dataset)
         self.meta = self.datadoc_meta.meta
-        
+
         # Dataset GUI elements
         self.datadoc_header_text = widgets.HTML(
             value="<h1 style='font-size:20px'>DataDoc - dokumentasjon av datasett og variabler</h1>"
@@ -102,7 +102,7 @@ class DataDocGui:
             description='Oppr. dato:',
             disabled=True
         )
-        
+
         self.ds_vbox_details = widgets.VBox(
             children=[
                 self.ds_dataSetState,
@@ -123,7 +123,7 @@ class DataDocGui:
             row_headers=False,
             rows=len(self.meta['variables']),
             columns=6  # TODO må justeres hvis flere kolonner skal inn
-        )        
+        )
         sheet('variable_sheet') # Activate the wanted sheet with "sheet key"
         self.col_num_short_name = 0
         self.col_num_name = 1
@@ -186,14 +186,14 @@ class DataDocGui:
         self.create_or_update_language_value('name', self.dropdown_language_code.value, self.ds_name.value)
         self.create_or_update_language_value('description', self.dropdown_language_code.value, self.ds_description.value)
         self.update_variable_metadata_from_gui_elements()
-        
+
     def update_variable_metadata_from_gui_elements(self):
         # print(self.variable_sheet.cells)
         self.meta['variables'] = []
         variable = {}
         # prev_item_row_num = 0
         for cell_item in self.variable_sheet.cells:
-            # print("col:" + str(cell_item.column_start) + ", row:" + str(cell_item.row_start) + ", value:" + str(cell_item.value) + '   -- ' + str(cell_item))    
+            # print("col:" + str(cell_item.column_start) + ", row:" + str(cell_item.row_start) + ", value:" + str(cell_item.value) + '   -- ' + str(cell_item))
             if cell_item.column_start == 0:
                 variable['shortName'] = cell_item.value
             elif cell_item.column_start == 1:
@@ -218,7 +218,7 @@ class DataDocGui:
                 variable['unitType'] = None
                 variable['foreignKeyType'] = None
                 self.meta['variables'].append(variable)  # Legger til ny variabel
-                variable = {} # Nullstiller før neste runde i loopen                        
+                variable = {} # Nullstiller før neste runde i loopen
 
     def save_button_clicked(self, b):
         self.update_dataset_metadata_from_gui_elements()
@@ -321,7 +321,11 @@ class DataDocMetadata:
         self.metadata_document_full_path = self.dataset_directory.joinpath(self.metadata_document_name)
         self.dataset_state = self.get_dataset_state()
         self.dataset_version = self.get_dataset_version()
-        self.current_user = os.environ['JUPYTERHUB_USER']
+        try:
+            self.current_user = os.environ['JUPYTERHUB_USER']
+        except KeyError:
+            print("JUPYTERHUB_USER env variable not set, using default for current_user")
+            self.current_user = "default_user"
         self.current_datetime = str(datetime.datetime.now())
         self.meta = {}
         self.read_metadata_document()
@@ -424,7 +428,7 @@ class VariableDefinition:
         self.vardef_definition = None
         self.vardef_short_name = None
         self.get_variable_definition()
-        
+
     def get_variable_definition(self):
         # TODO: Denne skal gå mot ny VarDef, men bruker foreløpig gamle VarDok!
         vardok_xml = requests.get(self.vardef_uri)
@@ -434,3 +438,6 @@ class VariableDefinition:
         self.vardef_name = variable_document.getElementsByTagName('Title')[0].firstChild.nodeValue
         self.vardef_definition = variable_document.getElementsByTagName('Description')[0].firstChild.nodeValue
         # self.vardef_short_name = variable_document.getElementsByTagName('DataElementName')[0].firstChild.nodeValue
+
+if __name__ == "__main__":
+    DataDocGui('./klargjorte_data/person_data_v1.parquet')
