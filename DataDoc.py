@@ -151,7 +151,31 @@ class DataDocGui:
         self.col_num_definition_uri = 4
         self.col_num_comment = 5
 
+        # Set initial values in each column for each variable
         for row_num, variable in enumerate(self.meta["variables"]):
+            ipysheet.cell(
+                row_num, self.col_num_short_name, value=str(variable["shortName"])
+            )
+            ipysheet.cell(row_num, self.col_num_name, value=variable["name"])
+            ipysheet.cell(
+                row_num,
+                self.col_num_datatype,
+                value=variable["dataType"],
+                choice=["STRING", "INTEGER", "FLOAT", "DATETIME", "BOOLEAN"],
+            )
+            ipysheet.cell(
+                row_num,
+                self.col_num_variable_role,
+                value=variable["variableRole"],
+                choice=[
+                    "IDENTIFIER",
+                    "MEASURE",
+                    "START_TIME",
+                    "STOP_TIME",
+                    "ATTRIBUTE",
+                ],
+            )
+            ipysheet.cell(row_num, self.col_num_comment, value=variable["comment"])
             tmp_definition_uri = ipysheet.cell(
                 row_num, self.col_num_definition_uri, value=variable["definitionUri"]
             )
@@ -260,6 +284,9 @@ class DataDocGui:
             row_num = cell_changed.row_start
 
             vardef = VariableDefinition(vardef_id)
+            # TODO: støtte flere språk!
+            ipysheet.cell(row_num, self.col_num_name, value=vardef.vardef_name)
+            ipysheet.cell(row_num, self.col_num_comment, vardef.vardef_definition)
         except requests.RequestException:
             print('Fant ikke variabeldefinisjon med VarDef-ID "' + vardef_id + '"')
 
@@ -288,7 +315,7 @@ class DatasetSchema:
         return fields
 
     @staticmethod
-    def transform_datatype(data_type) -> Optional(str):
+    def transform_datatype(data_type) -> Optional[str]:
         v_data_type = data_type.lower()
         if v_data_type in (
             "int",
