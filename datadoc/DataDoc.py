@@ -170,8 +170,14 @@ class DataDocGui:
                 ],
             )
             ipysheet.cell(row_num, self.col_num_comment, value=variable["comment"])
+            try:
+                # This field isn't set for all variables, if it doesn't exist we
+                # use None for the value
+                existing_definition_uri = variable["definitionUri"]
+            except KeyError:
+                existing_definition_uri = None
             tmp_definition_uri = ipysheet.cell(
-                row_num, self.col_num_definition_uri, value=variable["definitionUri"]
+                row_num, self.col_num_definition_uri, value=existing_definition_uri
             )
             tmp_definition_uri.observe(self.cell_definition_uri_changed, "value")
 
