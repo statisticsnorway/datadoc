@@ -2,7 +2,7 @@
 name = "datadoc"
 version = "0.1.0"
 description = "A tool for documentation of datasets from within a Jupyter environment"
-authors = ["Your Name <you@example.com>"]
+authors = ["Bjørn Roar Joneid <bnj@ssb.no>", "Miles Winther <mmw@ssb.no>", "Jan Sander <jhs@ssb.no>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -12,6 +12,13 @@ requests = "^2.27.1"
 pyarrow = "^8.0.0"
 
 [tool.poetry.dev-dependencies]
+jupyter = "^1.0.0"
+ipykernel = "^6.13.0"
+notebook = "^6.4.11"
+flake8 = "^4.0.1"
+mypy = "^0.950"
+black = "^22.3.0"
+pytest = "^7.1.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
