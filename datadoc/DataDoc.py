@@ -396,13 +396,17 @@ class DataDocMetadata:
         self.meta = {}
         self.read_metadata_document()
 
-    def get_dataset_state(self, dataset_path):
-        dataset_path = str(dataset_path)
-        if "/kildedata/" in dataset_path:
+    def get_dataset_state(self, dataset_path: pathlib.Path = None):
+        """Use the path to attempt to guess the state of the dataset"""
+
+        if dataset_path is None:
+            dataset_path = self.dataset_full_path
+        dataset_path = list(dataset_path.parts)
+        if "kildedata" in dataset_path:
             return "SOURCE_DATA"
-        elif "/inndata/" in dataset_path:
+        elif "inndata" in dataset_path:
             return "INPUT_DATA"
-        elif "/klargjorte_data/" in dataset_path:
+        elif "klargjorte_data" in dataset_path:
             return "PROCESSED_DATA"
         else:
             return None
