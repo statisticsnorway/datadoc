@@ -383,7 +383,7 @@ class DataDocMetadata:
         self.metadata_document_full_path = self.dataset_directory.joinpath(
             self.metadata_document_name
         )
-        self.dataset_state = self.get_dataset_state()
+        self.dataset_state = self.get_dataset_state(self.dataset_full_path)
         self.dataset_version = self.get_dataset_version()
         try:
             self.current_user = os.environ["JUPYTERHUB_USER"]
@@ -396,18 +396,16 @@ class DataDocMetadata:
         self.meta = {}
         self.read_metadata_document()
 
-    def get_dataset_state(self):
-        for directory_element in pathlib.PurePath(self.dataset_full_path).parts:
-            dir_element = str(directory_element).lower()
-            # print(dir_element)
-            if dir_element == "kildedata":
-                return "SOURCE_DATA"
-            elif dir_element == "inndata":
-                return "INPUT_DATA"
-            elif dir_element == "klargjorte_data":
-                return "PROCESSED_DATA"
-            else:
-                return None
+    def get_dataset_state(self, dataset_path):
+        dataset_path = str(dataset_path)
+        if "/kildedata/" in dataset_path:
+            return "SOURCE_DATA"
+        elif "/inndata/" in dataset_path:
+            return "INPUT_DATA"
+        elif "/klargjorte_data/" in dataset_path:
+            return "PROCESSED_DATA"
+        else:
+            return None
 
     def get_dataset_version(self):
         """Find version information if exists in filename,

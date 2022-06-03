@@ -1,4 +1,5 @@
 from .. import DatasetSchema
+from .utils import TEST_PARQUET_FILEPATH
 
 
 def test_get_fields():
@@ -13,7 +14,7 @@ def test_get_fields():
         {"name": "hoveddiagnose", "datatype": "STRING"},
     ]
 
-    schema = DatasetSchema("datadoc/tests/resources/person_data_v1.parquet")
+    schema = DatasetSchema(TEST_PARQUET_FILEPATH)
     fields = schema.get_fields()
 
     assert fields == expected_fields

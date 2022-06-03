@@ -9,4 +9,7 @@
 "python.linting.pylintEnabled": false,
 "python.linting.mypyEnabled": false,
 "python.languageServer": "Pylance",
+"python.testing.pytestArgs": [],
+"python.testing.unittestEnabled": false,
+"python.testing.pytestEnabled": true,
 }
