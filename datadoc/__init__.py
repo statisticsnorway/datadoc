@@ -1,1 +1,2 @@
-from .DataDoc import DataDocGui, DatasetSchema, DataDocMetadata
+from .DataDoc import DataDocGui, DataDocMetadata
+from .DatasetSchema import DatasetSchema
