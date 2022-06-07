@@ -1,7 +1,3 @@
-import datetime
-import json
-import os
-import pathlib
 from xml.dom.minidom import parseString
 
 import ipysheet
@@ -11,6 +7,7 @@ from IPython.display import display
 from ipywidgets import Layout, widgets
 
 from .DataDocMetadata import DataDocMetadata
+from .VariableDefinition import VariableDefinition
 
 # Example usage:
 # --------------
@@ -286,37 +283,6 @@ class DataDocGui:
             ipysheet.cell(row_num, self.col_num_comment, vardef.vardef_definition)
         except requests.RequestException:
             print('Fant ikke variabeldefinisjon med VarDef-ID "' + vardef_id + '"')
-
-
-class VariableDefinition:
-    # TODO: Denne skal gå mot ny VarDef, men bruker foreløpig gamle VarDok!
-    def __init__(self, vardef_id):
-        self.vardef_id = vardef_id
-        self.vardef_uri = (
-            "https://www.ssb.no/a/xml/metadata/conceptvariable/vardok/"
-            + self.vardef_id
-            + "/nb"
-        )
-        self.vardef_gui_uri = (
-            "https://www.ssb.no/a/metadata/conceptvariable/vardok/"
-            + self.vardef_id
-            + "/nb"
-        )
-        self.vardef_name = None
-        self.vardef_definition = None
-        self.vardef_short_name = None
-        self.get_variable_definition()
-
-    def get_variable_definition(self):
-        # TODO: Denne skal gå mot ny VarDef, men bruker foreløpig gamle VarDok!
-        vardok_xml = requests.get(self.vardef_uri)
-        variable_document = parseString(vardok_xml.text)
-        self.vardef_name = variable_document.getElementsByTagName("Title")[
-            0
-        ].firstChild.nodeValue
-        self.vardef_definition = variable_document.getElementsByTagName("Description")[
-            0
-        ].firstChild.nodeValue
 
 
 if __name__ == "__main__":
