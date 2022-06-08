@@ -12,6 +12,7 @@ requests = "^2.27.1"
 pyarrow = "^8.0.0"
 jupyter-dash = "^0.4.2"
 dash = "^2.4.1"
+pydantic = "^1.9.1"
 
 [tool.poetry.dev-dependencies]
 jupyter = "^1.0.0"
