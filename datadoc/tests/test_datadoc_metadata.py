@@ -1,5 +1,4 @@
 from copy import copy
-from os import stat
 from pathlib import PurePath
 from .. import DataDocMetadata
 from .utils import TEST_PARQUET_FILEPATH
