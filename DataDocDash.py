@@ -8,7 +8,7 @@ from flask import send_from_directory
 from typing import Type
 
 from datadoc import DataDocMetadata
-from Model import DataDocVariable, Datatype, VariableRole
+from datadoc.Model import DataDocVariable, Datatype, VariableRole
 
 variables = DataDocMetadata("./klargjorte_data/person_data_v1.parquet").meta[
     "variables"
