@@ -244,6 +244,20 @@ diskcache = ["diskcache (>=5.2.1)", "multiprocess (>=0.70.12)", "psutil (>=5.8.0
 testing = ["beautifulsoup4 (>=4.8.2)", "lxml (>=4.6.2)", "percy (>=2.0.2)", "pytest (>=6.0.2)", "requests[security] (>=2.21.0)", "selenium (>=3.141.0)", "waitress (>=1.4.4)", "cryptography (<3.4)"]
 
 [[package]]
+name = "dash-bootstrap-components"
+version = "1.1.0"
+description = "Bootstrap themed components for use in Plotly Dash"
+category = "main"
+optional = false
+python-versions = ">=3.6, <4"
+
+[package.dependencies]
+dash = ">=2.0.0"
+
+[package.extras]
+pandas = ["numpy", "pandas"]
+
+[[package]]
 name = "dash-core-components"
 version = "2.0.0"
 description = "Core component suite for Dash"
@@ -1436,7 +1450,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "2c67567699bb0a089863714cc150c871ab2eabba6c3bc1cf2e1e87d60986b3ef"
+content-hash = "1ba3e6c0735e74c0629b23b7ee7aab8095efe4fc4e88a81abbec2534a9cd2e35"
 
 [metadata.files]
 ansi2html = [
@@ -1662,6 +1676,10 @@ colorama = [
 dash = [
     {file = "dash-2.4.1-py3-none-any.whl", hash = "sha256:44ad5593d69f8aba37e4dd8fa07b1e5dfc012aebd8cccf6e4f68591bca02d177"},
     {file = "dash-2.4.1.tar.gz", hash = "sha256:aef5fdbb2e948a378c1c8175d52a76c59cf998c62b25eaff616cd947310b04d3"},
+]
+dash-bootstrap-components = [
+    {file = "dash-bootstrap-components-1.1.0.tar.gz", hash = "sha256:340755d3ca4d2e5b2745fc67398785e673092faef2097e2895f8580b1ad1816e"},
+    {file = "dash_bootstrap_components-1.1.0-py3-none-any.whl", hash = "sha256:e0490bf865c61f14371e537bdab4be08db693cec01884eb5a9c55489ebd13d47"},
 ]
 dash-core-components = [
     {file = "dash_core_components-2.0.0-py3-none-any.whl", hash = "sha256:52b8e8cce13b18d0802ee3acbc5e888cb1248a04968f962d63d070400af2e346"},

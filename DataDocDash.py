@@ -1,7 +1,8 @@
 import itertools
 import os
 from jupyter_dash import JupyterDash
-from dash import dash_table, html, Input, Output, dcc
+from dash import Dash, dash_table, html, Input, Output, dcc
+import dash_bootstrap_components as dbc
 from dash.development.base_component import Component
 from pydantic import ValidationError
 from flask import send_from_directory
@@ -14,7 +15,7 @@ variables = DataDocMetadata("./klargjorte_data/person_data_v1.parquet").meta[
     "variables"
 ]
 
-app = JupyterDash(__name__)
+app = Dash(name="DataDoc", external_stylesheets=[dbc.themes.GRID])
 
 colors = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
@@ -24,43 +25,75 @@ for variable in variables:
     display_variable_metadata.append(dict(itertools.islice(variable.items(), 6)))
 
 
-def make_input_element(
-    label: str, placeholder: str, input_class: Type[Component], input_type: str = "text"
-):
-    return html.Div(
-        style={"backgroundColor": colors["green_1"], "padding": "4px"},
-        children=[
-            html.Label(label),
-            input_class(
-                placeholder=placeholder,
-                type=input_type,
-            ),
-        ],
-    )
-
-
-dataset_short_name = make_input_element(
-    "Kort Navn", "Et teknisk navn, ofte lik filnavnet", dcc.Input, "text"
-)
-dataset_name = make_input_element(
-    "Navn", "Beskrivende navn for datasettet", dcc.Input, "text"
-)
-# dataset_description = make_input_element(
-#     "Beskrivelse",
-#     "Beskriv: Hva datasettet er egnet til, hvor dataen kommer fra osv",
-#     dcc.Textarea,
-#     "text",
-# )
-dataset_version = make_input_element("Versjon", "1", dcc.Input, "number")
+dataset_details_inputs = [
+    {
+        "name": "Kort Navn",
+        "input_component": dcc.Input(
+            placeholder="Et teknisk navn, ofte lik filnavnet", style={"width": "100%"}
+        ),
+    },
+    {
+        "name": "Navn",
+        "input_component": dcc.Input(
+            placeholder="Beskrivende navn for datasettet", style={"width": "100%"}
+        ),
+    },
+    {
+        "name": "Beskrivelse",
+        "input_component": dcc.Textarea(
+            placeholder="Besrive egenskaper av datasettet", style={"width": "100%"}
+        ),
+    },
+    {
+        "name": "Tilstand",
+        "input_component": dcc.Dropdown(
+            options=["Kildedata", "Inndata", "Klargjorte data", "Utdata"],
+            style={"width": "100%"},
+        ),
+    },
+    {
+        "name": "Versjon",
+        "input_component": dcc.Input(
+            placeholder=1, type="number", style={"width": "100%"}
+        ),
+    },
+    {
+        "name": "Datasett sti",
+        "input_component": dcc.Input(
+            placeholder="Sti til datasett fil", style={"width": "100%"}
+        ),
+    },
+    {
+        "name": "Opprettet av",
+        "input_component": dcc.Input(
+            placeholder="kari.nordman@ssb.no", type="email", style={"width": "100%"}
+        ),
+    },
+]
 
 dataset_details = html.Div(
+    style={
+        "backgroundColor": colors["green_1"],
+        "padding": "4px",
+        "display": "inline-block",
+        "width": "50%",
+        "min-width": "600px",
+        "verticalAlign": "top",
+    },
     children=[
-        html.H2("Datasett detaljer", className="ssb-title"),
-        dataset_short_name,
-        dataset_name,
-        dcc.Dropdown(className="ssb-dropdown"),
-        dataset_version,
-    ]
+        dbc.Row(html.H2("Datasett detaljer", className="ssb-title")),
+        dbc.Row(
+            [
+                dbc.Row(
+                    [
+                        dbc.Col(html.Label(input["name"]), width=3),
+                        dbc.Col(input["input_component"]),
+                    ]
+                )
+                for input in dataset_details_inputs
+            ]
+        ),
+    ],
 )
 
 variables_table = html.Div(
@@ -106,7 +139,7 @@ validation_error_dialog = html.Dialog(
 )
 
 app.layout = html.Div(
-    style={"width": "50%", "padding": "4px"},
+    style={"padding": "4px"},
     children=[
         html.Div(
             [
@@ -172,15 +205,6 @@ def validate_input(data, data_previous):
     # IF IT IS: Return the input data unchanged
     return output_data, not show_error, error_explanation
 
-
-@app.server.route("/assets/<path:path>")
-def assets_file(path):
-    assets_folder = os.path.join(os.getcwd(), "assets")
-    return send_from_directory(assets_folder, path)
-
-
-app.css.config.serve_locally = True
-app.scripts.config.serve_locally = True
 
 if __name__ == "__main__":
     app.run_server(debug=True)
