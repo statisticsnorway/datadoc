@@ -14,9 +14,9 @@ from datadoc.Model import DataDocVariable, Datatype, VariableRole
 metadata = DataDocMetadata("./klargjorte_data/person_data_v1.parquet").meta
 variables = metadata["variables"]
 
-app = Dash(name="DataDoc", external_stylesheets=[dbc.themes.GRID])
+app = Dash(name="DataDoc", external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-colors = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
+COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
 # Display only the first 6 variables
 #display_variable_metadata = []
@@ -48,7 +48,8 @@ dataset_details_inputs = [
     {
         "name": "Tilstand",
         "input_component": dcc.Dropdown(
-            options=["Kildedata", "Inndata", "Klargjorte data", "Utdata"],
+            placeholder="Velg fra listen",
+            options=["Kildedata", "Inndata", "Klargjorte data", "Utdata", "Statistikk"],
             style={"width": "100%"},
         ),
     },
@@ -82,9 +83,11 @@ dataset_details_inputs = [
     },
 ]
 
-dataset_details = html.Div(
+dataset_details = dbc.Tab(
+    label="Datasett detaljer",
+    tab_id="datasett-detaljer",
     style={
-        "backgroundColor": colors["green_1"],
+        "backgroundColor": COLORS["green_1"],
         "padding": "4px",
         "display": "inline-block",
         "width": "50%",
@@ -107,7 +110,17 @@ dataset_details = html.Div(
     ],
 )
 
-variables_table = html.Div(
+
+validation_error_dialog = html.Dialog(
+    id="validation-error",
+    open=True,
+    hidden=False,
+    children=[dcc.Markdown(id="validation-explanation")],
+)
+
+variables_table = dbc.Tab(
+    label="Variabel detaljer",
+    tab_id="variabel-detaljer",
     children=[
         html.H2("Variabel detaljer", className="ssb-title"),
         dash_table.DataTable(
@@ -140,29 +153,26 @@ variables_table = html.Div(
                 },
             },
         ),
-    ]
+        validation_error_dialog,
+    ],
 )
 
-validation_error_dialog = html.Dialog(
-    id="validation-error",
-    open=True,
-    hidden=False,
-    children=[dcc.Markdown(id="validation-explanation")],
-)
-
-app.layout = html.Div(
+app.layout = dbc.Card(
     style={"padding": "4px"},
     children=[
-        html.Div(
+        dbc.Card(
             [
                 html.Link(rel="stylesheet", href="/assets/bundle.css"),
                 html.H1("DataDoc", className="ssb-title", style={"color": "white"}),
             ],
-            style={"backgroundColor": colors["green_4"], "padding": "4px"},
+            style={"backgroundColor": COLORS["green_4"], "padding": "4px"},
         ),
-        dataset_details,
-        variables_table,
-        validation_error_dialog,
+        dbc.Tabs(
+            [
+                dataset_details,
+                variables_table,
+            ]
+        ),
     ],
 )
 
