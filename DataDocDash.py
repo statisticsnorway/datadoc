@@ -13,24 +13,19 @@ from datadoc.Model import DataDocVariable, Datatype, VariableRole
 
 metadata = DataDocMetadata("./klargjorte_data/person_data_v1.parquet").meta
 variables = metadata["variables"]
+df = pd.DataFrame(variables)
 
 app = Dash(name="DataDoc", external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
-# Display only the first 6 variables
-#display_variable_metadata = []
-#for variable in variables:
-#    display_variable_metadata.append(dict(itertools.islice(variable.items(), 6)))
-
-df = pd.DataFrame(variables)
-
 dataset_details_inputs = [
     {
         "name": "Kort Navn",
         "input_component": dcc.Input(
-            placeholder="Et teknisk navn, ofte lik filnavnet", style={"width": "100%"},
-            value = metadata["shortName"]
+            placeholder="Et teknisk navn, ofte lik filnavnet",
+            style={"width": "100%"},
+            value=metadata["shortName"],
         ),
     },
     {
@@ -56,108 +51,133 @@ dataset_details_inputs = [
     {
         "name": "Versjon",
         "input_component": dcc.Input(
-            placeholder=1, type="number", style={"width": "100%"},
-            value = metadata["version"]
+            placeholder=1,
+            type="number",
+            style={"width": "100%"},
+            value=metadata["version"],
         ),
     },
     {
         "name": "Datasett sti",
         "input_component": dcc.Input(
-            placeholder="Sti til datasett fil", style={"width": "100%"},
-            value = metadata["dataSourcePath"]
+            placeholder="Sti til datasett fil",
+            style={"width": "100%"},
+            value=metadata["dataSourcePath"],
         ),
     },
     {
         "name": "Opprettet av",
         "input_component": dcc.Input(
-            placeholder="kari.nordman@ssb.no", type="email", style={"width": "100%"},
-            value = metadata["createdBy"]
+            placeholder="kari.nordman@ssb.no",
+            type="email",
+            style={"width": "100%"},
+            value=metadata["createdBy"],
         ),
     },
     {
         "name": "Opprettet dato",
         "input_component": dcc.Input(
-            style={"width": "100%"},
-            value = metadata["createdDate"]
+            style={"width": "100%"}, value=metadata["createdDate"]
         ),
     },
 ]
 
 dataset_details = dbc.Tab(
-    label="Datasett detaljer",
+    label="Datasett",
     tab_id="datasett-detaljer",
+    class_name="ssb-tabs",
+    label_class_name="ssb-title",
     style={
         "backgroundColor": COLORS["green_1"],
         "padding": "4px",
         "display": "inline-block",
-        "width": "50%",
-        "min-width": "600px",
         "verticalAlign": "top",
     },
-    children=[
-        dbc.Row(html.H2("Datasett detaljer", className="ssb-title")),
-        dbc.Row(
-            [
-                dbc.Row(
-                    [
-                        dbc.Col(html.Label(input["name"]), width=3),
-                        dbc.Col(input["input_component"]),
-                    ]
-                )
-                for input in dataset_details_inputs
-            ]
-        ),
-    ],
-)
-
-
-validation_error_dialog = html.Dialog(
-    id="validation-error",
-    open=True,
-    hidden=False,
-    children=[dcc.Markdown(id="validation-explanation")],
+    children=dbc.Container(
+        children=[
+            dbc.Row(html.H2("Datasett detaljer", className="ssb-title")),
+            dbc.Row(
+                [
+                    dbc.Row(
+                        [
+                            dbc.Col(html.Label(input["name"])),
+                            dbc.Col(input["input_component"], width=4),
+                            dbc.Col(width=6),
+                        ]
+                    )
+                    for input in dataset_details_inputs
+                ]
+            ),
+        ],
+    ),
 )
 
 variables_table = dbc.Tab(
-    label="Variabel detaljer",
+    label="Variabeler",
     tab_id="variabel-detaljer",
-    children=[
-        html.H2("Variabel detaljer", className="ssb-title"),
-        dash_table.DataTable(
-            id="variables-table",
-            # data=display_variable_metadata,
-            data = df[["shortName", "dataType"]].to_dict('records'),
-            columns=[
-                {"name": "Kort navn", "id": "shortName", "editable": False},
-                {
-                    "name": "Navn",
-                    "id": "name",
-                },
-                {"name": "Datatype", "id": "dataType", "presentation": "dropdown"},
-                {
-                    "name": "Variabelens rolle",
-                    "id": "variableRole",
-                    "presentation": "dropdown",
-                },
-                {"name": "Definition URI", "id": "definitionUri"},
-            ],
-            editable=True,
-            dropdown={
-                "dataType": {
-                    "options": [{"label": i.name, "value": i.name} for i in Datatype]
-                },
-                "variableRole": {
-                    "options": [
-                        {"label": i.name, "value": i.name} for i in VariableRole
-                    ]
-                },
-            },
-        ),
-        validation_error_dialog,
-    ],
+    class_name="ssb-tabs",
+    label_class_name="ssb-title",
+    children=dbc.Container(
+        [
+            dbc.Row(html.H2("Variabel detaljer", className="ssb-title")),
+            dbc.Row(
+                dash_table.DataTable(
+                    id="variables-table",
+                    data=df[
+                        [
+                            "shortName",
+                            "dataType",
+                            "variableRole",
+                            "definitionUri",
+                            "comment",
+                        ]
+                    ].to_dict("records"),
+                    columns=[
+                        {"name": "Kort navn", "id": "shortName", "editable": False},
+                        {
+                            "name": "Navn",
+                            "id": "name",
+                        },
+                        {
+                            "name": "Datatype",
+                            "id": "dataType",
+                            "presentation": "dropdown",
+                        },
+                        {
+                            "name": "Variabelens rolle",
+                            "id": "variableRole",
+                            "presentation": "dropdown",
+                        },
+                        {"name": "Definition URI", "id": "definitionUri"},
+                    ],
+                    editable=True,
+                    dropdown={
+                        "dataType": {
+                            "options": [
+                                {"label": i.name, "value": i.name} for i in Datatype
+                            ]
+                        },
+                        "variableRole": {
+                            "options": [
+                                {"label": i.name, "value": i.name} for i in VariableRole
+                            ]
+                        },
+                    },
+                )
+            ),
+            dbc.Row(
+                html.Dialog(
+                    id="validation-error",
+                    open=True,
+                    hidden=False,
+                    children=[dcc.Markdown(id="validation-explanation")],
+                )
+            ),
+        ]
+    ),
 )
 
-app.layout = dbc.Card(
+app.layout = dbc.Container(
     style={"padding": "4px"},
     children=[
         dbc.Card(
@@ -168,10 +188,11 @@ app.layout = dbc.Card(
             style={"backgroundColor": COLORS["green_4"], "padding": "4px"},
         ),
         dbc.Tabs(
-            [
+            class_name="ssb-tabs",
+            children=[
                 dataset_details,
                 variables_table,
-            ]
+            ],
         ),
     ],
 )
