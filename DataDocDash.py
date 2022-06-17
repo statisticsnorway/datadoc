@@ -11,17 +11,11 @@ from datadoc.Model import DataDocVariable, Datatype, VariableRole
 
 metadata = DataDocMetadata("./klargjorte_data/person_data_v1.parquet").meta
 variables = metadata["variables"]
-
-app = Dash(name="DataDoc", external_stylesheets=[dbc.themes.GRID])
-
-colors = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
-
-# Display only the first 6 variables
-# display_variable_metadata = []
-# for variable in variables:
-#    display_variable_metadata.append(dict(itertools.islice(variable.items(), 6)))
-
 df = pd.DataFrame(variables)
+
+app = Dash(name="DataDoc", external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
 dataset_details_inputs = [
     {
@@ -47,7 +41,8 @@ dataset_details_inputs = [
     {
         "name": "Tilstand",
         "input_component": dcc.Dropdown(
-            options=["Kildedata", "Inndata", "Klargjorte data", "Utdata"],
+            placeholder="Velg fra listen",
+            options=["Kildedata", "Inndata", "Klargjorte data", "Utdata", "Statistikk"],
             style={"width": "100%"},
         ),
     },
@@ -85,95 +80,109 @@ dataset_details_inputs = [
     },
 ]
 
-dataset_details = html.Div(
+dataset_details = dbc.Tab(
+    label="Datasett",
+    tab_id="datasett-detaljer",
+    class_name="ssb-tabs",
+    label_class_name="ssb-title",
     style={
-        "backgroundColor": colors["green_1"],
+        "backgroundColor": COLORS["green_1"],
         "padding": "4px",
         "display": "inline-block",
-        "width": "50%",
-        "min-width": "600px",
         "verticalAlign": "top",
     },
-    children=[
-        dbc.Row(html.H2("Datasett detaljer", className="ssb-title")),
-        dbc.Row(
-            [
-                dbc.Row(
-                    [
-                        dbc.Col(html.Label(input["name"]), width=3),
-                        dbc.Col(input["input_component"]),
-                    ]
-                )
-                for input in dataset_details_inputs
-            ]
-        ),
-    ],
+    children=dbc.Container(
+        children=[
+            dbc.Row(html.H2("Datasett detaljer", className="ssb-title")),
+            dbc.Row(
+                [
+                    dbc.Row(
+                        [
+                            dbc.Col(html.Label(input["name"])),
+                            dbc.Col(input["input_component"], width=4),
+                            dbc.Col(width=6),
+                        ]
+                    )
+                    for input in dataset_details_inputs
+                ]
+            ),
+        ],
+    ),
 )
 
-variables_table = html.Div(
-    children=[
-        html.H2("Variabel detaljer", className="ssb-title"),
-        dash_table.DataTable(
-            id="variables-table",
-            # Populate fields with known values
-            data=df[
-                [
-                    VariableIdentifiers.SHORT_NAME.value,
-                    VariableIdentifiers.DATA_TYPE.value,
-                ]
-            ].to_dict("records"),
-            # Define columns based on the information in DISPLAY_VARIABLES
-            columns=[
-                {
-                    "name": variable.display_name,
-                    "id": variable.identifier,
-                    "editable": variable.editable,
-                    "presentation": variable.presentation,
-                    "hideable": variable.editable,
-                }
-                for variable in DISPLAY_VARIABLES.values()
-            ],
-            # Non-obligatory variables are hidden by default
-            hidden_columns=[
-                v.identifier
-                for v in DISPLAY_VARIABLES.values()
-                if v.obligatory is False
-            ],
-            # Include tooltips for all columns
-            tooltip_header={
-                v.identifier: v.description for v in DISPLAY_VARIABLES.values()
-            },
-            editable=True,
-            sort_action="native",
-            page_action="native",
-            # Populate the options for all dropdown values
-            dropdown={
-                v.identifier: v.options for v in DISPLAY_VARIABLES.values() if v.options
-            },
+variables_table = dbc.Container(
+    [
+        dbc.Row(html.H2("Variabel detaljer", className="ssb-title")),
+        dbc.Row(
+            dash_table.DataTable(
+                id="variables-table",
+                # Populate fields with known values
+                data=df[
+                    [
+                        VariableIdentifiers.SHORT_NAME.value,
+                        VariableIdentifiers.DATA_TYPE.value,
+                    ]
+                ].to_dict("records"),
+                # Define columns based on the information in DISPLAY_VARIABLES
+                columns=[
+                    {
+                        "name": variable.display_name,
+                        "id": variable.identifier,
+                        "editable": variable.editable,
+                        "presentation": variable.presentation,
+                        "hideable": variable.editable,
+                    }
+                    for variable in DISPLAY_VARIABLES.values()
+                ],
+                # Non-obligatory variables are hidden by default
+                hidden_columns=[
+                    v.identifier
+                    for v in DISPLAY_VARIABLES.values()
+                    if v.obligatory is False
+                ],
+                # Include tooltips for all columns
+                tooltip_header={
+                    v.identifier: v.description for v in DISPLAY_VARIABLES.values()
+                },
+                editable=True,
+                sort_action="native",
+                page_action="native",
+                # Populate the options for all dropdown values
+                dropdown={
+                    v.identifier: v.options
+                    for v in DISPLAY_VARIABLES.values()
+                    if v.options
+                },
+            )
+        ),
+        dbc.Row(
+            html.Dialog(
+                id="validation-error",
+                open=True,
+                hidden=False,
+                children=[dcc.Markdown(id="validation-explanation")],
+            )
         ),
     ]
 )
 
-validation_error_dialog = html.Dialog(
-    id="validation-error",
-    open=True,
-    hidden=False,
-    children=[dcc.Markdown(id="validation-explanation")],
-)
-
-app.layout = html.Div(
+app.layout = dbc.Container(
     style={"padding": "4px"},
     children=[
-        html.Div(
+        dbc.Card(
             [
                 html.Link(rel="stylesheet", href="/assets/bundle.css"),
                 html.H1("DataDoc", className="ssb-title", style={"color": "white"}),
             ],
-            style={"backgroundColor": colors["green_4"], "padding": "4px"},
+            style={"backgroundColor": COLORS["green_4"], "padding": "4px"},
         ),
-        dataset_details,
-        variables_table,
-        validation_error_dialog,
+        dbc.Tabs(
+            class_name="ssb-tabs",
+            children=[
+                dataset_details,
+                variables_table,
+            ],
+        ),
     ],
 )
 
