@@ -3,12 +3,10 @@ import os
 from jupyter_dash import JupyterDash
 from dash import Dash, dash_table, html, Input, Output, dcc
 import dash_bootstrap_components as dbc
-from dash.development.base_component import Component
 from pydantic import ValidationError
-from flask import send_from_directory
-from typing import Type
 import pandas as pd
-from datadoc import DataDocMetadata
+from datadoc.DataDocMetadata import DataDocMetadata
+from datadoc.DisplayVariables import DISPLAY_VARIABLES, VariableIdentifiers
 from datadoc.Model import DataDocVariable, Datatype, VariableRole
 
 metadata = DataDocMetadata("./klargjorte_data/person_data_v1.parquet").meta
@@ -19,8 +17,8 @@ app = Dash(name="DataDoc", external_stylesheets=[dbc.themes.GRID])
 colors = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
 # Display only the first 6 variables
-#display_variable_metadata = []
-#for variable in variables:
+# display_variable_metadata = []
+# for variable in variables:
 #    display_variable_metadata.append(dict(itertools.islice(variable.items(), 6)))
 
 df = pd.DataFrame(variables)
@@ -29,8 +27,9 @@ dataset_details_inputs = [
     {
         "name": "Kort Navn",
         "input_component": dcc.Input(
-            placeholder="Et teknisk navn, ofte lik filnavnet", style={"width": "100%"},
-            value = metadata["shortName"]
+            placeholder="Et teknisk navn, ofte lik filnavnet",
+            style={"width": "100%"},
+            value=metadata["shortName"],
         ),
     },
     {
@@ -55,29 +54,33 @@ dataset_details_inputs = [
     {
         "name": "Versjon",
         "input_component": dcc.Input(
-            placeholder=1, type="number", style={"width": "100%"},
-            value = metadata["version"]
+            placeholder=1,
+            type="number",
+            style={"width": "100%"},
+            value=metadata["version"],
         ),
     },
     {
         "name": "Datasett sti",
         "input_component": dcc.Input(
-            placeholder="Sti til datasett fil", style={"width": "100%"},
-            value = metadata["dataSourcePath"]
+            placeholder="Sti til datasett fil",
+            style={"width": "100%"},
+            value=metadata["dataSourcePath"],
         ),
     },
     {
         "name": "Opprettet av",
         "input_component": dcc.Input(
-            placeholder="kari.nordman@ssb.no", type="email", style={"width": "100%"},
-            value = metadata["createdBy"]
+            placeholder="kari.nordman@ssb.no",
+            type="email",
+            style={"width": "100%"},
+            value=metadata["createdBy"],
         ),
     },
     {
         "name": "Opprettet dato",
         "input_component": dcc.Input(
-            style={"width": "100%"},
-            value = metadata["createdDate"]
+            style={"width": "100%"}, value=metadata["createdDate"]
         ),
     },
 ]
@@ -112,32 +115,40 @@ variables_table = html.Div(
         html.H2("Variabel detaljer", className="ssb-title"),
         dash_table.DataTable(
             id="variables-table",
-            # data=display_variable_metadata,
-            data = df[["shortName", "dataType"]].to_dict('records'),
+            # Populate fields with known values
+            data=df[
+                [
+                    VariableIdentifiers.SHORT_NAME.value,
+                    VariableIdentifiers.DATA_TYPE.value,
+                ]
+            ].to_dict("records"),
+            # Define columns based on the information in DISPLAY_VARIABLES
             columns=[
-                {"name": "Kort navn", "id": "shortName", "editable": False},
                 {
-                    "name": "Navn",
-                    "id": "name",
-                },
-                {"name": "Datatype", "id": "dataType", "presentation": "dropdown"},
-                {
-                    "name": "Variabelens rolle",
-                    "id": "variableRole",
-                    "presentation": "dropdown",
-                },
-                {"name": "Definition URI", "id": "definitionUri"},
+                    "name": variable.display_name,
+                    "id": variable.identifier,
+                    "editable": variable.editable,
+                    "presentation": variable.presentation,
+                    "hideable": variable.editable,
+                }
+                for variable in DISPLAY_VARIABLES.values()
             ],
+            # Non-obligatory variables are hidden by default
+            hidden_columns=[
+                v.identifier
+                for v in DISPLAY_VARIABLES.values()
+                if v.obligatory is False
+            ],
+            # Include tooltips for all columns
+            tooltip_header={
+                v.identifier: v.description for v in DISPLAY_VARIABLES.values()
+            },
             editable=True,
+            sort_action="native",
+            page_action="native",
+            # Populate the options for all dropdown values
             dropdown={
-                "dataType": {
-                    "options": [{"label": i.name, "value": i.name} for i in Datatype]
-                },
-                "variableRole": {
-                    "options": [
-                        {"label": i.name, "value": i.name} for i in VariableRole
-                    ]
-                },
+                v.identifier: v.options for v in DISPLAY_VARIABLES.values() if v.options
             },
         ),
     ]
