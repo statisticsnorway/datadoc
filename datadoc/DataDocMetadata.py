@@ -26,7 +26,7 @@ class DataDocMetadata:
             print(
                 "JUPYTERHUB_USER env variable not set, using default for current_user"
             )
-            self.current_user = "default_user"
+            self.current_user = "default_user@ssb.no"
         self.current_datetime = str(datetime.datetime.now())
         self.meta = {}
         self.read_metadata_document()
