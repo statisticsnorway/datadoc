@@ -19,9 +19,26 @@ class DatasetSchema:
                 field["name"] = str(data_field.name)
                 field["datatype"] = self.transform_datatype(str(data_field.type))
                 fields.append(field)
+
+        # SAS Data files
         elif self.dataset_file_type == "sas7bdat":
-            test = pd.read_sas(self.dataset, iterator=True)
-            a=1
+            # Use an iterator to avoid reading in the entire dataset
+            sas_reader = pd.read_sas(self.dataset, iterator=True)
+
+            # Get the first row from the iterator
+            row = next(sas_reader)
+
+            # Get all the values from the row and loop through them
+            for i, v in enumerate(row.values.tolist()[0]):
+                field = {}
+
+                # Read the "column names" to get the variable name
+                field["name"] = row.columns.values.tolist()[i]
+
+                # Access the python type for the value and transform it to a DataDoc Datatype
+                field["datatype"] = self.transform_datatype(type(v).__name__.lower())
+                fields.append(field)
+
         elif self.dataset_file_type == "csv":
             raise NotImplementedError
         elif self.dataset_file_type == "json":
@@ -70,6 +87,7 @@ class DatasetSchema:
             "varchar2",
             "text",
             "txt",
+            "bytes",
         ):
             return "STRING"
         elif v_data_type in (
