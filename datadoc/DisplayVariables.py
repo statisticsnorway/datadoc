@@ -101,12 +101,6 @@ DISPLAY_VARIABLES = {
         description="Populasjonen variabelen beskriver kan spesifiseres nærmere her. Settes på datasettnivå, men kan overstyres på variabelforekomstnivå.",
     ),
     VariableIdentifiers.COMMENT: DisplayVariable(
-        # https://statistics-norway.atlassian.net/wiki/spaces/MPD/pages/3042869256/Variabelforekomst#populationDescription
-        identifier=VariableIdentifiers.COMMENT.value,
-        display_name="Kommentar",
-        description="Ytterligere presiseringer av variabeldefinisjon",
-    ),
-    VariableIdentifiers.COMMENT: DisplayVariable(
         # https://statistics-norway.atlassian.net/wiki/spaces/MPD/pages/3042869256/Variabelforekomst#comment
         identifier=VariableIdentifiers.COMMENT.value,
         display_name="Kommentar",
