@@ -16,8 +16,8 @@ class DatasetSchema:
             data_table = pq.read_table(self.dataset)
             for data_field in data_table.schema:
                 field = {}
-                field["name"] = str(data_field.name)
-                field["datatype"] = self.transform_datatype(str(data_field.type))
+                field["shortName"] = str(data_field.name)
+                field["dataType"] = self.transform_datatype(str(data_field.type))
                 fields.append(field)
 
         # SAS Data files
@@ -31,12 +31,10 @@ class DatasetSchema:
             # Get all the values from the row and loop through them
             for i, v in enumerate(row.values.tolist()[0]):
                 field = {}
-
-                # Read the "column names" to get the variable name
-                field["name"] = row.columns.values.tolist()[i]
-
+                field["shortName"] = sas_reader.columns[i].name
+                field["name"] = sas_reader.columns[i].label
                 # Access the python type for the value and transform it to a DataDoc Datatype
-                field["datatype"] = self.transform_datatype(type(v).__name__.lower())
+                field["dataType"] = self.transform_datatype(type(v).__name__.lower())
                 fields.append(field)
 
         elif self.dataset_file_type == "csv":
