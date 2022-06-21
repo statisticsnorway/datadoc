@@ -1,6 +1,7 @@
 import pathlib
 import pyarrow.parquet as pq
 from typing import Optional
+import pandas as pd
 
 
 class DatasetSchema:
@@ -18,6 +19,9 @@ class DatasetSchema:
                 field["name"] = str(data_field.name)
                 field["datatype"] = self.transform_datatype(str(data_field.type))
                 fields.append(field)
+        elif self.dataset_file_type == "sas7bdat":
+            test = pd.read_sas(self.dataset, iterator=True)
+            a=1
         elif self.dataset_file_type == "csv":
             raise NotImplementedError
         elif self.dataset_file_type == "json":

@@ -11,17 +11,13 @@ import pandas as pd
 from datadoc import DataDocMetadata
 from datadoc.Model import DataDocVariable, Datatype, VariableRole
 
-metadata = DataDocMetadata("./klargjorte_data/person_data_v1.parquet").meta
+#metadata = DataDocMetadata("./klargjorte_data/person_data_v1.parquet").meta
+metadata = DataDocMetadata("./datadoc/tests/resources/sasdata.sas7bdat").meta
 variables = metadata["variables"]
 
 app = Dash(name="DataDoc", external_stylesheets=[dbc.themes.GRID])
 
 colors = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
-
-# Display only the first 6 variables
-#display_variable_metadata = []
-#for variable in variables:
-#    display_variable_metadata.append(dict(itertools.islice(variable.items(), 6)))
 
 df = pd.DataFrame(variables)
 
@@ -112,7 +108,6 @@ variables_table = html.Div(
         html.H2("Variabel detaljer", className="ssb-title"),
         dash_table.DataTable(
             id="variables-table",
-            # data=display_variable_metadata,
             data = df[["shortName", "dataType"]].to_dict('records'),
             columns=[
                 {"name": "Kort navn", "id": "shortName", "editable": False},
