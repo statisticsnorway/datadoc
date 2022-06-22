@@ -15,6 +15,7 @@ dash = "^2.4.1"
 pydantic = "^1.9.1"
 dash-bootstrap-components = "^1.1.0"
 pandas = "^1.4.2"
+saspy = "^4.3.0"
 
 [tool.poetry.dev-dependencies]
 jupyter = "^1.0.0"
