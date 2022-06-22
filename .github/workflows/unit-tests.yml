@@ -39,6 +39,6 @@ jobs:
           poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Run unit tests
         run: |
-          poetry run pytest -v --cache-clear --cov=datadoc tests/ > pytest-coverage.txt
+          poetry run pytest -v --cache-clear --cov=datadoc > pytest-coverage.txt
       - name: Comment coverage
         uses: coroo/pytest-coverage-commentator@v1.0.2
