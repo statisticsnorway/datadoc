@@ -11,17 +11,13 @@ import pandas as pd
 from datadoc import DataDocMetadata
 from datadoc.Model import DataDocVariable, Datatype, VariableRole
 
-metadata = DataDocMetadata("./klargjorte_data/person_data_v1.parquet").meta
+# metadata = DataDocMetadata("./klargjorte_data/person_data_v1.parquet").meta
+metadata = DataDocMetadata("./datadoc/tests/resources/sasdata.sas7bdat").meta
 variables = metadata["variables"]
 
 app = Dash(name="DataDoc", external_stylesheets=[dbc.themes.GRID])
 
 colors = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
-
-# Display only the first 6 variables
-#display_variable_metadata = []
-#for variable in variables:
-#    display_variable_metadata.append(dict(itertools.islice(variable.items(), 6)))
 
 df = pd.DataFrame(variables)
 
@@ -29,8 +25,9 @@ dataset_details_inputs = [
     {
         "name": "Kort Navn",
         "input_component": dcc.Input(
-            placeholder="Et teknisk navn, ofte lik filnavnet", style={"width": "100%"},
-            value = metadata["shortName"]
+            placeholder="Et teknisk navn, ofte lik filnavnet",
+            style={"width": "100%"},
+            value=metadata["shortName"],
         ),
     },
     {
@@ -55,29 +52,33 @@ dataset_details_inputs = [
     {
         "name": "Versjon",
         "input_component": dcc.Input(
-            placeholder=1, type="number", style={"width": "100%"},
-            value = metadata["version"]
+            placeholder=1,
+            type="number",
+            style={"width": "100%"},
+            value=metadata["version"],
         ),
     },
     {
         "name": "Datasett sti",
         "input_component": dcc.Input(
-            placeholder="Sti til datasett fil", style={"width": "100%"},
-            value = metadata["dataSourcePath"]
+            placeholder="Sti til datasett fil",
+            style={"width": "100%"},
+            value=metadata["dataSourcePath"],
         ),
     },
     {
         "name": "Opprettet av",
         "input_component": dcc.Input(
-            placeholder="kari.nordman@ssb.no", type="email", style={"width": "100%"},
-            value = metadata["createdBy"]
+            placeholder="kari.nordman@ssb.no",
+            type="email",
+            style={"width": "100%"},
+            value=metadata["createdBy"],
         ),
     },
     {
         "name": "Opprettet dato",
         "input_component": dcc.Input(
-            style={"width": "100%"},
-            value = metadata["createdDate"]
+            style={"width": "100%"}, value=metadata["createdDate"]
         ),
     },
 ]
@@ -112,8 +113,7 @@ variables_table = html.Div(
         html.H2("Variabel detaljer", className="ssb-title"),
         dash_table.DataTable(
             id="variables-table",
-            # data=display_variable_metadata,
-            data = df[["shortName", "dataType"]].to_dict('records'),
+            data=df[["shortName", "name", "dataType"]].to_dict("records"),
             columns=[
                 {"name": "Kort navn", "id": "shortName", "editable": False},
                 {
