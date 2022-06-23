@@ -103,7 +103,7 @@ class DataDocMetadata:
                 variable["name"] = field["name"]
             except KeyError:
                 variable["name"] = None
-            variable["dataType"] = field["dataType"].value
+            variable["dataType"] = field["dataType"].name
             variable["variableRole"] = None
             # Eksempel VarDok XML, Sivilstand:
             # https://www.ssb.no/a/xml/metadata/conceptvariable/vardok/91/nb

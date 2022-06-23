@@ -21,8 +21,6 @@ app = Dash(
 
 COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
-df = pd.DataFrame(variables)
-
 dataset_details_inputs = [
     {
         "name": "Kort Navn",
