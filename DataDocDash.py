@@ -10,7 +10,8 @@ from datadoc.DataDocMetadata import DataDocMetadata
 from datadoc.DisplayVariables import DISPLAY_VARIABLES, VariableIdentifiers
 from datadoc.Model import DataDocVariable, Datatype, VariableRole
 
-metadata = DataDocMetadata("./klargjorte_data/person_data_v1.parquet").meta
+# metadata = DataDocMetadata("./klargjorte_data/person_data_v1.parquet").meta
+metadata = DataDocMetadata("./datadoc/tests/resources/sasdata.sas7bdat").meta
 variables = metadata["variables"]
 df = pd.DataFrame(variables)
 
@@ -19,6 +20,8 @@ app = Dash(
 )
 
 COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
+
+df = pd.DataFrame(variables)
 
 dataset_details_inputs = [
     {
