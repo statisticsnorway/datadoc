@@ -1,6 +1,6 @@
 from copy import copy
 from pathlib import PurePath
-from .. import DataDocMetadata
+from ..DataDocMetadata import DataDocMetadata
 from .utils import TEST_PARQUET_FILEPATH
 
 
