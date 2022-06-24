@@ -8,7 +8,6 @@ from .DatasetSchema import DatasetSchema
 
 class DataDocMetadata:
     def __init__(self, dataset):
-        # TODO: Denne delen må tilpasses lesing av datasett fra Google buckets også
         self.dataset = dataset
         self.dataset_full_path = pathlib.Path(self.dataset)
         self.dataset_directory = self.dataset_full_path.resolve().parent
@@ -118,7 +117,6 @@ class DataDocMetadata:
             variable["unitType"] = None
             variable["foreignKeyType"] = None
             self.meta["variables"].append(variable)
-        # print(self.meta)
 
     def write_metadata_document(self):
         json_str = json.dumps(self.meta, indent=4, sort_keys=False)

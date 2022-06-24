@@ -1,5 +1,5 @@
 from enum import Enum, auto
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel, constr
 
 ALPHANUMERIC_HYPHEN_UNDERSCORE = "[-A-Za-z0-9_.*/]"
@@ -26,6 +26,6 @@ class DataDocVariable(BaseModel):
     short_name: Optional[
         constr(min_length=1, max_length=63, regex=ALPHANUMERIC_HYPHEN_UNDERSCORE)
     ]
-    name: Optional[str]
+    name: Optional[List[str]]
     datatype: Optional[Datatype]
     definition_uri: Optional[constr(min_length=1, max_length=63, regex=URL_FORMAT)]
