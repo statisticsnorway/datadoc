@@ -1,46 +1,46 @@
-# Purpose:
-# I want a sas dataset in /datadoc/tests/resources
-# To achieve this I must run .create_testdata.sas with SASPy
-# It requires a SAS OnDemand for Academics account and some config
+# TODO: Could this be useful?
+# sasdata = sas_session.sasdata("sasdata")
+# columnInfo = sasdata.columnInfo()
 
-# TODO: If not exists; add file datadoc\tests\resources\sascfg_personal.py to local directory
-# TODO: If not exists; add file template _authinfo (win) or .authinfo (mac) to user home directory
-#       Do something if password is not present in this file? Or will this generate an error anyway?
 
 import saspy
 from pathlib import PurePath
+from .utils import TEST_SAS_FILEPATH, TEST_SAS_PROGRAM
+
 
 def setup_module():
+    global sas_session
     sas_session = saspy.SASsession()
-    code = open(PurePath('./datadoc/tests/create_testdata.sas')).read()
-    global log_submit
-    log_submit = sas_session.submit(code)
-    global log_download
-    remote_file = sas_session.workpath + 'sasdata.sas7bdat'
-    log_download = sas_session.download(PurePath('./datadoc/tests/resources/sasdata.sas7bdat'), remote_file)
-
-    # TODO: Could this be useful?
-    sasdata = sas_session.sasdata("sasdata")
-    columnInfo = sasdata.columnInfo()
-    print(type(columnInfo))
-    print(columnInfo)
-
-    sas_session.endsas()
 
 
-def test_submit_noerror():
+def run_sas_program(sas_session):
+    code = open(PurePath(TEST_SAS_PROGRAM)).read()
+    return sas_session.submit(code)
+
+
+def download_sas_dataset(sas_session):
+    remote_file = sas_session.workpath + PurePath(TEST_SAS_FILEPATH).name
+    return sas_session.download(PurePath(TEST_SAS_FILEPATH), remote_file)
+
+
+def test_submit_noerrorinlog():
+    run_log = run_sas_program(sas_session)
     error = False
-    if 'ERROR' in log_submit['LOG']:
+    if 'ERROR' in run_log['LOG']:
         error = True
     assert error is False
 
 
 def test_download_success():
-    assert log_download['Success'] is True
+    run_log = run_sas_program(sas_session)
+    download_log = download_sas_dataset(sas_session)
+    assert download_log['Success'] is True
+
+
+def teardown_module():
+    sas_session.endsas()
 
 
 # TODO: Possible tests:
-# TODO: Check log_submit for 'ERROR'
-# TODO: Assert log_download has Succcess == True
 # TODO: Read SAS dataset with sas7bdat
 # TODO: Check structure of SAS-dataset

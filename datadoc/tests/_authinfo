@@ -1,0 +1,9 @@
+# Create an account on https://welcome.oda.sas.com/home if not already done
+# Insert your user and password here, and place this file in your user's home directory
+# Windows:
+#   c:\users\<initials>\_authinfo
+#  MacOS:
+#   touch ~/.authinfo
+#   chmod 600 ~/.authinfo
+
+oda user <full.name@ssb.no> password <your_password>

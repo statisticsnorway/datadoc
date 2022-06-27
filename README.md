@@ -30,3 +30,9 @@ A Jupyter instance should open in your browser. Once there, open the `*.ipynb` f
 1. Install dev dependencies (see [Dependency Management](#dependency-management))
 1. Run `poetry shell` to open a shell in the Virtual Environment for the project
 1. Run `pytest` in the root of the project
+
+#### Setup for SAS tests
+
+1. Create a SAS OnDemand for Academics account https://welcome.oda.sas.com/home
+1. Place and modify tests/_autinfo in your home directory, see comments in file for detailed instructions
+1. Place and modify tests\sascfg_personal.py in your poetry installation directory, see comments in file for detailed instructions
