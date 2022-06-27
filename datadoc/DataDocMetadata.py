@@ -98,9 +98,12 @@ class DataDocMetadata:
         self.meta["variables"] = []
         for field in self.ds_fields:
             variable = {}
-            variable["shortName"] = field["name"]
-            variable["name"] = None  # TODO: Støtte flere språk!
-            variable["dataType"] = field["datatype"]
+            variable["shortName"] = field["shortName"]
+            try:
+                variable["name"] = field["name"]
+            except KeyError:
+                variable["name"] = None
+            variable["dataType"] = field["dataType"]
             variable["variableRole"] = None
             # Eksempel VarDok XML, Sivilstand:
             # https://www.ssb.no/a/xml/metadata/conceptvariable/vardok/91/nb

@@ -1,6 +1,7 @@
 import pathlib
 import pyarrow.parquet as pq
 from typing import Optional
+import pandas as pd
 
 
 class DatasetSchema:
@@ -15,9 +16,27 @@ class DatasetSchema:
             data_table = pq.read_table(self.dataset)
             for data_field in data_table.schema:
                 field = {}
-                field["name"] = str(data_field.name)
-                field["datatype"] = self.transform_datatype(str(data_field.type))
+                field["shortName"] = str(data_field.name)
+                field["dataType"] = self.transform_datatype(str(data_field.type))
                 fields.append(field)
+
+        # SAS Data files
+        elif self.dataset_file_type == "sas7bdat":
+            # Use an iterator to avoid reading in the entire dataset
+            sas_reader = pd.read_sas(self.dataset, iterator=True)
+
+            # Get the first row from the iterator
+            row = next(sas_reader)
+
+            # Get all the values from the row and loop through them
+            for i, v in enumerate(row.values.tolist()[0]):
+                field = {}
+                field["shortName"] = sas_reader.columns[i].name
+                field["name"] = sas_reader.columns[i].label
+                # Access the python type for the value and transform it to a DataDoc Datatype
+                field["dataType"] = self.transform_datatype(type(v).__name__.lower())
+                fields.append(field)
+
         elif self.dataset_file_type == "csv":
             raise NotImplementedError
         elif self.dataset_file_type == "json":
@@ -66,6 +85,7 @@ class DatasetSchema:
             "varchar2",
             "text",
             "txt",
+            "bytes",
         ):
             return "STRING"
         elif v_data_type in (
