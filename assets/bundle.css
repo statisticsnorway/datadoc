@@ -16,6 +16,10 @@ body {
   color: #162327;
 }
 
+.Select-menu-outer {
+  display : block !important;
+}
+
 a {
   text-decoration: none;
 }
