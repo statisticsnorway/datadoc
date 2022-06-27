@@ -1,0 +1,4 @@
+[run]
+omit =
+    datadoc/tests/*
+    datadoc/__init__.py
