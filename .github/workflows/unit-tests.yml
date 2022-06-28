@@ -1,7 +1,7 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Python application
+name: Datadoc Unit tests
 
 on:
   pull_request:
@@ -40,11 +40,26 @@ jobs:
       - name: Run unit tests
         run: |
           set -o pipefail; poetry run pytest -v --cache-clear --junitxml=pytest.xml --cov-report=term-missing --cov=datadoc | tee pytest-coverage.txt
+      - uses: actions/upload-artifact@v2
+        with:
+          name: test-results-xml
+          path: pytest.xml
+      - uses: actions/upload-artifact@v2
+        with:
+          name: test-coverage-txt
+          path: pytest-coverage.txt
 
   comment-coverage:
     if:  ${{ success() || failure() }}
+    needs: run-unit-tests
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: test-results-xml
+      - uses: actions/download-artifact@v2
+        with:
+          name: test-coverage-txt
       - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@main
         with:
