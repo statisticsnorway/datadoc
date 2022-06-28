@@ -64,10 +64,10 @@ class TemporalityType(Enum):
 
 
 class DataDocDataSet(BaseModel):
-    """ DataDoc data set. See documentation https://statistics-norway.atlassian.net/l/c/NgjE7yj1 """
+    """DataDoc data set. See documentation https://statistics-norway.atlassian.net/l/c/NgjE7yj1"""
+
     short_name: Optional[
-        constr(min_length=1, max_length=63,
-               regex=ALPHANUMERIC_HYPHEN_UNDERSCORE)
+        constr(min_length=1, max_length=63, regex=ALPHANUMERIC_HYPHEN_UNDERSCORE)
     ]
     assessment: Optional[Assessment]
     dataset_state: Optional[DataSetState]
@@ -80,9 +80,7 @@ class DataDocDataSet(BaseModel):
     temporality_type: Optional[TemporalityType]
     description: Optional[str]
     spatial_coverage_description: Optional[str]
-    id:  Optional[
-        constr(regex=URL_FORMAT)
-    ]
+    id: Optional[constr(regex=URL_FORMAT)]
     owner: Optional[str]
     data_source_path: Optional[str]
     created_date: Optional[datetime]
@@ -108,16 +106,15 @@ class VariableRole(Enum):
 
 
 class DataDocVariable(BaseModel):
-    """ DataDoc instance variable. See documentation https://statistics-norway.atlassian.net/l/c/goyNhUPP """
+    """DataDoc instance variable. See documentation https://statistics-norway.atlassian.net/l/c/goyNhUPP"""
+
     short_name: Optional[
-        constr(min_length=1, max_length=63,
-               regex=ALPHANUMERIC_HYPHEN_UNDERSCORE)
+        constr(min_length=1, max_length=63, regex=ALPHANUMERIC_HYPHEN_UNDERSCORE)
     ]
     name: Optional[str]
     datatype: Optional[Datatype]
     variable_role: Optional[VariableRole]
-    definition_uri: Optional[constr(
-        min_length=1, max_length=63, regex=URL_FORMAT)]
+    definition_uri: Optional[constr(min_length=1, max_length=63, regex=URL_FORMAT)]
     direct_person_identifying: Optional[bool]
     data_source: Optional[str]
     population_description: Optional[str]
@@ -126,13 +123,9 @@ class DataDocVariable(BaseModel):
     # TODO: measurement_unit implemented as string. In the future this should be implemente as a class? See https://www.ssb.no/klass/klassifikasjoner/303/koder
     measurement_unit: Optional[str]
     format: Optional[str]
-    classification_uri: Optional[constr(
-        min_length=1, max_length=63, regex=URL_FORMAT)]
-    sentinel_value_uri: Optional[constr(
-        min_length=1, max_length=63, regex=URL_FORMAT)]
-    invalid_value_description = Optional[str]
-    id:  Optional[
-        constr(regex=URL_FORMAT)
-    ]
+    classification_uri: Optional[constr(min_length=1, max_length=63, regex=URL_FORMAT)]
+    sentinel_value_uri: Optional[constr(min_length=1, max_length=63, regex=URL_FORMAT)]
+    invalid_value_description: Optional[str]
+    id: Optional[constr(regex=URL_FORMAT)]
     contains_data_from: Optional[date]
     contains_data_until: Optional[date]
