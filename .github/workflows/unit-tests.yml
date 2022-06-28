@@ -14,10 +14,8 @@ permissions:
   pull-requests: write
 
 jobs:
-  build:
-
+  run-unit-tests:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v1
@@ -41,7 +39,12 @@ jobs:
           poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Run unit tests
         run: |
-          poetry run pytest -v --cache-clear --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=datadoc | tee pytest-coverage.txt
+          set -o pipefail; poetry run pytest -v --cache-clear --junitxml=pytest.xml --cov-report=term-missing --cov=datadoc | tee pytest-coverage.txt
+
+  comment-coverage:
+    if:  ${{ success() || failure() }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@main
         with:
