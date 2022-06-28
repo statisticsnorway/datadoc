@@ -40,27 +40,9 @@ jobs:
       - name: Run unit tests
         run: |
           set -o pipefail; poetry run pytest -v --cache-clear --junitxml=pytest.xml --cov-report=term-missing --cov=datadoc | tee pytest-coverage.txt
-      - uses: actions/upload-artifact@v2
-        with:
-          name: test-results-xml
-          path: pytest.xml
-      - uses: actions/upload-artifact@v2
-        with:
-          name: test-coverage-txt
-          path: pytest-coverage.txt
-
-  comment-coverage:
-    if:  ${{ success() || failure() }}
-    needs: run-unit-tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: test-results-xml
-      - uses: actions/download-artifact@v2
-        with:
-          name: test-coverage-txt
       - name: Pytest coverage comment
+        # Always run so we see the test report
+        if:  ${{ success() || failure() }}
         uses: MishaKav/pytest-coverage-comment@main
         with:
           pytest-coverage-path: ./pytest-coverage.txt
