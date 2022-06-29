@@ -1,4 +1,4 @@
-from .. import DatasetSchema
+from ..DatasetSchema import DatasetSchema
 from .utils import TEST_PARQUET_FILEPATH, TEST_SAS7BDAT_FILEPATH
 
 
