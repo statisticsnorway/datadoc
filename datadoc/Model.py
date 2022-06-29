@@ -74,7 +74,7 @@ class DataDocDataSet(BaseModel):
     name: Optional[str]
     data_source: Optional[str]
     population_description: Optional[str]
-    administrative_status: Optional[AdministrativeStatus] = "DRAFT"
+    administrative_status: Optional[AdministrativeStatus] = AdministrativeStatus.DRAFT
     version: Optional[str]
     unit_type: Optional[UnitType]
     temporality_type: Optional[TemporalityType]

@@ -3,6 +3,62 @@ import pyarrow.parquet as pq
 from typing import Optional
 import pandas as pd
 
+from datadoc.Model import Datatype
+
+KNOWN_INTEGER_TYPES = (
+    "int",
+    "int_",
+    "int8",
+    "int16",
+    "int32",
+    "int64",
+    "integer",
+    "long",
+    "uint",
+    "uint8",
+    "uint16",
+    "uint32",
+    "uint64",
+)
+
+KNOWN_FLOAT_TYPES = (
+    "double",
+    "float",
+    "float_",
+    "float16",
+    "float32",
+    "float64",
+    "decimal",
+    "number",
+    "numeric",
+    "num",
+)
+
+KNOWN_STRING_TYPES = (
+    "string",
+    "str",
+    "char",
+    "varchar",
+    "varchar2",
+    "text",
+    "txt",
+    "bytes",
+)
+
+KNOWN_DATETIME_TYPES = (
+    "timestamp",
+    "timestamp[us]",
+    "timestamp[ns]",
+    "datetime64",
+    " datetime64[ns]",
+    " datetime64[us]",
+    "date",
+    "datetime",
+    "time",
+)
+
+KNOWN_BOOLEAN_TYPES = ("bool", "bool_", "boolean")
+
 
 class DatasetSchema:
     def __init__(self, dataset):
@@ -17,7 +73,7 @@ class DatasetSchema:
             for data_field in data_table.schema:
                 field = {}
                 field["shortName"] = str(data_field.name)
-                field["dataType"] = self.transform_datatype(str(data_field.type))
+                field["dataType"] = self.transform_data_type(str(data_field.type))
                 fields.append(field)
 
         # SAS Data files
@@ -33,8 +89,8 @@ class DatasetSchema:
                 field = {}
                 field["shortName"] = sas_reader.columns[i].name
                 field["name"] = sas_reader.columns[i].label
-                # Access the python type for the value and transform it to a DataDoc Datatype
-                field["dataType"] = self.transform_datatype(type(v).__name__.lower())
+                # Access the python type for the value and transform it to a DataDoc Data type
+                field["dataType"] = self.transform_data_type(type(v).__name__.lower())
                 fields.append(field)
 
         elif self.dataset_file_type == "csv":
@@ -46,61 +102,17 @@ class DatasetSchema:
         return fields
 
     @staticmethod
-    def transform_datatype(data_type) -> Optional[str]:
+    def transform_data_type(data_type: str) -> Optional[Datatype]:
         v_data_type = data_type.lower()
-        if v_data_type in (
-            "int",
-            "int_",
-            "int8",
-            "int16",
-            "int32",
-            "int64",
-            "integer",
-            "long",
-            "uint",
-            "uint8",
-            "uint16",
-            "uint32",
-            "uint64",
-        ):
-            return "INTEGER"
-        elif v_data_type in (
-            "double",
-            "float",
-            "float_",
-            "float16",
-            "float32",
-            "float64",
-            "decimal",
-            "number",
-            "numeric",
-            "num",
-        ):
-            return "FLOAT"
-        elif v_data_type in (
-            "string",
-            "str",
-            "char",
-            "varchar",
-            "varchar2",
-            "text",
-            "txt",
-            "bytes",
-        ):
-            return "STRING"
-        elif v_data_type in (
-            "timestamp",
-            "timestamp[us]",
-            "timestamp[ns]",
-            "datetime64",
-            " datetime64[ns]",
-            " datetime64[us]",
-            "date",
-            "datetime",
-            "time",
-        ):
-            return "DATETIME"
-        elif v_data_type in ("bool", "bool_", "boolean"):
-            return "BOOLEAN"
+        if v_data_type in KNOWN_INTEGER_TYPES:
+            return Datatype.INTEGER
+        elif v_data_type in KNOWN_FLOAT_TYPES:
+            return Datatype.FLOAT
+        elif v_data_type in KNOWN_STRING_TYPES:
+            return Datatype.STRING
+        elif v_data_type in KNOWN_DATETIME_TYPES:
+            return Datatype.DATETIME
+        elif v_data_type in KNOWN_BOOLEAN_TYPES:
+            return Datatype.BOOLEAN
         else:
             return None  # Unknown datatype?

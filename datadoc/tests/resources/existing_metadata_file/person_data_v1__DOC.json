@@ -1,0 +1,162 @@
+{
+    "dataSourcePath": "klargjorte_data/person_data_v1.parquet",
+    "shortName": "person_data_v1",
+    "name": [
+        {
+            "languageCode": "no",
+            "value": "successfully_read_existing_file"
+        }
+    ],
+    "dataSetState": "PROCESSED_DATA",
+    "description": [
+        {
+            "languageCode": "no",
+            "value": ""
+        }
+    ],
+    "temporalityType": null,
+    "spatialCoverageDescription": [
+        {
+            "languageCode": "no",
+            "value": "Norge"
+        }
+    ],
+    "populationDescription": [],
+    "id": null,
+    "createdDate": "2022-06-23 15:32:41.120207",
+    "createdBy": "default_user@ssb.no",
+    "dataOwner": null,
+    "lastUpdatedDate": null,
+    "lastUpdatedBy": null,
+    "version": "1",
+    "administrativeStatus": "DRAFT",
+    "variables": [
+        {
+            "shortName": "pers_id",
+            "name": null,
+            "dataType": "STRING",
+            "variableRole": null,
+            "comment": null,
+            "populationDescription": null,
+            "temporalityType": null,
+            "mesurementType": null,
+            "measurementUnit": null,
+            "format": null,
+            "sentinelAndMissingValueUri": [],
+            "unitType": null,
+            "foreignKeyType": null
+        },
+        {
+            "definitionUri": null,
+            "shortName": "tidspunkt",
+            "name": null,
+            "dataType": "DATETIME",
+            "variableRole": null,
+            "comment": null,
+            "populationDescription": null,
+            "temporalityType": null,
+            "mesurementType": null,
+            "measurementUnit": null,
+            "format": null,
+            "sentinelAndMissingValueUri": [],
+            "unitType": null,
+            "foreignKeyType": null
+        },
+        {
+            "definitionUri": null,
+            "shortName": "sivilstand",
+            "name": null,
+            "dataType": "STRING",
+            "variableRole": null,
+            "comment": null,
+            "populationDescription": null,
+            "temporalityType": null,
+            "mesurementType": null,
+            "measurementUnit": null,
+            "format": null,
+            "sentinelAndMissingValueUri": [],
+            "unitType": null,
+            "foreignKeyType": null
+        },
+        {
+            "definitionUri": null,
+            "shortName": "alm_inntekt",
+            "name": null,
+            "dataType": "INTEGER",
+            "variableRole": null,
+            "comment": null,
+            "populationDescription": null,
+            "temporalityType": null,
+            "mesurementType": null,
+            "measurementUnit": null,
+            "format": null,
+            "sentinelAndMissingValueUri": [],
+            "unitType": null,
+            "foreignKeyType": null
+        },
+        {
+            "definitionUri": null,
+            "shortName": "sykepenger",
+            "name": null,
+            "dataType": "INTEGER",
+            "variableRole": null,
+            "comment": null,
+            "populationDescription": null,
+            "temporalityType": null,
+            "mesurementType": null,
+            "measurementUnit": null,
+            "format": null,
+            "sentinelAndMissingValueUri": [],
+            "unitType": null,
+            "foreignKeyType": null
+        },
+        {
+            "definitionUri": null,
+            "shortName": "ber_bruttoformue",
+            "name": null,
+            "dataType": "INTEGER",
+            "variableRole": null,
+            "comment": null,
+            "populationDescription": null,
+            "temporalityType": null,
+            "mesurementType": null,
+            "measurementUnit": null,
+            "format": null,
+            "sentinelAndMissingValueUri": [],
+            "unitType": null,
+            "foreignKeyType": null
+        },
+        {
+            "definitionUri": null,
+            "shortName": "fullf_utdanning",
+            "name": null,
+            "dataType": "STRING",
+            "variableRole": null,
+            "comment": null,
+            "populationDescription": null,
+            "temporalityType": null,
+            "mesurementType": null,
+            "measurementUnit": null,
+            "format": null,
+            "sentinelAndMissingValueUri": [],
+            "unitType": null,
+            "foreignKeyType": null
+        },
+        {
+            "definitionUri": null,
+            "shortName": "hoveddiagnose",
+            "name": null,
+            "dataType": "STRING",
+            "variableRole": null,
+            "comment": null,
+            "populationDescription": null,
+            "temporalityType": null,
+            "mesurementType": null,
+            "measurementUnit": null,
+            "format": null,
+            "sentinelAndMissingValueUri": [],
+            "unitType": null,
+            "foreignKeyType": null
+        }
+    ]
+}
