@@ -1,19 +1,17 @@
-import itertools
-import os
 import re
-from jupyter_dash import JupyterDash
-from dash import Dash, dash_table, html, Input, Output, dcc
+
 import dash_bootstrap_components as dbc
+from dash import Dash, Input, Output, dash_table, dcc, html
 from pydantic import ValidationError
-import pandas as pd
+
 from datadoc.DataDocMetadata import DataDocMetadata
 from datadoc.DisplayVariables import DISPLAY_VARIABLES, VariableIdentifiers
-from datadoc.Model import DataDocVariable, Datatype, VariableRole
+from datadoc.Model import DataDocVariable, DataSetState, Datatype
 
-# metadata = DataDocMetadata("./klargjorte_data/person_data_v1.parquet").meta
-metadata = DataDocMetadata("./datadoc/tests/resources/sasdata.sas7bdat").meta
-variables = metadata["variables"]
-df = pd.DataFrame(variables)
+datadoc_metadata = DataDocMetadata("./klargjorte_data/person_data_v1.parquet")
+# datadoc_metadata = DataDocMetadata("./datadoc/tests/resources/sasdata.sas7bdat")
+metadata = datadoc_metadata.dataset_metadata
+variables = datadoc_metadata.variables_metadata
 
 app = Dash(
     name="DataDoc", external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP]
@@ -27,7 +25,7 @@ dataset_details_inputs = [
         "input_component": dcc.Input(
             placeholder="Et teknisk navn, ofte lik filnavnet",
             style={"width": "100%"},
-            value=metadata["shortName"],
+            value=metadata.short_name,
             className="ssb-input",
         ),
     },
@@ -36,6 +34,7 @@ dataset_details_inputs = [
         "input_component": dcc.Input(
             placeholder="Beskrivende navn for datasettet",
             style={"width": "100%"},
+            value=metadata.name,
             className="ssb-input",
         ),
     },
@@ -44,6 +43,7 @@ dataset_details_inputs = [
         "input_component": dcc.Textarea(
             placeholder="Besrive egenskaper av datasettet",
             style={"width": "100%"},
+            value=metadata.description,
             className="ssb-input",
         ),
     },
@@ -52,13 +52,13 @@ dataset_details_inputs = [
         "input_component": dcc.Dropdown(
             placeholder="Velg fra listen",
             options=[
-                {"label": o, "value": o}
-                for o in [
-                    "Kildedata",
-                    "Inndata",
-                    "Klargjorte data",
-                    "Utdata",
-                    "Statistikk",
+                {"label": label, "value": value}
+                for label, value in [
+                    ("Kildedata", DataSetState.SOURCE_DATA.name),
+                    ("Inndata", DataSetState.INPUT_DATA.name),
+                    ("Klargjorte data", DataSetState.PROCESSED_DATA.name),
+                    ("Utdata", DataSetState.OUTPUT_DATA.name),
+                    ("Statistikk", DataSetState.STATISTIC.name),
                 ]
             ],
             style={"width": "100%"},
@@ -71,7 +71,7 @@ dataset_details_inputs = [
             placeholder=1,
             type="number",
             style={"width": "100%"},
-            value=metadata["version"],
+            value=metadata.version,
             className="ssb-input",
         ),
     },
@@ -80,7 +80,7 @@ dataset_details_inputs = [
         "input_component": dcc.Input(
             placeholder="Sti til datasett fil",
             style={"width": "100%"},
-            value=metadata["dataSourcePath"],
+            value=metadata.data_source_path,
             className="ssb-input",
         ),
     },
@@ -90,7 +90,7 @@ dataset_details_inputs = [
             placeholder="kari.nordman@ssb.no",
             type="email",
             style={"width": "100%"},
-            value=metadata["createdBy"],
+            value=metadata.created_by,
             className="ssb-input",
         ),
     },
@@ -98,7 +98,7 @@ dataset_details_inputs = [
         "name": "Opprettet dato",
         "input_component": dcc.Input(
             style={"width": "100%"},
-            value=metadata["createdDate"],
+            value=metadata.created_date,
             className="ssb-input",
         ),
     },
@@ -147,12 +147,7 @@ variables_table = make_ssb_styled_tab(
                 dash_table.DataTable(
                     id="variables-table",
                     # Populate fields with known values
-                    data=df[
-                        [
-                            VariableIdentifiers.SHORT_NAME.value,
-                            VariableIdentifiers.DATA_TYPE.value,
-                        ]
-                    ].to_dict("records"),
+                    data=[v.export_for_datatable() for v in variables],
                     # Define columns based on the information in DISPLAY_VARIABLES
                     columns=[
                         {
@@ -300,6 +295,7 @@ app.layout = dbc.Container(
     Output("validation-explanation", "children"),
     Input("variables-table", "data"),
     Input("variables-table", "data_previous"),
+    prevent_initial_call=True,
 )
 def validate_input(data, data_previous):
     updated_row_id = None
@@ -314,7 +310,8 @@ def validate_input(data, data_previous):
             update_diff = list(data[i].items() - data_previous[i].items())
             if update_diff:
                 print(update_diff)
-                updated_row_id = data[i]["shortName"]
+                print(data[i])
+                updated_row_id = data[i][VariableIdentifiers.SHORT_NAME.value]
                 updated_column_id = update_diff[-1][0]
                 new_value = update_diff[-1][-1]
                 print(
@@ -330,15 +327,15 @@ def validate_input(data, data_previous):
             validated_data = DataDocVariable(definition_uri=new_value)
         else:
             validated_data = None
-            print("Unexpected type")
     except ValidationError as e:
         show_error = True
         error_explanation = f"`{e}`"
         output_data = data_previous
         print(error_explanation)
     else:
-        output_data = data
-        print(f"Success: {validated_data}")
+        if validated_data is not None:
+            output_data = data
+            print(f"Success: {validated_data}")
 
     # IF NOT: Return in which way it is not valid
     # IF IT IS: Return the input data unchanged

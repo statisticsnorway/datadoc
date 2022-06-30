@@ -1,6 +1,7 @@
+import json
 import random
 
-from datadoc.Model import Datatype
+from datadoc.Model import DataDocVariable, Datatype
 from ..DatasetSchema import (
     KNOWN_BOOLEAN_TYPES,
     KNOWN_DATETIME_TYPES,
@@ -15,14 +16,14 @@ from pytest import raises
 
 def test_get_fields_parquet():
     expected_fields = [
-        {"shortName": "pers_id", "dataType": Datatype.STRING},
-        {"shortName": "tidspunkt", "dataType": Datatype.DATETIME},
-        {"shortName": "sivilstand", "dataType": Datatype.STRING},
-        {"shortName": "alm_inntekt", "dataType": Datatype.INTEGER},
-        {"shortName": "sykepenger", "dataType": Datatype.INTEGER},
-        {"shortName": "ber_bruttoformue", "dataType": Datatype.INTEGER},
-        {"shortName": "fullf_utdanning", "dataType": Datatype.STRING},
-        {"shortName": "hoveddiagnose", "dataType": Datatype.STRING},
+        DataDocVariable(short_name="pers_id", datatype=Datatype.STRING),
+        DataDocVariable(short_name="tidspunkt", datatype=Datatype.DATETIME),
+        DataDocVariable(short_name="sivilstand", datatype=Datatype.STRING),
+        DataDocVariable(short_name="alm_inntekt", datatype=Datatype.INTEGER),
+        DataDocVariable(short_name="sykepenger", datatype=Datatype.INTEGER),
+        DataDocVariable(short_name="ber_bruttoformue", datatype=Datatype.INTEGER),
+        DataDocVariable(short_name="fullf_utdanning", datatype=Datatype.STRING),
+        DataDocVariable(short_name="hoveddiagnose", datatype=Datatype.STRING),
     ]
 
     schema = DatasetSchema(TEST_PARQUET_FILEPATH)
@@ -33,9 +34,9 @@ def test_get_fields_parquet():
 
 def test_get_fields_sas7bdat():
     expected_fields = [
-        {"shortName": "tekst", "name": "Tekst", "dataType": Datatype.STRING},
-        {"shortName": "tall", "name": "Tall", "dataType": Datatype.FLOAT},
-        {"shortName": "dato", "name": "Dato", "dataType": Datatype.DATETIME},
+        DataDocVariable(short_name="tekst", name="Tekst", datatype=Datatype.STRING),
+        DataDocVariable(short_name="tall", name="Tall", datatype=Datatype.FLOAT),
+        DataDocVariable(short_name="dato", name="Dato", datatype=Datatype.DATETIME),
     ]
 
     schema = DatasetSchema(TEST_SAS7BDAT_FILEPATH)

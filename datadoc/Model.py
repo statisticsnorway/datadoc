@@ -1,6 +1,6 @@
 from enum import Enum, auto
 from datetime import date, datetime
-from typing import Optional
+from typing import Dict, List, Optional
 from pydantic import BaseModel, constr
 
 ALPHANUMERIC_HYPHEN_UNDERSCORE = "[-A-Za-z0-9_.*/]"
@@ -19,7 +19,7 @@ class DataSetState(Enum):
     INPUT_DATA = auto()
     PROCESSED_DATA = auto()
     STATISTIC = auto()
-    OUPUT_DATA = auto()
+    OUTPUT_DATA = auto()
 
 
 class AdministrativeStatus(Enum):
@@ -79,7 +79,7 @@ class DataDocDataSet(BaseModel):
     unit_type: Optional[UnitType]
     temporality_type: Optional[TemporalityType]
     description: Optional[str]
-    spatial_coverage_description: Optional[str]
+    spatial_coverage_description: Optional[List[Dict[str, str]]]
     id: Optional[constr(regex=URL_FORMAT)]
     owner: Optional[str]
     data_source_path: Optional[str]
@@ -129,3 +129,12 @@ class DataDocVariable(BaseModel):
     id: Optional[constr(regex=URL_FORMAT)]
     contains_data_from: Optional[date]
     contains_data_until: Optional[date]
+
+    def export_for_datatable(self) -> Dict:
+        """Converts to dict and replaces all Enum values with their 'name' for display.
+        We do this because the default 'dict' representation of an Enum doesn't play nicely in the frontend"""
+        dictionary = self.dict(exclude_none=True)
+        for k, v in dictionary.items():
+            if issubclass(type(v), Enum):
+                dictionary[k] = v.name
+        return dictionary

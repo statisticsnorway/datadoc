@@ -1,7 +1,17 @@
+from copy import deepcopy
 import json
 import pathlib
 import datetime
 import os
+from typing import List, Optional
+from datadoc.DisplayVariables import VariableIdentifiers
+
+from datadoc.Model import (
+    AdministrativeStatus,
+    DataDocDataSet,
+    DataDocVariable,
+    DataSetState,
+)
 
 from .DatasetSchema import DatasetSchema
 
@@ -27,25 +37,30 @@ class DataDocMetadata:
             )
             self.current_user = "default_user@ssb.no"
         self.current_datetime = str(datetime.datetime.now())
-        self.meta = {}
+
+        self.dataset_metadata: DataDocDataSet
+        self.variables_metadata: List[DataDocVariable] = []
+
         self.read_metadata_document()
 
-    def get_dataset_state(self, dataset_path: pathlib.Path = None):
+    def get_dataset_state(
+        self, dataset_path: pathlib.Path = None
+    ) -> Optional[DataSetState]:
         """Use the path to attempt to guess the state of the dataset"""
 
         if dataset_path is None:
             dataset_path = self.dataset_full_path
         dataset_path = list(dataset_path.parts)
         if "kildedata" in dataset_path:
-            return "SOURCE_DATA"
+            return DataSetState.SOURCE_DATA
         elif "inndata" in dataset_path:
-            return "INPUT_DATA"
+            return DataSetState.INPUT_DATA
         elif "klargjorte_data" in dataset_path:
-            return "PROCESSED_DATA"
+            return DataSetState.PROCESSED_DATA
         else:
             return None
 
-    def get_dataset_version(self):
+    def get_dataset_version(self) -> Optional[str]:
         """Find version information if exists in filename,
         eg. 'v1' in filename 'person_data_v1.parquet'"""
         splitted_file_name = str(self.dataset_stem).split("_")
@@ -60,64 +75,51 @@ class DataDocMetadata:
         return None
 
     def read_metadata_document(self):
+        fresh_metadata = {}
         if self.metadata_document_full_path.exists():
             with open(self.metadata_document_full_path, "r", encoding="utf-8") as JSON:
-                self.meta = json.load(JSON)
+                fresh_metadata = json.load(JSON)
             print(
                 "Opened existing metadata file " + str(self.metadata_document_full_path)
             )
+
+            variables_list = fresh_metadata.pop("variables", None)
+
+            self.variables_metadata = [DataDocVariable(**v) for v in variables_list]
+            self.dataset_metadata = DataDocDataSet(**fresh_metadata)
         else:
             self.generate_new_metadata_document()
 
     def generate_new_metadata_document(self):
         self.ds_schema = DatasetSchema(self.dataset)
-        self.ds_fields = self.ds_schema.get_fields()
 
-        # Dataset elements
-        self.meta["dataSourcePath"] = str(self.dataset_full_path)
-        self.meta["shortName"] = str(self.dataset_stem)
-        self.meta["name"] = []
-        self.meta["dataSetState"] = self.dataset_state
-        self.meta["description"] = []
-        self.meta["temporalityType"] = None
-        self.meta["spatialCoverageDescription"] = [
-            {"languageCode": "no", "value": "Norge"}
-        ]
-        self.meta["populationDescription"] = []
-        self.meta["id"] = None
-        self.meta["createdDate"] = self.current_datetime
-        self.meta["createdBy"] = self.current_user
-        self.meta["dataOwner"] = None
-        self.meta["lastUpdatedDate"] = None
-        self.meta["lastUpdatedBy"] = None
-        self.meta["version"] = self.dataset_version
-        self.meta["administrativeStatus"] = "DRAFT"
+        self.dataset_metadata = DataDocDataSet(
+            short_name=self.dataset_stem,
+            assessment=None,
+            dataset_state=self.dataset_state,
+            name=None,
+            data_source=None,
+            population_description=None,
+            administrative_status=AdministrativeStatus.DRAFT,
+            version=self.dataset_version,
+            unit_type=None,
+            temporality_type=None,
+            description=None,
+            spatial_coverage_description=[{"languageCode": "no", "value": "Norge"}],
+            id=None,
+            owner=None,
+            data_source_path=str(self.dataset_full_path),
+            created_date=self.current_datetime,
+            created_by=self.current_user,
+            last_updated_date=None,
+            last_updated_by=None,
+        )
 
-        # Elements for instance variables (dataset fields)
-        self.meta["variables"] = []
-        for field in self.ds_fields:
-            variable = {}
-            variable["shortName"] = field["shortName"]
-            try:
-                variable["name"] = field["name"]
-            except KeyError:
-                variable["name"] = None
-            variable["dataType"] = field["dataType"].name
-            variable["variableRole"] = None
-            # Eksempel VarDok XML, Sivilstand:
-            # https://www.ssb.no/a/xml/metadata/conceptvariable/vardok/91/nb
-            variable["definitionUri"] = None
-            variable["populationDescription"] = None  # TODO: Støtte flere språk!
-            variable["comment"] = None  # TODO: Støtte flere språk!
-            variable["temporalityType"] = None
-            variable["mesurementType"] = None
-            variable["measurementUnit"] = None
-            variable["format"] = None
-            variable["sentinelAndMissingValueUri"] = []
-            variable["unitType"] = None
-            variable["foreignKeyType"] = None
-            self.meta["variables"].append(variable)
+        self.variables_metadata = self.ds_schema.get_fields()
 
-    def write_metadata_document(self):
-        json_str = json.dumps(self.meta, indent=4, sort_keys=False)
+    def write_metadata_document(self) -> None:
+        """Write all currently known metadata to file"""
+        export_dict = deepcopy(self.dataset_metadata)
+        export_dict["variables"] = self.variables_metadata
+        json_str = json.dumps(export_dict, indent=4, sort_keys=False)
         self.metadata_document_full_path.write_text(json_str, encoding="utf-8")

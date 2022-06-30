@@ -1,9 +1,9 @@
 import pathlib
 import pyarrow.parquet as pq
-from typing import Optional
+from typing import List, Optional
 import pandas as pd
 
-from datadoc.Model import Datatype
+from datadoc.Model import DataDocVariable, Datatype
 
 KNOWN_INTEGER_TYPES = (
     "int",
@@ -66,15 +66,17 @@ class DatasetSchema:
         self.dataset_full_path = pathlib.Path(self.dataset)
         self.dataset_file_type = str(self.dataset_full_path.name).lower().split(".")[1]
 
-    def get_fields(self):
+    def get_fields(self) -> List[DataDocVariable]:
         fields = []
         if self.dataset_file_type == "parquet":
             data_table = pq.read_table(self.dataset)
             for data_field in data_table.schema:
-                field = {}
-                field["shortName"] = str(data_field.name)
-                field["dataType"] = self.transform_data_type(str(data_field.type))
-                fields.append(field)
+                fields.append(
+                    DataDocVariable(
+                        short_name=data_field.name,
+                        datatype=self.transform_data_type(str(data_field.type)),
+                    )
+                )
 
         # SAS Data files
         elif self.dataset_file_type == "sas7bdat":
@@ -86,12 +88,14 @@ class DatasetSchema:
 
             # Get all the values from the row and loop through them
             for i, v in enumerate(row.values.tolist()[0]):
-                field = {}
-                field["shortName"] = sas_reader.columns[i].name
-                field["name"] = sas_reader.columns[i].label
-                # Access the python type for the value and transform it to a DataDoc Data type
-                field["dataType"] = self.transform_data_type(type(v).__name__.lower())
-                fields.append(field)
+                fields.append(
+                    DataDocVariable(
+                        short_name=sas_reader.columns[i].name,
+                        name=sas_reader.columns[i].label,
+                        # Access the python type for the value and transform it to a DataDoc Data type
+                        datatype=self.transform_data_type(type(v).__name__.lower()),
+                    )
+                )
 
         elif self.dataset_file_type == "csv":
             raise NotImplementedError

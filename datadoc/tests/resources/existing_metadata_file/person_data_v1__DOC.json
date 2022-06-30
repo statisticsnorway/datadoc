@@ -1,19 +1,9 @@
 {
     "dataSourcePath": "klargjorte_data/person_data_v1.parquet",
     "shortName": "person_data_v1",
-    "name": [
-        {
-            "languageCode": "no",
-            "value": "successfully_read_existing_file"
-        }
-    ],
+    "name": "successfully_read_existing_file",
     "dataSetState": "PROCESSED_DATA",
-    "description": [
-        {
-            "languageCode": "no",
-            "value": ""
-        }
-    ],
+    "description": "",
     "temporalityType": null,
     "spatialCoverageDescription": [
         {

@@ -3,6 +3,8 @@ import os
 from pathlib import PurePath
 import shutil
 import pytest
+
+from datadoc.Model import DataSetState
 from ..DataDocMetadata import DataDocMetadata
 from .utils import (
     TEST_EXISTING_METADATA_FILE_NAME,
@@ -16,9 +18,9 @@ from .utils import (
 def make_paths():
     split_path = list(PurePath(TEST_PARQUET_FILEPATH).parts)
     initial_data = [
-        ("kildedata", "SOURCE_DATA"),
-        ("inndata", "INPUT_DATA"),
-        ("klargjorte_data", "PROCESSED_DATA"),
+        ("kildedata", DataSetState.SOURCE_DATA),
+        ("inndata", DataSetState.INPUT_DATA),
+        ("klargjorte_data", DataSetState.PROCESSED_DATA),
         ("", None),
     ]
     test_data = []
@@ -55,7 +57,5 @@ def existing_metadata_file():
 
 
 def test_existing_metadata_file(existing_metadata_file):
-    # Existing metadata file in place
-    # self.meta is filled with correct data
     metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
-    assert metadata.meta["name"][0]["value"] == "successfully_read_existing_file"
+    assert metadata.dataset_metadata.name == "successfully_read_existing_file"
