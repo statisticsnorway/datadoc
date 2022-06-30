@@ -7,60 +7,60 @@ ALPHANUMERIC_HYPHEN_UNDERSCORE = "[-A-Za-z0-9_.*/]"
 URL_FORMAT = "(https?:\/\/)?(www\.)?[a-zA-Z0-9]+([-a-zA-Z0-9.]{1,254}[A-Za-z0-9])?\.[a-zA-Z0-9()]{1,6}([\/][-a-zA-Z0-9_]+)*[\/]?"
 
 
-class Assessment(Enum):
+class Assessment(str, Enum):
     # TODO: May have some kind of relation to DataSetState (SSB decision not made yet)? E.g. if "PROCSESSED_DATA" then "PROTECTED"?
-    SENSITIVE = auto()
-    PROTECTED = auto()
-    OPEN = auto()
+    SENSITIVE = "SENSITIVE"
+    PROTECTED = "PROTECTED"
+    OPEN = "OPEN"
 
 
-class DataSetState(Enum):
-    SOURCE_DATA = auto()
-    INPUT_DATA = auto()
-    PROCESSED_DATA = auto()
-    STATISTIC = auto()
-    OUTPUT_DATA = auto()
+class DataSetState(str, Enum):
+    SOURCE_DATA = "SOURCE_DATA"
+    INPUT_DATA = "INPUT_DATA"
+    PROCESSED_DATA = "PROCESSED_DATA"
+    STATISTIC = "STATISTIC"
+    OUTPUT_DATA = "OUTPUT_DATA"
 
 
-class AdministrativeStatus(Enum):
+class AdministrativeStatus(str, Enum):
     # TODO: The definition of this property is not complete (may change)?
-    DRAFT = auto()
-    INTERNAL = auto()
-    OPEN = auto()
-    DEPRECATED = auto()
+    DRAFT = "DRAFT"
+    INTERNAL = "INTERNAL"
+    OPEN = "OPEN"
+    DEPRECATED = "DEPRECATED"
 
 
-class UnitType(Enum):
+class UnitType(str, Enum):
     # TODO: May change in the nearest future? See list of SSB unit types https://www.ssb.no/metadata/definisjoner-av-statistiske-enheter
-    ARBEIDSULYKKE = auto()
-    BOLIG = auto()
-    BYGNING = auto()
-    EIENDOM = auto()
-    FAMILIE = auto()
-    FORETAK = auto()
-    FYLKE = auto()
-    HAVNEANLOEP = auto()
-    HUSHOLDNING = auto()
-    KJOERETOEY = auto()
-    KOMMUNE = auto()
-    KURS = auto()
-    LOVBRUDD = auto()
-    PERSON = auto()
-    STAT = auto()
-    STORFE = auto()
-    TRAFIKKULYKKE = auto()
-    TRANSAKSJON = auto()
-    VARE_TJENESTE = auto()
-    VERDIPAPIR = auto()
-    VIRKSOMHET = auto()
+    ARBEIDSULYKKE = "ARBEIDSULYKKE"
+    BOLIG = "BOLIG"
+    BYGNING = "BYGNING"
+    EIENDOM = "EIENDOM"
+    FAMILIE = "FAMILIE"
+    FORETAK = "FORETAK"
+    FYLKE = "FYLKE"
+    HAVNEANLOEP = "HAVNEANLOEP"
+    HUSHOLDNING = "HUSHOLDNING"
+    KJOERETOEY = "KJOERETOEY"
+    KOMMUNE = "KOMMUNE"
+    KURS = "KURS"
+    LOVBRUDD = "LOVBRUDD"
+    PERSON = "PERSON"
+    STAT = "STAT"
+    STORFE = "STORFE"
+    TRAFIKKULYKKE = "TRAFIKKULYKKE"
+    TRANSAKSJON = "TRANSAKSJON"
+    VARE_TJENESTE = "VARE_TJENESTE"
+    VERDIPAPIR = "VERDIPAPIR"
+    VIRKSOMHET = "VIRKSOMHET"
 
 
-class TemporalityType(Enum):
+class TemporalityType(str, Enum):
     # More information about temporality type: https://statistics-norway.atlassian.net/l/c/HV12q90R
-    FIXED = auto()
-    STATUS = auto()
-    ACCUMULATED = auto()
-    EVENT = auto()
+    FIXED = "FIXED"
+    STATUS = "STATUS"
+    ACCUMULATED = "ACCUMULATED"
+    EVENT = "EVENT"
 
 
 class DataDocDataSet(BaseModel):
@@ -89,20 +89,20 @@ class DataDocDataSet(BaseModel):
     last_updated_by: Optional[str]
 
 
-class Datatype(Enum):
-    STRING = auto()
-    INTEGER = auto()
-    FLOAT = auto()
-    DATETIME = auto()
-    BOOLEAN = auto()
+class Datatype(str, Enum):
+    STRING = "STRING"
+    INTEGER = "INTEGER"
+    FLOAT = "FLOAT"
+    DATETIME = "DATETIME"
+    BOOLEAN = "BOOLEAN"
 
 
-class VariableRole(Enum):
-    IDENTIFIER = auto()
-    MEASURE = auto()
-    START_TIME = auto()
-    STOP_TIME = auto()
-    ATTRIBUTE = auto()
+class VariableRole(str, Enum):
+    IDENTIFIER = "IDENTIFIER"
+    MEASURE = "MEASURE"
+    START_TIME = "START_TIME"
+    STOP_TIME = "STOP_TIME"
+    ATTRIBUTE = "ATTRIBUTE"
 
 
 class DataDocVariable(BaseModel):
