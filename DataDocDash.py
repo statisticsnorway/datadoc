@@ -1,17 +1,19 @@
 import re
-
+from dash import Dash, dash_table, html, Input, Output, dcc, State
 import dash_bootstrap_components as dbc
-from dash import Dash, Input, Output, dash_table, dcc, html
 from pydantic import ValidationError
 
 from datadoc.DataDocMetadata import DataDocMetadata
 from datadoc.DisplayVariables import DISPLAY_VARIABLES, VariableIdentifiers
 from datadoc.Model import DataDocVariable, DataSetState, Datatype
 
+
 datadoc_metadata = DataDocMetadata("./klargjorte_data/person_data_v1.parquet")
 # datadoc_metadata = DataDocMetadata("./datadoc/tests/resources/sasdata.sas7bdat")
 metadata = datadoc_metadata.dataset_metadata
-variables = datadoc_metadata.variables_metadata
+
+DATASET_METADATA_INPUT_ID_PREFIX = "dataset-metadata-input"
+
 
 app = Dash(
     name="DataDoc", external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP]
@@ -26,6 +28,7 @@ dataset_details_inputs = [
             placeholder="Et teknisk navn, ofte lik filnavnet",
             style={"width": "100%"},
             value=metadata.short_name,
+            id={"type": DATASET_METADATA_INPUT_ID_PREFIX, "index": 0},
             className="ssb-input",
         ),
     },
@@ -147,7 +150,9 @@ variables_table = make_ssb_styled_tab(
                 dash_table.DataTable(
                     id="variables-table",
                     # Populate fields with known values
-                    data=[v.export_for_datatable() for v in variables],
+                    data=[
+                        v.dict() for v in datadoc_metadata.variables_metadata.values()
+                    ],
                     # Define columns based on the information in DISPLAY_VARIABLES
                     columns=[
                         {
@@ -210,6 +215,7 @@ controls_bar = dbc.CardBody(
                             "   Lagre",
                         ],
                         class_name="ssb-btn primary-btn",
+                        id="save-button",
                     ),
                 ),
                 dbc.Col(
@@ -266,6 +272,42 @@ validation_error = dbc.Alert(
     color="danger",
 )
 
+success_toast = dbc.Alert(
+    id="success-message",
+    is_open=False,
+    dismissable=True,
+    fade=True,
+    class_name="ssb-dialog",
+    children=[
+        dbc.Row(
+            [
+                dbc.Col(
+                    width=3,
+                    children=[
+                        html.Div(
+                            className="ssb-dialog icon-panel",
+                            children=[
+                                html.I(
+                                    className="bi bi-check-circle",
+                                ),
+                            ],
+                        )
+                    ],
+                ),
+                dbc.Col(
+                    [
+                        html.H5(
+                            "Successfuly saved metadata",
+                        ),
+                    ]
+                ),
+            ],
+            align="center",
+        )
+    ],
+    color="success",
+)
+
 app.layout = dbc.Container(
     style={"padding": "4px"},
     children=[
@@ -285,8 +327,28 @@ app.layout = dbc.Container(
             ],
         ),
         validation_error,
+        success_toast,
     ],
 )
+
+
+@app.callback(
+    Output("success-message", "is_open"),
+    Input("save-button", "n_clicks"),
+    State("variables-table", "data"),
+)
+def save_metadata_file(n_clicks, data):
+    if n_clicks and n_clicks > 0:
+        print(data)
+        datadoc_metadata.write_metadata_document()
+        return True
+    else:
+        return False
+
+
+# @app.callback()
+# def accept_dataset_metadata_input():
+#     pass
 
 
 @app.callback(
@@ -297,7 +359,7 @@ app.layout = dbc.Container(
     Input("variables-table", "data_previous"),
     prevent_initial_call=True,
 )
-def validate_input(data, data_previous):
+def accept_variable_metadata_input(data, data_previous):
     updated_row_id = None
     updated_column_id = None
     new_value = None
@@ -317,6 +379,13 @@ def validate_input(data, data_previous):
                 print(
                     f"Row: {updated_row_id} Column: {updated_column_id} New value: {new_value}"
                 )
+
+    setattr(
+        datadoc_metadata.variables_metadata[updated_row_id],
+        updated_column_id,
+        new_value,
+    )
+
     # Is the change valid?
     try:
         if updated_column_id == "name":
@@ -333,8 +402,8 @@ def validate_input(data, data_previous):
         output_data = data_previous
         print(error_explanation)
     else:
+        output_data = data
         if validated_data is not None:
-            output_data = data
             print(f"Success: {validated_data}")
 
     # IF NOT: Return in which way it is not valid

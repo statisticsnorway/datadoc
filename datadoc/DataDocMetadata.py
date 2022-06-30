@@ -3,7 +3,7 @@ import json
 import pathlib
 import datetime
 import os
-from typing import List, Optional
+from typing import Dict, List, Optional
 from datadoc.DisplayVariables import VariableIdentifiers
 
 from datadoc.Model import (
@@ -39,7 +39,7 @@ class DataDocMetadata:
         self.current_datetime = str(datetime.datetime.now())
 
         self.dataset_metadata: DataDocDataSet
-        self.variables_metadata: List[DataDocVariable] = []
+        self.variables_metadata: Dict[str, DataDocVariable] = {}
 
         self.read_metadata_document()
 
@@ -85,7 +85,10 @@ class DataDocMetadata:
 
             variables_list = fresh_metadata.pop("variables", None)
 
-            self.variables_metadata = [DataDocVariable(**v) for v in variables_list]
+            self.variables_metadata = {
+                v[VariableIdentifiers.SHORT_NAME.value]: DataDocVariable(**v)
+                for v in variables_list
+            }
             self.dataset_metadata = DataDocDataSet(**fresh_metadata)
         else:
             self.generate_new_metadata_document()
@@ -115,11 +118,11 @@ class DataDocMetadata:
             last_updated_by=None,
         )
 
-        self.variables_metadata = self.ds_schema.get_fields()
+        self.variables_metadata = {v.short_name: v for v in self.ds_schema.get_fields()}
 
     def write_metadata_document(self) -> None:
         """Write all currently known metadata to file"""
-        export_dict = deepcopy(self.dataset_metadata)
-        export_dict["variables"] = self.variables_metadata
-        json_str = json.dumps(export_dict, indent=4, sort_keys=False)
+        export_dict = self.dataset_metadata.dict()
+        export_dict["variables"] = [v.dict() for v in self.variables_metadata.values()]
+        json_str = json.dumps(export_dict, indent=4, sort_keys=False, default=str)
         self.metadata_document_full_path.write_text(json_str, encoding="utf-8")
