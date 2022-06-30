@@ -63,7 +63,31 @@ class TemporalityType(str, Enum):
     EVENT = "EVENT"
 
 
-class DataDocDataSet(BaseModel):
+class Datatype(str, Enum):
+    STRING = "STRING"
+    INTEGER = "INTEGER"
+    FLOAT = "FLOAT"
+    DATETIME = "DATETIME"
+    BOOLEAN = "BOOLEAN"
+
+
+class VariableRole(str, Enum):
+    IDENTIFIER = "IDENTIFIER"
+    MEASURE = "MEASURE"
+    START_TIME = "START_TIME"
+    STOP_TIME = "STOP_TIME"
+    ATTRIBUTE = "ATTRIBUTE"
+
+
+class DataDocBaseModel(BaseModel):
+    """Defines configuration which applies to all Models in this application"""
+
+    class Config:
+        validate_assignment = True
+        use_enum_values = True
+
+
+class DataDocDataSet(DataDocBaseModel):
     """DataDoc data set. See documentation https://statistics-norway.atlassian.net/l/c/NgjE7yj1"""
 
     short_name: Optional[
@@ -89,23 +113,7 @@ class DataDocDataSet(BaseModel):
     last_updated_by: Optional[str]
 
 
-class Datatype(str, Enum):
-    STRING = "STRING"
-    INTEGER = "INTEGER"
-    FLOAT = "FLOAT"
-    DATETIME = "DATETIME"
-    BOOLEAN = "BOOLEAN"
-
-
-class VariableRole(str, Enum):
-    IDENTIFIER = "IDENTIFIER"
-    MEASURE = "MEASURE"
-    START_TIME = "START_TIME"
-    STOP_TIME = "STOP_TIME"
-    ATTRIBUTE = "ATTRIBUTE"
-
-
-class DataDocVariable(BaseModel):
+class DataDocVariable(DataDocBaseModel):
     """DataDoc instance variable. See documentation https://statistics-norway.atlassian.net/l/c/goyNhUPP"""
 
     short_name: Optional[
