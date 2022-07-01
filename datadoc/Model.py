@@ -1,7 +1,7 @@
 from enum import Enum, auto
 from datetime import date, datetime
 from typing import Dict, List, Optional
-from pydantic import BaseModel, constr
+from pydantic import BaseModel, constr, conint
 
 ALPHANUMERIC_HYPHEN_UNDERSCORE = "[-A-Za-z0-9_.*/]"
 URL_FORMAT = "(https?:\/\/)?(www\.)?[a-zA-Z0-9]+([-a-zA-Z0-9.]{1,254}[A-Za-z0-9])?\.[a-zA-Z0-9()]{1,6}([\/][-a-zA-Z0-9_]+)*[\/]?"
@@ -83,7 +83,9 @@ class DataDocBaseModel(BaseModel):
     """Defines configuration which applies to all Models in this application"""
 
     class Config:
+        # Runs validation when a field value is assigned, not just in the constructor
         validate_assignment = True
+        # Write only the values of enums during serialization
         use_enum_values = True
 
 
@@ -138,11 +140,12 @@ class DataDocVariable(DataDocBaseModel):
     contains_data_from: Optional[date]
     contains_data_until: Optional[date]
 
-    def export_for_datatable(self) -> Dict:
-        """Converts to dict and replaces all Enum values with their 'name' for display.
-        We do this because the default 'dict' representation of an Enum doesn't play nicely in the frontend"""
-        dictionary = self.dict(exclude_none=True)
-        for k, v in dictionary.items():
-            if issubclass(type(v), Enum):
-                dictionary[k] = v.name
-        return dictionary
+
+class MetadataDocument(DataDocBaseModel):
+    """Represents the data structure on file. Includes the dataset metadata from the user as
+    well as meta-metadata like the percentage of completed metadata fields and the document version"""
+
+    percentage_complete: conint(ge=0, le=100)
+    document_version: str
+    dataset: DataDocDataSet
+    variables: List[DataDocVariable]

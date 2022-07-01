@@ -431,7 +431,6 @@ def accept_variable_metadata_input(data, data_previous):
                 f"Row: {updated_row_id} Column: {updated_column_id} New value: {new_value}"
             )
 
-    # Is the change valid?
     try:
         # Write the value to the variables structure
         setattr(
@@ -448,8 +447,6 @@ def accept_variable_metadata_input(data, data_previous):
         output_data = data
         print(f"Successfully updated {updated_row_id} with {new_value}")
 
-    # IF NOT: Return in which way it is not valid
-    # IF IT IS: Return the input data unchanged
     return output_data, show_error, error_explanation
 
 
