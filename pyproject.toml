@@ -6,8 +6,6 @@ authors = ["Bjørn Roar Joneid <bnj@ssb.no>", "Miles Winther <mmw@ssb.no>", "Jan
 
 [tool.poetry.dependencies]
 python = "^3.8"
-ipywidgets = "^7.7.0"
-ipysheet = "^0.5.0"
 requests = "^2.27.1"
 pyarrow = "^8.0.0"
 jupyter-dash = "^0.4.2"
@@ -15,7 +13,6 @@ dash = "^2.4.1"
 pydantic = "^1.9.1"
 dash-bootstrap-components = "^1.1.0"
 pandas = "^1.4.2"
-pytest-cov = "^3.0.0"
 
 [tool.poetry.dev-dependencies]
 jupyter = "^1.0.0"
@@ -25,6 +22,7 @@ flake8 = "^4.0.1"
 mypy = "^0.950"
 black = "^22.3.0"
 pytest = "^7.1.2"
+pytest-cov = "^3.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
