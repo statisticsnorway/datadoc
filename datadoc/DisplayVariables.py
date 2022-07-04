@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, List, Optional
+from typing import Dict, List, Optional
 
 from datadoc.Model import Datatype, VariableRole
 
@@ -33,9 +33,9 @@ class DisplayVariable:
     identifier: str
     display_name: str
     description: str
+    options: Optional[Dict[str, List[Dict[str, str]]]] = None
     obligatory: bool = False
     presentation: Optional[str] = "input"
-    options: Optional[List[Any]] = field(default_factory=list)
     editable: bool = True
 
 

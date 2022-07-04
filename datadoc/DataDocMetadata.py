@@ -50,12 +50,12 @@ class DataDocMetadata:
 
         if dataset_path is None:
             dataset_path = self.dataset_full_path
-        dataset_path = list(dataset_path.parts)
-        if "kildedata" in dataset_path:
+        dataset_path_parts = list(dataset_path.parts)
+        if "kildedata" in dataset_path_parts:
             return DataSetState.SOURCE_DATA
-        elif "inndata" in dataset_path:
+        elif "inndata" in dataset_path_parts:
             return DataSetState.INPUT_DATA
-        elif "klargjorte_data" in dataset_path:
+        elif "klargjorte_data" in dataset_path_parts:
             return DataSetState.PROCESSED_DATA
         else:
             return None
