@@ -2,16 +2,21 @@ import json
 import random
 
 from datadoc.Model import DataDocVariable, Datatype
-from ..DatasetSchema import (
+from ..DatasetReader import (
     KNOWN_BOOLEAN_TYPES,
     KNOWN_DATETIME_TYPES,
     KNOWN_FLOAT_TYPES,
     KNOWN_INTEGER_TYPES,
     KNOWN_STRING_TYPES,
-    DatasetSchema,
+    DatasetReader,
 )
 from .utils import TEST_PARQUET_FILEPATH, TEST_SAS7BDAT_FILEPATH
 from pytest import raises
+
+
+def test_use_abstract_class_directly():
+    with raises(TypeError):
+        DatasetReader().get_fields()
 
 
 def test_get_fields_parquet():
@@ -26,8 +31,8 @@ def test_get_fields_parquet():
         DataDocVariable(short_name="hoveddiagnose", datatype=Datatype.STRING),
     ]
 
-    schema = DatasetSchema(TEST_PARQUET_FILEPATH)
-    fields = schema.get_fields()
+    reader = DatasetReader.for_file(TEST_PARQUET_FILEPATH)
+    fields = reader.get_fields()
 
     assert fields == expected_fields
 
@@ -39,31 +44,21 @@ def test_get_fields_sas7bdat():
         DataDocVariable(short_name="dato", name="Dato", datatype=Datatype.DATETIME),
     ]
 
-    schema = DatasetSchema(TEST_SAS7BDAT_FILEPATH)
-    fields = schema.get_fields()
+    reader = DatasetReader.for_file(TEST_SAS7BDAT_FILEPATH)
+    fields = reader.get_fields()
 
     assert fields == expected_fields
 
 
-def test_get_fields_csv():
+def test_get_fields_unknown_file_type():
     with raises(NotImplementedError):
-        DatasetSchema("my_dataset.csv").get_fields()
-
-
-def test_get_fields_json():
-    with raises(NotImplementedError):
-        DatasetSchema("my_dataset.json").get_fields()
-
-
-def test_get_fields_xml():
-    with raises(NotImplementedError):
-        DatasetSchema("my_dataset.xml").get_fields()
+        DatasetReader.for_file("my_dataset.csv").get_fields()
 
 
 def test_transform_datatype_unknown_type():
     expected = None
     input_data = "definitely not a known data type"
-    actual = DatasetSchema.transform_data_type(input_data)
+    actual = DatasetReader.transform_data_type(input_data)
     assert actual == expected
 
 
@@ -76,5 +71,5 @@ def test_transform_datatype():
         (Datatype.BOOLEAN, KNOWN_BOOLEAN_TYPES),
     ]:
         input_data = random.choice(input_options)
-        actual = DatasetSchema.transform_data_type(input_data)
+        actual = DatasetReader.transform_data_type(input_data)
         assert actual == expected

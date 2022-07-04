@@ -13,7 +13,7 @@ from datadoc.Model import (
     DataSetState,
 )
 
-from datadoc.DatasetSchema import DatasetSchema
+from datadoc.DatasetReader import DatasetReader
 
 
 class DataDocMetadata:
@@ -94,7 +94,7 @@ class DataDocMetadata:
             self.generate_new_metadata_document()
 
     def generate_new_metadata_document(self):
-        self.ds_schema = DatasetSchema(self.dataset)
+        self.ds_schema = DatasetReader.for_file(self.dataset)
 
         self.dataset_metadata = DataDocDataSet(
             short_name=self.dataset_stem,
