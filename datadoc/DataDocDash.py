@@ -1,5 +1,5 @@
-import os
 import re
+import argparse
 from typing import Type
 from dash import Dash, dash_table, html, Input, Output, dcc, State, MATCH, ctx
 import dash_bootstrap_components as dbc
@@ -453,14 +453,20 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dataset-path", help="Specify the path to a dataset")
+    args = parser.parse_args()
+
+    # Use example dataset if nothing specified
+    dataset = args.dataset_path or "./klargjorte_data/person_data_v1.parquet"
+
     if running_in_notebook():
-        # Running in Jupyter Notebook
         from jupyter_dash import JupyterDash
 
-        app = main(JupyterDash, "./klargjorte_data/person_data_v1.parquet")
+        app = main(JupyterDash, dataset)
         app.run_server(mode="inline")
     else:
         # Assume running in server mode is better (largely for development purposes)
         print("Starting in development mode")
-        app = main(Dash, "./klargjorte_data/person_data_v1.parquet")
+        app = main(Dash, dataset)
         app.run_server(debug=True)
