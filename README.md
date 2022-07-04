@@ -1,9 +1,16 @@
-# datadoc-prototype
+# DataDoc
+
+Document datasets in SSB
 
 ## Usage example
 
-Data Documentation (DataDoc) Prototyp for Jupyter
-![DataDoc](./doc/DataDoc_prototype_001.png)
+1. Clone this repo to your Jupyter instance
+1. Open the `DataDoc.ipynb` Notebook and run the cell to see the example dataset
+1. Run `%run -i datadoc/DataDocDash.py --dataset-path ./path/to/your/dataset` to run Datadoc on a dataset of your choosing.
+1. Complete metadata as you desire
+1. Click `Lagre` to save your metadata together with your dataset
+
+![DataDoc](./doc/datadoc.png)
 
 ## Contributing
 
