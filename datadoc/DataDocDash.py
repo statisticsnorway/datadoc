@@ -3,9 +3,9 @@ from dash import Dash, dash_table, html, Input, Output, dcc, State, MATCH, ctx
 import dash_bootstrap_components as dbc
 from pydantic import ValidationError
 
-from datadoc.DataDocMetadata import DataDocMetadata
-from datadoc.DisplayVariables import DISPLAY_VARIABLES, VariableIdentifiers
-from datadoc.Model import DataSetState
+from DataDocMetadata import DataDocMetadata
+from DisplayVariables import DISPLAY_VARIABLES, VariableIdentifiers
+from Model import DataSetState
 
 
 datadoc_metadata = DataDocMetadata("./klargjorte_data/person_data_v1.parquet")

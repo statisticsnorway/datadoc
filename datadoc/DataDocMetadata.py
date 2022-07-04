@@ -4,16 +4,16 @@ import pathlib
 import datetime
 import os
 from typing import Dict, List, Optional
-from datadoc.DisplayVariables import VariableIdentifiers
+from DisplayVariables import VariableIdentifiers
 
-from datadoc.Model import (
+from Model import (
     AdministrativeStatus,
     DataDocDataSet,
     DataDocVariable,
     DataSetState,
 )
 
-from .DatasetSchema import DatasetSchema
+from DatasetSchema import DatasetSchema
 
 
 class DataDocMetadata:
