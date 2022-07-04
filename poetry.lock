@@ -797,6 +797,17 @@ traitlets = ">=5.1"
 test = ["check-manifest", "testpath", "pytest", "pre-commit"]
 
 [[package]]
+name = "nbstripout"
+version = "0.5.0"
+description = "Strips outputs from Jupyter and IPython notebooks"
+category = "dev"
+optional = false
+python-versions = ">=3.5"
+
+[package.dependencies]
+nbformat = "*"
+
+[[package]]
 name = "nest-asyncio"
 version = "1.5.5"
 description = "Patch asyncio to allow nested event loops"
@@ -1429,7 +1440,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "a5a359b1ab9f61400749e5a49fec5e2c24c8503cdeff8aa7f66041f220629fcc"
+content-hash = "eb01a03d1dfbb150714e558b41a25d26ab2d348525c7868dd3e5918f1e592659"
 
 [metadata.files]
 ansi2html = [
@@ -1948,6 +1959,10 @@ nbconvert = [
 nbformat = [
     {file = "nbformat-5.4.0-py3-none-any.whl", hash = "sha256:0d6072aaec95dddc39735c144ee8bbc6589c383fb462e4058abc855348152dad"},
     {file = "nbformat-5.4.0.tar.gz", hash = "sha256:44ba5ca6acb80c5d5a500f1e5b83ede8cbe364d5a495c4c8cf60aaf1ba656501"},
+]
+nbstripout = [
+    {file = "nbstripout-0.5.0-py2.py3-none-any.whl", hash = "sha256:1e8a471780d1429aaa5d954c4d26c312df8666cc84de0ff160d62d8b576ae65b"},
+    {file = "nbstripout-0.5.0.tar.gz", hash = "sha256:86ab50136998d62c9fa92478d2eb9ddc4137e51a28568f78fa8f24a6fbb6a7d8"},
 ]
 nest-asyncio = [
     {file = "nest_asyncio-1.5.5-py3-none-any.whl", hash = "sha256:b98e3ec1b246135e4642eceffa5a6c23a3ab12c82ff816a92c612d68205813b2"},
