@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, List, Optional
 
-from Model import Datatype, VariableRole
+from datadoc.Model import Datatype, VariableRole
 
 
 class VariableIdentifiers(str, Enum):

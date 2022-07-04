@@ -5,10 +5,10 @@ from dash import Dash, dash_table, html, Input, Output, dcc, State, MATCH, ctx
 import dash_bootstrap_components as dbc
 from pydantic import ValidationError
 
-from DataDocMetadata import DataDocMetadata
-from DisplayVariables import DISPLAY_VARIABLES, VariableIdentifiers
-from Model import DataSetState
-from utils import running_in_notebook
+from datadoc.DataDocMetadata import DataDocMetadata
+from datadoc.DisplayVariables import DISPLAY_VARIABLES, VariableIdentifiers
+from datadoc.Model import DataSetState
+from datadoc.utils import running_in_notebook
 
 
 def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
