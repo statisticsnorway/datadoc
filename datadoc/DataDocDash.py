@@ -1,15 +1,16 @@
-import re
 import argparse
+import re
 from typing import Dict, List, Tuple, Type
-from dash import Dash, dash_table, html, Input, Output, dcc, State, MATCH, ctx
-import dash_bootstrap_components as dbc
 
+import dash_bootstrap_components as dbc
+from dash import MATCH, Dash, Input, Output, State, ctx, dash_table, dcc, html
+
+import datadoc.globals as globals
+from datadoc.Callbacks import accept_variable_metadata_input
 from datadoc.DataDocMetadata import DataDocMetadata
-import globals
 from datadoc.DisplayVariables import DISPLAY_VARIABLES
 from datadoc.Model import DataSetState
 from datadoc.utils import running_in_notebook
-from datadoc.Callbacks import accept_variable_metadata_input
 
 
 def main(dash_class: Type[Dash], dataset_path: str) -> Dash:

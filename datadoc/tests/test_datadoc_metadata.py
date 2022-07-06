@@ -5,7 +5,7 @@ import shutil
 import pytest
 
 from datadoc.Model import DataSetState
-from ..DataDocMetadata import DataDocMetadata
+from datadoc.DataDocMetadata import DataDocMetadata
 from .utils import (
     TEST_EXISTING_METADATA_FILE_NAME,
     TEST_EXISTING_METADATA_FILEPATH,
