@@ -395,12 +395,10 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
     @app.callback(
         Output("success-message", "is_open"),
         Input("save-button", "n_clicks"),
-        State("variables-table", "data"),
         prevent_initial_call=True,
     )
-    def save_metadata_file(n_clicks, data):
+    def callback_save_metadata_file(n_clicks):
         if n_clicks and n_clicks > 0:
-            print(data)
             globals.metadata.write_metadata_document()
             return True
         else:
@@ -414,9 +412,8 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
     )
     def callback_accept_dataset_metadata_input(value: Any) -> Tuple[bool, str]:
         # Get the ID of the input that changed. This MUST match the attribute name defined in DataDocDataSet
-        metadata_identifier = ctx.triggered_id["id"]
         return accept_dataset_metadata_input(
-            ctx.triggered[0]["value"], metadata_identifier
+            ctx.triggered[0]["value"], ctx.triggered_id["id"]
         )
 
     @app.callback(
