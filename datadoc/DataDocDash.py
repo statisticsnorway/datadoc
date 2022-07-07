@@ -12,7 +12,7 @@ from datadoc.Callbacks import (
 )
 from datadoc.DataDocMetadata import DataDocMetadata
 from datadoc.DisplayVariables import DISPLAY_VARIABLES
-from datadoc.Model import DataSetState
+from datadoc.Enums import DatasetState
 from datadoc.utils import running_in_notebook
 
 
@@ -78,11 +78,11 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                 options=[
                     {"label": label, "value": value}
                     for label, value in [
-                        ("Kildedata", DataSetState.SOURCE_DATA.name),
-                        ("Inndata", DataSetState.INPUT_DATA.name),
-                        ("Klargjorte data", DataSetState.PROCESSED_DATA.name),
-                        ("Utdata", DataSetState.OUTPUT_DATA.name),
-                        ("Statistikk", DataSetState.STATISTIC.name),
+                        ("Kildedata", DatasetState.SOURCE_DATA.name),
+                        ("Inndata", DatasetState.INPUT_DATA.name),
+                        ("Klargjorte data", DatasetState.PROCESSED_DATA.name),
+                        ("Utdata", DatasetState.OUTPUT_DATA.name),
+                        ("Statistikk", DatasetState.STATISTIC.name),
                     ]
                 ],
                 value=meta.dataset_state,

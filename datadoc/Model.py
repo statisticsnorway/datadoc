@@ -1,82 +1,19 @@
 from enum import Enum, auto
 from datetime import date, datetime
+import statistics
 from typing import Dict, List, Optional
-from pydantic import BaseModel, constr, conint
+from pydantic import BaseModel, constr, conint, Field
+
+from datadoc.DisplayDataset import OBLIGATORY_DATASET_METADATA
+from datadoc import Enums
+from datadoc.DisplayVariables import OBLIGATORY_VARIABLES_METADATA
 
 ALPHANUMERIC_HYPHEN_UNDERSCORE = "[-A-Za-z0-9_.*/]"
 URL_FORMAT = "(https?:\/\/)?(www\.)?[a-zA-Z0-9]+([-a-zA-Z0-9.]{1,254}[A-Za-z0-9])?\.[a-zA-Z0-9()]{1,6}([\/][-a-zA-Z0-9_]+)*[\/]?"
 
 
-class Assessment(str, Enum):
-    # TODO: May have some kind of relation to DataSetState (SSB decision not made yet)? E.g. if "PROCSESSED_DATA" then "PROTECTED"?
-    SENSITIVE = "SENSITIVE"
-    PROTECTED = "PROTECTED"
-    OPEN = "OPEN"
-
-
-class DataSetState(str, Enum):
-    SOURCE_DATA = "SOURCE_DATA"
-    INPUT_DATA = "INPUT_DATA"
-    PROCESSED_DATA = "PROCESSED_DATA"
-    STATISTIC = "STATISTIC"
-    OUTPUT_DATA = "OUTPUT_DATA"
-
-
-class AdministrativeStatus(str, Enum):
-    # TODO: The definition of this property is not complete (may change)?
-    DRAFT = "DRAFT"
-    INTERNAL = "INTERNAL"
-    OPEN = "OPEN"
-    DEPRECATED = "DEPRECATED"
-
-
-class UnitType(str, Enum):
-    # TODO: May change in the nearest future? See list of SSB unit types https://www.ssb.no/metadata/definisjoner-av-statistiske-enheter
-    ARBEIDSULYKKE = "ARBEIDSULYKKE"
-    BOLIG = "BOLIG"
-    BYGNING = "BYGNING"
-    EIENDOM = "EIENDOM"
-    FAMILIE = "FAMILIE"
-    FORETAK = "FORETAK"
-    FYLKE = "FYLKE"
-    HAVNEANLOEP = "HAVNEANLOEP"
-    HUSHOLDNING = "HUSHOLDNING"
-    KJOERETOEY = "KJOERETOEY"
-    KOMMUNE = "KOMMUNE"
-    KURS = "KURS"
-    LOVBRUDD = "LOVBRUDD"
-    PERSON = "PERSON"
-    STAT = "STAT"
-    STORFE = "STORFE"
-    TRAFIKKULYKKE = "TRAFIKKULYKKE"
-    TRANSAKSJON = "TRANSAKSJON"
-    VARE_TJENESTE = "VARE_TJENESTE"
-    VERDIPAPIR = "VERDIPAPIR"
-    VIRKSOMHET = "VIRKSOMHET"
-
-
-class TemporalityType(str, Enum):
-    # More information about temporality type: https://statistics-norway.atlassian.net/l/c/HV12q90R
-    FIXED = "FIXED"
-    STATUS = "STATUS"
-    ACCUMULATED = "ACCUMULATED"
-    EVENT = "EVENT"
-
-
-class Datatype(str, Enum):
-    STRING = "STRING"
-    INTEGER = "INTEGER"
-    FLOAT = "FLOAT"
-    DATETIME = "DATETIME"
-    BOOLEAN = "BOOLEAN"
-
-
-class VariableRole(str, Enum):
-    IDENTIFIER = "IDENTIFIER"
-    MEASURE = "MEASURE"
-    START_TIME = "START_TIME"
-    STOP_TIME = "STOP_TIME"
-    ATTRIBUTE = "ATTRIBUTE"
+def calculate_percentage(num_set_fields: int, num_all_fields: int) -> int:
+    return round((num_set_fields / num_all_fields) * 100)
 
 
 class DataDocBaseModel(BaseModel):
@@ -95,15 +32,15 @@ class DataDocDataSet(DataDocBaseModel):
     short_name: Optional[
         constr(min_length=1, max_length=63, regex=ALPHANUMERIC_HYPHEN_UNDERSCORE)
     ]
-    assessment: Optional[Assessment]
-    dataset_state: Optional[DataSetState]
+    assessment: Optional[Enums.Assessment]
+    dataset_state: Optional[Enums.DatasetState]
     name: Optional[str]
     data_source: Optional[str]
     population_description: Optional[str]
-    administrative_status: Optional[AdministrativeStatus] = AdministrativeStatus.DRAFT
+    dataset_status: Optional[Enums.DatasetStatus] = Enums.DatasetStatus.DRAFT
     version: Optional[str]
-    unit_type: Optional[UnitType]
-    temporality_type: Optional[TemporalityType]
+    unit_type: Optional[Enums.UnitType]
+    temporality_type: Optional[Enums.TemporalityType]
     description: Optional[str]
     spatial_coverage_description: Optional[List[Dict[str, str]]]
     id: Optional[constr(regex=URL_FORMAT)]
@@ -122,14 +59,14 @@ class DataDocVariable(DataDocBaseModel):
         constr(min_length=1, max_length=63, regex=ALPHANUMERIC_HYPHEN_UNDERSCORE)
     ]
     name: Optional[str]
-    datatype: Optional[Datatype]
-    variable_role: Optional[VariableRole]
+    datatype: Optional[Enums.Datatype]
+    variable_role: Optional[Enums.VariableRole]
     definition_uri: Optional[constr(min_length=1, max_length=63, regex=URL_FORMAT)]
     direct_person_identifying: Optional[bool]
     data_source: Optional[str]
     population_description: Optional[str]
     comment: Optional[str]
-    temporality_type: Optional[TemporalityType]
+    temporality_type: Optional[Enums.TemporalityType]
     # TODO: measurement_unit implemented as string. In the future this should be implemente as a class? See https://www.ssb.no/klass/klassifikasjoner/303/koder
     measurement_unit: Optional[str]
     format: Optional[str]
@@ -149,3 +86,22 @@ class MetadataDocument(DataDocBaseModel):
     document_version: str
     dataset: DataDocDataSet
     variables: List[DataDocVariable]
+
+    @property
+    def percent_complete(self) -> int:
+        num_all_fields = len(
+            [f for f in self.dataset.__fields__ if f in OBLIGATORY_DATASET_METADATA]
+        )
+        num_set_fields = len(
+            [f for f in self.dataset.__fields_set__ if f in OBLIGATORY_DATASET_METADATA]
+        )
+
+        for v in self.variables:
+            num_all_fields += len(
+                [f for f in v.__fields__ if f in OBLIGATORY_VARIABLES_METADATA]
+            )
+            num_set_fields += len(
+                [f for f in v.__fields_set__ if f in OBLIGATORY_VARIABLES_METADATA]
+            )
+
+        return calculate_percentage(num_set_fields, num_all_fields)

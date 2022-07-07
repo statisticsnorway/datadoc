@@ -4,7 +4,7 @@ from pathlib import PurePath
 import shutil
 import pytest
 
-from datadoc.Model import DataSetState
+from datadoc.Enums import DatasetState
 from datadoc.DataDocMetadata import DataDocMetadata
 from .utils import (
     TEST_EXISTING_METADATA_FILE_NAME,
@@ -18,9 +18,9 @@ from .utils import (
 def make_paths():
     split_path = list(PurePath(TEST_PARQUET_FILEPATH).parts)
     initial_data = [
-        ("kildedata", DataSetState.SOURCE_DATA),
-        ("inndata", DataSetState.INPUT_DATA),
-        ("klargjorte_data", DataSetState.PROCESSED_DATA),
+        ("kildedata", DatasetState.SOURCE_DATA),
+        ("inndata", DatasetState.INPUT_DATA),
+        ("klargjorte_data", DatasetState.PROCESSED_DATA),
         ("", None),
     ]
     test_data = []

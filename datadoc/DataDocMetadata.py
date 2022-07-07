@@ -8,10 +8,12 @@ from typing import Dict, List, Optional
 from datadoc.DatasetReader import DatasetReader
 from datadoc.DisplayVariables import VariableIdentifiers
 from datadoc.Model import (
-    AdministrativeStatus,
     DataDocDataSet,
     DataDocVariable,
-    DataSetState,
+)
+from datadoc.Enums import (
+    AdministrativeStatus,
+    DatasetState,
 )
 
 
@@ -44,18 +46,18 @@ class DataDocMetadata:
 
     def get_dataset_state(
         self, dataset_path: pathlib.Path = None
-    ) -> Optional[DataSetState]:
+    ) -> Optional[DatasetState]:
         """Use the path to attempt to guess the state of the dataset"""
 
         if dataset_path is None:
             dataset_path = self.dataset_full_path
         dataset_path_parts = list(dataset_path.parts)
         if "kildedata" in dataset_path_parts:
-            return DataSetState.SOURCE_DATA
+            return DatasetState.SOURCE_DATA
         elif "inndata" in dataset_path_parts:
-            return DataSetState.INPUT_DATA
+            return DatasetState.INPUT_DATA
         elif "klargjorte_data" in dataset_path_parts:
-            return DataSetState.PROCESSED_DATA
+            return DatasetState.PROCESSED_DATA
         else:
             return None
 

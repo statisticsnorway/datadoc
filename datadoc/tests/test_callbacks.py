@@ -1,10 +1,7 @@
 from copy import deepcopy
 
-from pytest import raises
-from pydantic import ValidationError
-
 from datadoc.DataDocMetadata import DataDocMetadata
-from datadoc.Model import DataSetState, VariableRole
+from datadoc.Enums import DatasetState, VariableRole
 from datadoc.tests.utils import TEST_PARQUET_FILEPATH
 from datadoc.Callbacks import (
     accept_dataset_metadata_input,
@@ -67,10 +64,10 @@ def test_accept_variable_metadata_input_incorrect_data_type():
 
 def test_accept_dataset_metadata_input_new_data():
     globals.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
-    output = accept_dataset_metadata_input(DataSetState.INPUT_DATA, "dataset_state")
+    output = accept_dataset_metadata_input(DatasetState.INPUT_DATA, "dataset_state")
     assert output[0] is False
     assert output[1] == ""
-    assert globals.metadata.dataset_metadata.dataset_state == DataSetState.INPUT_DATA
+    assert globals.metadata.dataset_metadata.dataset_state == DatasetState.INPUT_DATA
 
 
 def test_accept_dataset_metadata_input_incorrect_data_type():
