@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from pydantic import ValidationError
 
@@ -47,3 +47,25 @@ def accept_variable_metadata_input(
             print(f"Successfully updated {updated_row_id} with {new_value}")
 
     return output_data, show_error, error_explanation
+
+
+def accept_dataset_metadata_input(
+    value: Any, metadata_identifier: str
+) -> Tuple[bool, str]:
+    try:
+        # Update the value in the model
+        setattr(
+            globals.metadata.dataset_metadata,
+            metadata_identifier,
+            value,
+        )
+    except ValidationError as e:
+        show_error = True
+        error_explanation = f"`{e}`"
+        print(error_explanation)
+    else:
+        show_error = False
+        error_explanation = ""
+        print(f"Successfully updated {metadata_identifier} with {value}")
+
+    return show_error, error_explanation

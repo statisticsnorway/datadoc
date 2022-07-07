@@ -1,12 +1,15 @@
 import argparse
 import re
-from typing import Dict, List, Tuple, Type
+from typing import Any, Dict, List, Tuple, Type
 
 import dash_bootstrap_components as dbc
-from dash import MATCH, Dash, Input, Output, State, ctx, dash_table, dcc, html
+from dash import ALL, Dash, Input, Output, State, ctx, dash_table, dcc, html
 
 import datadoc.globals as globals
-from datadoc.Callbacks import accept_variable_metadata_input
+from datadoc.Callbacks import (
+    accept_dataset_metadata_input,
+    accept_variable_metadata_input,
+)
 from datadoc.DataDocMetadata import DataDocMetadata
 from datadoc.DisplayVariables import DISPLAY_VARIABLES
 from datadoc.Model import DataSetState
@@ -161,6 +164,47 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
             children=content,
         )
 
+    def make_ssb_warning_alert(
+        alert_identifier: str, title: str, content_identifier: str
+    ) -> dbc.Alert:
+        return dbc.Alert(
+            id=alert_identifier,
+            is_open=False,
+            dismissable=True,
+            fade=True,
+            class_name="ssb-dialog warning",
+            children=[
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            width=1,
+                            children=[
+                                html.Div(
+                                    className="ssb-dialog warning icon-panel",
+                                    children=[
+                                        html.I(
+                                            className="bi bi-exclamation-triangle",
+                                        ),
+                                    ],
+                                )
+                            ],
+                        ),
+                        dbc.Col(
+                            [
+                                html.H5(
+                                    title,
+                                ),
+                                dcc.Markdown(
+                                    id=content_identifier,
+                                ),
+                            ]
+                        ),
+                    ],
+                )
+            ],
+            color="danger",
+        )
+
     dataset_details = make_ssb_styled_tab(
         "Datasett",
         dbc.Container(
@@ -276,43 +320,16 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
             )
         ],
     )
+    dataset_validation_error = make_ssb_warning_alert(
+        "dataset-validation-error",
+        "Failed validation",
+        "dataset-validation-explanation",
+    )
 
-    validation_error = dbc.Alert(
-        id="validation-error",
-        is_open=False,
-        dismissable=True,
-        fade=True,
-        class_name="ssb-dialog warning",
-        children=[
-            dbc.Row(
-                [
-                    dbc.Col(
-                        width=1,
-                        children=[
-                            html.Div(
-                                className="ssb-dialog warning icon-panel",
-                                children=[
-                                    html.I(
-                                        className="bi bi-exclamation-triangle",
-                                    ),
-                                ],
-                            )
-                        ],
-                    ),
-                    dbc.Col(
-                        [
-                            html.H5(
-                                "Failed validation",
-                            ),
-                            dcc.Markdown(
-                                id="validation-explanation",
-                            ),
-                        ]
-                    ),
-                ]
-            )
-        ],
-        color="danger",
+    variables_validation_error = make_ssb_warning_alert(
+        "variables-validation-error",
+        "Failed validation",
+        "variables-validation-explanation",
     )
 
     success_toast = dbc.Alert(
@@ -369,7 +386,8 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                     ),
                 ],
             ),
-            validation_error,
+            variables_validation_error,
+            dataset_validation_error,
             success_toast,
         ],
     )
@@ -389,28 +407,22 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
             return False
 
     @app.callback(
-        Output({"type": DATASET_METADATA_INPUT, "id": MATCH}, "value"),
-        Input({"type": DATASET_METADATA_INPUT, "id": MATCH}, "value"),
+        Output("dataset-validation-error", "is_open"),
+        Output("dataset-validation-explanation", "children"),
+        Input({"type": DATASET_METADATA_INPUT, "id": ALL}, "value"),
         prevent_initial_call=True,
     )
-    def accept_dataset_metadata_input(value):
-
+    def callback_accept_dataset_metadata_input(value: Any) -> Tuple[bool, str]:
         # Get the ID of the input that changed. This MUST match the attribute name defined in DataDocDataSet
         metadata_identifier = ctx.triggered_id["id"]
-
-        # Update the value in the model
-        setattr(
-            globals.metadata.dataset_metadata,
-            metadata_identifier,
-            value,
+        return accept_dataset_metadata_input(
+            ctx.triggered[0]["value"], metadata_identifier
         )
-        print(f"Updated value for {metadata_identifier}: {value}")
-        return value
 
     @app.callback(
         Output("variables-table", "data"),
-        Output("validation-error", "is_open"),
-        Output("validation-explanation", "children"),
+        Output("variables-validation-error", "is_open"),
+        Output("variables-validation-explanation", "children"),
         Input("variables-table", "data"),
         Input("variables-table", "data_previous"),
         prevent_initial_call=True,
