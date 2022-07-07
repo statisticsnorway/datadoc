@@ -20,8 +20,6 @@ def accept_variable_metadata_input(
     for i in range(len(data)):
         update_diff = list(data[i].items() - data_previous[i].items())
         if update_diff:
-            print(data)
-            print(data_previous)
             updated_row_id = data[i][VariableIdentifiers.SHORT_NAME.value]
             updated_column_id = update_diff[-1][0]
             new_value = update_diff[-1][-1]
@@ -34,7 +32,7 @@ def accept_variable_metadata_input(
         try:
             # Write the value to the variables structure
             setattr(
-                globals.metadata.variables_metadata[updated_row_id],
+                globals.metadata.variables_lookup[updated_row_id],
                 updated_column_id,
                 new_value,
             )
@@ -55,7 +53,7 @@ def accept_dataset_metadata_input(
     try:
         # Update the value in the model
         setattr(
-            globals.metadata.dataset_metadata,
+            globals.metadata.meta.dataset,
             metadata_identifier,
             value,
         )

@@ -58,4 +58,4 @@ def existing_metadata_file():
 
 def test_existing_metadata_file(existing_metadata_file):
     metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
-    assert metadata.dataset_metadata.name == "successfully_read_existing_file"
+    assert metadata.meta.dataset.name == "successfully_read_existing_file"

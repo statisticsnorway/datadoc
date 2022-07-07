@@ -10,6 +10,7 @@ from datadoc.DisplayVariables import VariableIdentifiers
 from datadoc.Model import (
     DataDocDataSet,
     DataDocVariable,
+    MetadataDocument,
 )
 from datadoc.Enums import (
     AdministrativeStatus,
@@ -39,8 +40,14 @@ class DataDocMetadata:
             self.current_user = "default_user@ssb.no"
         self.current_datetime = str(datetime.datetime.now())
 
-        self.dataset_metadata: DataDocDataSet
-        self.variables_metadata: Dict[str, DataDocVariable] = {}
+        self.meta: MetadataDocument = MetadataDocument(
+            percentage_complete=0,
+            document_version=1,
+            dataset=DataDocDataSet(),
+            variables=[],
+        )
+
+        self.variables_lookup: Dict[str, DataDocVariable] = {}
 
         self.read_metadata_document()
 
@@ -86,18 +93,17 @@ class DataDocMetadata:
 
             variables_list = fresh_metadata.pop("variables", None)
 
-            self.variables_metadata = {
-                v[VariableIdentifiers.SHORT_NAME.value]: DataDocVariable(**v)
-                for v in variables_list
-            }
-            self.dataset_metadata = DataDocDataSet(**fresh_metadata)
+            self.meta.variables = [DataDocVariable(**v) for v in variables_list]
+            self.meta.dataset = DataDocDataSet(**fresh_metadata)
         else:
             self.generate_new_metadata_document()
+
+        self.variables_lookup = {v.short_name: v for v in self.meta.variables}
 
     def generate_new_metadata_document(self):
         self.ds_schema = DatasetReader.for_file(self.dataset)
 
-        self.dataset_metadata = DataDocDataSet(
+        self.meta.dataset = DataDocDataSet(
             short_name=self.dataset_stem,
             assessment=None,
             dataset_state=self.dataset_state,
@@ -119,11 +125,9 @@ class DataDocMetadata:
             last_updated_by=None,
         )
 
-        self.variables_metadata = {v.short_name: v for v in self.ds_schema.get_fields()}
+        self.meta.variables = self.ds_schema.get_fields()
 
     def write_metadata_document(self) -> None:
         """Write all currently known metadata to file"""
-        export_dict = self.dataset_metadata.dict()
-        export_dict["variables"] = [v.dict() for v in self.variables_metadata.values()]
-        json_str = json.dumps(export_dict, indent=4, sort_keys=False, default=str)
+        json_str = json.dumps(self.meta.dict(), indent=4, sort_keys=False, default=str)
         self.metadata_document_full_path.write_text(json_str, encoding="utf-8")

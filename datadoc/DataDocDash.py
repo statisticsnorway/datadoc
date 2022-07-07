@@ -19,7 +19,7 @@ from datadoc.utils import running_in_notebook
 def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
 
     globals.metadata = DataDocMetadata(dataset_path)
-    meta = globals.metadata.dataset_metadata
+    meta = globals.metadata.meta.dataset
 
     DATASET_METADATA_INPUT = "dataset-metadata-input"
 
@@ -235,10 +235,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                     dash_table.DataTable(
                         id="variables-table",
                         # Populate fields with known values
-                        data=[
-                            v.dict()
-                            for v in globals.metadata.variables_metadata.values()
-                        ],
+                        data=[v.dict() for v in globals.metadata.meta.variables],
                         # Define columns based on the information in DISPLAY_VARIABLES
                         columns=[
                             {
