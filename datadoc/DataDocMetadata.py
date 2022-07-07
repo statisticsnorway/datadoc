@@ -13,7 +13,7 @@ from datadoc.Model import (
     DataSetState,
 )
 
-from .DatasetSchema import DatasetSchema
+from datadoc.DatasetReader import DatasetReader
 
 
 class DataDocMetadata:
@@ -50,12 +50,12 @@ class DataDocMetadata:
 
         if dataset_path is None:
             dataset_path = self.dataset_full_path
-        dataset_path = list(dataset_path.parts)
-        if "kildedata" in dataset_path:
+        dataset_path_parts = list(dataset_path.parts)
+        if "kildedata" in dataset_path_parts:
             return DataSetState.SOURCE_DATA
-        elif "inndata" in dataset_path:
+        elif "inndata" in dataset_path_parts:
             return DataSetState.INPUT_DATA
-        elif "klargjorte_data" in dataset_path:
+        elif "klargjorte_data" in dataset_path_parts:
             return DataSetState.PROCESSED_DATA
         else:
             return None
@@ -94,7 +94,7 @@ class DataDocMetadata:
             self.generate_new_metadata_document()
 
     def generate_new_metadata_document(self):
-        self.ds_schema = DatasetSchema(self.dataset)
+        self.ds_schema = DatasetReader.for_file(self.dataset)
 
         self.dataset_metadata = DataDocDataSet(
             short_name=self.dataset_stem,
