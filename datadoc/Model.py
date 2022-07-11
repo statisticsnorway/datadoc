@@ -2,7 +2,7 @@ from datetime import date, datetime
 from typing import Dict, List, Optional
 from pydantic import BaseModel, constr, conint
 
-from datadoc.DisplayDataset import OBLIGATORY_DATASET_METADATA
+from datadoc.frontend.DisplayDataset import OBLIGATORY_DATASET_METADATA
 from datadoc import Enums
 from datadoc.DisplayVariables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.utils import calculate_percentage

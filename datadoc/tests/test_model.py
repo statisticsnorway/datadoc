@@ -1,5 +1,5 @@
 from datadoc import Enums
-from datadoc.DisplayDataset import DISPLAY_DATASET, DatasetIdentifiers
+from datadoc.frontend.DisplayDataset import DISPLAY_DATASET, DatasetIdentifiers
 from datadoc.DisplayVariables import DISPLAY_VARIABLES, VariableIdentifiers
 from datadoc.Model import (
     DataDocDataSet,
