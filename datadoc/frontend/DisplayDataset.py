@@ -1,5 +1,5 @@
 from enum import Enum
-from datadoc.DisplayVariables import DisplayMetadata
+from datadoc.frontend.DisplayVariables import DisplayMetadata
 from datadoc.Enums import Assessment, DatasetState, DatasetStatus, TemporalityType
 
 

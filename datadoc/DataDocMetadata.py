@@ -6,7 +6,7 @@ from copy import deepcopy
 from typing import Dict, Optional
 
 from datadoc.DatasetReader import DatasetReader
-from datadoc.DisplayVariables import VariableIdentifiers
+from datadoc.frontend.DisplayVariables import VariableIdentifiers
 from datadoc.Model import (
     DataDocDataSet,
     DataDocVariable,

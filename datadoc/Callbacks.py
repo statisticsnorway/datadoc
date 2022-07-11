@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Tuple
 from pydantic import ValidationError
 
 import datadoc.globals as globals
-from datadoc.DisplayVariables import VariableIdentifiers
+from datadoc.frontend.DisplayVariables import VariableIdentifiers
 
 
 def accept_variable_metadata_input(

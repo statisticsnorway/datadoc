@@ -4,7 +4,7 @@ from pydantic import BaseModel, constr, conint
 
 from datadoc.frontend.DisplayDataset import OBLIGATORY_DATASET_METADATA
 from datadoc import Enums
-from datadoc.DisplayVariables import OBLIGATORY_VARIABLES_METADATA
+from datadoc.frontend.DisplayVariables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.utils import calculate_percentage
 
 ALPHANUMERIC_HYPHEN_UNDERSCORE = "[-A-Za-z0-9_.*/]"

@@ -1,6 +1,6 @@
 from datadoc import Enums
 from datadoc.frontend.DisplayDataset import DISPLAY_DATASET, DatasetIdentifiers
-from datadoc.DisplayVariables import DISPLAY_VARIABLES, VariableIdentifiers
+from datadoc.frontend.DisplayVariables import DISPLAY_VARIABLES, VariableIdentifiers
 from datadoc.Model import (
     DataDocDataSet,
     DataDocVariable,

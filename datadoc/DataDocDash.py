@@ -11,7 +11,7 @@ from datadoc.Callbacks import (
     accept_variable_metadata_input,
 )
 from datadoc.DataDocMetadata import DataDocMetadata
-from datadoc.DisplayVariables import DISPLAY_VARIABLES
+from datadoc.frontend.DisplayVariables import DISPLAY_VARIABLES
 from datadoc.Enums import DatasetState
 from datadoc.utils import running_in_notebook
 
