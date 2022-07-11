@@ -1,19 +1,14 @@
-from enum import Enum, auto
 from datetime import date, datetime
-import statistics
 from typing import Dict, List, Optional
-from pydantic import BaseModel, constr, conint, Field
+from pydantic import BaseModel, constr, conint
 
 from datadoc.DisplayDataset import OBLIGATORY_DATASET_METADATA
 from datadoc import Enums
 from datadoc.DisplayVariables import OBLIGATORY_VARIABLES_METADATA
+from datadoc.utils import calculate_percentage
 
 ALPHANUMERIC_HYPHEN_UNDERSCORE = "[-A-Za-z0-9_.*/]"
-URL_FORMAT = "(https?:\/\/)?(www\.)?[a-zA-Z0-9]+([-a-zA-Z0-9.]{1,254}[A-Za-z0-9])?\.[a-zA-Z0-9()]{1,6}([\/][-a-zA-Z0-9_]+)*[\/]?"
-
-
-def calculate_percentage(num_set_fields: int, num_all_fields: int) -> int:
-    return round((num_set_fields / num_all_fields) * 100)
+URL_FORMAT = "(https?:\/\/)?(www\.)?[a-zA-Z0-9]+([-a-zA-Z0-9.]{1,254}[A-Za-z0-9])?\.[a-zA-Z0-9()]{1,6}([\/][-a-zA-Z0-9_]+)*[\/]?"  # noqa: W605
 
 
 class DataDocBaseModel(BaseModel):
@@ -33,15 +28,16 @@ class DataDocDataSet(DataDocBaseModel):
         constr(min_length=1, max_length=63, regex=ALPHANUMERIC_HYPHEN_UNDERSCORE)
     ]
     assessment: Optional[Enums.Assessment]
+    dataset_status: Optional[Enums.DatasetStatus] = Enums.DatasetStatus.DRAFT
     dataset_state: Optional[Enums.DatasetState]
     name: Optional[str]
     data_source: Optional[str]
     population_description: Optional[str]
-    dataset_status: Optional[Enums.DatasetStatus] = Enums.DatasetStatus.DRAFT
     version: Optional[str]
     unit_type: Optional[Enums.UnitType]
     temporality_type: Optional[Enums.TemporalityType]
     description: Optional[str]
+    subject_field: Optional[str]
     spatial_coverage_description: Optional[List[Dict[str, str]]]
     id: Optional[constr(regex=URL_FORMAT)]
     owner: Optional[str]
@@ -78,6 +74,7 @@ class DataDocVariable(DataDocBaseModel):
     contains_data_until: Optional[date]
 
 
+# These don't vary at runtime so we calculate them as constants here
 NUM_OBLIGATORY_DATASET_FIELDS = len(
     [k for k in DataDocDataSet().dict().keys() if k in OBLIGATORY_DATASET_METADATA]
 )
@@ -97,6 +94,12 @@ class MetadataDocument(DataDocBaseModel):
 
     @property
     def percent_complete(self) -> int:
+        """The percentage of obligatory metadata completed.
+
+        A metadata field is counted as complete when any non-None value is
+        assigned. Used for a live progress bar in the UI, as well as being
+        saved in the datadoc as a simple quality indicator."""
+
         num_all_fields = NUM_OBLIGATORY_DATASET_FIELDS
         num_set_fields = len(
             [

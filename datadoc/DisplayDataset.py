@@ -14,7 +14,7 @@ class DatasetIdentifiers(str, Enum):
     DATA_SOURCE = "data_source"
     POPULATION_DESCRIPTION = "population_description"
     VERSION = "version"
-    UNIT_TYPE = "unitType"
+    UNIT_TYPE = "unit_type"
     TEMPORALITY_TYPE = "temporality_type"
     DESCRIPTION = "description"
     SUBJECT_FIELD = "subject_field"
@@ -22,10 +22,10 @@ class DatasetIdentifiers(str, Enum):
     ID = "id"
     OWNER = "owner"
     DATA_SOURCE_PATH = "data_source_path"
-    METADATA_CREATED_DATE = "metadata_created_date"
-    METADATA_CREATED_BY = "metadata_created_by"
-    METADATA_LAST_UPDATED_DATE = "metadata_last_updated_date"
-    METADATA_LAST_UPDATED_BY = "metadata_last_updated_by"
+    METADATA_CREATED_DATE = "created_date"
+    METADATA_CREATED_BY = "created_by"
+    METADATA_LAST_UPDATED_DATE = "last_updated_date"
+    METADATA_LAST_UPDATED_BY = "last_updated_by"
 
 
 DISPLAY_DATASET = {
