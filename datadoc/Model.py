@@ -78,6 +78,14 @@ class DataDocVariable(DataDocBaseModel):
     contains_data_until: Optional[date]
 
 
+NUM_OBLIGATORY_DATASET_FIELDS = len(
+    [k for k in DataDocDataSet().dict().keys() if k in OBLIGATORY_DATASET_METADATA]
+)
+NUM_OBLIGATORY_VARIABLES_FIELDS = len(
+    [k for k in DataDocVariable().dict().keys() if k in OBLIGATORY_VARIABLES_METADATA]
+)
+
+
 class MetadataDocument(DataDocBaseModel):
     """Represents the data structure on file. Includes the dataset metadata from the user as
     well as meta-metadata like the percentage of completed metadata fields and the document version"""
@@ -89,19 +97,23 @@ class MetadataDocument(DataDocBaseModel):
 
     @property
     def percent_complete(self) -> int:
-        num_all_fields = len(
-            [f for f in self.dataset.__fields__ if f in OBLIGATORY_DATASET_METADATA]
-        )
+        num_all_fields = NUM_OBLIGATORY_DATASET_FIELDS
         num_set_fields = len(
-            [f for f in self.dataset.__fields_set__ if f in OBLIGATORY_DATASET_METADATA]
+            [
+                k
+                for k, v in self.dataset.dict().items()
+                if k in OBLIGATORY_DATASET_METADATA and v is not None
+            ]
         )
 
-        for v in self.variables:
-            num_all_fields += len(
-                [f for f in v.__fields__ if f in OBLIGATORY_VARIABLES_METADATA]
-            )
+        for variable in self.variables:
+            num_all_fields += NUM_OBLIGATORY_VARIABLES_FIELDS
             num_set_fields += len(
-                [f for f in v.__fields_set__ if f in OBLIGATORY_VARIABLES_METADATA]
+                [
+                    k
+                    for k, v in variable.dict().items()
+                    if k in OBLIGATORY_VARIABLES_METADATA and v is not None
+                ]
             )
 
         return calculate_percentage(num_set_fields, num_all_fields)

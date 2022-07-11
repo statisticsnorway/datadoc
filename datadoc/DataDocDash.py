@@ -284,6 +284,11 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
         style={"backgroundColor": COLORS["green_4"]},
     )
 
+    progress_bar = dbc.CardBody(
+        style={"padding": "4px"},
+        children=[dbc.Progress(id="progress-bar", color=COLORS["green_4"], value=40)],
+    )
+
     controls_bar = dbc.CardBody(
         style={"padding": "4px"},
         children=[
@@ -369,6 +374,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
         style={"padding": "4px"},
         children=[
             header,
+            progress_bar,
             controls_bar,
             dbc.CardBody(
                 style={"padding": "4px"},
@@ -388,6 +394,16 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
             success_toast,
         ],
     )
+
+    @app.callback(
+        Output("progress-bar", "value"),
+        Output("progress-bar", "label"),
+        Input({"type": DATASET_METADATA_INPUT, "id": ALL}, "value"),
+        Input("variables-table", "data"),
+    )
+    def callback_update_progress(value, data) -> Tuple[int, str]:
+        completion = globals.metadata.meta.percent_complete
+        return completion, f"{completion}%"
 
     @app.callback(
         Output("success-message", "is_open"),

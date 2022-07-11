@@ -1,28 +1,32 @@
 {
-    "short_name": "person_data_v1",
-    "assessment": null,
-    "dataset_state": "PROCESSED_DATA",
-    "name": "successfully_read_existing_file",
-    "data_source": null,
-    "population_description": null,
-    "administrative_status": "DRAFT",
-    "version": "1",
-    "unit_type": null,
-    "temporality_type": null,
-    "description": null,
-    "spatial_coverage_description": [
-        {
-            "languageCode": "no",
-            "value": "Norge"
-        }
-    ],
-    "id": null,
-    "owner": null,
-    "data_source_path": "klargjorte_data/person_data_v1.parquet",
-    "created_date": "2022-06-30 16:07:42.988259",
-    "created_by": "default_user@ssb.no",
-    "last_updated_date": null,
-    "last_updated_by": null,
+    "percentage_complete": 0,
+    "document_version": "1",
+    "dataset": {
+        "short_name": "person_data_v1",
+        "assessment": null,
+        "dataset_state": "PROCESSED_DATA",
+        "name": "successfully_read_existing_file",
+        "data_source": null,
+        "population_description": null,
+        "dataset_status": "DRAFT",
+        "version": "1",
+        "unit_type": null,
+        "temporality_type": null,
+        "description": null,
+        "spatial_coverage_description": [
+            {
+                "languageCode": "no",
+                "value": "Norge"
+            }
+        ],
+        "id": null,
+        "owner": null,
+        "data_source_path": "klargjorte_data/person_data_v1.parquet",
+        "created_date": "2022-07-11 09:17:31.465776",
+        "created_by": "default_user@ssb.no",
+        "last_updated_date": null,
+        "last_updated_by": null
+    },
     "variables": [
         {
             "short_name": "pers_id",

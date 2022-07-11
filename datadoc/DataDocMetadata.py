@@ -3,7 +3,7 @@ import json
 import os
 import pathlib
 from copy import deepcopy
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 from datadoc.DatasetReader import DatasetReader
 from datadoc.DisplayVariables import VariableIdentifiers
@@ -94,7 +94,7 @@ class DataDocMetadata:
             variables_list = fresh_metadata.pop("variables", None)
 
             self.meta.variables = [DataDocVariable(**v) for v in variables_list]
-            self.meta.dataset = DataDocDataSet(**fresh_metadata)
+            self.meta.dataset = DataDocDataSet(**fresh_metadata.pop("dataset", None))
         else:
             self.generate_new_metadata_document()
 

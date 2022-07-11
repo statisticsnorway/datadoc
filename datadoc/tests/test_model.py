@@ -3,7 +3,6 @@ from datadoc.Model import (
     DataDocDataSet,
     DataDocVariable,
     MetadataDocument,
-    calculate_percentage,
 )
 
 
