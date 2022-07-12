@@ -115,7 +115,7 @@ class DataDocMetadata:
             unit_type=None,
             temporality_type=None,
             description=None,
-            spatial_coverage_description=[{"languageCode": "no", "value": "Norge"}],
+            spatial_coverage_description=None,
             id=None,
             owner=None,
             data_source_path=str(self.dataset_full_path),

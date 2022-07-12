@@ -12,8 +12,13 @@ from datadoc.Callbacks import (
 )
 from datadoc.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.DisplayVariables import DISPLAY_VARIABLES
+from datadoc.frontend.DisplayDataset import DISPLAY_DATASET
 from datadoc.Enums import DatasetState
 from datadoc.utils import running_in_notebook
+
+
+DATASET_METADATA_INPUT = "dataset-metadata-input"
+COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
 
 def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
@@ -21,136 +26,65 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
     globals.metadata = DataDocMetadata(dataset_path)
     meta = globals.metadata.meta.dataset
 
-    DATASET_METADATA_INPUT = "dataset-metadata-input"
-
     app = dash_class(
         name="DataDoc", external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP]
     )
 
-    COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
+    obligatory_dataset_metadata_inputs = [
+        {
+            "name": m.display_name,
+            "input_component": m.component(
+                placeholder=m.description,
+                disabled=not m.editable,
+                value=meta.dict()[m.identifier],
+                id={
+                    "type": DATASET_METADATA_INPUT,
+                    "id": m.identifier,
+                },
+                **m.extra_kwargs,
+                **(m.options or {}),
+            ),
+        }
+        for m in DISPLAY_DATASET.values()
+        if m.obligatory and m.editable
+    ]
 
-    dataset_details_inputs = [
+    machine_generated_dataset_metadata_inputs = [
         {
-            "name": "Kort Navn",
-            "input_component": dcc.Input(
-                placeholder="Et teknisk navn, ofte lik filnavnet",
-                debounce=True,
-                style={"width": "100%"},
-                value=meta.short_name,
+            "name": m.display_name,
+            "input_component": m.component(
+                placeholder=m.description,
+                disabled=not m.editable,
+                value=meta.dict()[m.identifier],
                 id={
                     "type": DATASET_METADATA_INPUT,
-                    "id": "short_name",
+                    "id": m.identifier,
                 },
-                className="ssb-input",
+                **m.extra_kwargs,
+                **(m.options or {}),
             ),
-        },
+        }
+        for m in DISPLAY_DATASET.values()
+        if not m.editable
+    ]
+
+    optional_dataset_metadata_inputs = [
         {
-            "name": "Navn",
-            "input_component": dcc.Input(
-                placeholder="Beskrivende navn for datasettet",
-                debounce=True,
-                style={"width": "100%"},
-                value=meta.name,
+            "name": m.display_name,
+            "input_component": m.component(
+                placeholder=m.description,
+                disabled=not m.editable,
+                value=meta.dict()[m.identifier],
                 id={
                     "type": DATASET_METADATA_INPUT,
-                    "id": "name",
+                    "id": m.identifier,
                 },
-                className="ssb-input",
+                **m.extra_kwargs,
+                **(m.options or {}),
             ),
-        },
-        {
-            "name": "Beskrivelse",
-            "input_component": dcc.Textarea(
-                placeholder="Besrive egenskaper av datasettet",
-                style={"width": "100%"},
-                value=meta.description,
-                id={
-                    "type": DATASET_METADATA_INPUT,
-                    "id": "description",
-                },
-                className="ssb-input",
-            ),
-        },
-        {
-            "name": "Tilstand",
-            "input_component": dcc.Dropdown(
-                placeholder="Velg fra listen",
-                options=[
-                    {"label": label, "value": value}
-                    for label, value in [
-                        ("Kildedata", DatasetState.SOURCE_DATA.name),
-                        ("Inndata", DatasetState.INPUT_DATA.name),
-                        ("Klargjorte data", DatasetState.PROCESSED_DATA.name),
-                        ("Utdata", DatasetState.OUTPUT_DATA.name),
-                        ("Statistikk", DatasetState.STATISTIC.name),
-                    ]
-                ],
-                value=meta.dataset_state,
-                style={"width": "100%"},
-                id={
-                    "type": DATASET_METADATA_INPUT,
-                    "id": "dataset_state",
-                },
-                className="ssb-dropdown",
-            ),
-        },
-        {
-            "name": "Versjon",
-            "input_component": dcc.Input(
-                placeholder=1,
-                debounce=True,
-                type="number",
-                style={"width": "100%"},
-                value=meta.version,
-                id={
-                    "type": DATASET_METADATA_INPUT,
-                    "id": "version",
-                },
-                className="ssb-input",
-            ),
-        },
-        {
-            "name": "Datasett sti",
-            "input_component": dcc.Input(
-                placeholder="Sti til datasett fil",
-                debounce=True,
-                style={"width": "100%"},
-                value=meta.data_source_path,
-                id={
-                    "type": DATASET_METADATA_INPUT,
-                    "id": "data_source_path",
-                },
-                className="ssb-input",
-            ),
-        },
-        {
-            "name": "Opprettet av",
-            "input_component": dcc.Input(
-                placeholder="kari.nordman@ssb.no",
-                debounce=True,
-                type="email",
-                style={"width": "100%"},
-                value=meta.created_by,
-                id={
-                    "type": DATASET_METADATA_INPUT,
-                    "id": "created_by",
-                },
-                className="ssb-input",
-            ),
-        },
-        {
-            "name": "Opprettet dato",
-            "input_component": dcc.Input(
-                debounce=True,
-                style={"width": "100%"},
-                value=meta.created_date,
-                id={
-                    "type": DATASET_METADATA_INPUT,
-                    "id": "created_date",
-                },
-                className="ssb-input",
-            ),
-        },
+        }
+        for m in DISPLAY_DATASET.values()
+        if not m.obligatory and m.editable
     ]
 
     def make_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:
@@ -210,17 +144,49 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
         dbc.Container(
             [
                 dbc.Row(html.H2("Datasett detaljer", className="ssb-title")),
-                dbc.Row(
-                    [
-                        dbc.Row(
-                            [
-                                dbc.Col(html.Label(input["name"])),
-                                dbc.Col(input["input_component"], width=4),
-                                dbc.Col(width=6),
-                            ]
-                        )
-                        for input in dataset_details_inputs
-                    ]
+                dbc.Accordion(
+                    always_open=True,
+                    children=[
+                        dbc.AccordionItem(
+                            title="Obligatorisk",
+                            children=[
+                                dbc.Row(
+                                    [
+                                        dbc.Col(html.Label(input["name"])),
+                                        dbc.Col(input["input_component"], width=5),
+                                        dbc.Col(width=4),
+                                    ]
+                                )
+                                for input in obligatory_dataset_metadata_inputs
+                            ],
+                        ),
+                        dbc.AccordionItem(
+                            title="Valgfritt",
+                            children=[
+                                dbc.Row(
+                                    [
+                                        dbc.Col(html.Label(input["name"])),
+                                        dbc.Col(input["input_component"], width=5),
+                                        dbc.Col(width=4),
+                                    ]
+                                )
+                                for input in optional_dataset_metadata_inputs
+                            ],
+                        ),
+                        dbc.AccordionItem(
+                            title="Maskingenerert",
+                            children=[
+                                dbc.Row(
+                                    [
+                                        dbc.Col(html.Label(input["name"])),
+                                        dbc.Col(input["input_component"], width=5),
+                                        dbc.Col(width=4),
+                                    ]
+                                )
+                                for input in machine_generated_dataset_metadata_inputs
+                            ],
+                        ),
+                    ],
                 ),
             ],
         ),

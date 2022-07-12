@@ -38,7 +38,7 @@ class DataDocDataSet(DataDocBaseModel):
     temporality_type: Optional[Enums.TemporalityType]
     description: Optional[str]
     subject_field: Optional[str]
-    spatial_coverage_description: Optional[List[Dict[str, str]]]
+    spatial_coverage_description: Optional[str]
     id: Optional[constr(regex=URL_FORMAT)]
     owner: Optional[str]
     data_source_path: Optional[str]
