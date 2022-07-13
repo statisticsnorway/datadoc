@@ -1,20 +1,25 @@
-import re
 import argparse
-from typing import Type
-from dash import Dash, dash_table, html, Input, Output, dcc, State, MATCH, ctx
-import dash_bootstrap_components as dbc
-from pydantic import ValidationError
+import re
+from typing import Any, Dict, List, Tuple, Type
 
+import dash_bootstrap_components as dbc
+from dash import ALL, Dash, Input, Output, State, ctx, dash_table, dcc, html
+
+import datadoc.globals as globals
+from datadoc.Callbacks import (
+    accept_dataset_metadata_input,
+    accept_variable_metadata_input,
+)
 from datadoc.DataDocMetadata import DataDocMetadata
-from datadoc.DisplayVariables import DISPLAY_VARIABLES, VariableIdentifiers
+from datadoc.DisplayVariables import DISPLAY_VARIABLES
 from datadoc.Model import DataSetState
 from datadoc.utils import running_in_notebook
 
 
 def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
 
-    datadoc_metadata = DataDocMetadata(dataset_path)
-    metadata = datadoc_metadata.dataset_metadata
+    globals.metadata = DataDocMetadata(dataset_path)
+    meta = globals.metadata.dataset_metadata
 
     DATASET_METADATA_INPUT = "dataset-metadata-input"
 
@@ -31,7 +36,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                 placeholder="Et teknisk navn, ofte lik filnavnet",
                 debounce=True,
                 style={"width": "100%"},
-                value=metadata.short_name,
+                value=meta.short_name,
                 id={
                     "type": DATASET_METADATA_INPUT,
                     "id": "short_name",
@@ -45,7 +50,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                 placeholder="Beskrivende navn for datasettet",
                 debounce=True,
                 style={"width": "100%"},
-                value=metadata.name,
+                value=meta.name,
                 id={
                     "type": DATASET_METADATA_INPUT,
                     "id": "name",
@@ -58,7 +63,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
             "input_component": dcc.Textarea(
                 placeholder="Besrive egenskaper av datasettet",
                 style={"width": "100%"},
-                value=metadata.description,
+                value=meta.description,
                 id={
                     "type": DATASET_METADATA_INPUT,
                     "id": "description",
@@ -80,7 +85,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                         ("Statistikk", DataSetState.STATISTIC.name),
                     ]
                 ],
-                value=metadata.dataset_state,
+                value=meta.dataset_state,
                 style={"width": "100%"},
                 id={
                     "type": DATASET_METADATA_INPUT,
@@ -96,7 +101,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                 debounce=True,
                 type="number",
                 style={"width": "100%"},
-                value=metadata.version,
+                value=meta.version,
                 id={
                     "type": DATASET_METADATA_INPUT,
                     "id": "version",
@@ -110,7 +115,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                 placeholder="Sti til datasett fil",
                 debounce=True,
                 style={"width": "100%"},
-                value=metadata.data_source_path,
+                value=meta.data_source_path,
                 id={
                     "type": DATASET_METADATA_INPUT,
                     "id": "data_source_path",
@@ -125,7 +130,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                 debounce=True,
                 type="email",
                 style={"width": "100%"},
-                value=metadata.created_by,
+                value=meta.created_by,
                 id={
                     "type": DATASET_METADATA_INPUT,
                     "id": "created_by",
@@ -138,7 +143,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
             "input_component": dcc.Input(
                 debounce=True,
                 style={"width": "100%"},
-                value=metadata.created_date,
+                value=meta.created_date,
                 id={
                     "type": DATASET_METADATA_INPUT,
                     "id": "created_date",
@@ -157,6 +162,47 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
             label_style={"margin-left": "10px", "margin-right": "10px"},
             style={"backgroundColor": COLORS["green_1"], "padding": "4px"},
             children=content,
+        )
+
+    def make_ssb_warning_alert(
+        alert_identifier: str, title: str, content_identifier: str
+    ) -> dbc.Alert:
+        return dbc.Alert(
+            id=alert_identifier,
+            is_open=False,
+            dismissable=True,
+            fade=True,
+            class_name="ssb-dialog warning",
+            children=[
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            width=1,
+                            children=[
+                                html.Div(
+                                    className="ssb-dialog warning icon-panel",
+                                    children=[
+                                        html.I(
+                                            className="bi bi-exclamation-triangle",
+                                        ),
+                                    ],
+                                )
+                            ],
+                        ),
+                        dbc.Col(
+                            [
+                                html.H5(
+                                    title,
+                                ),
+                                dcc.Markdown(
+                                    id=content_identifier,
+                                ),
+                            ]
+                        ),
+                    ],
+                )
+            ],
+            color="danger",
         )
 
     dataset_details = make_ssb_styled_tab(
@@ -191,7 +237,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                         # Populate fields with known values
                         data=[
                             v.dict()
-                            for v in datadoc_metadata.variables_metadata.values()
+                            for v in globals.metadata.variables_metadata.values()
                         ],
                         # Define columns based on the information in DISPLAY_VARIABLES
                         columns=[
@@ -274,43 +320,16 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
             )
         ],
     )
+    dataset_validation_error = make_ssb_warning_alert(
+        "dataset-validation-error",
+        "Failed validation",
+        "dataset-validation-explanation",
+    )
 
-    validation_error = dbc.Alert(
-        id="validation-error",
-        is_open=False,
-        dismissable=True,
-        fade=True,
-        class_name="ssb-dialog warning",
-        children=[
-            dbc.Row(
-                [
-                    dbc.Col(
-                        width=1,
-                        children=[
-                            html.Div(
-                                className="ssb-dialog warning icon-panel",
-                                children=[
-                                    html.I(
-                                        className="bi bi-exclamation-triangle",
-                                    ),
-                                ],
-                            )
-                        ],
-                    ),
-                    dbc.Col(
-                        [
-                            html.H5(
-                                "Failed validation",
-                            ),
-                            dcc.Markdown(
-                                id="validation-explanation",
-                            ),
-                        ]
-                    ),
-                ]
-            )
-        ],
-        color="danger",
+    variables_validation_error = make_ssb_warning_alert(
+        "variables-validation-error",
+        "Failed validation",
+        "variables-validation-explanation",
     )
 
     success_toast = dbc.Alert(
@@ -367,7 +386,8 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                     ),
                 ],
             ),
-            validation_error,
+            variables_validation_error,
+            dataset_validation_error,
             success_toast,
         ],
     )
@@ -375,79 +395,39 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
     @app.callback(
         Output("success-message", "is_open"),
         Input("save-button", "n_clicks"),
-        State("variables-table", "data"),
         prevent_initial_call=True,
     )
-    def save_metadata_file(n_clicks, data):
+    def callback_save_metadata_file(n_clicks):
         if n_clicks and n_clicks > 0:
-            print(data)
-            datadoc_metadata.write_metadata_document()
+            globals.metadata.write_metadata_document()
             return True
         else:
             return False
 
     @app.callback(
-        Output({"type": DATASET_METADATA_INPUT, "id": MATCH}, "value"),
-        Input({"type": DATASET_METADATA_INPUT, "id": MATCH}, "value"),
+        Output("dataset-validation-error", "is_open"),
+        Output("dataset-validation-explanation", "children"),
+        Input({"type": DATASET_METADATA_INPUT, "id": ALL}, "value"),
         prevent_initial_call=True,
     )
-    def accept_dataset_metadata_input(value):
-
+    def callback_accept_dataset_metadata_input(value: Any) -> Tuple[bool, str]:
         # Get the ID of the input that changed. This MUST match the attribute name defined in DataDocDataSet
-        metadata_identifier = ctx.triggered_id["id"]
-
-        # Update the value in the model
-        setattr(
-            datadoc_metadata.dataset_metadata,
-            metadata_identifier,
-            value,
+        return accept_dataset_metadata_input(
+            ctx.triggered[0]["value"], ctx.triggered_id["id"]
         )
-        print(f"Updated value for {metadata_identifier}: {value}")
-        return value
 
     @app.callback(
         Output("variables-table", "data"),
-        Output("validation-error", "is_open"),
-        Output("validation-explanation", "children"),
+        Output("variables-validation-error", "is_open"),
+        Output("variables-validation-explanation", "children"),
         Input("variables-table", "data"),
         Input("variables-table", "data_previous"),
         prevent_initial_call=True,
     )
-    def accept_variable_metadata_input(data, data_previous):
-        updated_row_id = None
-        updated_column_id = None
-        new_value = None
-        show_error = False
-        error_explanation = ""
-        output_data = []
-        # What has changed?
-        for i in range(len(data)):
-            update_diff = list(data[i].items() - data_previous[i].items())
-            if update_diff:
-                updated_row_id = data[i][VariableIdentifiers.SHORT_NAME.value]
-                updated_column_id = update_diff[-1][0]
-                new_value = update_diff[-1][-1]
-                print(
-                    f"Row: {updated_row_id} Column: {updated_column_id} New value: {new_value}"
-                )
-
-        try:
-            # Write the value to the variables structure
-            setattr(
-                datadoc_metadata.variables_metadata[updated_row_id],
-                updated_column_id,
-                new_value,
-            )
-        except ValidationError as e:
-            show_error = True
-            error_explanation = f"`{e}`"
-            output_data = data_previous
-            print(error_explanation)
-        else:
-            output_data = data
-            print(f"Successfully updated {updated_row_id} with {new_value}")
-
-        return output_data, show_error, error_explanation
+    def callback_accept_variable_metadata_input(
+        data: List[Dict], data_previous: List[Dict]
+    ) -> Tuple[List[Dict], bool, str]:
+        return accept_variable_metadata_input(data, data_previous)
 
     return app
 

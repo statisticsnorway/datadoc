@@ -1,19 +1,18 @@
-from copy import deepcopy
-import json
-import pathlib
 import datetime
+import json
 import os
+import pathlib
+from copy import deepcopy
 from typing import Dict, List, Optional
-from datadoc.DisplayVariables import VariableIdentifiers
 
+from datadoc.DatasetReader import DatasetReader
+from datadoc.DisplayVariables import VariableIdentifiers
 from datadoc.Model import (
     AdministrativeStatus,
     DataDocDataSet,
     DataDocVariable,
     DataSetState,
 )
-
-from datadoc.DatasetReader import DatasetReader
 
 
 class DataDocMetadata:

@@ -2,7 +2,7 @@ import json
 import random
 
 from datadoc.Model import DataDocVariable, Datatype
-from ..DatasetReader import (
+from datadoc.DatasetReader import (
     KNOWN_BOOLEAN_TYPES,
     KNOWN_DATETIME_TYPES,
     KNOWN_FLOAT_TYPES,
