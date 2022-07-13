@@ -4,7 +4,8 @@ import pyarrow.parquet as pq
 from typing import List, Optional, TypeVar
 import pandas as pd
 
-from datadoc.Model import DataDocVariable, Datatype
+from datadoc.Enums import Datatype
+from datadoc.Model import DataDocVariable
 
 TDatasetReader = TypeVar("TDatasetReader", bound="DatasetReader")
 

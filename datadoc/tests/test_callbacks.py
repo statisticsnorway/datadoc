@@ -1,10 +1,7 @@
 from copy import deepcopy
 
-from pytest import raises
-from pydantic import ValidationError
-
 from datadoc.DataDocMetadata import DataDocMetadata
-from datadoc.Model import DataSetState, VariableRole
+from datadoc.Enums import DatasetState, VariableRole
 from datadoc.tests.utils import TEST_PARQUET_FILEPATH
 from datadoc.Callbacks import (
     accept_dataset_metadata_input,
@@ -46,7 +43,7 @@ def test_accept_variable_metadata_input_new_data():
     output = accept_variable_metadata_input(DATA_VALID, DATA_ORIGINAL)
 
     assert (
-        globals.metadata.variables_metadata["pers_id"].variable_role
+        globals.metadata.variables_lookup["pers_id"].variable_role
         == VariableRole.IDENTIFIER
     )
     assert output[0] == DATA_VALID
@@ -56,21 +53,21 @@ def test_accept_variable_metadata_input_new_data():
 
 def test_accept_variable_metadata_input_incorrect_data_type():
     globals.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
-    previous_metadata = deepcopy(globals.metadata.variables_metadata)
+    previous_metadata = deepcopy(globals.metadata.meta.variables)
     output = accept_variable_metadata_input(DATA_INVALID, DATA_ORIGINAL)
 
     assert output[0] == DATA_ORIGINAL
     assert output[1] is True
     assert "validation error for DataDocVariable" in output[2]
-    assert globals.metadata.variables_metadata == previous_metadata
+    assert globals.metadata.meta.variables == previous_metadata
 
 
 def test_accept_dataset_metadata_input_new_data():
     globals.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
-    output = accept_dataset_metadata_input(DataSetState.INPUT_DATA, "dataset_state")
+    output = accept_dataset_metadata_input(DatasetState.INPUT_DATA, "dataset_state")
     assert output[0] is False
     assert output[1] == ""
-    assert globals.metadata.dataset_metadata.dataset_state == DataSetState.INPUT_DATA
+    assert globals.metadata.meta.dataset.dataset_state == DatasetState.INPUT_DATA
 
 
 def test_accept_dataset_metadata_input_incorrect_data_type():

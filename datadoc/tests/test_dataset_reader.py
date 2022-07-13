@@ -1,7 +1,8 @@
 import json
 import random
 
-from datadoc.Model import DataDocVariable, Datatype
+from datadoc.Model import DataDocVariable
+from datadoc.Enums import Datatype
 from datadoc.DatasetReader import (
     KNOWN_BOOLEAN_TYPES,
     KNOWN_DATETIME_TYPES,

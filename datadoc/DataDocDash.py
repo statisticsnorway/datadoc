@@ -11,147 +11,54 @@ from datadoc.Callbacks import (
     accept_variable_metadata_input,
 )
 from datadoc.DataDocMetadata import DataDocMetadata
-from datadoc.DisplayVariables import DISPLAY_VARIABLES
-from datadoc.Model import DataSetState
+from datadoc.frontend.DisplayVariables import DISPLAY_VARIABLES
+from datadoc.frontend.DisplayDataset import DISPLAY_DATASET, DisplayDatasetMetadata
 from datadoc.utils import running_in_notebook
+
+
+DATASET_METADATA_INPUT = "dataset-metadata-input"
+COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
 
 def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
 
     globals.metadata = DataDocMetadata(dataset_path)
-    meta = globals.metadata.dataset_metadata
-
-    DATASET_METADATA_INPUT = "dataset-metadata-input"
+    meta = globals.metadata.meta.dataset
 
     app = dash_class(
         name="DataDoc", external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP]
     )
 
-    COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
-
-    dataset_details_inputs = [
-        {
-            "name": "Kort Navn",
-            "input_component": dcc.Input(
-                placeholder="Et teknisk navn, ofte lik filnavnet",
-                debounce=True,
-                style={"width": "100%"},
-                value=meta.short_name,
-                id={
-                    "type": DATASET_METADATA_INPUT,
-                    "id": "short_name",
-                },
-                className="ssb-input",
-            ),
-        },
-        {
-            "name": "Navn",
-            "input_component": dcc.Input(
-                placeholder="Beskrivende navn for datasettet",
-                debounce=True,
-                style={"width": "100%"},
-                value=meta.name,
-                id={
-                    "type": DATASET_METADATA_INPUT,
-                    "id": "name",
-                },
-                className="ssb-input",
-            ),
-        },
-        {
-            "name": "Beskrivelse",
-            "input_component": dcc.Textarea(
-                placeholder="Besrive egenskaper av datasettet",
-                style={"width": "100%"},
-                value=meta.description,
-                id={
-                    "type": DATASET_METADATA_INPUT,
-                    "id": "description",
-                },
-                className="ssb-input",
-            ),
-        },
-        {
-            "name": "Tilstand",
-            "input_component": dcc.Dropdown(
-                placeholder="Velg fra listen",
-                options=[
-                    {"label": label, "value": value}
-                    for label, value in [
-                        ("Kildedata", DataSetState.SOURCE_DATA.name),
-                        ("Inndata", DataSetState.INPUT_DATA.name),
-                        ("Klargjorte data", DataSetState.PROCESSED_DATA.name),
-                        ("Utdata", DataSetState.OUTPUT_DATA.name),
-                        ("Statistikk", DataSetState.STATISTIC.name),
+    def make_dataset_metadata_accordion_item(
+        title: str,
+        metadata_inputs: List[DisplayDatasetMetadata],
+    ) -> dbc.AccordionItem:
+        return dbc.AccordionItem(
+            title=title,
+            children=[
+                dbc.Row(
+                    [
+                        dbc.Col(html.Label(i.display_name)),
+                        dbc.Col(
+                            i.component(
+                                placeholder=i.description,
+                                disabled=not i.editable,
+                                value=meta.dict()[i.identifier],
+                                id={
+                                    "type": DATASET_METADATA_INPUT,
+                                    "id": i.identifier,
+                                },
+                                **i.extra_kwargs,
+                                **(i.options or {}),
+                            ),
+                            width=5,
+                        ),
+                        dbc.Col(width=4),
                     ]
-                ],
-                value=meta.dataset_state,
-                style={"width": "100%"},
-                id={
-                    "type": DATASET_METADATA_INPUT,
-                    "id": "dataset_state",
-                },
-                className="ssb-dropdown",
-            ),
-        },
-        {
-            "name": "Versjon",
-            "input_component": dcc.Input(
-                placeholder=1,
-                debounce=True,
-                type="number",
-                style={"width": "100%"},
-                value=meta.version,
-                id={
-                    "type": DATASET_METADATA_INPUT,
-                    "id": "version",
-                },
-                className="ssb-input",
-            ),
-        },
-        {
-            "name": "Datasett sti",
-            "input_component": dcc.Input(
-                placeholder="Sti til datasett fil",
-                debounce=True,
-                style={"width": "100%"},
-                value=meta.data_source_path,
-                id={
-                    "type": DATASET_METADATA_INPUT,
-                    "id": "data_source_path",
-                },
-                className="ssb-input",
-            ),
-        },
-        {
-            "name": "Opprettet av",
-            "input_component": dcc.Input(
-                placeholder="kari.nordman@ssb.no",
-                debounce=True,
-                type="email",
-                style={"width": "100%"},
-                value=meta.created_by,
-                id={
-                    "type": DATASET_METADATA_INPUT,
-                    "id": "created_by",
-                },
-                className="ssb-input",
-            ),
-        },
-        {
-            "name": "Opprettet dato",
-            "input_component": dcc.Input(
-                debounce=True,
-                style={"width": "100%"},
-                value=meta.created_date,
-                id={
-                    "type": DATASET_METADATA_INPUT,
-                    "id": "created_date",
-                },
-                className="ssb-input",
-            ),
-        },
-    ]
+                )
+                for i in metadata_inputs
+            ],
+        )
 
     def make_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:
         return dbc.Tab(
@@ -160,7 +67,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
             tab_id=re.sub(r"\s+", "-", label.lower()),
             label_class_name="ssb-tabs navigation-item",
             label_style={"margin-left": "10px", "margin-right": "10px"},
-            style={"backgroundColor": COLORS["green_1"], "padding": "4px"},
+            style={"padding": "4px"},
             children=content,
         )
 
@@ -210,17 +117,30 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
         dbc.Container(
             [
                 dbc.Row(html.H2("Datasett detaljer", className="ssb-title")),
-                dbc.Row(
-                    [
-                        dbc.Row(
+                dbc.Accordion(
+                    always_open=True,
+                    children=[
+                        make_dataset_metadata_accordion_item(
+                            "Obligatorisk",
                             [
-                                dbc.Col(html.Label(input["name"])),
-                                dbc.Col(input["input_component"], width=4),
-                                dbc.Col(width=6),
-                            ]
-                        )
-                        for input in dataset_details_inputs
-                    ]
+                                m
+                                for m in DISPLAY_DATASET.values()
+                                if m.obligatory and m.editable
+                            ],
+                        ),
+                        make_dataset_metadata_accordion_item(
+                            "Valgfritt",
+                            [
+                                m
+                                for m in DISPLAY_DATASET.values()
+                                if not m.obligatory and m.editable
+                            ],
+                        ),
+                        make_dataset_metadata_accordion_item(
+                            "Maskingenerert",
+                            [m for m in DISPLAY_DATASET.values() if not m.editable],
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -235,10 +155,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                     dash_table.DataTable(
                         id="variables-table",
                         # Populate fields with known values
-                        data=[
-                            v.dict()
-                            for v in globals.metadata.variables_metadata.values()
-                        ],
+                        data=[v.dict() for v in globals.metadata.meta.variables],
                         # Define columns based on the information in DISPLAY_VARIABLES
                         columns=[
                             {
@@ -285,6 +202,11 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
             ],
         ),
         style={"backgroundColor": COLORS["green_4"]},
+    )
+
+    progress_bar = dbc.CardBody(
+        style={"padding": "4px"},
+        children=[dbc.Progress(id="progress-bar", color=COLORS["green_4"], value=40)],
     )
 
     controls_bar = dbc.CardBody(
@@ -372,6 +294,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
         style={"padding": "4px"},
         children=[
             header,
+            progress_bar,
             controls_bar,
             dbc.CardBody(
                 style={"padding": "4px"},
@@ -393,12 +316,26 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
     )
 
     @app.callback(
+        Output("progress-bar", "value"),
+        Output("progress-bar", "label"),
+        Input({"type": DATASET_METADATA_INPUT, "id": ALL}, "value"),
+        Input("variables-table", "data"),
+    )
+    def callback_update_progress(value, data) -> Tuple[int, str]:
+        completion = globals.metadata.meta.percent_complete
+        return completion, f"{completion}%"
+
+    @app.callback(
         Output("success-message", "is_open"),
         Input("save-button", "n_clicks"),
         prevent_initial_call=True,
     )
     def callback_save_metadata_file(n_clicks):
         if n_clicks and n_clicks > 0:
+            # Write the final completion percentage to the model
+            globals.metadata.meta.percentage_complete = (
+                globals.metadata.meta.percent_complete
+            )
             globals.metadata.write_metadata_document()
             return True
         else:
