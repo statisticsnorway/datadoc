@@ -332,6 +332,10 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
     )
     def callback_save_metadata_file(n_clicks):
         if n_clicks and n_clicks > 0:
+            # Write the final completion percentage to the model
+            globals.metadata.meta.percentage_complete = (
+                globals.metadata.meta.percent_complete
+            )
             globals.metadata.write_metadata_document()
             return True
         else:

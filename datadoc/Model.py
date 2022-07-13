@@ -7,6 +7,8 @@ from datadoc import Enums
 from datadoc.frontend.DisplayVariables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.utils import calculate_percentage
 
+MODEL_VERSION = "0.1.0"
+
 ALPHANUMERIC_HYPHEN_UNDERSCORE = "[-A-Za-z0-9_.*/]"
 URL_FORMAT = "(https?:\/\/)?(www\.)?[a-zA-Z0-9]+([-a-zA-Z0-9.]{1,254}[A-Za-z0-9])?\.[a-zA-Z0-9()]{1,6}([\/][-a-zA-Z0-9_]+)*[\/]?"  # noqa: W605
 
@@ -88,7 +90,7 @@ class MetadataDocument(DataDocBaseModel):
     well as meta-metadata like the percentage of completed metadata fields and the document version"""
 
     percentage_complete: conint(ge=0, le=100)
-    document_version: str
+    document_version: str = MODEL_VERSION
     dataset: DataDocDataSet
     variables: List[DataDocVariable]
 
