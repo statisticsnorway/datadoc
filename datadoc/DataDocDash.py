@@ -12,8 +12,7 @@ from datadoc.Callbacks import (
 )
 from datadoc.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.DisplayVariables import DISPLAY_VARIABLES
-from datadoc.frontend.DisplayDataset import DISPLAY_DATASET
-from datadoc.Enums import DatasetState
+from datadoc.frontend.DisplayDataset import DISPLAY_DATASET, DisplayDatasetMetadata
 from datadoc.utils import running_in_notebook
 
 
@@ -30,62 +29,36 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
         name="DataDoc", external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP]
     )
 
-    obligatory_dataset_metadata_inputs = [
-        {
-            "name": m.display_name,
-            "input_component": m.component(
-                placeholder=m.description,
-                disabled=not m.editable,
-                value=meta.dict()[m.identifier],
-                id={
-                    "type": DATASET_METADATA_INPUT,
-                    "id": m.identifier,
-                },
-                **m.extra_kwargs,
-                **(m.options or {}),
-            ),
-        }
-        for m in DISPLAY_DATASET.values()
-        if m.obligatory and m.editable
-    ]
-
-    machine_generated_dataset_metadata_inputs = [
-        {
-            "name": m.display_name,
-            "input_component": m.component(
-                placeholder=m.description,
-                disabled=not m.editable,
-                value=meta.dict()[m.identifier],
-                id={
-                    "type": DATASET_METADATA_INPUT,
-                    "id": m.identifier,
-                },
-                **m.extra_kwargs,
-                **(m.options or {}),
-            ),
-        }
-        for m in DISPLAY_DATASET.values()
-        if not m.editable
-    ]
-
-    optional_dataset_metadata_inputs = [
-        {
-            "name": m.display_name,
-            "input_component": m.component(
-                placeholder=m.description,
-                disabled=not m.editable,
-                value=meta.dict()[m.identifier],
-                id={
-                    "type": DATASET_METADATA_INPUT,
-                    "id": m.identifier,
-                },
-                **m.extra_kwargs,
-                **(m.options or {}),
-            ),
-        }
-        for m in DISPLAY_DATASET.values()
-        if not m.obligatory and m.editable
-    ]
+    def make_dataset_metadata_accordion_item(
+        title: str,
+        metadata_inputs: List[DisplayDatasetMetadata],
+    ) -> dbc.AccordionItem:
+        return dbc.AccordionItem(
+            title=title,
+            children=[
+                dbc.Row(
+                    [
+                        dbc.Col(html.Label(i.display_name)),
+                        dbc.Col(
+                            i.component(
+                                placeholder=i.description,
+                                disabled=not i.editable,
+                                value=meta.dict()[i.identifier],
+                                id={
+                                    "type": DATASET_METADATA_INPUT,
+                                    "id": i.identifier,
+                                },
+                                **i.extra_kwargs,
+                                **(i.options or {}),
+                            ),
+                            width=5,
+                        ),
+                        dbc.Col(width=4),
+                    ]
+                )
+                for i in metadata_inputs
+            ],
+        )
 
     def make_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:
         return dbc.Tab(
@@ -94,7 +67,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
             tab_id=re.sub(r"\s+", "-", label.lower()),
             label_class_name="ssb-tabs navigation-item",
             label_style={"margin-left": "10px", "margin-right": "10px"},
-            style={"backgroundColor": COLORS["green_1"], "padding": "4px"},
+            style={"padding": "4px"},
             children=content,
         )
 
@@ -147,44 +120,25 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                 dbc.Accordion(
                     always_open=True,
                     children=[
-                        dbc.AccordionItem(
-                            title="Obligatorisk",
-                            children=[
-                                dbc.Row(
-                                    [
-                                        dbc.Col(html.Label(input["name"])),
-                                        dbc.Col(input["input_component"], width=5),
-                                        dbc.Col(width=4),
-                                    ]
-                                )
-                                for input in obligatory_dataset_metadata_inputs
+                        make_dataset_metadata_accordion_item(
+                            "Obligatorisk",
+                            [
+                                m
+                                for m in DISPLAY_DATASET.values()
+                                if m.obligatory and m.editable
                             ],
                         ),
-                        dbc.AccordionItem(
-                            title="Valgfritt",
-                            children=[
-                                dbc.Row(
-                                    [
-                                        dbc.Col(html.Label(input["name"])),
-                                        dbc.Col(input["input_component"], width=5),
-                                        dbc.Col(width=4),
-                                    ]
-                                )
-                                for input in optional_dataset_metadata_inputs
+                        make_dataset_metadata_accordion_item(
+                            "Valgfritt",
+                            [
+                                m
+                                for m in DISPLAY_DATASET.values()
+                                if not m.obligatory and m.editable
                             ],
                         ),
-                        dbc.AccordionItem(
-                            title="Maskingenerert",
-                            children=[
-                                dbc.Row(
-                                    [
-                                        dbc.Col(html.Label(input["name"])),
-                                        dbc.Col(input["input_component"], width=5),
-                                        dbc.Col(width=4),
-                                    ]
-                                )
-                                for input in machine_generated_dataset_metadata_inputs
-                            ],
+                        make_dataset_metadata_accordion_item(
+                            "Maskingenerert",
+                            [m for m in DISPLAY_DATASET.values() if not m.editable],
                         ),
                     ],
                 ),
