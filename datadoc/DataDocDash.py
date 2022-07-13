@@ -43,7 +43,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                             i.component(
                                 placeholder=i.description,
                                 disabled=not i.editable,
-                                value=meta.dict()[i.identifier],
+                                value=i.value_getter(meta, i.identifier),
                                 id={
                                     "type": DATASET_METADATA_INPUT,
                                     "id": i.identifier,

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, List, Optional
@@ -113,7 +115,3 @@ DISPLAY_VARIABLES = {
         description="Ytterligere presiseringer av variabeldefinisjon",
     ),
 }
-
-OBLIGATORY_VARIABLES_METADATA = [
-    m.identifier for m in DISPLAY_VARIABLES.values() if m.obligatory
-]

@@ -1,7 +1,9 @@
-from collections import defaultdict
+from __future__ import annotations
+
 from dataclasses import dataclass
+from pydantic import BaseModel
 from enum import Enum
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Callable, Dict, List, Optional, Type
 from dash import dcc
 from dash.development.base_component import Component
 from datadoc.Enums import (
@@ -11,6 +13,7 @@ from datadoc.Enums import (
     TemporalityType,
     UnitType,
 )
+from datadoc import globals
 
 
 class DatasetIdentifiers(str, Enum):
@@ -49,6 +52,17 @@ DROPDOWN_KWARGS = {
 }
 
 
+def get_standard_metadata(metadata: BaseModel, identifier: str) -> Any:
+    return metadata.dict()[identifier]
+
+
+def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> Any:
+    value = getattr(metadata, identifier)
+    if value is None:
+        return value
+    return getattr(value, globals.CURRENT_METADATA_LANGUAGE)
+
+
 @dataclass
 class DisplayDatasetMetadata:
     identifier: str
@@ -57,9 +71,11 @@ class DisplayDatasetMetadata:
     extra_kwargs: Dict[str, Any]
     component: Type[Component] = dcc.Input
     options: Optional[Dict[str, List[Dict[str, str]]]] = None
+    multiple_language_support: bool = False
     obligatory: bool = False
     presentation: Optional[str] = "input"
     editable: bool = True
+    value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
 
 
 DISPLAY_DATASET = {
@@ -105,6 +121,7 @@ DISPLAY_DATASET = {
         description="Datasettnavn",
         extra_kwargs=INPUT_KWARGS,
         obligatory=True,
+        multiple_language_support=True,
     ),
     DatasetIdentifiers.DATA_SOURCE: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.DATA_SOURCE.value,
@@ -223,6 +240,10 @@ DISPLAY_DATASET = {
     ),
 }
 
-OBLIGATORY_DATASET_METADATA = [
-    m.identifier for m in DISPLAY_DATASET.values() if m.obligatory
+for v in DISPLAY_DATASET.values():
+    if v.multiple_language_support:
+        v.value_getter = get_multi_language_metadata
+
+MULTIPLE_LANGUAGE_DATASET_METADATA = [
+    m.identifier for m in DISPLAY_DATASET.values() if m.multiple_language_support
 ]

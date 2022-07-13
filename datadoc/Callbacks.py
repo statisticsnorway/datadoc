@@ -1,6 +1,8 @@
 from typing import Any, Dict, List, Tuple
 
 from pydantic import ValidationError
+from datadoc.Model import LanguageStrings
+from datadoc.frontend.DisplayDataset import MULTIPLE_LANGUAGE_DATASET_METADATA
 
 import datadoc.globals as globals
 from datadoc.frontend.DisplayVariables import VariableIdentifiers
@@ -51,6 +53,19 @@ def accept_dataset_metadata_input(
     value: Any, metadata_identifier: str
 ) -> Tuple[bool, str]:
     try:
+        if (
+            metadata_identifier in MULTIPLE_LANGUAGE_DATASET_METADATA
+            and type(value) is str
+        ):
+            supplied_value = value
+            value = getattr(globals.metadata.meta.dataset, metadata_identifier)
+            if value is None:
+                value = LanguageStrings(
+                    **{globals.CURRENT_METADATA_LANGUAGE.value: supplied_value}
+                )
+            else:
+                setattr(value, globals.CURRENT_METADATA_LANGUAGE.value, supplied_value)
+
         # Update the value in the model
         setattr(
             globals.metadata.meta.dataset,

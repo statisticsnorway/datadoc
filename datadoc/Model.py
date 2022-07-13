@@ -1,11 +1,12 @@
+from __future__ import annotations
 from datetime import date, datetime
 from typing import Dict, List, Optional
-from pydantic import BaseModel, constr, conint
+from pydantic import BaseModel, constr, conint, root_validator
 
-from datadoc.frontend.DisplayDataset import OBLIGATORY_DATASET_METADATA
 from datadoc import Enums
-from datadoc.frontend.DisplayVariables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.utils import calculate_percentage
+import datadoc.frontend.DisplayDataset as DisplayDataset
+import datadoc.frontend.DisplayVariables as DisplayVariables
 
 MODEL_VERSION = "0.1.0"
 
@@ -23,6 +24,12 @@ class DataDocBaseModel(BaseModel):
         use_enum_values = True
 
 
+class LanguageStrings(DataDocBaseModel):
+    en: str = ""
+    nn: str = ""
+    nb: str = ""
+
+
 class DataDocDataSet(DataDocBaseModel):
     """DataDoc data set. See documentation https://statistics-norway.atlassian.net/l/c/NgjE7yj1"""
 
@@ -32,7 +39,7 @@ class DataDocDataSet(DataDocBaseModel):
     assessment: Optional[Enums.Assessment]
     dataset_status: Optional[Enums.DatasetStatus] = Enums.DatasetStatus.DRAFT
     dataset_state: Optional[Enums.DatasetState]
-    name: Optional[str]
+    name: Optional[LanguageStrings]
     data_source: Optional[str]
     population_description: Optional[str]
     version: Optional[str]
@@ -75,6 +82,14 @@ class DataDocVariable(DataDocBaseModel):
     contains_data_from: Optional[date]
     contains_data_until: Optional[date]
 
+
+OBLIGATORY_DATASET_METADATA = [
+    m.identifier for m in DisplayDataset.DISPLAY_DATASET.values() if m.obligatory
+]
+
+OBLIGATORY_VARIABLES_METADATA = [
+    m.identifier for m in DisplayVariables.DISPLAY_VARIABLES.values() if m.obligatory
+]
 
 # These don't vary at runtime so we calculate them as constants here
 NUM_OBLIGATORY_DATASET_FIELDS = len(

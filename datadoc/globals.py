@@ -1,4 +1,5 @@
 from datadoc.DataDocMetadata import DataDocMetadata
+from datadoc.Enums import SupportedLanguages
 
 # DANGER: This global is safe when Datadoc is run as designed, with
 # an individual instance per user run within a Jupyter Notebook.
@@ -9,3 +10,5 @@ from datadoc.DataDocMetadata import DataDocMetadata
 
 # Global metadata container
 metadata: DataDocMetadata
+
+CURRENT_METADATA_LANGUAGE: SupportedLanguages = SupportedLanguages.NORSK_BOKMÅL

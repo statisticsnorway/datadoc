@@ -78,3 +78,10 @@ class VariableRole(str, Enum):
     START_TIME = "START_TIME"
     STOP_TIME = "STOP_TIME"
     ATTRIBUTE = "ATTRIBUTE"
+
+
+class SupportedLanguages(str, Enum):
+    "Reference: https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry"
+    NORSK_BOKMÅL = "nb"
+    NORSK_NYNORSK = "nn"
+    ENGLISH = "en"
