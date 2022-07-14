@@ -64,7 +64,7 @@ class DataDocVariable(DataDocBaseModel):
         constr(min_length=1, max_length=63, regex=ALPHANUMERIC_HYPHEN_UNDERSCORE)
     ]
     name: Optional[str]
-    datatype: Optional[Enums.Datatype]
+    data_type: Optional[Enums.Datatype]
     variable_role: Optional[Enums.VariableRole]
     definition_uri: Optional[constr(min_length=1, max_length=63, regex=URL_FORMAT)]
     direct_person_identifying: Optional[bool]

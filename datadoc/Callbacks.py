@@ -121,3 +121,11 @@ def change_language(language: SupportedLanguages) -> List[Any]:
         m.value_getter(globals.metadata.meta.dataset, m.identifier)
         for m in displayed_dataset_metadata
     ]
+
+
+def update_variable_table_language(
+    data: List[Dict],
+    language: SupportedLanguages,
+) -> Tuple[List[Dict], bool, str]:
+    print(f"Updated variable table language: {language.name}")
+    return data, False, ""

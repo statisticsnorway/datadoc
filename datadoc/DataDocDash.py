@@ -5,12 +5,14 @@ from typing import Any, Dict, List, Tuple, Type
 import dash_bootstrap_components as dbc
 from dash import ALL, Dash, Input, Output, State, ctx, dash_table, dcc, html
 from datadoc.Enums import SupportedLanguages
+from datadoc.Model import LanguageStrings
 
 import datadoc.globals as globals
 from datadoc.Callbacks import (
     accept_dataset_metadata_input,
     accept_variable_metadata_input,
     change_language,
+    update_variable_table_language,
 )
 from datadoc.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.DisplayVariables import DISPLAY_VARIABLES
@@ -369,12 +371,16 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
         Output("variables-validation-explanation", "children"),
         Input("variables-table", "data"),
         Input("variables-table", "data_previous"),
+        Input("language-dropdown", "value"),
         prevent_initial_call=True,
     )
     def callback_accept_variable_metadata_input(
-        data: List[Dict], data_previous: List[Dict]
+        data: List[Dict], data_previous: List[Dict], language: str
     ) -> Tuple[List[Dict], bool, str]:
-        return accept_variable_metadata_input(data, data_previous)
+        if ctx.triggered_id == "language-dropdown":
+            return update_variable_table_language(data, SupportedLanguages(language))
+        else:
+            return accept_variable_metadata_input(data, data_previous)
 
     return app
 

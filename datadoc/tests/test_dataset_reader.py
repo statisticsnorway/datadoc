@@ -22,14 +22,14 @@ def test_use_abstract_class_directly():
 
 def test_get_fields_parquet():
     expected_fields = [
-        DataDocVariable(short_name="pers_id", datatype=Datatype.STRING),
-        DataDocVariable(short_name="tidspunkt", datatype=Datatype.DATETIME),
-        DataDocVariable(short_name="sivilstand", datatype=Datatype.STRING),
-        DataDocVariable(short_name="alm_inntekt", datatype=Datatype.INTEGER),
-        DataDocVariable(short_name="sykepenger", datatype=Datatype.INTEGER),
-        DataDocVariable(short_name="ber_bruttoformue", datatype=Datatype.INTEGER),
-        DataDocVariable(short_name="fullf_utdanning", datatype=Datatype.STRING),
-        DataDocVariable(short_name="hoveddiagnose", datatype=Datatype.STRING),
+        DataDocVariable(short_name="pers_id", data_type=Datatype.STRING),
+        DataDocVariable(short_name="tidspunkt", data_type=Datatype.DATETIME),
+        DataDocVariable(short_name="sivilstand", data_type=Datatype.STRING),
+        DataDocVariable(short_name="alm_inntekt", data_type=Datatype.INTEGER),
+        DataDocVariable(short_name="sykepenger", data_type=Datatype.INTEGER),
+        DataDocVariable(short_name="ber_bruttoformue", data_type=Datatype.INTEGER),
+        DataDocVariable(short_name="fullf_utdanning", data_type=Datatype.STRING),
+        DataDocVariable(short_name="hoveddiagnose", data_type=Datatype.STRING),
     ]
 
     reader = DatasetReader.for_file(TEST_PARQUET_FILEPATH)
@@ -40,9 +40,9 @@ def test_get_fields_parquet():
 
 def test_get_fields_sas7bdat():
     expected_fields = [
-        DataDocVariable(short_name="tekst", name="Tekst", datatype=Datatype.STRING),
-        DataDocVariable(short_name="tall", name="Tall", datatype=Datatype.FLOAT),
-        DataDocVariable(short_name="dato", name="Dato", datatype=Datatype.DATETIME),
+        DataDocVariable(short_name="tekst", name="Tekst", data_type=Datatype.STRING),
+        DataDocVariable(short_name="tall", name="Tall", data_type=Datatype.FLOAT),
+        DataDocVariable(short_name="dato", name="Dato", data_type=Datatype.DATETIME),
     ]
 
     reader = DatasetReader.for_file(TEST_SAS7BDAT_FILEPATH)

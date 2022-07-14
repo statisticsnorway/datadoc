@@ -113,7 +113,7 @@ class DatasetReaderParquet(DatasetReader):
             fields.append(
                 DataDocVariable(
                     short_name=data_field.name,
-                    datatype=self.transform_data_type(str(data_field.type)),
+                    data_type=self.transform_data_type(str(data_field.type)),
                 )
             )
         return fields
@@ -138,7 +138,7 @@ class DatasetReaderSas7bdat(DatasetReader):
                     short_name=sas_reader.columns[i].name,
                     name=sas_reader.columns[i].label,
                     # Access the python type for the value and transform it to a DataDoc Data type
-                    datatype=self.transform_data_type(type(v).__name__.lower()),
+                    data_type=self.transform_data_type(type(v).__name__.lower()),
                 )
             )
 
