@@ -127,3 +127,4 @@ class DataDocMetadata:
         """Write all currently known metadata to file"""
         json_str = json.dumps(self.meta.dict(), indent=4, sort_keys=False, default=str)
         self.metadata_document_full_path.write_text(json_str, encoding="utf-8")
+        print(f"Saved metadata document {self.metadata_document_full_path}")

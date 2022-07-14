@@ -1,10 +1,30 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from pydantic import ValidationError
 
 import datadoc.globals as globals
 from datadoc import Model
 from datadoc.frontend.DisplayDataset import MULTIPLE_LANGUAGE_DATASET_METADATA
 from datadoc.frontend.DisplayVariables import VariableIdentifiers
+
+
+def store_language_string(
+    metadata_model_object: "Model.DataDocBaseModel",
+    value: str,
+    metadata_identifier: str,
+) -> Optional[Model.LanguageStrings]:
+    # In this case we need to set the string to the correct language code
+    language_strings = getattr(metadata_model_object, metadata_identifier)
+    if language_strings is None:
+        # This means that no strings have been saved yet so we need to construct
+        # a new LanguageStrings object
+        language_strings = Model.LanguageStrings(
+            **{globals.CURRENT_METADATA_LANGUAGE.value: value}
+        )
+    else:
+        # In this case there's an existing object so we save this string
+        # to the current language
+        setattr(language_strings, globals.CURRENT_METADATA_LANGUAGE.value, value)
+    return language_strings
 
 
 def accept_variable_metadata_input(
@@ -56,14 +76,9 @@ def accept_dataset_metadata_input(
             metadata_identifier in MULTIPLE_LANGUAGE_DATASET_METADATA
             and type(value) is str
         ):
-            supplied_value = value
-            value = getattr(globals.metadata.meta.dataset, metadata_identifier)
-            if value is None:
-                value = Model.LanguageStrings(
-                    **{globals.CURRENT_METADATA_LANGUAGE.value: supplied_value}
-                )
-            else:
-                setattr(value, globals.CURRENT_METADATA_LANGUAGE.value, supplied_value)
+            value = store_language_string(
+                globals.metadata.meta.dataset, value, metadata_identifier
+            )
 
         # Update the value in the model
         setattr(

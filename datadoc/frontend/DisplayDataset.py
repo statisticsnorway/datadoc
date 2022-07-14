@@ -129,6 +129,7 @@ DISPLAY_DATASET = {
         description="Datakilde. Settes enten for datasettet eller variabelforekomst.",
         extra_kwargs=INPUT_KWARGS,
         obligatory=True,
+        multiple_language_support=True,
     ),
     DatasetIdentifiers.POPULATION_DESCRIPTION: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.POPULATION_DESCRIPTION.value,
@@ -136,6 +137,7 @@ DISPLAY_DATASET = {
         description="Populasjonen datasettet dekker. Populasjonsbeskrivelsen inkluderer enhetstype, geografisk dekningsområde og tidsperiode.",
         extra_kwargs=INPUT_KWARGS,
         obligatory=True,
+        multiple_language_support=True,
     ),
     DatasetIdentifiers.VERSION: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.VERSION.value,
@@ -168,6 +170,7 @@ DISPLAY_DATASET = {
         display_name="Beskrivelse",
         description="Beskrivelse av datasettet",
         extra_kwargs=INPUT_KWARGS,
+        multiple_language_support=True,
     ),
     DatasetIdentifiers.SUBJECT_FIELD: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.SUBJECT_FIELD.value,
@@ -175,12 +178,14 @@ DISPLAY_DATASET = {
         description="Primær statistikkområdet som datasettet inngår i",
         extra_kwargs=INPUT_KWARGS,
         obligatory=True,
+        multiple_language_support=True,
     ),
     DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION.value,
         display_name="Geografiskedekningsområde",
         description="Beskrivelse av datasettets geografiske dekningsområde. Målet er på sikt at dette skal hentes fra Klass, men fritekst vil også kunne brukes.",
         extra_kwargs=INPUT_KWARGS,
+        multiple_language_support=True,
     ),
     DatasetIdentifiers.ID: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.ID.value,
@@ -197,6 +202,7 @@ DISPLAY_DATASET = {
         extra_kwargs=INPUT_KWARGS,
         obligatory=True,
         editable=False,
+        multiple_language_support=True,
     ),
     DatasetIdentifiers.DATA_SOURCE_PATH: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.DATA_SOURCE_PATH.value,
