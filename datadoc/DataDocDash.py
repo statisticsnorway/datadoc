@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Tuple, Type
 
 import dash_bootstrap_components as dbc
 from dash import ALL, Dash, Input, Output, State, ctx, dash_table, dcc, html
+from datadoc.Enums import SupportedLanguages
 
 import datadoc.globals as globals
 from datadoc.Callbacks import (
@@ -12,7 +13,14 @@ from datadoc.Callbacks import (
 )
 from datadoc.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.DisplayVariables import DISPLAY_VARIABLES
-from datadoc.frontend.DisplayDataset import DISPLAY_DATASET, DisplayDatasetMetadata
+from datadoc.frontend.DisplayDataset import (
+    DISPLAY_DATASET,
+    NON_EDITABLE_DATASET_METADATA,
+    OBLIGATORY_EDITABLE_DATASET_METADATA,
+    OPTIONAL_DATASET_METADATA,
+    DatasetIdentifiers,
+    DisplayDatasetMetadata,
+)
 from datadoc.utils import running_in_notebook
 
 
@@ -122,23 +130,15 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                     children=[
                         make_dataset_metadata_accordion_item(
                             "Obligatorisk",
-                            [
-                                m
-                                for m in DISPLAY_DATASET.values()
-                                if m.obligatory and m.editable
-                            ],
+                            OBLIGATORY_EDITABLE_DATASET_METADATA,
                         ),
                         make_dataset_metadata_accordion_item(
                             "Valgfritt",
-                            [
-                                m
-                                for m in DISPLAY_DATASET.values()
-                                if not m.obligatory and m.editable
-                            ],
+                            OPTIONAL_DATASET_METADATA,
                         ),
                         make_dataset_metadata_accordion_item(
                             "Maskingenerert",
-                            [m for m in DISPLAY_DATASET.values() if not m.editable],
+                            NON_EDITABLE_DATASET_METADATA,
                         ),
                     ],
                 ),
@@ -229,11 +229,14 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                     ),
                     dbc.Col(
                         dcc.Dropdown(
+                            id="language-dropdown",
                             placeholder="Velg språk",
+                            value=globals.CURRENT_METADATA_LANGUAGE.value,
                             className="ssb-dropdown",
-                            options=["Norsk Bokmål", "Nynorsk", "English"],
-                            value="Norsk Bokmål",
-                            disabled=True,
+                            options=[
+                                {"label": i.name, "value": i.value}
+                                for i in SupportedLanguages
+                            ],
                         ),
                         align="end",
                         width="auto",
@@ -342,12 +345,34 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
             return False
 
     @app.callback(
+        Output(
+            {"type": DATASET_METADATA_INPUT, "id": ALL},
+            "value",
+        ),
+        Input("language-dropdown", "value"),
+        prevent_initial_call=True,
+    )
+    def callback_change_language(language):
+        globals.CURRENT_METADATA_LANGUAGE = SupportedLanguages(language)
+        print(f"Updated language: {globals.CURRENT_METADATA_LANGUAGE.name}")
+        displayed_dataset_metadata: List[DisplayDatasetMetadata] = (
+            OBLIGATORY_EDITABLE_DATASET_METADATA
+            + OPTIONAL_DATASET_METADATA
+            + NON_EDITABLE_DATASET_METADATA
+        )
+        return [
+            m.value_getter(globals.metadata.meta.dataset, m.identifier)
+            for m in displayed_dataset_metadata
+        ]
+
+    @app.callback(
         Output("dataset-validation-error", "is_open"),
         Output("dataset-validation-explanation", "children"),
         Input({"type": DATASET_METADATA_INPUT, "id": ALL}, "value"),
         prevent_initial_call=True,
     )
     def callback_accept_dataset_metadata_input(value: Any) -> Tuple[bool, str]:
+        print(value)
         # Get the ID of the input that changed. This MUST match the attribute name defined in DataDocDataSet
         return accept_dataset_metadata_input(
             ctx.triggered[0]["value"], ctx.triggered_id["id"]

@@ -253,3 +253,13 @@ for v in DISPLAY_DATASET.values():
 MULTIPLE_LANGUAGE_DATASET_METADATA = [
     m.identifier for m in DISPLAY_DATASET.values() if m.multiple_language_support
 ]
+
+OBLIGATORY_EDITABLE_DATASET_METADATA = [
+    m for m in DISPLAY_DATASET.values() if m.obligatory and m.editable
+]
+
+OPTIONAL_DATASET_METADATA = [
+    m for m in DISPLAY_DATASET.values() if not m.obligatory and m.editable
+]
+
+NON_EDITABLE_DATASET_METADATA = [m for m in DISPLAY_DATASET.values() if not m.editable]
