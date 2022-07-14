@@ -1,13 +1,10 @@
 from copy import deepcopy
 
-from datadoc.DataDocMetadata import DataDocMetadata
 from datadoc.Enums import DatasetState, VariableRole
 from datadoc.tests.utils import TEST_PARQUET_FILEPATH
-from datadoc.Callbacks import (
-    accept_dataset_metadata_input,
-    accept_variable_metadata_input,
-)
 import datadoc.globals as globals
+from datadoc.DataDocMetadata import DataDocMetadata
+from datadoc import Callbacks
 
 
 DATA_ORIGINAL = [
@@ -32,7 +29,7 @@ DATA_INVALID = [
 
 def test_accept_variable_metadata_input_no_change_in_data():
     globals.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
-    output = accept_variable_metadata_input(DATA_ORIGINAL, DATA_ORIGINAL)
+    output = Callbacks.accept_variable_metadata_input(DATA_ORIGINAL, DATA_ORIGINAL)
     assert output[0] == DATA_ORIGINAL
     assert output[1] is False
     assert output[2] == ""
@@ -40,7 +37,7 @@ def test_accept_variable_metadata_input_no_change_in_data():
 
 def test_accept_variable_metadata_input_new_data():
     globals.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
-    output = accept_variable_metadata_input(DATA_VALID, DATA_ORIGINAL)
+    output = Callbacks.accept_variable_metadata_input(DATA_VALID, DATA_ORIGINAL)
 
     assert (
         globals.metadata.variables_lookup["pers_id"].variable_role
@@ -54,7 +51,7 @@ def test_accept_variable_metadata_input_new_data():
 def test_accept_variable_metadata_input_incorrect_data_type():
     globals.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
     previous_metadata = deepcopy(globals.metadata.meta.variables)
-    output = accept_variable_metadata_input(DATA_INVALID, DATA_ORIGINAL)
+    output = Callbacks.accept_variable_metadata_input(DATA_INVALID, DATA_ORIGINAL)
 
     assert output[0] == DATA_ORIGINAL
     assert output[1] is True
@@ -64,7 +61,9 @@ def test_accept_variable_metadata_input_incorrect_data_type():
 
 def test_accept_dataset_metadata_input_new_data():
     globals.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
-    output = accept_dataset_metadata_input(DatasetState.INPUT_DATA, "dataset_state")
+    output = Callbacks.accept_dataset_metadata_input(
+        DatasetState.INPUT_DATA, "dataset_state"
+    )
     assert output[0] is False
     assert output[1] == ""
     assert globals.metadata.meta.dataset.dataset_state == DatasetState.INPUT_DATA
@@ -72,6 +71,6 @@ def test_accept_dataset_metadata_input_new_data():
 
 def test_accept_dataset_metadata_input_incorrect_data_type():
     globals.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
-    output = accept_dataset_metadata_input(3.1415, "dataset_state")
+    output = Callbacks.accept_dataset_metadata_input(3.1415, "dataset_state")
     assert output[0] is True
     assert "validation error for DataDocDataSet" in output[1]

@@ -1,5 +1,10 @@
-from datadoc.DataDocMetadata import DataDocMetadata
+from typing import TYPE_CHECKING
 from datadoc.Enums import SupportedLanguages
+
+if TYPE_CHECKING:
+    # This is only needed for a type hint so we put the import inside
+    # this check to avoid circular imports
+    from datadoc.DataDocMetadata import DataDocMetadata
 
 # DANGER: This global is safe when Datadoc is run as designed, with
 # an individual instance per user run within a Jupyter Notebook.
@@ -9,6 +14,6 @@ from datadoc.Enums import SupportedLanguages
 # See here: https://dash.plotly.com/sharing-data-between-callbacks
 
 # Global metadata container
-metadata: DataDocMetadata
+metadata: "DataDocMetadata"
 
 CURRENT_METADATA_LANGUAGE: SupportedLanguages = SupportedLanguages.NORSK_BOKMÅL

@@ -2,20 +2,14 @@ import datetime
 import json
 import os
 import pathlib
-from copy import deepcopy
 from typing import Dict, Optional
 
-from datadoc.DatasetReader import DatasetReader
-from datadoc.frontend.DisplayVariables import VariableIdentifiers
-from datadoc.Model import (
-    DataDocDataSet,
-    DataDocVariable,
-    MetadataDocument,
-)
 from datadoc.Enums import (
     AdministrativeStatus,
     DatasetState,
 )
+from datadoc.DatasetReader import DatasetReader
+from datadoc import Model
 
 
 class DataDocMetadata:
@@ -40,14 +34,14 @@ class DataDocMetadata:
             self.current_user = "default_user@ssb.no"
         self.current_datetime = str(datetime.datetime.now())
 
-        self.meta: MetadataDocument = MetadataDocument(
+        self.meta: "Model.MetadataDocument" = Model.MetadataDocument(
             percentage_complete=0,
             document_version=1,
-            dataset=DataDocDataSet(),
+            dataset=Model.DataDocDataSet(),
             variables=[],
         )
 
-        self.variables_lookup: Dict[str, DataDocVariable] = {}
+        self.variables_lookup: Dict[str, "Model.DataDocVariable"] = {}
 
         self.read_metadata_document()
 
@@ -93,8 +87,10 @@ class DataDocMetadata:
 
             variables_list = fresh_metadata.pop("variables", None)
 
-            self.meta.variables = [DataDocVariable(**v) for v in variables_list]
-            self.meta.dataset = DataDocDataSet(**fresh_metadata.pop("dataset", None))
+            self.meta.variables = [Model.DataDocVariable(**v) for v in variables_list]
+            self.meta.dataset = Model.DataDocDataSet(
+                **fresh_metadata.pop("dataset", None)
+            )
         else:
             self.generate_new_metadata_document()
 
@@ -103,7 +99,7 @@ class DataDocMetadata:
     def generate_new_metadata_document(self):
         self.ds_schema = DatasetReader.for_file(self.dataset)
 
-        self.meta.dataset = DataDocDataSet(
+        self.meta.dataset = Model.DataDocDataSet(
             short_name=self.dataset_stem,
             assessment=None,
             dataset_state=self.dataset_state,
