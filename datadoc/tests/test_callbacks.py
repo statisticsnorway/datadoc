@@ -1,6 +1,7 @@
 from copy import deepcopy
 
-from datadoc.Enums import DatasetState, VariableRole
+from datadoc.Enums import DatasetState, SupportedLanguages, VariableRole
+from datadoc.Model import LanguageStrings
 from datadoc.tests.utils import TEST_PARQUET_FILEPATH
 import datadoc.globals as globals
 from datadoc.DataDocMetadata import DataDocMetadata
@@ -74,3 +75,18 @@ def test_accept_dataset_metadata_input_incorrect_data_type():
     output = Callbacks.accept_dataset_metadata_input(3.1415, "dataset_state")
     assert output[0] is True
     assert "validation error for DataDocDataSet" in output[1]
+
+
+def test_change_language():
+    ENGLISH_NAME = "English Name"
+    BOKMÅL_NAME = "Bokmål Name"
+    globals.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
+    globals.metadata.meta.dataset.name = LanguageStrings(
+        en=ENGLISH_NAME, nb=BOKMÅL_NAME
+    )
+    output = Callbacks.change_language(SupportedLanguages.NORSK_BOKMÅL)
+    assert ENGLISH_NAME not in output
+    assert BOKMÅL_NAME in output
+    output = Callbacks.change_language(SupportedLanguages.ENGLISH)
+    assert ENGLISH_NAME in output
+    assert BOKMÅL_NAME not in output

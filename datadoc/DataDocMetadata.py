@@ -81,9 +81,7 @@ class DataDocMetadata:
         if self.metadata_document_full_path.exists():
             with open(self.metadata_document_full_path, "r", encoding="utf-8") as JSON:
                 fresh_metadata = json.load(JSON)
-            print(
-                "Opened existing metadata file " + str(self.metadata_document_full_path)
-            )
+            print(f"Opened existing metadata file {self.metadata_document_full_path}")
 
             variables_list = fresh_metadata.pop("variables", None)
 

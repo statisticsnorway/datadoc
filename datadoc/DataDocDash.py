@@ -10,15 +10,14 @@ import datadoc.globals as globals
 from datadoc.Callbacks import (
     accept_dataset_metadata_input,
     accept_variable_metadata_input,
+    change_language,
 )
 from datadoc.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.DisplayVariables import DISPLAY_VARIABLES
 from datadoc.frontend.DisplayDataset import (
-    DISPLAY_DATASET,
     NON_EDITABLE_DATASET_METADATA,
     OBLIGATORY_EDITABLE_DATASET_METADATA,
     OPTIONAL_DATASET_METADATA,
-    DatasetIdentifiers,
     DisplayDatasetMetadata,
 )
 from datadoc.utils import running_in_notebook
@@ -31,7 +30,6 @@ COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
 
     globals.metadata = DataDocMetadata(dataset_path)
-    meta = globals.metadata.meta.dataset
 
     app = dash_class(
         name="DataDoc", external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP]
@@ -51,7 +49,6 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                             i.component(
                                 placeholder=i.description,
                                 disabled=not i.editable,
-                                value=i.value_getter(meta, i.identifier),
                                 id={
                                     "type": DATASET_METADATA_INPUT,
                                     "id": i.identifier,
@@ -350,20 +347,9 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
             "value",
         ),
         Input("language-dropdown", "value"),
-        prevent_initial_call=True,
     )
-    def callback_change_language(language):
-        globals.CURRENT_METADATA_LANGUAGE = SupportedLanguages(language)
-        print(f"Updated language: {globals.CURRENT_METADATA_LANGUAGE.name}")
-        displayed_dataset_metadata: List[DisplayDatasetMetadata] = (
-            OBLIGATORY_EDITABLE_DATASET_METADATA
-            + OPTIONAL_DATASET_METADATA
-            + NON_EDITABLE_DATASET_METADATA
-        )
-        return [
-            m.value_getter(globals.metadata.meta.dataset, m.identifier)
-            for m in displayed_dataset_metadata
-        ]
+    def callback_change_language(language: str):
+        return change_language(SupportedLanguages(language))
 
     @app.callback(
         Output("dataset-validation-error", "is_open"),
@@ -372,7 +358,6 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
         prevent_initial_call=True,
     )
     def callback_accept_dataset_metadata_input(value: Any) -> Tuple[bool, str]:
-        print(value)
         # Get the ID of the input that changed. This MUST match the attribute name defined in DataDocDataSet
         return accept_dataset_metadata_input(
             ctx.triggered[0]["value"], ctx.triggered_id["id"]

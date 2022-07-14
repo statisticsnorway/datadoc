@@ -1,9 +1,16 @@
 from typing import Any, Dict, List, Optional, Tuple
 from pydantic import ValidationError
+from datadoc.Enums import SupportedLanguages
 
 import datadoc.globals as globals
 from datadoc import Model
-from datadoc.frontend.DisplayDataset import MULTIPLE_LANGUAGE_DATASET_METADATA
+from datadoc.frontend.DisplayDataset import (
+    MULTIPLE_LANGUAGE_DATASET_METADATA,
+    NON_EDITABLE_DATASET_METADATA,
+    OBLIGATORY_EDITABLE_DATASET_METADATA,
+    OPTIONAL_DATASET_METADATA,
+    DisplayDatasetMetadata,
+)
 from datadoc.frontend.DisplayVariables import VariableIdentifiers
 
 
@@ -96,3 +103,21 @@ def accept_dataset_metadata_input(
         print(f"Successfully updated {metadata_identifier} with {value}")
 
     return show_error, error_explanation
+
+
+def change_language(language: SupportedLanguages) -> List[Any]:
+    """Update the global language setting with the chosen language.
+    Return new values for ALL the dataset metadata inputs to allow
+    editing of strings in the chosen language"""
+
+    globals.CURRENT_METADATA_LANGUAGE = language
+    print(f"Updated language: {globals.CURRENT_METADATA_LANGUAGE.name}")
+    displayed_dataset_metadata: List[DisplayDatasetMetadata] = (
+        OBLIGATORY_EDITABLE_DATASET_METADATA
+        + OPTIONAL_DATASET_METADATA
+        + NON_EDITABLE_DATASET_METADATA
+    )
+    return [
+        m.value_getter(globals.metadata.meta.dataset, m.identifier)
+        for m in displayed_dataset_metadata
+    ]
