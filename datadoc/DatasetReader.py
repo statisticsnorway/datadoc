@@ -3,9 +3,10 @@ from abc import ABC, abstractmethod
 import pyarrow.parquet as pq
 from typing import List, Optional, TypeVar
 import pandas as pd
+from datadoc import state
 
 from datadoc.Enums import Datatype
-from datadoc.Model import DataDocVariable
+from datadoc.Model import DataDocVariable, LanguageStrings
 
 TDatasetReader = TypeVar("TDatasetReader", bound="DatasetReader")
 
@@ -136,7 +137,9 @@ class DatasetReaderSas7bdat(DatasetReader):
             fields.append(
                 DataDocVariable(
                     short_name=sas_reader.columns[i].name,
-                    name=sas_reader.columns[i].label,
+                    # Assume labels are defined in the default language (NORSK_BOKMÅL)
+                    # If this is not correct, the user may fix it via the UI
+                    name={state.CURRENT_METADATA_LANGUAGE: sas_reader.columns[i].label},
                     # Access the python type for the value and transform it to a DataDoc Data type
                     data_type=self.transform_data_type(type(v).__name__.lower()),
                 )

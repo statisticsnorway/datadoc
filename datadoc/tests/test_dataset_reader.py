@@ -1,8 +1,10 @@
 import json
 import random
+from pytest import raises
 
-from datadoc.Model import DataDocVariable
-from datadoc.Enums import Datatype
+from datadoc.Model import DataDocVariable, LanguageStrings
+from datadoc.Enums import Datatype, SupportedLanguages
+from datadoc import state
 from datadoc.DatasetReader import (
     KNOWN_BOOLEAN_TYPES,
     KNOWN_DATETIME_TYPES,
@@ -12,7 +14,6 @@ from datadoc.DatasetReader import (
     DatasetReader,
 )
 from .utils import TEST_PARQUET_FILEPATH, TEST_SAS7BDAT_FILEPATH
-from pytest import raises
 
 
 def test_use_abstract_class_directly():
@@ -39,10 +40,21 @@ def test_get_fields_parquet():
 
 
 def test_get_fields_sas7bdat():
+    state.CURRENT_METADATA_LANGUAGE = SupportedLanguages.NORSK_BOKMÅL
     expected_fields = [
-        DataDocVariable(short_name="tekst", name="Tekst", data_type=Datatype.STRING),
-        DataDocVariable(short_name="tall", name="Tall", data_type=Datatype.FLOAT),
-        DataDocVariable(short_name="dato", name="Dato", data_type=Datatype.DATETIME),
+        DataDocVariable(
+            short_name="tekst",
+            name=LanguageStrings(nb="Tekst"),
+            data_type=Datatype.STRING,
+        ),
+        DataDocVariable(
+            short_name="tall", name=LanguageStrings(nb="Tall"), data_type=Datatype.FLOAT
+        ),
+        DataDocVariable(
+            short_name="dato",
+            name=LanguageStrings(nb="Dato"),
+            data_type=Datatype.DATETIME,
+        ),
     ]
 
     reader = DatasetReader.for_file(TEST_SAS7BDAT_FILEPATH)
