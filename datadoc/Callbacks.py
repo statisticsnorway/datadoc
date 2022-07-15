@@ -61,6 +61,15 @@ def accept_variable_metadata_input(
 
     if update_diff:
         try:
+            if (
+                updated_column_id in MULTIPLE_LANGUAGE_DATASET_METADATA
+                and type(new_value) is str
+            ):
+                new_value = store_language_string(
+                    state.metadata.variables_lookup[updated_row_id],
+                    new_value,
+                    updated_column_id,
+                )
             # Write the value to the variables structure
             setattr(
                 state.metadata.variables_lookup[updated_row_id],
@@ -130,8 +139,13 @@ def update_variable_table_language(
     data: List[Dict],
     language: SupportedLanguages,
 ) -> Tuple[List[Dict], bool, str]:
+    state.CURRENT_METADATA_LANGUAGE = language
+    new_data = []
     for row in data:
-        for m in MULTIPLE_LANGUAGE_VARIABLES_METADATA:
-            row[m.identifier] = m.value_getter()
+        new_data.append(
+            state.metadata.variables_lookup[
+                row[VariableIdentifiers.SHORT_NAME.value]
+            ].get_display_values()
+        )
     print(f"Updated variable table language: {language.name}")
-    return data, False, ""
+    return new_data, False, ""

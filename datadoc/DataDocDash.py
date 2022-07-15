@@ -154,7 +154,10 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                     dash_table.DataTable(
                         id="variables-table",
                         # Populate fields with known values
-                        data=[v.dict() for v in state.metadata.meta.variables],
+                        data=[
+                            v.get_display_values()
+                            for v in state.metadata.meta.variables
+                        ],
                         # Define columns based on the information in DISPLAY_VARIABLES
                         columns=[
                             {

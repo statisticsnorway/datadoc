@@ -3,7 +3,7 @@ from datetime import date, datetime
 from typing import Dict, List, Optional
 from pydantic import BaseModel, constr, conint, root_validator
 
-from datadoc import Enums
+from datadoc import Enums, state
 from datadoc.utils import calculate_percentage
 import datadoc.frontend.DisplayDataset as DisplayDataset
 import datadoc.frontend.DisplayVariables as DisplayVariables
@@ -28,6 +28,9 @@ class LanguageStrings(DataDocBaseModel):
     en: str = ""
     nn: str = ""
     nb: str = ""
+
+    def get_string_for_current_language(self):
+        return self.dict()[state.CURRENT_METADATA_LANGUAGE.value]
 
 
 class DataDocDataSet(DataDocBaseModel):
@@ -81,6 +84,14 @@ class DataDocVariable(DataDocBaseModel):
     id: Optional[constr(regex=URL_FORMAT)]
     contains_data_from: Optional[date]
     contains_data_until: Optional[date]
+
+    def get_display_values(self) -> dict:
+        return_dict = {}
+        for field_name, value in self:
+            if isinstance(value, LanguageStrings):
+                value = value.get_string_for_current_language()
+            return_dict[field_name] = value
+        return return_dict
 
 
 OBLIGATORY_DATASET_METADATA = [
