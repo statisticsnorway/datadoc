@@ -11,7 +11,10 @@ from datadoc.frontend.DisplayDataset import (
     OPTIONAL_DATASET_METADATA,
     DisplayDatasetMetadata,
 )
-from datadoc.frontend.DisplayVariables import VariableIdentifiers
+from datadoc.frontend.DisplayVariables import (
+    MULTIPLE_LANGUAGE_VARIABLES_METADATA,
+    VariableIdentifiers,
+)
 
 
 def store_language_string(
@@ -127,5 +130,8 @@ def update_variable_table_language(
     data: List[Dict],
     language: SupportedLanguages,
 ) -> Tuple[List[Dict], bool, str]:
+    for row in data:
+        for m in MULTIPLE_LANGUAGE_VARIABLES_METADATA:
+            row[m.identifier] = m.value_getter()
     print(f"Updated variable table language: {language.name}")
     return data, False, ""

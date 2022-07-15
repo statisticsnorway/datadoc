@@ -33,5 +33,4 @@ def test_variables_metadata_definition_parity():
     assert [i.value for i in VariableIdentifiers] == list(
         DataDocVariable().dict().keys()
     )
-    # TODO: Add the remaining items to DISPLAY_VARIABLES
-    # assert [i for i in VariableIdentifiers] == list(DISPLAY_VARIABLES.keys())
+    assert [i for i in VariableIdentifiers] == list(DISPLAY_VARIABLES.keys())

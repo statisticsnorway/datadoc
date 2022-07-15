@@ -1,11 +1,5 @@
-from __future__ import annotations
-
-from dataclasses import dataclass
-from pydantic import BaseModel
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Type
 from dash import dcc
-from dash.development.base_component import Component
 from datadoc.Enums import (
     Assessment,
     DatasetState,
@@ -14,6 +8,12 @@ from datadoc.Enums import (
     UnitType,
 )
 from datadoc import globals
+from datadoc.frontend.DisplayBase import (
+    DisplayDatasetMetadata,
+    DROPDOWN_KWARGS,
+    NUMBER_KWARGS,
+    get_multi_language_metadata,
+)
 
 
 class DatasetIdentifiers(str, Enum):
@@ -41,50 +41,12 @@ class DatasetIdentifiers(str, Enum):
     METADATA_LAST_UPDATED_BY = "last_updated_by"
 
 
-INPUT_KWARGS = {
-    "debounce": True,
-    "style": {"width": "100%"},
-    "className": "ssb-input",
-}
-DROPDOWN_KWARGS = {
-    "style": {"width": "100%"},
-    "className": "ssb-dropdown",
-}
-
-
-def get_standard_metadata(metadata: BaseModel, identifier: str) -> Any:
-    return metadata.dict()[identifier]
-
-
-def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> Any:
-    value = getattr(metadata, identifier)
-    if value is None:
-        return value
-    return getattr(value, globals.CURRENT_METADATA_LANGUAGE)
-
-
-@dataclass
-class DisplayDatasetMetadata:
-    identifier: str
-    display_name: str
-    description: str
-    extra_kwargs: Dict[str, Any]
-    component: Type[Component] = dcc.Input
-    options: Optional[Dict[str, List[Dict[str, str]]]] = None
-    multiple_language_support: bool = False
-    obligatory: bool = False
-    presentation: Optional[str] = "input"
-    editable: bool = True
-    value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
-
-
 DISPLAY_DATASET = {
     DatasetIdentifiers.SHORT_NAME: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.SHORT_NAME.value,
         display_name="Kortnavn",
         description="Navn på (fysisk) datafil, datatabell eller datasett",
         component=dcc.Input,
-        extra_kwargs=INPUT_KWARGS,
         obligatory=True,
         editable=False,
     ),
@@ -119,7 +81,6 @@ DISPLAY_DATASET = {
         identifier=DatasetIdentifiers.NAME.value,
         display_name="Datasettnavn",
         description="Datasettnavn",
-        extra_kwargs=INPUT_KWARGS,
         obligatory=True,
         multiple_language_support=True,
     ),
@@ -127,7 +88,6 @@ DISPLAY_DATASET = {
         identifier=DatasetIdentifiers.DATA_SOURCE.value,
         display_name="Datakilde",
         description="Datakilde. Settes enten for datasettet eller variabelforekomst.",
-        extra_kwargs=INPUT_KWARGS,
         obligatory=True,
         multiple_language_support=True,
     ),
@@ -135,7 +95,6 @@ DISPLAY_DATASET = {
         identifier=DatasetIdentifiers.POPULATION_DESCRIPTION.value,
         display_name="Populasjonsbeskrivelsen",
         description="Populasjonen datasettet dekker. Populasjonsbeskrivelsen inkluderer enhetstype, geografisk dekningsområde og tidsperiode.",
-        extra_kwargs=INPUT_KWARGS,
         obligatory=True,
         multiple_language_support=True,
     ),
@@ -143,8 +102,7 @@ DISPLAY_DATASET = {
         identifier=DatasetIdentifiers.VERSION.value,
         display_name="Versjon",
         description="Versjon",
-        presentation="number",
-        extra_kwargs=INPUT_KWARGS,
+        extra_kwargs=NUMBER_KWARGS,
         obligatory=True,
     ),
     DatasetIdentifiers.UNIT_TYPE: DisplayDatasetMetadata(
@@ -169,14 +127,12 @@ DISPLAY_DATASET = {
         identifier=DatasetIdentifiers.DESCRIPTION.value,
         display_name="Beskrivelse",
         description="Beskrivelse av datasettet",
-        extra_kwargs=INPUT_KWARGS,
         multiple_language_support=True,
     ),
     DatasetIdentifiers.SUBJECT_FIELD: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.SUBJECT_FIELD.value,
         display_name="Statistikkområde",
         description="Primær statistikkområdet som datasettet inngår i",
-        extra_kwargs=INPUT_KWARGS,
         obligatory=True,
         multiple_language_support=True,
     ),
@@ -184,14 +140,12 @@ DISPLAY_DATASET = {
         identifier=DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION.value,
         display_name="Geografiskedekningsområde",
         description="Beskrivelse av datasettets geografiske dekningsområde. Målet er på sikt at dette skal hentes fra Klass, men fritekst vil også kunne brukes.",
-        extra_kwargs=INPUT_KWARGS,
         multiple_language_support=True,
     ),
     DatasetIdentifiers.ID: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.ID.value,
         display_name="Unik ID",
         description="Unik SSB-identifikator for datasettet (løpenummer)",
-        extra_kwargs=INPUT_KWARGS,
         obligatory=True,
         editable=False,
     ),
@@ -199,7 +153,6 @@ DISPLAY_DATASET = {
         identifier=DatasetIdentifiers.OWNER.value,
         display_name="Eier",
         description="Maskingenerert seksjonstilhørighet til den som oppretter metadata om datasettet, men kan korrigeres manuelt",
-        extra_kwargs=INPUT_KWARGS,
         obligatory=True,
         editable=False,
         multiple_language_support=True,
@@ -208,7 +161,6 @@ DISPLAY_DATASET = {
         identifier=DatasetIdentifiers.DATA_SOURCE_PATH.value,
         display_name="Datasettsti",
         description="Fysisk fil-sti (plassering) av datasett",
-        extra_kwargs=INPUT_KWARGS,
         obligatory=True,
         editable=False,
     ),
@@ -216,7 +168,6 @@ DISPLAY_DATASET = {
         identifier=DatasetIdentifiers.METADATA_CREATED_DATE.value,
         display_name="Dato opprettet",
         description="Opprettet dato for metadata om datasettet",
-        extra_kwargs=INPUT_KWARGS,
         obligatory=True,
         editable=False,
     ),
@@ -224,7 +175,6 @@ DISPLAY_DATASET = {
         identifier=DatasetIdentifiers.METADATA_CREATED_BY.value,
         display_name="Opprettet av",
         description="Opprettet av person. Kun til bruk i SSB.",
-        extra_kwargs=INPUT_KWARGS,
         obligatory=True,
         editable=False,
     ),
@@ -232,7 +182,6 @@ DISPLAY_DATASET = {
         identifier=DatasetIdentifiers.METADATA_LAST_UPDATED_DATE.value,
         display_name="Dato oppdatert",
         description="Sist oppdatert dato for metadata om datasettet",
-        extra_kwargs=INPUT_KWARGS,
         obligatory=True,
         editable=False,
     ),
@@ -240,7 +189,6 @@ DISPLAY_DATASET = {
         identifier=DatasetIdentifiers.METADATA_LAST_UPDATED_BY.value,
         display_name="Oppdatert av",
         description="Siste endring utført av person. Kun til bruk i SSB.",
-        extra_kwargs=INPUT_KWARGS,
         obligatory=True,
         editable=False,
     ),
