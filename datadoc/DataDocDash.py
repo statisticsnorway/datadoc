@@ -7,7 +7,7 @@ from dash import ALL, Dash, Input, Output, State, ctx, dash_table, dcc, html
 from datadoc.Enums import SupportedLanguages
 from datadoc.Model import LanguageStrings
 
-import datadoc.globals as globals
+import datadoc.state as state
 from datadoc.Callbacks import (
     accept_dataset_metadata_input,
     accept_variable_metadata_input,
@@ -31,7 +31,7 @@ COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
 def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
 
-    globals.metadata = DataDocMetadata(dataset_path)
+    state.metadata = DataDocMetadata(dataset_path)
 
     app = dash_class(
         name="DataDoc", external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP]
@@ -154,7 +154,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                     dash_table.DataTable(
                         id="variables-table",
                         # Populate fields with known values
-                        data=[v.dict() for v in globals.metadata.meta.variables],
+                        data=[v.dict() for v in state.metadata.meta.variables],
                         # Define columns based on the information in DISPLAY_VARIABLES
                         columns=[
                             {
@@ -230,7 +230,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                         dcc.Dropdown(
                             id="language-dropdown",
                             placeholder="Velg språk",
-                            value=globals.CURRENT_METADATA_LANGUAGE.value,
+                            value=state.CURRENT_METADATA_LANGUAGE.value,
                             className="ssb-dropdown",
                             options=[
                                 {"label": i.name, "value": i.value}
@@ -324,7 +324,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
         Input("variables-table", "data"),
     )
     def callback_update_progress(value, data) -> Tuple[int, str]:
-        completion = globals.metadata.meta.percent_complete
+        completion = state.metadata.meta.percent_complete
         return completion, f"{completion}%"
 
     @app.callback(
@@ -335,10 +335,10 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
     def callback_save_metadata_file(n_clicks):
         if n_clicks and n_clicks > 0:
             # Write the final completion percentage to the model
-            globals.metadata.meta.percentage_complete = (
-                globals.metadata.meta.percent_complete
+            state.metadata.meta.percentage_complete = (
+                state.metadata.meta.percent_complete
             )
-            globals.metadata.write_metadata_document()
+            state.metadata.write_metadata_document()
             return True
         else:
             return False

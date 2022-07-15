@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from pydantic import ValidationError
 from datadoc.Enums import SupportedLanguages
 
-import datadoc.globals as globals
+import datadoc.state as state
 from datadoc import Model
 from datadoc.frontend.DisplayDataset import (
     MULTIPLE_LANGUAGE_DATASET_METADATA,
@@ -28,12 +28,12 @@ def store_language_string(
         # This means that no strings have been saved yet so we need to construct
         # a new LanguageStrings object
         language_strings = Model.LanguageStrings(
-            **{globals.CURRENT_METADATA_LANGUAGE.value: value}
+            **{state.CURRENT_METADATA_LANGUAGE.value: value}
         )
     else:
         # In this case there's an existing object so we save this string
         # to the current language
-        setattr(language_strings, globals.CURRENT_METADATA_LANGUAGE.value, value)
+        setattr(language_strings, state.CURRENT_METADATA_LANGUAGE.value, value)
     return language_strings
 
 
@@ -63,7 +63,7 @@ def accept_variable_metadata_input(
         try:
             # Write the value to the variables structure
             setattr(
-                globals.metadata.variables_lookup[updated_row_id],
+                state.metadata.variables_lookup[updated_row_id],
                 updated_column_id,
                 new_value,
             )
@@ -87,12 +87,12 @@ def accept_dataset_metadata_input(
             and type(value) is str
         ):
             value = store_language_string(
-                globals.metadata.meta.dataset, value, metadata_identifier
+                state.metadata.meta.dataset, value, metadata_identifier
             )
 
         # Update the value in the model
         setattr(
-            globals.metadata.meta.dataset,
+            state.metadata.meta.dataset,
             metadata_identifier,
             value,
         )
@@ -113,15 +113,15 @@ def change_language(language: SupportedLanguages) -> List[Any]:
     Return new values for ALL the dataset metadata inputs to allow
     editing of strings in the chosen language"""
 
-    globals.CURRENT_METADATA_LANGUAGE = language
-    print(f"Updated language: {globals.CURRENT_METADATA_LANGUAGE.name}")
+    state.CURRENT_METADATA_LANGUAGE = language
+    print(f"Updated language: {state.CURRENT_METADATA_LANGUAGE.name}")
     displayed_dataset_metadata: List[DisplayDatasetMetadata] = (
         OBLIGATORY_EDITABLE_DATASET_METADATA
         + OPTIONAL_DATASET_METADATA
         + NON_EDITABLE_DATASET_METADATA
     )
     return [
-        m.value_getter(globals.metadata.meta.dataset, m.identifier)
+        m.value_getter(state.metadata.meta.dataset, m.identifier)
         for m in displayed_dataset_metadata
     ]
 

@@ -5,7 +5,7 @@ from dash import dcc
 from dash.development.base_component import Component
 
 from datadoc.Enums import SupportedLanguages
-from datadoc import globals
+from datadoc import state
 
 
 INPUT_KWARGS = {
@@ -36,7 +36,7 @@ def get_multi_language_metadata(
     value = getattr(metadata, identifier)
     if value is None:
         return value
-    return getattr(value, globals.CURRENT_METADATA_LANGUAGE)
+    return getattr(value, state.CURRENT_METADATA_LANGUAGE)
 
 
 @dataclass

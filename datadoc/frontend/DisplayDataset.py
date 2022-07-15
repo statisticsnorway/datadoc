@@ -7,7 +7,7 @@ from datadoc.Enums import (
     TemporalityType,
     UnitType,
 )
-from datadoc import globals
+from datadoc import state
 from datadoc.frontend.DisplayBase import (
     DisplayDatasetMetadata,
     DROPDOWN_KWARGS,
