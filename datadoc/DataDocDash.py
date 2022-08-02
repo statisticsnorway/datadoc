@@ -21,7 +21,7 @@ from datadoc.frontend.DisplayDataset import (
     OPTIONAL_DATASET_METADATA,
     DisplayDatasetMetadata,
 )
-from datadoc.utils import running_in_notebook
+from datadoc.utils import running_in_notebook, get_display_values
 
 
 DATASET_METADATA_INPUT = "dataset-metadata-input"
@@ -154,7 +154,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                         id="variables-table",
                         # Populate fields with known values
                         data=[
-                            v.get_display_values()
+                            get_display_values(v, state.current_metadata_language)
                             for v in state.metadata.meta.variables
                         ],
                         # Define columns based on the information in DISPLAY_VARIABLES
