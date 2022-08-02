@@ -4,12 +4,12 @@ import os
 import pathlib
 from typing import Dict, Optional
 
-from datadoc.Enums import (
+from datadoc_model.Enums import (
     AdministrativeStatus,
     DatasetState,
 )
 from datadoc.DatasetReader import DatasetReader
-from datadoc import Model
+from datadoc_model import Model
 
 
 class DataDocMetadata:

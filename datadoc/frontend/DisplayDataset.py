@@ -1,6 +1,6 @@
 from enum import Enum
 from dash import dcc
-from datadoc.Enums import (
+from datadoc_model.Enums import (
     Assessment,
     DatasetState,
     DatasetStatus,

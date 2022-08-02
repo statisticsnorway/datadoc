@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Tuple, Type
 
 import dash_bootstrap_components as dbc
 from dash import ALL, Dash, Input, Output, ctx, dash_table, dcc, html
-from datadoc.Enums import SupportedLanguages
+from datadoc_model.Enums import SupportedLanguages
 
 import datadoc.state as state
 from datadoc.Callbacks import (

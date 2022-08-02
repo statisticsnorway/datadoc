@@ -4,7 +4,7 @@ from pathlib import PurePath
 import shutil
 import pytest
 
-from datadoc.Enums import DatasetState
+from datadoc_model.Enums import DatasetState
 from datadoc import DataDocMetadata
 from .utils import (
     TEST_EXISTING_METADATA_FILE_NAME,

@@ -1,6 +1,6 @@
 from enum import Enum
 
-from datadoc.Enums import Datatype, TemporalityType, VariableRole
+from datadoc_model.Enums import Datatype, TemporalityType, VariableRole
 from datadoc.frontend.DisplayBase import DisplayVariablesMetadata
 
 

@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING
-from datadoc.Enums import SupportedLanguages
+from datadoc_model.Enums import SupportedLanguages
 
 if TYPE_CHECKING:
     # This is only needed for a type hint so we put the import inside

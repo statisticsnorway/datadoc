@@ -1,7 +1,7 @@
-from datadoc import Enums
+from datadoc_model import Enums
 from datadoc.frontend.DisplayDataset import DISPLAY_DATASET, DatasetIdentifiers
 from datadoc.frontend.DisplayVariables import DISPLAY_VARIABLES, VariableIdentifiers
-from datadoc.Model import (
+from datadoc_model.Model import (
     DataDocDataSet,
     DataDocVariable,
     MetadataDocument,

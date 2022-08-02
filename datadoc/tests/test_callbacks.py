@@ -1,7 +1,7 @@
 from copy import deepcopy
 
-from datadoc.Enums import DatasetState, SupportedLanguages, VariableRole
-from datadoc.Model import LanguageStrings
+from datadoc_model.Enums import DatasetState, SupportedLanguages, VariableRole
+from datadoc_model.Model import LanguageStrings
 from datadoc.tests.utils import TEST_PARQUET_FILEPATH
 import datadoc.state as state
 from datadoc.DataDocMetadata import DataDocMetadata

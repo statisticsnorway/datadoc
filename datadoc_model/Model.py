@@ -3,7 +3,8 @@ from datetime import date, datetime
 from typing import List, Optional
 from pydantic import BaseModel, constr, conint
 
-from datadoc import Enums, state
+from datadoc_model import Enums
+from datadoc import state
 from datadoc.utils import calculate_percentage
 import datadoc.frontend.DisplayDataset as DisplayDataset
 import datadoc.frontend.DisplayVariables as DisplayVariables

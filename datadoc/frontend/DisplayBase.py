@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from dash import dcc
 from dash.development.base_component import Component
 
-from datadoc.Enums import SupportedLanguages
+from datadoc_model.Enums import SupportedLanguages
 from datadoc import state
 
 
