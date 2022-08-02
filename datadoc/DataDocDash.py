@@ -231,7 +231,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                     dbc.Col(
                         dcc.Dropdown(
                             id="language-dropdown",
-                            placeholder="Velg språk",
+                            searchable=False,
                             value=state.current_metadata_language.value,
                             className="ssb-dropdown",
                             options=[
