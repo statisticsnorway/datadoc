@@ -1,7 +1,7 @@
 from __future__ import annotations
 from datetime import date, datetime
-from typing import Dict, List, Optional
-from pydantic import BaseModel, constr, conint, root_validator
+from typing import List, Optional
+from pydantic import BaseModel, constr, conint
 
 from datadoc import Enums, state
 from datadoc.utils import calculate_percentage
@@ -30,7 +30,7 @@ class LanguageStrings(DataDocBaseModel):
     nb: str = ""
 
     def get_string_for_current_language(self):
-        return self.dict()[state.CURRENT_METADATA_LANGUAGE.value]
+        return self.dict()[state.current_metadata_language.value]
 
 
 class DataDocDataSet(DataDocBaseModel):

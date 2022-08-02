@@ -82,9 +82,9 @@ def test_change_language():
     BOKMÅL_NAME = "Bokmål Name"
     state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
     state.metadata.meta.dataset.name = LanguageStrings(en=ENGLISH_NAME, nb=BOKMÅL_NAME)
-    output = Callbacks.change_language(SupportedLanguages.NORSK_BOKMÅL)
+    output = Callbacks.update_dataset_metadata_language(SupportedLanguages.NORSK_BOKMÅL)
     assert ENGLISH_NAME not in output
     assert BOKMÅL_NAME in output
-    output = Callbacks.change_language(SupportedLanguages.ENGLISH)
+    output = Callbacks.update_dataset_metadata_language(SupportedLanguages.ENGLISH)
     assert ENGLISH_NAME in output
     assert BOKMÅL_NAME not in output

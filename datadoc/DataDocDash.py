@@ -3,15 +3,14 @@ import re
 from typing import Any, Dict, List, Tuple, Type
 
 import dash_bootstrap_components as dbc
-from dash import ALL, Dash, Input, Output, State, ctx, dash_table, dcc, html
+from dash import ALL, Dash, Input, Output, ctx, dash_table, dcc, html
 from datadoc.Enums import SupportedLanguages
-from datadoc.Model import LanguageStrings
 
 import datadoc.state as state
 from datadoc.Callbacks import (
     accept_dataset_metadata_input,
     accept_variable_metadata_input,
-    change_language,
+    update_dataset_metadata_language,
     update_variable_table_language,
 )
 from datadoc.DataDocMetadata import DataDocMetadata
@@ -233,7 +232,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                         dcc.Dropdown(
                             id="language-dropdown",
                             placeholder="Velg språk",
-                            value=state.CURRENT_METADATA_LANGUAGE.value,
+                            value=state.current_metadata_language.value,
                             className="ssb-dropdown",
                             options=[
                                 {"label": i.name, "value": i.value}
@@ -354,7 +353,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
         Input("language-dropdown", "value"),
     )
     def callback_change_language(language: str):
-        return change_language(SupportedLanguages(language))
+        return update_dataset_metadata_language(SupportedLanguages(language))
 
     @app.callback(
         Output("dataset-validation-error", "is_open"),
@@ -377,7 +376,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
         Input("language-dropdown", "value"),
         prevent_initial_call=True,
     )
-    def callback_accept_variable_metadata_input(
+    def callback_variable_table(
         data: List[Dict], data_previous: List[Dict], language: str
     ) -> Tuple[List[Dict], bool, str]:
         if ctx.triggered_id == "language-dropdown":

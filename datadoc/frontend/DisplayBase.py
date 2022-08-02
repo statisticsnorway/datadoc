@@ -36,7 +36,7 @@ def get_multi_language_metadata(
     value = getattr(metadata, identifier)
     if value is None:
         return value
-    return getattr(value, state.CURRENT_METADATA_LANGUAGE)
+    return getattr(value, state.current_metadata_language)
 
 
 @dataclass

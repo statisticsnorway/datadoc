@@ -139,7 +139,7 @@ class DatasetReaderSas7bdat(DatasetReader):
                     short_name=sas_reader.columns[i].name,
                     # Assume labels are defined in the default language (NORSK_BOKMÅL)
                     # If this is not correct, the user may fix it via the UI
-                    name={state.CURRENT_METADATA_LANGUAGE: sas_reader.columns[i].label},
+                    name={state.current_metadata_language: sas_reader.columns[i].label},
                     # Access the python type for the value and transform it to a DataDoc Data type
                     data_type=self.transform_data_type(type(v).__name__.lower()),
                 )

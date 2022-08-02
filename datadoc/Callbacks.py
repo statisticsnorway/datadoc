@@ -28,12 +28,12 @@ def store_language_string(
         # This means that no strings have been saved yet so we need to construct
         # a new LanguageStrings object
         language_strings = Model.LanguageStrings(
-            **{state.CURRENT_METADATA_LANGUAGE.value: value}
+            **{state.current_metadata_language.value: value}
         )
     else:
         # In this case there's an existing object so we save this string
         # to the current language
-        setattr(language_strings, state.CURRENT_METADATA_LANGUAGE.value, value)
+        setattr(language_strings, state.current_metadata_language.value, value)
     return language_strings
 
 
@@ -117,18 +117,20 @@ def accept_dataset_metadata_input(
     return show_error, error_explanation
 
 
-def change_language(language: SupportedLanguages) -> List[Any]:
+def update_dataset_metadata_language(language: SupportedLanguages) -> List[Any]:
     """Update the global language setting with the chosen language.
     Return new values for ALL the dataset metadata inputs to allow
     editing of strings in the chosen language"""
 
-    state.CURRENT_METADATA_LANGUAGE = language
-    print(f"Updated language: {state.CURRENT_METADATA_LANGUAGE.name}")
+    state.current_metadata_language = language
+    # The order of this list MUST match the order of display components, as defined
+    # in dataset_variables in DataDocDash.py
     displayed_dataset_metadata: List[DisplayDatasetMetadata] = (
         OBLIGATORY_EDITABLE_DATASET_METADATA
         + OPTIONAL_DATASET_METADATA
         + NON_EDITABLE_DATASET_METADATA
     )
+    print(f"Updated language: {state.current_metadata_language.name}")
     return [
         m.value_getter(state.metadata.meta.dataset, m.identifier)
         for m in displayed_dataset_metadata
@@ -139,7 +141,7 @@ def update_variable_table_language(
     data: List[Dict],
     language: SupportedLanguages,
 ) -> Tuple[List[Dict], bool, str]:
-    state.CURRENT_METADATA_LANGUAGE = language
+    state.current_metadata_language = language
     new_data = []
     for row in data:
         new_data.append(

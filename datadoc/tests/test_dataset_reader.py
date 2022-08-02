@@ -40,7 +40,7 @@ def test_get_fields_parquet():
 
 
 def test_get_fields_sas7bdat():
-    state.CURRENT_METADATA_LANGUAGE = SupportedLanguages.NORSK_BOKMÅL
+    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     expected_fields = [
         DataDocVariable(
             short_name="tekst",
