@@ -1,9 +1,10 @@
 from typing import Any, Dict, List, Optional, Tuple
 from pydantic import ValidationError
 from datadoc_model.Enums import SupportedLanguages
+from datadoc_model import Model
 
 import datadoc.state as state
-from datadoc_model import Model
+from datadoc.utils import get_display_values
 from datadoc.frontend.DisplayDataset import (
     MULTIPLE_LANGUAGE_DATASET_METADATA,
     NON_EDITABLE_DATASET_METADATA,
@@ -145,9 +146,12 @@ def update_variable_table_language(
     new_data = []
     for row in data:
         new_data.append(
-            state.metadata.variables_lookup[
-                row[VariableIdentifiers.SHORT_NAME.value]
-            ].get_display_values()
+            get_display_values(
+                state.metadata.variables_lookup[
+                    row[VariableIdentifiers.SHORT_NAME.value]
+                ],
+                state.current_metadata_language,
+            )
         )
     print(f"Updated variable table language: {language.name}")
     return new_data, False, ""
