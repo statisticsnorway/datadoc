@@ -5,9 +5,6 @@ from pydantic import BaseModel, constr, conint
 
 from datadoc_model import Enums
 from datadoc import state
-from datadoc.utils import calculate_percentage
-import datadoc.frontend.DisplayDataset as DisplayDataset
-import datadoc.frontend.DisplayVariables as DisplayVariables
 
 MODEL_VERSION = "0.1.0"
 
@@ -95,23 +92,6 @@ class DataDocVariable(DataDocBaseModel):
         return return_dict
 
 
-OBLIGATORY_DATASET_METADATA = [
-    m.identifier for m in DisplayDataset.DISPLAY_DATASET.values() if m.obligatory
-]
-
-OBLIGATORY_VARIABLES_METADATA = [
-    m.identifier for m in DisplayVariables.DISPLAY_VARIABLES.values() if m.obligatory
-]
-
-# These don't vary at runtime so we calculate them as constants here
-NUM_OBLIGATORY_DATASET_FIELDS = len(
-    [k for k in DataDocDataSet().dict().keys() if k in OBLIGATORY_DATASET_METADATA]
-)
-NUM_OBLIGATORY_VARIABLES_FIELDS = len(
-    [k for k in DataDocVariable().dict().keys() if k in OBLIGATORY_VARIABLES_METADATA]
-)
-
-
 class MetadataDocument(DataDocBaseModel):
     """Represents the data structure on file. Includes the dataset metadata from the user as
     well as meta-metadata like the percentage of completed metadata fields and the document version"""
@@ -120,32 +100,3 @@ class MetadataDocument(DataDocBaseModel):
     document_version: str = MODEL_VERSION
     dataset: DataDocDataSet
     variables: List[DataDocVariable]
-
-    @property
-    def percent_complete(self) -> int:
-        """The percentage of obligatory metadata completed.
-
-        A metadata field is counted as complete when any non-None value is
-        assigned. Used for a live progress bar in the UI, as well as being
-        saved in the datadoc as a simple quality indicator."""
-
-        num_all_fields = NUM_OBLIGATORY_DATASET_FIELDS
-        num_set_fields = len(
-            [
-                k
-                for k, v in self.dataset.dict().items()
-                if k in OBLIGATORY_DATASET_METADATA and v is not None
-            ]
-        )
-
-        for variable in self.variables:
-            num_all_fields += NUM_OBLIGATORY_VARIABLES_FIELDS
-            num_set_fields += len(
-                [
-                    k
-                    for k, v in variable.dict().items()
-                    if k in OBLIGATORY_VARIABLES_METADATA and v is not None
-                ]
-            )
-
-        return calculate_percentage(num_set_fields, num_all_fields)
