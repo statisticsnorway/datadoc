@@ -1,9 +1,9 @@
 from typing import Any, Dict, List, Optional, Tuple
 from pydantic import ValidationError
-from datadoc_model.Enums import SupportedLanguages
 from datadoc_model import Model
 
 import datadoc.state as state
+from datadoc.Enums import SupportedLanguages
 from datadoc.utils import get_display_values
 from datadoc.frontend.DisplayDataset import (
     MULTIPLE_LANGUAGE_DATASET_METADATA,

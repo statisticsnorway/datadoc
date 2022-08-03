@@ -1,6 +1,5 @@
-from typing import List
 from datadoc_model import Model
-from datadoc_model.Enums import SupportedLanguages
+from datadoc.Enums import SupportedLanguages
 
 
 def running_in_notebook() -> bool:
