@@ -18,7 +18,7 @@ from datadoc.frontend.DisplayVariables import (
 )
 
 
-def store_language_string(
+def find_existing_language_string(
     metadata_model_object: "Model.DataDocBaseModel",
     value: str,
     metadata_identifier: str,
@@ -66,7 +66,7 @@ def accept_variable_metadata_input(
                 updated_column_id in MULTIPLE_LANGUAGE_DATASET_METADATA
                 and type(new_value) is str
             ):
-                new_value = store_language_string(
+                new_value = find_existing_language_string(
                     state.metadata.variables_lookup[updated_row_id],
                     new_value,
                     updated_column_id,
@@ -96,7 +96,7 @@ def accept_dataset_metadata_input(
             metadata_identifier in MULTIPLE_LANGUAGE_DATASET_METADATA
             and type(value) is str
         ):
-            value = store_language_string(
+            value = find_existing_language_string(
                 state.metadata.meta.dataset, value, metadata_identifier
             )
 

@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 from datadoc_model.Enums import DatasetState, VariableRole
-from datadoc_model.Model import LanguageStrings
+from datadoc_model.Model import LanguageStrings, DataDocDataSet
 from datadoc.tests.utils import TEST_PARQUET_FILEPATH
 import datadoc.state as state
 from datadoc.DataDocMetadata import DataDocMetadata
@@ -27,6 +27,10 @@ DATA_INVALID = [
         "variable_role": 3.1415,
     },
 ]
+
+ENGLISH_NAME = "English Name"
+BOKMÅL_NAME = "Bokmål Name"
+NYNORSK_NAME = "Nynorsk Name"
 
 
 def test_accept_variable_metadata_input_no_change_in_data():
@@ -79,8 +83,6 @@ def test_accept_dataset_metadata_input_incorrect_data_type():
 
 
 def test_change_language():
-    ENGLISH_NAME = "English Name"
-    BOKMÅL_NAME = "Bokmål Name"
     state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
     state.metadata.meta.dataset.name = LanguageStrings(en=ENGLISH_NAME, nb=BOKMÅL_NAME)
     output = Callbacks.update_dataset_metadata_language(SupportedLanguages.NORSK_BOKMÅL)
@@ -89,3 +91,24 @@ def test_change_language():
     output = Callbacks.update_dataset_metadata_language(SupportedLanguages.ENGLISH)
     assert ENGLISH_NAME in output
     assert BOKMÅL_NAME not in output
+
+
+def test_find_existing_language_string_no_existing_strings():
+    dataset_metadata = DataDocDataSet()
+    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
+    language_strings = Callbacks.find_existing_language_string(
+        dataset_metadata, BOKMÅL_NAME, "name"
+    )
+    assert language_strings == LanguageStrings(nb=BOKMÅL_NAME)
+
+
+def test_find_existing_language_string_pre_existing_strings():
+    dataset_metadata = DataDocDataSet()
+    dataset_metadata.name = LanguageStrings(en=ENGLISH_NAME, nb=BOKMÅL_NAME)
+    state.current_metadata_language = SupportedLanguages.NORSK_NYNORSK
+    language_strings = Callbacks.find_existing_language_string(
+        dataset_metadata, NYNORSK_NAME, "name"
+    )
+    assert language_strings == LanguageStrings(
+        nb=BOKMÅL_NAME, en=ENGLISH_NAME, nn=NYNORSK_NAME
+    )
