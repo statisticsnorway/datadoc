@@ -1,7 +1,9 @@
 from copy import deepcopy
+import random
 
 from datadoc_model.Enums import DatasetState, VariableRole
-from datadoc_model.Model import LanguageStrings, DataDocDataSet
+from datadoc_model.Model import LanguageStrings, DataDocDataSet, DataDocVariable
+from datadoc.frontend.DisplayVariables import VariableIdentifiers
 from datadoc.tests.utils import TEST_PARQUET_FILEPATH
 import datadoc.state as state
 from datadoc.DataDocMetadata import DataDocMetadata
@@ -112,3 +114,21 @@ def test_find_existing_language_string_pre_existing_strings():
     assert language_strings == LanguageStrings(
         nb=BOKMÅL_NAME, en=ENGLISH_NAME, nn=NYNORSK_NAME
     )
+
+
+def test_update_variable_table_language():
+    state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
+    test_variable = random.choice([v.short_name for v in state.metadata.meta.variables])
+    state.metadata.variables_lookup[test_variable].name = LanguageStrings(
+        en=ENGLISH_NAME, nb=BOKMÅL_NAME
+    )
+    output = Callbacks.update_variable_table_language(
+        [v.dict() for v in state.metadata.meta.variables],
+        SupportedLanguages.NORSK_BOKMÅL,
+    )
+    name = [
+        d[VariableIdentifiers.NAME.value]
+        for d in output[0]
+        if d[VariableIdentifiers.SHORT_NAME.value] == test_variable
+    ][0]
+    assert name == BOKMÅL_NAME
