@@ -1,10 +1,10 @@
-import json
 import random
 from pytest import raises
 
-from datadoc.Model import DataDocVariable, LanguageStrings
-from datadoc.Enums import Datatype, SupportedLanguages
+from datadoc_model.Model import DataDocVariable, LanguageStrings
+from datadoc_model.Enums import Datatype
 from datadoc import state
+from datadoc.Enums import SupportedLanguages
 from datadoc.DatasetReader import (
     KNOWN_BOOLEAN_TYPES,
     KNOWN_DATETIME_TYPES,

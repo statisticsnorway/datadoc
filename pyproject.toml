@@ -3,6 +3,7 @@ name = "datadoc"
 version = "0.1.0"
 description = "A tool for documentation of datasets from within a Jupyter environment"
 authors = ["Bjørn Roar Joneid <bnj@ssb.no>", "Miles Winther <mmw@ssb.no>", "Jan Sander <jhs@ssb.no>"]
+license = "Apache-2.0"
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -13,6 +14,7 @@ dash = "^2.4.1"
 pydantic = "^1.9.1"
 dash-bootstrap-components = "^1.1.0"
 pandas = "^1.4.2"
+ssb-datadoc-model = "0.1.0"
 
 [tool.poetry.dev-dependencies]
 jupyter = "^1.0.0"

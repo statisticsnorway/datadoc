@@ -5,8 +5,8 @@ from typing import List, Optional, TypeVar
 import pandas as pd
 from datadoc import state
 
-from datadoc.Enums import Datatype
-from datadoc.Model import DataDocVariable, LanguageStrings
+from datadoc_model.Enums import Datatype
+from datadoc_model.Model import DataDocVariable, LanguageStrings
 
 TDatasetReader = TypeVar("TDatasetReader", bound="DatasetReader")
 

@@ -4,12 +4,40 @@ import os
 import pathlib
 from typing import Dict, Optional
 
-from datadoc.Enums import (
+from datadoc_model.Enums import (
     AdministrativeStatus,
     DatasetState,
 )
 from datadoc.DatasetReader import DatasetReader
-from datadoc import Model
+from datadoc_model import Model
+import datadoc.frontend.DisplayDataset as DisplayDataset
+import datadoc.frontend.DisplayVariables as DisplayVariables
+from datadoc.utils import calculate_percentage
+
+
+OBLIGATORY_DATASET_METADATA = [
+    m.identifier for m in DisplayDataset.DISPLAY_DATASET.values() if m.obligatory
+]
+
+OBLIGATORY_VARIABLES_METADATA = [
+    m.identifier for m in DisplayVariables.DISPLAY_VARIABLES.values() if m.obligatory
+]
+
+# These don't vary at runtime so we calculate them as constants here
+NUM_OBLIGATORY_DATASET_FIELDS = len(
+    [
+        k
+        for k in Model.DataDocDataSet().dict().keys()
+        if k in OBLIGATORY_DATASET_METADATA
+    ]
+)
+NUM_OBLIGATORY_VARIABLES_FIELDS = len(
+    [
+        k
+        for k in Model.DataDocVariable().dict().keys()
+        if k in OBLIGATORY_VARIABLES_METADATA
+    ]
+)
 
 
 class DataDocMetadata:
@@ -126,3 +154,32 @@ class DataDocMetadata:
         json_str = json.dumps(self.meta.dict(), indent=4, sort_keys=False, default=str)
         self.metadata_document_full_path.write_text(json_str, encoding="utf-8")
         print(f"Saved metadata document {self.metadata_document_full_path}")
+
+    @property
+    def percent_complete(self) -> int:
+        """The percentage of obligatory metadata completed.
+
+        A metadata field is counted as complete when any non-None value is
+        assigned. Used for a live progress bar in the UI, as well as being
+        saved in the datadoc as a simple quality indicator."""
+
+        num_all_fields = NUM_OBLIGATORY_DATASET_FIELDS
+        num_set_fields = len(
+            [
+                k
+                for k, v in self.meta.dataset.dict().items()
+                if k in OBLIGATORY_DATASET_METADATA and v is not None
+            ]
+        )
+
+        for variable in self.meta.variables:
+            num_all_fields += NUM_OBLIGATORY_VARIABLES_FIELDS
+            num_set_fields += len(
+                [
+                    k
+                    for k, v in variable.dict().items()
+                    if k in OBLIGATORY_VARIABLES_METADATA and v is not None
+                ]
+            )
+
+        return calculate_percentage(num_set_fields, num_all_fields)

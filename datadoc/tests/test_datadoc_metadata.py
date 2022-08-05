@@ -3,9 +3,11 @@ import os
 from pathlib import PurePath
 import shutil
 import pytest
+from datadoc_model import Enums
 
-from datadoc.Enums import DatasetState
+from datadoc_model.Enums import DatasetState
 from datadoc import DataDocMetadata
+from datadoc_model.Model import DataDocDataSet, DataDocVariable, MetadataDocument
 from .utils import (
     TEST_EXISTING_METADATA_FILE_NAME,
     TEST_EXISTING_METADATA_FILEPATH,
@@ -59,3 +61,19 @@ def existing_metadata_file():
 def test_existing_metadata_file(existing_metadata_file):
     metadata = DataDocMetadata.DataDocMetadata(TEST_PARQUET_FILEPATH)
     assert metadata.meta.dataset.name.en == "successfully_read_existing_file"
+
+
+def test_metadata_document_percent_complete():
+    dataset = DataDocDataSet(dataset_state=Enums.DatasetState.OUTPUT_DATA)
+    variable_1 = DataDocVariable(data_type=Enums.Datatype.BOOLEAN)
+    variable_2 = DataDocVariable(data_type=Enums.Datatype.INTEGER)
+    document = MetadataDocument(
+        percentage_complete=0,
+        document_version=1,
+        dataset=dataset,
+        variables=[variable_1, variable_2],
+    )
+    metadata = DataDocMetadata.DataDocMetadata(TEST_PARQUET_FILEPATH)
+    metadata.meta = document
+
+    assert metadata.percent_complete == 11

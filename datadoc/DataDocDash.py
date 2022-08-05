@@ -4,8 +4,8 @@ from typing import Any, Dict, List, Tuple, Type
 
 import dash_bootstrap_components as dbc
 from dash import ALL, Dash, Input, Output, ctx, dash_table, dcc, html
-from datadoc.Enums import SupportedLanguages
 
+from datadoc.Enums import SupportedLanguages
 import datadoc.state as state
 from datadoc.Callbacks import (
     accept_dataset_metadata_input,
@@ -21,7 +21,7 @@ from datadoc.frontend.DisplayDataset import (
     OPTIONAL_DATASET_METADATA,
     DisplayDatasetMetadata,
 )
-from datadoc.utils import running_in_notebook
+from datadoc.utils import running_in_notebook, get_display_values
 
 
 DATASET_METADATA_INPUT = "dataset-metadata-input"
@@ -154,7 +154,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                         id="variables-table",
                         # Populate fields with known values
                         data=[
-                            v.get_display_values()
+                            get_display_values(v, state.current_metadata_language)
                             for v in state.metadata.meta.variables
                         ],
                         # Define columns based on the information in DISPLAY_VARIABLES
@@ -326,7 +326,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
         Input("variables-table", "data"),
     )
     def callback_update_progress(value, data) -> Tuple[int, str]:
-        completion = state.metadata.meta.percent_complete
+        completion = state.metadata.percent_complete
         return completion, f"{completion}%"
 
     @app.callback(
@@ -337,9 +337,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
     def callback_save_metadata_file(n_clicks):
         if n_clicks and n_clicks > 0:
             # Write the final completion percentage to the model
-            state.metadata.meta.percentage_complete = (
-                state.metadata.meta.percent_complete
-            )
+            state.metadata.meta.percentage_complete = state.metadata.percent_complete
             state.metadata.write_metadata_document()
             return True
         else:
