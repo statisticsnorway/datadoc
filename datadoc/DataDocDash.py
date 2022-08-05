@@ -1,4 +1,5 @@
 import argparse
+import os
 import re
 from typing import Any, Dict, List, Tuple, Type
 
@@ -28,7 +29,7 @@ DATASET_METADATA_INPUT = "dataset-metadata-input"
 COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
 
-def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
+def build_app(dash_class: Type[Dash], dataset_path: str) -> Dash:
 
     state.metadata = DataDocMetadata(dataset_path)
 
@@ -198,7 +199,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
     header = dbc.CardBody(
         dbc.Row(
             children=[
-                html.Link(rel="stylesheet", href="/assets/bundle.css"),
+                # html.Link(rel="stylesheet", href="assets/bundle.css"),
                 html.H1("DataDoc", className="ssb-title", style={"color": "white"}),
             ],
         ),
@@ -385,7 +386,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
     return app
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset-path", help="Specify the path to a dataset")
     args = parser.parse_args()
@@ -396,10 +397,14 @@ if __name__ == "__main__":
     if running_in_notebook():
         from jupyter_dash import JupyterDash
 
-        app = main(JupyterDash, dataset)
+        app = build_app(JupyterDash, dataset)
         app.run_server(mode="inline")
     else:
         # Assume running in server mode is better (largely for development purposes)
         print("Starting in development mode")
-        app = main(Dash, dataset)
+        app = build_app(Dash, dataset)
         app.run_server(debug=True)
+
+
+if __name__ == "__main__":
+    main()
