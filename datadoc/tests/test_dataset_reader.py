@@ -1,8 +1,10 @@
 import json
 import random
+from pytest import raises
 
-from datadoc.Model import DataDocVariable
-from datadoc.Enums import Datatype
+from datadoc.Model import DataDocVariable, LanguageStrings
+from datadoc.Enums import Datatype, SupportedLanguages
+from datadoc import state
 from datadoc.DatasetReader import (
     KNOWN_BOOLEAN_TYPES,
     KNOWN_DATETIME_TYPES,
@@ -12,7 +14,6 @@ from datadoc.DatasetReader import (
     DatasetReader,
 )
 from .utils import TEST_PARQUET_FILEPATH, TEST_SAS7BDAT_FILEPATH
-from pytest import raises
 
 
 def test_use_abstract_class_directly():
@@ -22,14 +23,14 @@ def test_use_abstract_class_directly():
 
 def test_get_fields_parquet():
     expected_fields = [
-        DataDocVariable(short_name="pers_id", datatype=Datatype.STRING),
-        DataDocVariable(short_name="tidspunkt", datatype=Datatype.DATETIME),
-        DataDocVariable(short_name="sivilstand", datatype=Datatype.STRING),
-        DataDocVariable(short_name="alm_inntekt", datatype=Datatype.INTEGER),
-        DataDocVariable(short_name="sykepenger", datatype=Datatype.INTEGER),
-        DataDocVariable(short_name="ber_bruttoformue", datatype=Datatype.INTEGER),
-        DataDocVariable(short_name="fullf_utdanning", datatype=Datatype.STRING),
-        DataDocVariable(short_name="hoveddiagnose", datatype=Datatype.STRING),
+        DataDocVariable(short_name="pers_id", data_type=Datatype.STRING),
+        DataDocVariable(short_name="tidspunkt", data_type=Datatype.DATETIME),
+        DataDocVariable(short_name="sivilstand", data_type=Datatype.STRING),
+        DataDocVariable(short_name="alm_inntekt", data_type=Datatype.INTEGER),
+        DataDocVariable(short_name="sykepenger", data_type=Datatype.INTEGER),
+        DataDocVariable(short_name="ber_bruttoformue", data_type=Datatype.INTEGER),
+        DataDocVariable(short_name="fullf_utdanning", data_type=Datatype.STRING),
+        DataDocVariable(short_name="hoveddiagnose", data_type=Datatype.STRING),
     ]
 
     reader = DatasetReader.for_file(TEST_PARQUET_FILEPATH)
@@ -39,10 +40,21 @@ def test_get_fields_parquet():
 
 
 def test_get_fields_sas7bdat():
+    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     expected_fields = [
-        DataDocVariable(short_name="tekst", name="Tekst", datatype=Datatype.STRING),
-        DataDocVariable(short_name="tall", name="Tall", datatype=Datatype.FLOAT),
-        DataDocVariable(short_name="dato", name="Dato", datatype=Datatype.DATETIME),
+        DataDocVariable(
+            short_name="tekst",
+            name=LanguageStrings(nb="Tekst"),
+            data_type=Datatype.STRING,
+        ),
+        DataDocVariable(
+            short_name="tall", name=LanguageStrings(nb="Tall"), data_type=Datatype.FLOAT
+        ),
+        DataDocVariable(
+            short_name="dato",
+            name=LanguageStrings(nb="Dato"),
+            data_type=Datatype.DATETIME,
+        ),
     ]
 
     reader = DatasetReader.for_file(TEST_SAS7BDAT_FILEPATH)

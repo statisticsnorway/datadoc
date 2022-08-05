@@ -5,7 +5,7 @@ import shutil
 import pytest
 
 from datadoc.Enums import DatasetState
-from datadoc.DataDocMetadata import DataDocMetadata
+from datadoc import DataDocMetadata
 from .utils import (
     TEST_EXISTING_METADATA_FILE_NAME,
     TEST_EXISTING_METADATA_FILEPATH,
@@ -36,14 +36,14 @@ def make_paths():
 
 
 def test_get_dataset_state(make_paths):
-    metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
+    metadata = DataDocMetadata.DataDocMetadata(TEST_PARQUET_FILEPATH)
     for path, expected_result in make_paths:
         actual_state = metadata.get_dataset_state(path)
         assert actual_state == expected_result
 
 
 def test_get_dataset_state_no_parameter_supplied():
-    metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
+    metadata = DataDocMetadata.DataDocMetadata(TEST_PARQUET_FILEPATH)
     assert metadata.get_dataset_state() is None
 
 
@@ -57,5 +57,5 @@ def existing_metadata_file():
 
 
 def test_existing_metadata_file(existing_metadata_file):
-    metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
-    assert metadata.meta.dataset.name == "successfully_read_existing_file"
+    metadata = DataDocMetadata.DataDocMetadata(TEST_PARQUET_FILEPATH)
+    assert metadata.meta.dataset.name.en == "successfully_read_existing_file"

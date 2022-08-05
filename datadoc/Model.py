@@ -1,11 +1,12 @@
+from __future__ import annotations
 from datetime import date, datetime
-from typing import Dict, List, Optional
+from typing import List, Optional
 from pydantic import BaseModel, constr, conint
 
-from datadoc.frontend.DisplayDataset import OBLIGATORY_DATASET_METADATA
-from datadoc import Enums
-from datadoc.frontend.DisplayVariables import OBLIGATORY_VARIABLES_METADATA
+from datadoc import Enums, state
 from datadoc.utils import calculate_percentage
+import datadoc.frontend.DisplayDataset as DisplayDataset
+import datadoc.frontend.DisplayVariables as DisplayVariables
 
 MODEL_VERSION = "0.1.0"
 
@@ -23,6 +24,15 @@ class DataDocBaseModel(BaseModel):
         use_enum_values = True
 
 
+class LanguageStrings(DataDocBaseModel):
+    en: str = ""
+    nn: str = ""
+    nb: str = ""
+
+    def get_string_for_current_language(self):
+        return self.dict()[state.current_metadata_language.value]
+
+
 class DataDocDataSet(DataDocBaseModel):
     """DataDoc data set. See documentation https://statistics-norway.atlassian.net/l/c/NgjE7yj1"""
 
@@ -32,17 +42,17 @@ class DataDocDataSet(DataDocBaseModel):
     assessment: Optional[Enums.Assessment]
     dataset_status: Optional[Enums.DatasetStatus] = Enums.DatasetStatus.DRAFT
     dataset_state: Optional[Enums.DatasetState]
-    name: Optional[str]
-    data_source: Optional[str]
-    population_description: Optional[str]
+    name: Optional[LanguageStrings]
+    data_source: Optional[LanguageStrings]
+    population_description: Optional[LanguageStrings]
     version: Optional[str]
     unit_type: Optional[Enums.UnitType]
     temporality_type: Optional[Enums.TemporalityType]
-    description: Optional[str]
-    subject_field: Optional[str]
-    spatial_coverage_description: Optional[str]
+    description: Optional[LanguageStrings]
+    subject_field: Optional[LanguageStrings]
+    spatial_coverage_description: Optional[LanguageStrings]
     id: Optional[constr(regex=URL_FORMAT)]
-    owner: Optional[str]
+    owner: Optional[LanguageStrings]
     data_source_path: Optional[str]
     created_date: Optional[datetime]
     created_by: Optional[str]
@@ -56,25 +66,41 @@ class DataDocVariable(DataDocBaseModel):
     short_name: Optional[
         constr(min_length=1, max_length=63, regex=ALPHANUMERIC_HYPHEN_UNDERSCORE)
     ]
-    name: Optional[str]
-    datatype: Optional[Enums.Datatype]
+    name: Optional[LanguageStrings]
+    data_type: Optional[Enums.Datatype]
     variable_role: Optional[Enums.VariableRole]
     definition_uri: Optional[constr(min_length=1, max_length=63, regex=URL_FORMAT)]
     direct_person_identifying: Optional[bool]
-    data_source: Optional[str]
-    population_description: Optional[str]
-    comment: Optional[str]
+    data_source: Optional[LanguageStrings]
+    population_description: Optional[LanguageStrings]
+    comment: Optional[LanguageStrings]
     temporality_type: Optional[Enums.TemporalityType]
     # TODO: measurement_unit implemented as string. In the future this should be implemente as a class? See https://www.ssb.no/klass/klassifikasjoner/303/koder
-    measurement_unit: Optional[str]
+    measurement_unit: Optional[LanguageStrings]
     format: Optional[str]
     classification_uri: Optional[constr(min_length=1, max_length=63, regex=URL_FORMAT)]
     sentinel_value_uri: Optional[constr(min_length=1, max_length=63, regex=URL_FORMAT)]
-    invalid_value_description: Optional[str]
+    invalid_value_description: Optional[LanguageStrings]
     id: Optional[constr(regex=URL_FORMAT)]
     contains_data_from: Optional[date]
     contains_data_until: Optional[date]
 
+    def get_display_values(self) -> dict:
+        return_dict = {}
+        for field_name, value in self:
+            if isinstance(value, LanguageStrings):
+                value = value.get_string_for_current_language()
+            return_dict[field_name] = value
+        return return_dict
+
+
+OBLIGATORY_DATASET_METADATA = [
+    m.identifier for m in DisplayDataset.DISPLAY_DATASET.values() if m.obligatory
+]
+
+OBLIGATORY_VARIABLES_METADATA = [
+    m.identifier for m in DisplayVariables.DISPLAY_VARIABLES.values() if m.obligatory
+]
 
 # These don't vary at runtime so we calculate them as constants here
 NUM_OBLIGATORY_DATASET_FIELDS = len(

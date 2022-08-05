@@ -10,8 +10,8 @@ from datadoc.Model import (
 
 def test_metadata_document_percent_complete():
     dataset = DataDocDataSet(dataset_state=Enums.DatasetState.OUTPUT_DATA)
-    variable_1 = DataDocVariable(datatype=Enums.Datatype.BOOLEAN)
-    variable_2 = DataDocVariable(datatype=Enums.Datatype.INTEGER)
+    variable_1 = DataDocVariable(data_type=Enums.Datatype.BOOLEAN)
+    variable_2 = DataDocVariable(data_type=Enums.Datatype.INTEGER)
     document = MetadataDocument(
         percentage_complete=0,
         document_version=1,
@@ -19,7 +19,7 @@ def test_metadata_document_percent_complete():
         variables=[variable_1, variable_2],
     )
 
-    assert document.percent_complete == 12
+    assert document.percent_complete == 11
 
 
 def test_dataset_metadata_definition_parity():
@@ -33,5 +33,4 @@ def test_variables_metadata_definition_parity():
     assert [i.value for i in VariableIdentifiers] == list(
         DataDocVariable().dict().keys()
     )
-    # TODO: Add the remaining items to DISPLAY_VARIABLES
-    # assert [i for i in VariableIdentifiers] == list(DISPLAY_VARIABLES.keys())
+    assert [i for i in VariableIdentifiers] == list(DISPLAY_VARIABLES.keys())

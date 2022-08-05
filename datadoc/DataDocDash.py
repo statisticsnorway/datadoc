@@ -3,16 +3,24 @@ import re
 from typing import Any, Dict, List, Tuple, Type
 
 import dash_bootstrap_components as dbc
-from dash import ALL, Dash, Input, Output, State, ctx, dash_table, dcc, html
+from dash import ALL, Dash, Input, Output, ctx, dash_table, dcc, html
+from datadoc.Enums import SupportedLanguages
 
-import datadoc.globals as globals
+import datadoc.state as state
 from datadoc.Callbacks import (
     accept_dataset_metadata_input,
     accept_variable_metadata_input,
+    update_dataset_metadata_language,
+    update_variable_table_language,
 )
 from datadoc.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.DisplayVariables import DISPLAY_VARIABLES
-from datadoc.frontend.DisplayDataset import DISPLAY_DATASET, DisplayDatasetMetadata
+from datadoc.frontend.DisplayDataset import (
+    NON_EDITABLE_DATASET_METADATA,
+    OBLIGATORY_EDITABLE_DATASET_METADATA,
+    OPTIONAL_DATASET_METADATA,
+    DisplayDatasetMetadata,
+)
 from datadoc.utils import running_in_notebook
 
 
@@ -22,8 +30,7 @@ COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
 def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
 
-    globals.metadata = DataDocMetadata(dataset_path)
-    meta = globals.metadata.meta.dataset
+    state.metadata = DataDocMetadata(dataset_path)
 
     app = dash_class(
         name="DataDoc", external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP]
@@ -43,7 +50,6 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                             i.component(
                                 placeholder=i.description,
                                 disabled=not i.editable,
-                                value=meta.dict()[i.identifier],
                                 id={
                                     "type": DATASET_METADATA_INPUT,
                                     "id": i.identifier,
@@ -122,23 +128,15 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                     children=[
                         make_dataset_metadata_accordion_item(
                             "Obligatorisk",
-                            [
-                                m
-                                for m in DISPLAY_DATASET.values()
-                                if m.obligatory and m.editable
-                            ],
+                            OBLIGATORY_EDITABLE_DATASET_METADATA,
                         ),
                         make_dataset_metadata_accordion_item(
                             "Valgfritt",
-                            [
-                                m
-                                for m in DISPLAY_DATASET.values()
-                                if not m.obligatory and m.editable
-                            ],
+                            OPTIONAL_DATASET_METADATA,
                         ),
                         make_dataset_metadata_accordion_item(
                             "Maskingenerert",
-                            [m for m in DISPLAY_DATASET.values() if not m.editable],
+                            NON_EDITABLE_DATASET_METADATA,
                         ),
                     ],
                 ),
@@ -155,7 +153,10 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                     dash_table.DataTable(
                         id="variables-table",
                         # Populate fields with known values
-                        data=[v.dict() for v in globals.metadata.meta.variables],
+                        data=[
+                            v.get_display_values()
+                            for v in state.metadata.meta.variables
+                        ],
                         # Define columns based on the information in DISPLAY_VARIABLES
                         columns=[
                             {
@@ -229,11 +230,14 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                     ),
                     dbc.Col(
                         dcc.Dropdown(
-                            placeholder="Velg språk",
+                            id="language-dropdown",
+                            searchable=False,
+                            value=state.current_metadata_language.value,
                             className="ssb-dropdown",
-                            options=["Norsk Bokmål", "Nynorsk", "English"],
-                            value="Norsk Bokmål",
-                            disabled=True,
+                            options=[
+                                {"label": i.name, "value": i.value}
+                                for i in SupportedLanguages
+                            ],
                         ),
                         align="end",
                         width="auto",
@@ -322,7 +326,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
         Input("variables-table", "data"),
     )
     def callback_update_progress(value, data) -> Tuple[int, str]:
-        completion = globals.metadata.meta.percent_complete
+        completion = state.metadata.meta.percent_complete
         return completion, f"{completion}%"
 
     @app.callback(
@@ -333,13 +337,23 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
     def callback_save_metadata_file(n_clicks):
         if n_clicks and n_clicks > 0:
             # Write the final completion percentage to the model
-            globals.metadata.meta.percentage_complete = (
-                globals.metadata.meta.percent_complete
+            state.metadata.meta.percentage_complete = (
+                state.metadata.meta.percent_complete
             )
-            globals.metadata.write_metadata_document()
+            state.metadata.write_metadata_document()
             return True
         else:
             return False
+
+    @app.callback(
+        Output(
+            {"type": DATASET_METADATA_INPUT, "id": ALL},
+            "value",
+        ),
+        Input("language-dropdown", "value"),
+    )
+    def callback_change_language(language: str):
+        return update_dataset_metadata_language(SupportedLanguages(language))
 
     @app.callback(
         Output("dataset-validation-error", "is_open"),
@@ -359,12 +373,16 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
         Output("variables-validation-explanation", "children"),
         Input("variables-table", "data"),
         Input("variables-table", "data_previous"),
+        Input("language-dropdown", "value"),
         prevent_initial_call=True,
     )
-    def callback_accept_variable_metadata_input(
-        data: List[Dict], data_previous: List[Dict]
+    def callback_variable_table(
+        data: List[Dict], data_previous: List[Dict], language: str
     ) -> Tuple[List[Dict], bool, str]:
-        return accept_variable_metadata_input(data, data_previous)
+        if ctx.triggered_id == "language-dropdown":
+            return update_variable_table_language(data, SupportedLanguages(language))
+        else:
+            return accept_variable_metadata_input(data, data_previous)
 
     return app
 
