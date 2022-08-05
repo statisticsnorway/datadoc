@@ -1,1 +1,1 @@
-from datadoc.DataDocDash import main
+from datadoc.DataDocDash import document_dataset

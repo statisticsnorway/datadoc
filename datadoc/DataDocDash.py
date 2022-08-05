@@ -34,7 +34,9 @@ def build_app(dash_class: Type[Dash], dataset_path: str) -> Dash:
     state.metadata = DataDocMetadata(dataset_path)
 
     app = dash_class(
-        name="DataDoc", external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP]
+        name="DataDoc",
+        external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP],
+        assets_folder=f"{os.path.dirname(__file__)}/assets",
     )
 
     def make_dataset_metadata_accordion_item(
@@ -386,17 +388,20 @@ def build_app(dash_class: Type[Dash], dataset_path: str) -> Dash:
     return app
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset-path", help="Specify the path to a dataset")
-    args = parser.parse_args()
-
-    # Use example dataset if nothing specified
-    dataset = args.dataset_path or "./klargjorte_data/person_data_v1.parquet"
+def document_dataset(dataset_path: str = None):
+    if dataset_path is None:
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--dataset-path", help="Specify the path to a dataset")
+        args = parser.parse_args()
+        # Use example dataset if nothing specified
+        dataset = args.dataset_path or "./klargjorte_data/person_data_v1.parquet"
+    else:
+        dataset = dataset_path
 
     if running_in_notebook():
         from jupyter_dash import JupyterDash
 
+        JupyterDash.infer_jupyter_proxy_config()
         app = build_app(JupyterDash, dataset)
         app.run_server(mode="inline")
     else:
@@ -407,4 +412,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    document_dataset()
