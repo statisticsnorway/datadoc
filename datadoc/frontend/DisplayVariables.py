@@ -151,5 +151,5 @@ DISPLAY_VARIABLES = {
 }
 
 MULTIPLE_LANGUAGE_VARIABLES_METADATA = [
-    m for m in DISPLAY_VARIABLES.values() if m.multiple_language_support
+    m.identifier for m in DISPLAY_VARIABLES.values() if m.multiple_language_support
 ]

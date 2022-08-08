@@ -58,15 +58,12 @@ def accept_variable_metadata_input(
             updated_row_id = data[i][VariableIdentifiers.SHORT_NAME.value]
             updated_column_id = update_diff[-1][0]
             new_value = update_diff[-1][-1]
-            logger.debug(
-                f"Row: {updated_row_id} Column: {updated_column_id} New value: {new_value}"
-            )
             break  # We're only interested in one change so we break here
 
     if update_diff:
         try:
             if (
-                updated_column_id in MULTIPLE_LANGUAGE_DATASET_METADATA
+                updated_column_id in MULTIPLE_LANGUAGE_VARIABLES_METADATA
                 and type(new_value) is str
             ):
                 new_value = store_language_string(
@@ -74,6 +71,10 @@ def accept_variable_metadata_input(
                     new_value,
                     updated_column_id,
                 )
+
+            logger.debug(
+                f"Row: {updated_row_id} Column: {updated_column_id} New value: {new_value}"
+            )
             # Write the value to the variables structure
             setattr(
                 state.metadata.variables_lookup[updated_row_id],
