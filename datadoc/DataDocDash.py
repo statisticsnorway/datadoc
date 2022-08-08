@@ -388,7 +388,7 @@ def build_app(dash_class: Type[Dash], dataset_path: str) -> Dash:
     return app
 
 
-def document_dataset(dataset_path: str = None):
+def main(dataset_path: str = None):
     if dataset_path is None:
         parser = argparse.ArgumentParser()
         parser.add_argument("--dataset-path", help="Specify the path to a dataset")
@@ -412,4 +412,4 @@ def document_dataset(dataset_path: str = None):
 
 
 if __name__ == "__main__":
-    document_dataset()
+    main()
