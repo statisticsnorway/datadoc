@@ -21,6 +21,9 @@ DATA_VALID = [
         "variable_role": "IDENTIFIER",
     },
 ]
+DATA_NONETYPE = [
+    {"short_name": "pers_id", "variable_role": "IDENTIFIER", "name": None},
+]
 DATA_INVALID = [
     {
         "short_name": "pers_id",
@@ -89,3 +92,18 @@ def test_change_language():
     output = Callbacks.update_dataset_metadata_language(SupportedLanguages.ENGLISH)
     assert ENGLISH_NAME in output
     assert BOKMÅL_NAME not in output
+
+
+def test_nonetype_value_for_language_string():
+    ENGLISH_NAME = "English Name"
+    BOKMÅL_NAME = "Bokmål Name"
+    state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
+    state.metadata.variables_lookup["pers_id"].name = LanguageStrings(
+        en=ENGLISH_NAME, nb=BOKMÅL_NAME
+    )
+    state.current_metadata_language = SupportedLanguages.NORSK_NYNORSK
+    Callbacks.accept_variable_metadata_input(DATA_NONETYPE, DATA_ORIGINAL)
+
+    assert state.metadata.variables_lookup["pers_id"].name == LanguageStrings(
+        en=ENGLISH_NAME, nb=BOKMÅL_NAME
+    )

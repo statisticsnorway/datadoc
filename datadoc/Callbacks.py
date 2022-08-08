@@ -62,15 +62,22 @@ def accept_variable_metadata_input(
 
     if update_diff:
         try:
-            if (
-                updated_column_id in MULTIPLE_LANGUAGE_VARIABLES_METADATA
-                and type(new_value) is str
-            ):
-                new_value = store_language_string(
-                    state.metadata.variables_lookup[updated_row_id],
-                    new_value,
-                    updated_column_id,
-                )
+            if updated_column_id in MULTIPLE_LANGUAGE_VARIABLES_METADATA:
+                if type(new_value) is str:
+                    new_value = store_language_string(
+                        state.metadata.variables_lookup[updated_row_id],
+                        new_value,
+                        updated_column_id,
+                    )
+                elif new_value is None:
+                    # This edge case occurs when the user removes the text in an input field
+                    # We want to ensure we only remove the content for the current language,
+                    # not create a new blank object!
+                    new_value = store_language_string(
+                        state.metadata.variables_lookup[updated_row_id],
+                        "",
+                        updated_column_id,
+                    )
 
             logger.debug(
                 f"Row: {updated_row_id} Column: {updated_column_id} New value: {new_value}"
