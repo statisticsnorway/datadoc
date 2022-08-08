@@ -289,7 +289,7 @@ def build_app(dash_class: Type[Dash], dataset_path: str) -> Dash:
                     dbc.Col(
                         [
                             html.H5(
-                                "Successfuly saved metadata",
+                                "Lagret metadata",
                             ),
                         ]
                     ),

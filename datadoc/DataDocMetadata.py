@@ -58,10 +58,10 @@ class DataDocMetadata:
         try:
             self.current_user = os.environ["JUPYTERHUB_USER"]
         except KeyError:
-            logger.warning(
-                "JUPYTERHUB_USER env variable not set, using default for current_user"
-            )
             self.current_user = "default_user@ssb.no"
+            logger.warning(
+                f"JUPYTERHUB_USER env variable not set, using {self.current_user} as placeholder"
+            )
         self.current_datetime = str(datetime.datetime.now())
 
         self.meta: "Model.MetadataDocument" = Model.MetadataDocument(
