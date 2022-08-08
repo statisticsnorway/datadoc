@@ -1,4 +1,5 @@
 import argparse
+import logging
 import os
 import re
 from typing import Any, Dict, List, Tuple, Type
@@ -23,6 +24,8 @@ from datadoc.frontend.DisplayDataset import (
     DisplayDatasetMetadata,
 )
 from datadoc.utils import running_in_notebook, get_display_values
+
+logger = logging.getLogger(__name__)
 
 
 DATASET_METADATA_INPUT = "dataset-metadata-input"
@@ -399,14 +402,16 @@ def main(dataset_path: str = None):
         dataset = dataset_path
 
     if running_in_notebook():
+        logging.basicConfig(level=logging.WARNING)
         from jupyter_dash import JupyterDash
 
         JupyterDash.infer_jupyter_proxy_config()
         app = build_app(JupyterDash, dataset)
         app.run_server(mode="inline")
     else:
+        logging.basicConfig(level=logging.DEBUG)
         # Assume running in server mode is better (largely for development purposes)
-        print("Starting in development mode")
+        logger.debug("Starting in development mode")
         app = build_app(Dash, dataset)
         app.run_server(debug=True)
 

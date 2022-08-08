@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Dict, List, Optional, Tuple
 from pydantic import ValidationError
 from datadoc_model import Model
@@ -16,6 +17,8 @@ from datadoc.frontend.DisplayVariables import (
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,
     VariableIdentifiers,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def store_language_string(
@@ -55,7 +58,7 @@ def accept_variable_metadata_input(
             updated_row_id = data[i][VariableIdentifiers.SHORT_NAME.value]
             updated_column_id = update_diff[-1][0]
             new_value = update_diff[-1][-1]
-            print(
+            logger.debug(
                 f"Row: {updated_row_id} Column: {updated_column_id} New value: {new_value}"
             )
             break  # We're only interested in one change so we break here
@@ -81,9 +84,9 @@ def accept_variable_metadata_input(
             show_error = True
             error_explanation = f"`{e}`"
             output_data = data_previous
-            print(error_explanation)
+            logger.debug("Caught ValidationError:", exc_info=True)
         else:
-            print(f"Successfully updated {updated_row_id} with {new_value}")
+            logger.debug(f"Successfully updated {updated_row_id} with {new_value}")
 
     return output_data, show_error, error_explanation
 
@@ -109,11 +112,11 @@ def accept_dataset_metadata_input(
     except ValidationError as e:
         show_error = True
         error_explanation = f"`{e}`"
-        print(error_explanation)
+        logger.debug("Caught ValidationError:", exc_info=True)
     else:
         show_error = False
         error_explanation = ""
-        print(f"Successfully updated {metadata_identifier} with {value}")
+        logger.debug(f"Successfully updated {metadata_identifier} with {value}")
 
     return show_error, error_explanation
 
@@ -131,7 +134,7 @@ def update_dataset_metadata_language(language: SupportedLanguages) -> List[Any]:
         + OPTIONAL_DATASET_METADATA
         + NON_EDITABLE_DATASET_METADATA
     )
-    print(f"Updated language: {state.current_metadata_language.name}")
+    logger.debug(f"Updated language: {state.current_metadata_language.name}")
     return [
         m.value_getter(state.metadata.meta.dataset, m.identifier)
         for m in displayed_dataset_metadata
@@ -153,5 +156,5 @@ def update_variable_table_language(
                 state.current_metadata_language,
             )
         )
-    print(f"Updated variable table language: {language.name}")
+    logger.debug(f"Updated variable table language: {language.name}")
     return new_data, False, ""

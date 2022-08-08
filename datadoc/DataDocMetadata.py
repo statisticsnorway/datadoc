@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 import os
 import pathlib
 from typing import Dict, Optional
@@ -14,6 +15,7 @@ import datadoc.frontend.DisplayDataset as DisplayDataset
 import datadoc.frontend.DisplayVariables as DisplayVariables
 from datadoc.utils import calculate_percentage
 
+logger = logging.getLogger(__name__)
 
 OBLIGATORY_DATASET_METADATA = [
     m.identifier for m in DisplayDataset.DISPLAY_DATASET.values() if m.obligatory
@@ -56,7 +58,7 @@ class DataDocMetadata:
         try:
             self.current_user = os.environ["JUPYTERHUB_USER"]
         except KeyError:
-            print(
+            logger.warning(
                 "JUPYTERHUB_USER env variable not set, using default for current_user"
             )
             self.current_user = "default_user@ssb.no"
@@ -109,7 +111,9 @@ class DataDocMetadata:
         if self.metadata_document_full_path.exists():
             with open(self.metadata_document_full_path, "r", encoding="utf-8") as JSON:
                 fresh_metadata = json.load(JSON)
-            print(f"Opened existing metadata file {self.metadata_document_full_path}")
+            logger.info(
+                f"Opened existing metadata file {self.metadata_document_full_path}"
+            )
 
             variables_list = fresh_metadata.pop("variables", None)
 
@@ -153,7 +157,7 @@ class DataDocMetadata:
         """Write all currently known metadata to file"""
         json_str = json.dumps(self.meta.dict(), indent=4, sort_keys=False, default=str)
         self.metadata_document_full_path.write_text(json_str, encoding="utf-8")
-        print(f"Saved metadata document {self.metadata_document_full_path}")
+        logger.info(f"Saved metadata document {self.metadata_document_full_path}")
 
     @property
     def percent_complete(self) -> int:
