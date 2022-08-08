@@ -1,4 +1,6 @@
 import argparse
+import logging
+import os
 import re
 from typing import Any, Dict, List, Tuple, Type
 
@@ -23,17 +25,21 @@ from datadoc.frontend.DisplayDataset import (
 )
 from datadoc.utils import running_in_notebook, get_display_values
 
+logger = logging.getLogger(__name__)
+
 
 DATASET_METADATA_INPUT = "dataset-metadata-input"
 COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
 
-def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
+def build_app(dash_class: Type[Dash], dataset_path: str) -> Dash:
 
     state.metadata = DataDocMetadata(dataset_path)
 
     app = dash_class(
-        name="DataDoc", external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP]
+        name="DataDoc",
+        external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP],
+        assets_folder=f"{os.path.dirname(__file__)}/assets",
     )
 
     def make_dataset_metadata_accordion_item(
@@ -198,7 +204,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
     header = dbc.CardBody(
         dbc.Row(
             children=[
-                html.Link(rel="stylesheet", href="/assets/bundle.css"),
+                # html.Link(rel="stylesheet", href="assets/bundle.css"),
                 html.H1("DataDoc", className="ssb-title", style={"color": "white"}),
             ],
         ),
@@ -283,7 +289,7 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
                     dbc.Col(
                         [
                             html.H5(
-                                "Successfuly saved metadata",
+                                "Lagret metadata",
                             ),
                         ]
                     ),
@@ -385,21 +391,30 @@ def main(dash_class: Type[Dash], dataset_path: str) -> Dash:
     return app
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset-path", help="Specify the path to a dataset")
-    args = parser.parse_args()
-
-    # Use example dataset if nothing specified
-    dataset = args.dataset_path or "./klargjorte_data/person_data_v1.parquet"
+def main(dataset_path: str = None):
+    if dataset_path is None:
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--dataset-path", help="Specify the path to a dataset")
+        args = parser.parse_args()
+        # Use example dataset if nothing specified
+        dataset = args.dataset_path or "./klargjorte_data/person_data_v1.parquet"
+    else:
+        dataset = dataset_path
 
     if running_in_notebook():
+        logging.basicConfig(level=logging.WARNING)
         from jupyter_dash import JupyterDash
 
-        app = main(JupyterDash, dataset)
+        JupyterDash.infer_jupyter_proxy_config()
+        app = build_app(JupyterDash, dataset)
         app.run_server(mode="inline")
     else:
+        logging.basicConfig(level=logging.DEBUG)
         # Assume running in server mode is better (largely for development purposes)
-        print("Starting in development mode")
-        app = main(Dash, dataset)
+        logger.debug("Starting in development mode")
+        app = build_app(Dash, dataset)
         app.run_server(debug=True)
+
+
+if __name__ == "__main__":
+    main()
