@@ -1,9 +1,11 @@
 [tool.poetry]
-name = "datadoc"
+name = "ssb-datadoc"
 version = "0.1.0"
-description = "A tool for documentation of datasets from within a Jupyter environment"
-authors = ["Bjørn Roar Joneid <bnj@ssb.no>", "Miles Winther <mmw@ssb.no>", "Jan Sander <jhs@ssb.no>"]
+description = "Document dataset metadata. For use in Statistics Norway's metadata system."
+authors = ["Statistics Norway <mmw@ssb.no>"]
 license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/statisticsnorway/ssb-datadoc"
 
 include = ["datadoc/*", "klargjorte_data/*"]
 
