@@ -8,11 +8,10 @@ from dash import ALL, Dash, Input, Output, ctx, dcc, html
 
 from datadoc.Enums import SupportedLanguages
 from datadoc.frontend.Builders import (
-    make_dataset_metadata_accordion_item,
-    make_ssb_styled_tab,
     make_ssb_warning_alert,
     DATASET_METADATA_INPUT,
 )
+from datadoc.frontend.components.DatasetTab import get_dataset_tab
 from datadoc.frontend.components.VariablesTab import get_variables_tab
 import datadoc.state as state
 from datadoc.Callbacks import (
@@ -22,11 +21,6 @@ from datadoc.Callbacks import (
     update_variable_table_language,
 )
 from datadoc.DataDocMetadata import DataDocMetadata
-from datadoc.frontend.DisplayDataset import (
-    NON_EDITABLE_DATASET_METADATA,
-    OBLIGATORY_EDITABLE_DATASET_METADATA,
-    OPTIONAL_DATASET_METADATA,
-)
 from datadoc.utils import running_in_notebook
 
 logger = logging.getLogger(__name__)
@@ -43,32 +37,6 @@ def build_app(dash_class: Type[Dash], dataset_path: str) -> Dash:
         name="DataDoc",
         external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP],
         assets_folder=f"{os.path.dirname(__file__)}/assets",
-    )
-
-    dataset_details = make_ssb_styled_tab(
-        "Datasett",
-        dbc.Container(
-            [
-                dbc.Row(html.H2("Datasett detaljer", className="ssb-title")),
-                dbc.Accordion(
-                    always_open=True,
-                    children=[
-                        make_dataset_metadata_accordion_item(
-                            "Obligatorisk",
-                            OBLIGATORY_EDITABLE_DATASET_METADATA,
-                        ),
-                        make_dataset_metadata_accordion_item(
-                            "Valgfritt",
-                            OPTIONAL_DATASET_METADATA,
-                        ),
-                        make_dataset_metadata_accordion_item(
-                            "Maskingenerert",
-                            NON_EDITABLE_DATASET_METADATA,
-                        ),
-                    ],
-                ),
-            ],
-        ),
     )
 
     header = dbc.CardBody(
@@ -183,7 +151,7 @@ def build_app(dash_class: Type[Dash], dataset_path: str) -> Dash:
                         id="tabs",
                         class_name="ssb-tabs",
                         children=[
-                            dataset_details,
+                            get_dataset_tab(),
                             get_variables_tab(),
                         ],
                     ),
