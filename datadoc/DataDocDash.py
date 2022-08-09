@@ -4,7 +4,7 @@ import os
 from typing import Any, Dict, List, Tuple, Type
 
 import dash_bootstrap_components as dbc
-from dash import ALL, Dash, Input, Output, ctx, dash_table, dcc, html
+from dash import ALL, Dash, Input, Output, ctx, dcc, html
 
 from datadoc.Enums import SupportedLanguages
 from datadoc.frontend.Builders import (
@@ -13,6 +13,7 @@ from datadoc.frontend.Builders import (
     make_ssb_warning_alert,
     DATASET_METADATA_INPUT,
 )
+from datadoc.frontend.components.VariablesTab import get_variables_tab
 import datadoc.state as state
 from datadoc.Callbacks import (
     accept_dataset_metadata_input,
@@ -21,13 +22,12 @@ from datadoc.Callbacks import (
     update_variable_table_language,
 )
 from datadoc.DataDocMetadata import DataDocMetadata
-from datadoc.frontend.DisplayVariables import DISPLAY_VARIABLES
 from datadoc.frontend.DisplayDataset import (
     NON_EDITABLE_DATASET_METADATA,
     OBLIGATORY_EDITABLE_DATASET_METADATA,
     OPTIONAL_DATASET_METADATA,
 )
-from datadoc.utils import running_in_notebook, get_display_values
+from datadoc.utils import running_in_notebook
 
 logger = logging.getLogger(__name__)
 
@@ -66,57 +66,6 @@ def build_app(dash_class: Type[Dash], dataset_path: str) -> Dash:
                             NON_EDITABLE_DATASET_METADATA,
                         ),
                     ],
-                ),
-            ],
-        ),
-    )
-
-    variables_table = make_ssb_styled_tab(
-        "Variabler",
-        dbc.Container(
-            children=[
-                dbc.Row(html.H2("Variabel detaljer", className="ssb-title")),
-                dbc.Row(
-                    dash_table.DataTable(
-                        id="variables-table",
-                        # Populate fields with known values
-                        data=[
-                            get_display_values(v, state.current_metadata_language)
-                            for v in state.metadata.meta.variables
-                        ],
-                        # Define columns based on the information in DISPLAY_VARIABLES
-                        columns=[
-                            {
-                                "name": variable.display_name,
-                                "id": variable.identifier,
-                                "editable": variable.editable,
-                                "presentation": variable.presentation,
-                                "hideable": variable.editable,
-                            }
-                            for variable in DISPLAY_VARIABLES.values()
-                        ],
-                        # Non-obligatory variables are hidden by default
-                        hidden_columns=[
-                            v.identifier
-                            for v in DISPLAY_VARIABLES.values()
-                            if v.obligatory is False
-                        ],
-                        # Include tooltips for all columns
-                        tooltip_header={
-                            v.identifier: v.description
-                            for v in DISPLAY_VARIABLES.values()
-                        },
-                        editable=True,
-                        # Enable sorting and pagination
-                        sort_action="native",
-                        page_action="native",
-                        # Populate the options for all dropdown values
-                        dropdown={
-                            v.identifier: v.options
-                            for v in DISPLAY_VARIABLES.values()
-                            if v.options
-                        },
-                    )
                 ),
             ],
         ),
@@ -235,7 +184,7 @@ def build_app(dash_class: Type[Dash], dataset_path: str) -> Dash:
                         class_name="ssb-tabs",
                         children=[
                             dataset_details,
-                            variables_table,
+                            get_variables_tab(),
                         ],
                     ),
                 ],
