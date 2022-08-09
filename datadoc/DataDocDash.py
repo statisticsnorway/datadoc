@@ -1,13 +1,18 @@
 import argparse
 import logging
 import os
-import re
 from typing import Any, Dict, List, Tuple, Type
 
 import dash_bootstrap_components as dbc
 from dash import ALL, Dash, Input, Output, ctx, dash_table, dcc, html
 
 from datadoc.Enums import SupportedLanguages
+from datadoc.frontend.Builders import (
+    make_dataset_metadata_accordion_item,
+    make_ssb_styled_tab,
+    make_ssb_warning_alert,
+    DATASET_METADATA_INPUT,
+)
 import datadoc.state as state
 from datadoc.Callbacks import (
     accept_dataset_metadata_input,
@@ -21,14 +26,12 @@ from datadoc.frontend.DisplayDataset import (
     NON_EDITABLE_DATASET_METADATA,
     OBLIGATORY_EDITABLE_DATASET_METADATA,
     OPTIONAL_DATASET_METADATA,
-    DisplayDatasetMetadata,
 )
 from datadoc.utils import running_in_notebook, get_display_values
 
 logger = logging.getLogger(__name__)
 
 
-DATASET_METADATA_INPUT = "dataset-metadata-input"
 COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
 
@@ -41,88 +44,6 @@ def build_app(dash_class: Type[Dash], dataset_path: str) -> Dash:
         external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP],
         assets_folder=f"{os.path.dirname(__file__)}/assets",
     )
-
-    def make_dataset_metadata_accordion_item(
-        title: str,
-        metadata_inputs: List[DisplayDatasetMetadata],
-    ) -> dbc.AccordionItem:
-        return dbc.AccordionItem(
-            title=title,
-            children=[
-                dbc.Row(
-                    [
-                        dbc.Col(html.Label(i.display_name)),
-                        dbc.Col(
-                            i.component(
-                                placeholder=i.description,
-                                disabled=not i.editable,
-                                id={
-                                    "type": DATASET_METADATA_INPUT,
-                                    "id": i.identifier,
-                                },
-                                **i.extra_kwargs,
-                                **(i.options or {}),
-                            ),
-                            width=5,
-                        ),
-                        dbc.Col(width=4),
-                    ]
-                )
-                for i in metadata_inputs
-            ],
-        )
-
-    def make_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:
-        return dbc.Tab(
-            label=label,
-            # Replace all whitespace with dashes
-            tab_id=re.sub(r"\s+", "-", label.lower()),
-            label_class_name="ssb-tabs navigation-item",
-            label_style={"margin-left": "10px", "margin-right": "10px"},
-            style={"padding": "4px"},
-            children=content,
-        )
-
-    def make_ssb_warning_alert(
-        alert_identifier: str, title: str, content_identifier: str
-    ) -> dbc.Alert:
-        return dbc.Alert(
-            id=alert_identifier,
-            is_open=False,
-            dismissable=True,
-            fade=True,
-            class_name="ssb-dialog warning",
-            children=[
-                dbc.Row(
-                    [
-                        dbc.Col(
-                            width=1,
-                            children=[
-                                html.Div(
-                                    className="ssb-dialog warning icon-panel",
-                                    children=[
-                                        html.I(
-                                            className="bi bi-exclamation-triangle",
-                                        ),
-                                    ],
-                                )
-                            ],
-                        ),
-                        dbc.Col(
-                            [
-                                html.H5(
-                                    title,
-                                ),
-                                dcc.Markdown(
-                                    id=content_identifier,
-                                ),
-                            ]
-                        ),
-                    ],
-                )
-            ],
-            color="danger",
-        )
 
     dataset_details = make_ssb_styled_tab(
         "Datasett",
