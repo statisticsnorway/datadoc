@@ -7,6 +7,9 @@ license = "Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/statisticsnorway/datadoc"
 
+packages = [
+    { include = "datadoc" },
+]
 include = ["datadoc/*", "klargjorte_data/*"]
 
 [tool.poetry.scripts]
