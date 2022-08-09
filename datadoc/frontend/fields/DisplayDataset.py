@@ -8,7 +8,7 @@ from datadoc_model.Enums import (
     UnitType,
 )
 from datadoc import state
-from datadoc.frontend.DisplayBase import (
+from datadoc.frontend.fields.DisplayBase import (
     DisplayDatasetMetadata,
     DROPDOWN_KWARGS,
     NUMBER_KWARGS,

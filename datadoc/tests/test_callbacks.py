@@ -3,7 +3,7 @@ import random
 
 from datadoc_model.Enums import DatasetState, VariableRole
 from datadoc_model.Model import LanguageStrings, DataDocDataSet, DataDocVariable
-from datadoc.frontend.DisplayVariables import VariableIdentifiers
+from datadoc.frontend.fields.DisplayVariables import VariableIdentifiers
 from datadoc.tests.utils import TEST_PARQUET_FILEPATH
 import datadoc.state as state
 from datadoc.DataDocMetadata import DataDocMetadata

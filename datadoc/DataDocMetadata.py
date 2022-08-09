@@ -11,8 +11,8 @@ from datadoc_model.Enums import (
 )
 from datadoc.DatasetReader import DatasetReader
 from datadoc_model import Model
-import datadoc.frontend.DisplayDataset as DisplayDataset
-import datadoc.frontend.DisplayVariables as DisplayVariables
+import datadoc.frontend.fields.DisplayDataset as DisplayDataset
+import datadoc.frontend.fields.DisplayVariables as DisplayVariables
 from datadoc.utils import calculate_percentage
 
 logger = logging.getLogger(__name__)

@@ -3,7 +3,7 @@ from typing import List
 import dash_bootstrap_components as dbc
 from dash import html, dcc
 
-from datadoc.frontend.DisplayDataset import DisplayDatasetMetadata
+from datadoc.frontend.fields.DisplayDataset import DisplayDatasetMetadata
 
 DATASET_METADATA_INPUT = "dataset-metadata-input"
 

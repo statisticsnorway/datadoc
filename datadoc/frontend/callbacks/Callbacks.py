@@ -7,14 +7,14 @@ from dash import Dash, Output, Input, ctx, ALL
 import datadoc.state as state
 from datadoc.Enums import SupportedLanguages
 from datadoc.utils import get_display_values
-from datadoc.frontend.DisplayDataset import (
+from datadoc.frontend.fields.DisplayDataset import (
     MULTIPLE_LANGUAGE_DATASET_METADATA,
     NON_EDITABLE_DATASET_METADATA,
     OBLIGATORY_EDITABLE_DATASET_METADATA,
     OPTIONAL_DATASET_METADATA,
     DisplayDatasetMetadata,
 )
-from datadoc.frontend.DisplayVariables import (
+from datadoc.frontend.fields.DisplayVariables import (
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,
     VariableIdentifiers,
 )
