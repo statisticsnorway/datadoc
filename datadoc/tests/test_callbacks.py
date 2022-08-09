@@ -7,7 +7,7 @@ from datadoc.frontend.DisplayVariables import VariableIdentifiers
 from datadoc.tests.utils import TEST_PARQUET_FILEPATH
 import datadoc.state as state
 from datadoc.DataDocMetadata import DataDocMetadata
-from datadoc import Callbacks
+from datadoc.frontend.callbacks import Callbacks
 from datadoc.Enums import SupportedLanguages
 
 

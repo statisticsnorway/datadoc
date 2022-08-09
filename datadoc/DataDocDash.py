@@ -23,7 +23,7 @@ from datadoc.frontend.components.HeaderBars import (
     get_controls_bar,
 )
 import datadoc.state as state
-from datadoc.Callbacks import (
+from datadoc.frontend.callbacks.Callbacks import (
     accept_dataset_metadata_input,
     accept_variable_metadata_input,
     update_dataset_metadata_language,
