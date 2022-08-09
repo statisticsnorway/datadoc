@@ -1,6 +1,6 @@
 from dash import Dash
 
-from datadoc.DataDocDash import build_app
+from datadoc.app import build_app
 from datadoc.DataDocMetadata import DataDocMetadata
 import datadoc.state as state
 from .utils import TEST_PARQUET_FILEPATH
