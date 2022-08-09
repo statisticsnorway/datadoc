@@ -13,7 +13,7 @@ Document datasets in Statistics Norway
 1. Clone this repo to your Jupyter instance (or local machine)
 1. Open the `DataDoc.ipynb` Notebook and run the cell to see the example dataset
 
-![DataDoc](./doc/datadoc.png)
+![DataDoc in use](./doc/change-language-example.gif)
 
 ## Contributing
 
