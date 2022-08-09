@@ -37,6 +37,8 @@ ENGLISH_NAME = "English Name"
 BOKMÅL_NAME = "Bokmål Name"
 NYNORSK_NAME = "Nynorsk Name"
 
+LANGUAGE_OBJECT = LanguageStrings(en=ENGLISH_NAME, nb=BOKMÅL_NAME)
+
 
 def test_accept_variable_metadata_input_no_change_in_data():
     state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
@@ -89,7 +91,7 @@ def test_accept_dataset_metadata_input_incorrect_data_type():
 
 def test_change_language():
     state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
-    state.metadata.meta.dataset.name = LanguageStrings(en=ENGLISH_NAME, nb=BOKMÅL_NAME)
+    state.metadata.meta.dataset.name = LANGUAGE_OBJECT
     output = Callbacks.update_dataset_metadata_language(SupportedLanguages.NORSK_BOKMÅL)
     assert ENGLISH_NAME not in output
     assert BOKMÅL_NAME in output
@@ -109,7 +111,7 @@ def test_find_existing_language_string_no_existing_strings():
 
 def test_find_existing_language_string_pre_existing_strings():
     dataset_metadata = DataDocDataSet()
-    dataset_metadata.name = LanguageStrings(en=ENGLISH_NAME, nb=BOKMÅL_NAME)
+    dataset_metadata.name = LANGUAGE_OBJECT
     state.current_metadata_language = SupportedLanguages.NORSK_NYNORSK
     language_strings = Callbacks.find_existing_language_string(
         dataset_metadata, NYNORSK_NAME, "name"
@@ -122,9 +124,7 @@ def test_find_existing_language_string_pre_existing_strings():
 def test_update_variable_table_language():
     state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
     test_variable = random.choice([v.short_name for v in state.metadata.meta.variables])
-    state.metadata.variables_lookup[test_variable].name = LanguageStrings(
-        en=ENGLISH_NAME, nb=BOKMÅL_NAME
-    )
+    state.metadata.variables_lookup[test_variable].name = LANGUAGE_OBJECT
     output = Callbacks.update_variable_table_language(
         [v.dict() for v in state.metadata.meta.variables],
         SupportedLanguages.NORSK_BOKMÅL,
@@ -138,15 +138,9 @@ def test_update_variable_table_language():
 
 
 def test_nonetype_value_for_language_string():
-    ENGLISH_NAME = "English Name"
-    BOKMÅL_NAME = "Bokmål Name"
     state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
-    state.metadata.variables_lookup["pers_id"].name = LanguageStrings(
-        en=ENGLISH_NAME, nb=BOKMÅL_NAME
-    )
+    state.metadata.variables_lookup["pers_id"].name = LANGUAGE_OBJECT
     state.current_metadata_language = SupportedLanguages.NORSK_NYNORSK
     Callbacks.accept_variable_metadata_input(DATA_NONETYPE, DATA_ORIGINAL)
 
-    assert state.metadata.variables_lookup["pers_id"].name == LanguageStrings(
-        en=ENGLISH_NAME, nb=BOKMÅL_NAME
-    )
+    assert state.metadata.variables_lookup["pers_id"].name == LANGUAGE_OBJECT
