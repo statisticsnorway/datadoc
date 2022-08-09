@@ -68,6 +68,11 @@ def test_get_fields_unknown_file_type():
         DatasetReader.for_file("my_dataset.csv").get_fields()
 
 
+def test_get_fields_no_extension_provided():
+    with raises(FileNotFoundError):
+        DatasetReader.for_file("my_dataset").get_fields()
+
+
 def test_transform_datatype_unknown_type():
     expected = None
     input_data = "definitely not a known data type"
