@@ -8,11 +8,15 @@ from dash import ALL, Dash, Input, Output, ctx, dcc, html
 
 from datadoc.Enums import SupportedLanguages
 from datadoc.frontend.Builders import (
-    make_ssb_warning_alert,
     DATASET_METADATA_INPUT,
 )
 from datadoc.frontend.components.DatasetTab import get_dataset_tab
 from datadoc.frontend.components.VariablesTab import get_variables_tab
+from datadoc.frontend.components.Alerts import (
+    dataset_validation_error,
+    variables_validation_error,
+    success_toast,
+)
 import datadoc.state as state
 from datadoc.Callbacks import (
     accept_dataset_metadata_input,
@@ -89,53 +93,6 @@ def build_app(dash_class: Type[Dash], dataset_path: str) -> Dash:
                 ]
             )
         ],
-    )
-    dataset_validation_error = make_ssb_warning_alert(
-        "dataset-validation-error",
-        "Failed validation",
-        "dataset-validation-explanation",
-    )
-
-    variables_validation_error = make_ssb_warning_alert(
-        "variables-validation-error",
-        "Failed validation",
-        "variables-validation-explanation",
-    )
-
-    success_toast = dbc.Alert(
-        id="success-message",
-        is_open=False,
-        dismissable=True,
-        fade=True,
-        class_name="ssb-dialog",
-        children=[
-            dbc.Row(
-                [
-                    dbc.Col(
-                        width=3,
-                        children=[
-                            html.Div(
-                                className="ssb-dialog icon-panel",
-                                children=[
-                                    html.I(
-                                        className="bi bi-check-circle",
-                                    ),
-                                ],
-                            )
-                        ],
-                    ),
-                    dbc.Col(
-                        [
-                            html.H5(
-                                "Lagret metadata",
-                            ),
-                        ]
-                    ),
-                ],
-                align="center",
-            )
-        ],
-        color="success",
     )
 
     app.layout = dbc.Container(
