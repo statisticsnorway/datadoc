@@ -21,7 +21,7 @@ from datadoc.frontend.components.HeaderBars import (
 )
 import datadoc.state as state
 from datadoc.frontend.callbacks.Callbacks import register_callbacks
-from datadoc.DataDocMetadata import DataDocMetadata
+from datadoc.backend.DataDocMetadata import DataDocMetadata
 from datadoc.utils import running_in_notebook
 
 logger = logging.getLogger(__name__)

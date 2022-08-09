@@ -6,7 +6,7 @@ import pytest
 from datadoc_model import Enums
 
 from datadoc_model.Enums import DatasetState
-from datadoc import DataDocMetadata
+from datadoc.backend import DataDocMetadata
 from datadoc_model.Model import DataDocDataSet, DataDocVariable, MetadataDocument
 from .utils import (
     TEST_EXISTING_METADATA_FILE_NAME,

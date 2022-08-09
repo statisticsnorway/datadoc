@@ -4,7 +4,7 @@ from datadoc.Enums import SupportedLanguages
 if TYPE_CHECKING:
     # This is only needed for a type hint so we put the import inside
     # this check to avoid circular imports
-    from datadoc.DataDocMetadata import DataDocMetadata
+    from datadoc.backend.DataDocMetadata import DataDocMetadata
 
 # DANGER: This global is safe when Datadoc is run as designed, with
 # an individual instance per user run within a Jupyter Notebook.

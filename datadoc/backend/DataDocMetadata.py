@@ -9,7 +9,7 @@ from datadoc_model.Enums import (
     AdministrativeStatus,
     DatasetState,
 )
-from datadoc.DatasetReader import DatasetReader
+from datadoc.backend.DatasetReader import DatasetReader
 from datadoc_model import Model
 import datadoc.frontend.fields.DisplayDataset as DisplayDataset
 import datadoc.frontend.fields.DisplayVariables as DisplayVariables

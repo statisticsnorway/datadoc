@@ -6,7 +6,7 @@ from datadoc_model.Model import LanguageStrings, DataDocDataSet, DataDocVariable
 from datadoc.frontend.fields.DisplayVariables import VariableIdentifiers
 from datadoc.tests.utils import TEST_PARQUET_FILEPATH
 import datadoc.state as state
-from datadoc.DataDocMetadata import DataDocMetadata
+from datadoc.backend.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.callbacks import Callbacks
 from datadoc.Enums import SupportedLanguages
 
