@@ -47,14 +47,13 @@ class DataDocMetadata:
         self.dataset = dataset
         self.dataset_full_path = pathlib.Path(self.dataset)
         self.dataset_directory = self.dataset_full_path.resolve().parent
-        self.dataset_name = self.dataset_full_path.name
         self.dataset_stem = self.dataset_full_path.stem  # filename without file ending
         self.metadata_document_name = str(self.dataset_stem) + "__DOC.json"
         self.metadata_document_full_path = self.dataset_directory.joinpath(
             self.metadata_document_name
         )
         self.dataset_state = self.get_dataset_state(self.dataset_full_path)
-        self.dataset_version = self.get_dataset_version()
+        self.dataset_version = self.get_dataset_version(self.dataset_stem)
         try:
             self.current_user = os.environ["JUPYTERHUB_USER"]
         except KeyError:
@@ -92,10 +91,10 @@ class DataDocMetadata:
         else:
             return None
 
-    def get_dataset_version(self) -> Optional[str]:
+    def get_dataset_version(self, dataset_stem: str) -> Optional[str]:
         """Find version information if exists in filename,
         eg. 'v1' in filename 'person_data_v1.parquet'"""
-        splitted_file_name = str(self.dataset_stem).split("_")
+        splitted_file_name = str(dataset_stem).split("_")
         if len(splitted_file_name) >= 2:
             last_filename_element = str(splitted_file_name[-1])
             if (

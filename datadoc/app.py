@@ -70,6 +70,7 @@ def build_app(dash_class: Type[Dash]) -> Dash:
 
 def main(dataset_path: str = None):
     if dataset_path is None:
+        # Get the supplied command line argument
         parser = argparse.ArgumentParser()
         parser.add_argument("--dataset-path", help="Specify the path to a dataset")
         args = parser.parse_args()
@@ -83,13 +84,12 @@ def main(dataset_path: str = None):
     if running_in_notebook():
         logging.basicConfig(level=logging.WARNING)
         from jupyter_dash import JupyterDash
-
         JupyterDash.infer_jupyter_proxy_config()
         app = build_app(JupyterDash)
         app.run_server(mode="inline")
     else:
-        logging.basicConfig(level=logging.DEBUG)
         # Assume running in server mode is better (largely for development purposes)
+        logging.basicConfig(level=logging.DEBUG)
         logger.debug("Starting in development mode")
         app = build_app(Dash)
         app.run_server(debug=True)
