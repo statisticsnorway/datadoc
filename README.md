@@ -1,16 +1,19 @@
-# DataDoc
+# Datadoc
 
-Document datasets in SSB
+Document datasets in Statistics Norway
 
 ## Usage example
 
-1. Clone this repo to your Jupyter instance
-1. Open the `DataDoc.ipynb` Notebook and run the cell to see the example dataset
-1. Run `%run -i datadoc/DataDocDash.py --dataset-path ./path/to/your/dataset` to run Datadoc on a dataset of your choosing.
+1. Run `from datadoc import main; main("./path/to/your/dataset")` to run Datadoc on a dataset of your choosing.
 1. Complete metadata as you desire
-1. Click `Lagre` to save your metadata together with your dataset
+1. Click `Lagre` to save a metadata document together with your dataset
 
-![DataDoc](./doc/datadoc.png)
+### If the datadoc package is not installed
+
+1. Clone this repo to your Jupyter instance (or local machine)
+1. Open the `DataDoc.ipynb` Notebook and run the cell to see the example dataset
+
+![DataDoc in use](./doc/change-language-example.gif)
 
 ## Contributing
 
