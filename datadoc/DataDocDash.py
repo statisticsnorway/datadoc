@@ -17,6 +17,11 @@ from datadoc.frontend.components.Alerts import (
     variables_validation_error,
     success_toast,
 )
+from datadoc.frontend.components.HeaderBars import (
+    header,
+    progress_bar,
+    get_controls_bar,
+)
 import datadoc.state as state
 from datadoc.Callbacks import (
     accept_dataset_metadata_input,
@@ -30,9 +35,6 @@ from datadoc.utils import running_in_notebook
 logger = logging.getLogger(__name__)
 
 
-COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
-
-
 def build_app(dash_class: Type[Dash], dataset_path: str) -> Dash:
 
     state.metadata = DataDocMetadata(dataset_path)
@@ -43,64 +45,12 @@ def build_app(dash_class: Type[Dash], dataset_path: str) -> Dash:
         assets_folder=f"{os.path.dirname(__file__)}/assets",
     )
 
-    header = dbc.CardBody(
-        dbc.Row(
-            children=[
-                # html.Link(rel="stylesheet", href="assets/bundle.css"),
-                html.H1("DataDoc", className="ssb-title", style={"color": "white"}),
-            ],
-        ),
-        style={"backgroundColor": COLORS["green_4"]},
-    )
-
-    progress_bar = dbc.CardBody(
-        style={"padding": "4px"},
-        children=[dbc.Progress(id="progress-bar", color=COLORS["green_4"], value=40)],
-    )
-
-    controls_bar = dbc.CardBody(
-        style={"padding": "4px"},
-        children=[
-            dbc.Row(
-                [
-                    dbc.Col(
-                        dbc.Button(
-                            [
-                                html.I(
-                                    className="bi bi-save",
-                                    style={"padding-right": "10px"},
-                                ),
-                                "   Lagre",
-                            ],
-                            class_name="ssb-btn primary-btn",
-                            id="save-button",
-                        ),
-                    ),
-                    dbc.Col(
-                        dcc.Dropdown(
-                            id="language-dropdown",
-                            searchable=False,
-                            value=state.current_metadata_language.value,
-                            className="ssb-dropdown",
-                            options=[
-                                {"label": i.name, "value": i.value}
-                                for i in SupportedLanguages
-                            ],
-                        ),
-                        align="end",
-                        width="auto",
-                    ),
-                ]
-            )
-        ],
-    )
-
     app.layout = dbc.Container(
         style={"padding": "4px"},
         children=[
             header,
             progress_bar,
-            controls_bar,
+            get_controls_bar(),
             dbc.CardBody(
                 style={"padding": "4px"},
                 children=[
