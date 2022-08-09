@@ -1,10 +1,10 @@
 import argparse
 import logging
 import os
-from typing import Any, Dict, List, Tuple, Type
+from typing import Type
 
 import dash_bootstrap_components as dbc
-from dash import ALL, Dash, Input, Output, ctx, dcc, html
+from dash import Dash
 
 from datadoc.Enums import SupportedLanguages
 from datadoc.frontend.components.DatasetTab import get_dataset_tab
@@ -20,25 +20,20 @@ from datadoc.frontend.components.HeaderBars import (
     get_controls_bar,
 )
 import datadoc.state as state
-from datadoc.frontend.callbacks.Callbacks import (
-    accept_dataset_metadata_input,
-    accept_variable_metadata_input,
-    register_callbacks,
-    update_dataset_metadata_language,
-    update_variable_table_language,
-)
+from datadoc.frontend.callbacks.Callbacks import register_callbacks
 from datadoc.DataDocMetadata import DataDocMetadata
 from datadoc.utils import running_in_notebook
 
 logger = logging.getLogger(__name__)
 
+NAME = "Datadoc"
 
-def build_app(dash_class: Type[Dash], dataset_path: str) -> Dash:
 
-    state.metadata = DataDocMetadata(dataset_path)
+def build_app(dash_class: Type[Dash]) -> Dash:
 
     app = dash_class(
-        name="DataDoc",
+        name=NAME,
+        title=NAME,
         external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP],
         assets_folder=f"{os.path.dirname(__file__)}/assets",
     )
@@ -83,18 +78,20 @@ def main(dataset_path: str = None):
     else:
         dataset = dataset_path
 
+    state.metadata = DataDocMetadata(dataset)
+
     if running_in_notebook():
         logging.basicConfig(level=logging.WARNING)
         from jupyter_dash import JupyterDash
 
         JupyterDash.infer_jupyter_proxy_config()
-        app = build_app(JupyterDash, dataset)
+        app = build_app(JupyterDash)
         app.run_server(mode="inline")
     else:
         logging.basicConfig(level=logging.DEBUG)
         # Assume running in server mode is better (largely for development purposes)
         logger.debug("Starting in development mode")
-        app = build_app(Dash, dataset)
+        app = build_app(Dash)
         app.run_server(debug=True)
 
 
