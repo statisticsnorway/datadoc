@@ -51,7 +51,7 @@ jobs:
       - name: Generate README Badge
         # Always run
         if: ${{ success() || failure() }}
-        uses: schneegans/dynamic-badges-action
+        uses: schneegans/dynamic-badges-action@v1.4.0
         with:
           auth: ${{ secrets.COVERAGE_BADGE_GIST }}
           gistID: 0c0c5bdfc360b59254f2c32d65914025
