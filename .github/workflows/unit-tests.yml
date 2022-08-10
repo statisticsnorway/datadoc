@@ -41,6 +41,7 @@ jobs:
         run: |
           set -o pipefail; poetry run pytest -v --cache-clear --junitxml=pytest.xml --cov-report=term-missing --cov=datadoc | tee pytest-coverage.txt
       - name: Pytest coverage comment
+        id: coverageComment
         # Always run
         if: ${{ success() || failure() }}
         uses: MishaKav/pytest-coverage-comment@main
