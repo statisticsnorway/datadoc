@@ -6,7 +6,7 @@ name: Datadoc Unit tests
 on:
   pull_request:
     branches:
-      - '*'
+      - "*"
 
 permissions:
   contents: read
@@ -41,9 +41,22 @@ jobs:
         run: |
           set -o pipefail; poetry run pytest -v --cache-clear --junitxml=pytest.xml --cov-report=term-missing --cov=datadoc | tee pytest-coverage.txt
       - name: Pytest coverage comment
-        # Always run so we see the test report
-        if:  ${{ success() || failure() }}
+        # Always run
+        if: ${{ success() || failure() }}
         uses: MishaKav/pytest-coverage-comment@main
         with:
+          github-token: ${{github.token}}
           pytest-coverage-path: ./pytest-coverage.txt
           junitxml-path: ./pytest.xml
+      - name: Generate README Badge
+        # Always run
+        if: ${{ success() || failure() }}
+        uses: schneegans/dynamic-badges-action
+        with:
+          auth: ${{ secrets.COVERAGE_BADGE_GIST }}
+          gistID: 0c0c5bdfc360b59254f2c32d65914025
+          filename: pytest-coverage-badge-datadoc.json
+          label: Coverage
+          message: ${{ steps.coverageComment.outputs.coverage }}
+          color: ${{ steps.coverageComment.outputs.color }}
+          namedLogo: python
