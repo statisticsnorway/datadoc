@@ -72,8 +72,8 @@ DISPLAY_VARIABLES = {
         presentation="dropdown",
         options={
             "options": [
-                {"label": "Ja", "value": "True"},
-                {"label": "Nei", "value": "False"},
+                {"label": "Ja", "value": True},
+                {"label": "Nei", "value": False},
             ]
         },
     ),
