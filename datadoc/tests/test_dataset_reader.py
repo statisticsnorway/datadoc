@@ -5,7 +5,7 @@ from datadoc_model.Model import DataDocVariable, LanguageStrings
 from datadoc_model.Enums import Datatype
 from datadoc import state
 from datadoc.Enums import SupportedLanguages
-from datadoc.DatasetReader import (
+from datadoc.backend.DatasetReader import (
     KNOWN_BOOLEAN_TYPES,
     KNOWN_DATETIME_TYPES,
     KNOWN_FLOAT_TYPES,
@@ -66,6 +66,11 @@ def test_get_fields_sas7bdat():
 def test_get_fields_unknown_file_type():
     with raises(NotImplementedError):
         DatasetReader.for_file("my_dataset.csv").get_fields()
+
+
+def test_get_fields_no_extension_provided():
+    with raises(FileNotFoundError):
+        DatasetReader.for_file("my_dataset").get_fields()
 
 
 def test_transform_datatype_unknown_type():

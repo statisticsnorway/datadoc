@@ -1,7 +1,7 @@
 from enum import Enum
 
 from datadoc_model.Enums import Datatype, TemporalityType, VariableRole
-from datadoc.frontend.DisplayBase import DisplayVariablesMetadata
+from datadoc.frontend.fields.DisplayBase import DisplayVariablesMetadata
 
 
 class VariableIdentifiers(str, Enum):

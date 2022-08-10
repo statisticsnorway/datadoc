@@ -6,7 +6,7 @@ import pandas as pd
 from datadoc import state
 
 from datadoc_model.Enums import Datatype
-from datadoc_model.Model import DataDocVariable, LanguageStrings
+from datadoc_model.Model import DataDocVariable
 
 TDatasetReader = TypeVar("TDatasetReader", bound="DatasetReader")
 
@@ -72,14 +72,25 @@ class DatasetReader(ABC):
     @staticmethod
     def for_file(dataset: str) -> TDatasetReader:
         """Factory method to return the correct subclass based on the given dataset file"""
-        file_type = str(pathlib.Path(dataset)).lower().split(".")[1]
-        if file_type == "parquet":
-            return DatasetReaderParquet(dataset)
-        if file_type == "sas7bdat":
-            return DatasetReaderSas7bdat(dataset)
-        else:
-            # In the future we can potentially support csv, xml or json files
-            raise NotImplementedError
+        SUPPORTED_FILE_TYPES = {
+            "parquet": DatasetReaderParquet,
+            "sas7bdat": DatasetReaderSas7bdat,
+        }
+        try:
+            file_type = str(pathlib.Path(dataset)).lower().split(".")[1]
+        except IndexError as e:
+            # Thrown when just one element is returned from split, meaning there is no file extension supplied
+            raise FileNotFoundError(
+                f"Could not recognise file type for provided {dataset = }. Supported file types are: {', '.join(SUPPORTED_FILE_TYPES.keys())}"
+            ) from e
+        try:
+            # Extract the appropriate reader class from the SUPPORTED_FILE_TYPES dict and return and instance of it
+            return SUPPORTED_FILE_TYPES[file_type](dataset)
+        except KeyError:
+            # In this case the file type is not supported so we throw a helpful exception
+            raise NotImplementedError(
+                f"{file_type = } is not supported. Please open one of the following supported files types: {', '.join(SUPPORTED_FILE_TYPES.keys())} or contact the maintainers to request support."
+            )
 
     @staticmethod
     def transform_data_type(data_type: str) -> Optional[Datatype]:
@@ -95,7 +106,9 @@ class DatasetReader(ABC):
         elif v_data_type in KNOWN_BOOLEAN_TYPES:
             return Datatype.BOOLEAN
         else:
-            return None  # Unknown datatype?
+            # Unknown data type. There's no need to throw an exception here,
+            # the user can still define the data type manually in the GUI
+            return None
 
     @abstractmethod
     def get_fields(self) -> List[DataDocVariable]:

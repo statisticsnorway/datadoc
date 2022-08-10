@@ -2,26 +2,30 @@ import logging
 from typing import Any, Dict, List, Optional, Tuple
 from pydantic import ValidationError
 from datadoc_model import Model
+from dash import Dash, Output, Input, ctx, ALL
 
 import datadoc.state as state
 from datadoc.Enums import SupportedLanguages
 from datadoc.utils import get_display_values
-from datadoc.frontend.DisplayDataset import (
+from datadoc.frontend.fields.DisplayDataset import (
     MULTIPLE_LANGUAGE_DATASET_METADATA,
     NON_EDITABLE_DATASET_METADATA,
     OBLIGATORY_EDITABLE_DATASET_METADATA,
     OPTIONAL_DATASET_METADATA,
     DisplayDatasetMetadata,
 )
-from datadoc.frontend.DisplayVariables import (
+from datadoc.frontend.fields.DisplayVariables import (
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,
     VariableIdentifiers,
+)
+from datadoc.frontend.Builders import (
+    DATASET_METADATA_INPUT,
 )
 
 logger = logging.getLogger(__name__)
 
 
-def store_language_string(
+def find_existing_language_string(
     metadata_model_object: "Model.DataDocBaseModel",
     value: str,
     metadata_identifier: str,
@@ -64,7 +68,7 @@ def accept_variable_metadata_input(
         try:
             if updated_column_id in MULTIPLE_LANGUAGE_VARIABLES_METADATA:
                 if type(new_value) is str:
-                    new_value = store_language_string(
+                    new_value = find_existing_language_string(
                         state.metadata.variables_lookup[updated_row_id],
                         new_value,
                         updated_column_id,
@@ -73,7 +77,7 @@ def accept_variable_metadata_input(
                     # This edge case occurs when the user removes the text in an input field
                     # We want to ensure we only remove the content for the current language,
                     # not create a new blank object!
-                    new_value = store_language_string(
+                    new_value = find_existing_language_string(
                         state.metadata.variables_lookup[updated_row_id],
                         "",
                         updated_column_id,
@@ -107,7 +111,7 @@ def accept_dataset_metadata_input(
             metadata_identifier in MULTIPLE_LANGUAGE_DATASET_METADATA
             and type(value) is str
         ):
-            value = store_language_string(
+            value = find_existing_language_string(
                 state.metadata.meta.dataset, value, metadata_identifier
             )
 
@@ -166,3 +170,68 @@ def update_variable_table_language(
         )
     logger.debug(f"Updated variable table language: {language.name}")
     return new_data, False, ""
+
+
+def register_callbacks(app: Dash) -> None:
+    @app.callback(
+        Output("progress-bar", "value"),
+        Output("progress-bar", "label"),
+        Input({"type": DATASET_METADATA_INPUT, "id": ALL}, "value"),
+        Input("variables-table", "data"),
+    )
+    def callback_update_progress(value, data) -> Tuple[int, str]:
+        completion = state.metadata.percent_complete
+        return completion, f"{completion}%"
+
+    @app.callback(
+        Output("success-message", "is_open"),
+        Input("save-button", "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def callback_save_metadata_file(n_clicks):
+        if n_clicks and n_clicks > 0:
+            # Write the final completion percentage to the model
+            state.metadata.meta.percentage_complete = state.metadata.percent_complete
+            state.metadata.write_metadata_document()
+            return True
+        else:
+            return False
+
+    @app.callback(
+        Output(
+            {"type": DATASET_METADATA_INPUT, "id": ALL},
+            "value",
+        ),
+        Input("language-dropdown", "value"),
+    )
+    def callback_change_language(language: str):
+        return update_dataset_metadata_language(SupportedLanguages(language))
+
+    @app.callback(
+        Output("dataset-validation-error", "is_open"),
+        Output("dataset-validation-explanation", "children"),
+        Input({"type": DATASET_METADATA_INPUT, "id": ALL}, "value"),
+        prevent_initial_call=True,
+    )
+    def callback_accept_dataset_metadata_input(value: Any) -> Tuple[bool, str]:
+        # Get the ID of the input that changed. This MUST match the attribute name defined in DataDocDataSet
+        return accept_dataset_metadata_input(
+            ctx.triggered[0]["value"], ctx.triggered_id["id"]
+        )
+
+    @app.callback(
+        Output("variables-table", "data"),
+        Output("variables-validation-error", "is_open"),
+        Output("variables-validation-explanation", "children"),
+        Input("variables-table", "data"),
+        Input("variables-table", "data_previous"),
+        Input("language-dropdown", "value"),
+        prevent_initial_call=True,
+    )
+    def callback_variable_table(
+        data: List[Dict], data_previous: List[Dict], language: str
+    ) -> Tuple[List[Dict], bool, str]:
+        if ctx.triggered_id == "language-dropdown":
+            return update_variable_table_language(data, SupportedLanguages(language))
+        else:
+            return accept_variable_metadata_input(data, data_previous)

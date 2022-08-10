@@ -6,7 +6,7 @@ import pytest
 from datadoc_model import Enums
 
 from datadoc_model.Enums import DatasetState
-from datadoc import DataDocMetadata
+from datadoc.backend.DataDocMetadata import DataDocMetadata
 from datadoc_model.Model import DataDocDataSet, DataDocVariable, MetadataDocument
 from .utils import (
     TEST_EXISTING_METADATA_FILE_NAME,
@@ -14,6 +14,11 @@ from .utils import (
     TEST_PARQUET_FILEPATH,
     TEST_RESOURCES_DIRECTORY,
 )
+
+
+@pytest.fixture
+def metadata():
+    yield DataDocMetadata(TEST_PARQUET_FILEPATH)
 
 
 @pytest.fixture
@@ -37,33 +42,34 @@ def make_paths():
     return test_data
 
 
-def test_get_dataset_state(make_paths):
-    metadata = DataDocMetadata.DataDocMetadata(TEST_PARQUET_FILEPATH)
-    for path, expected_result in make_paths:
-        actual_state = metadata.get_dataset_state(path)
-        assert actual_state == expected_result
-
-
-def test_get_dataset_state_no_parameter_supplied():
-    metadata = DataDocMetadata.DataDocMetadata(TEST_PARQUET_FILEPATH)
-    assert metadata.get_dataset_state() is None
+@pytest.fixture
+def remove_document_file() -> None:
+    yield None  # Dummy value, No need to return anything in particular here
+    os.remove(os.path.join(TEST_RESOURCES_DIRECTORY, TEST_EXISTING_METADATA_FILE_NAME))
 
 
 @pytest.fixture
 def existing_metadata_file():
     # Setup by copying the file into the relevant directory
     shutil.copy(TEST_EXISTING_METADATA_FILEPATH, TEST_RESOURCES_DIRECTORY)
-    yield True  # Dummy value, No need to return anything in particular here
-    # Cleanup by deleting the file once we're done
-    os.remove(os.path.join(TEST_RESOURCES_DIRECTORY, TEST_EXISTING_METADATA_FILE_NAME))
+    yield None  # Dummy value, No need to return anything in particular here
 
 
-def test_existing_metadata_file(existing_metadata_file):
-    metadata = DataDocMetadata.DataDocMetadata(TEST_PARQUET_FILEPATH)
+def test_get_dataset_state(metadata, make_paths):
+    for path, expected_result in make_paths:
+        actual_state = metadata.get_dataset_state(path)
+        assert actual_state == expected_result
+
+
+def test_get_dataset_state_no_parameter_supplied(metadata):
+    assert metadata.get_dataset_state() is None
+
+
+def test_existing_metadata_file(existing_metadata_file, metadata, remove_document_file):
     assert metadata.meta.dataset.name.en == "successfully_read_existing_file"
 
 
-def test_metadata_document_percent_complete():
+def test_metadata_document_percent_complete(metadata):
     dataset = DataDocDataSet(dataset_state=Enums.DatasetState.OUTPUT_DATA)
     variable_1 = DataDocVariable(data_type=Enums.Datatype.BOOLEAN)
     variable_2 = DataDocVariable(data_type=Enums.Datatype.INTEGER)
@@ -73,7 +79,21 @@ def test_metadata_document_percent_complete():
         dataset=dataset,
         variables=[variable_1, variable_2],
     )
-    metadata = DataDocMetadata.DataDocMetadata(TEST_PARQUET_FILEPATH)
     metadata.meta = document
 
     assert metadata.percent_complete == 11
+
+
+def test_get_dataset_version(metadata):
+    assert metadata.get_dataset_version(metadata.dataset_stem) == "1"
+
+
+def test_get_dataset_version_unknown(metadata):
+    assert metadata.get_dataset_version("person_data.parquet") is None
+
+
+def test_write_metadata_document(metadata, remove_document_file):
+    metadata.write_metadata_document()
+    assert os.path.exists(
+        os.path.join(TEST_RESOURCES_DIRECTORY, TEST_EXISTING_METADATA_FILE_NAME)
+    )

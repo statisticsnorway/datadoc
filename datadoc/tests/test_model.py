@@ -1,5 +1,8 @@
-from datadoc.frontend.DisplayDataset import DISPLAY_DATASET, DatasetIdentifiers
-from datadoc.frontend.DisplayVariables import DISPLAY_VARIABLES, VariableIdentifiers
+from datadoc.frontend.fields.DisplayDataset import DISPLAY_DATASET, DatasetIdentifiers
+from datadoc.frontend.fields.DisplayVariables import (
+    DISPLAY_VARIABLES,
+    VariableIdentifiers,
+)
 from datadoc_model.Model import (
     DataDocDataSet,
     DataDocVariable,
