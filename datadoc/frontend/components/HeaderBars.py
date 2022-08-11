@@ -1,7 +1,7 @@
 import dash_bootstrap_components as dbc
 from dash import html, dcc
 
-from datadoc.Enums import SupportedLanguages
+from datadoc_model.Enums import SupportedLanguages
 import datadoc.state as state
 
 

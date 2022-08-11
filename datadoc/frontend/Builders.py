@@ -27,7 +27,6 @@ def make_dataset_metadata_accordion_item(
                                 "id": i.identifier,
                             },
                             **i.extra_kwargs,
-                            **(i.options or {}),
                         ),
                         width=5,
                     ),

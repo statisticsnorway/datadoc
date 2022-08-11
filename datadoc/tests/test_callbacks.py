@@ -2,13 +2,13 @@ from copy import deepcopy
 import random
 
 from datadoc_model.Enums import DatasetState, VariableRole
-from datadoc_model.Model import LanguageStrings, DataDocDataSet, DataDocVariable
+from datadoc_model.Model import LanguageStrings, DataDocDataSet
 from datadoc.frontend.fields.DisplayVariables import VariableIdentifiers
 from datadoc.tests.utils import TEST_PARQUET_FILEPATH
 import datadoc.state as state
 from datadoc.backend.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.callbacks import Callbacks
-from datadoc.Enums import SupportedLanguages
+from datadoc_model.Enums import SupportedLanguages
 
 
 DATA_ORIGINAL = [
@@ -79,7 +79,7 @@ def test_accept_dataset_metadata_input_new_data():
     )
     assert output[0] is False
     assert output[1] == ""
-    assert state.metadata.meta.dataset.dataset_state == DatasetState.INPUT_DATA
+    assert state.metadata.meta.dataset.dataset_state == "INPUT_DATA"
 
 
 def test_accept_dataset_metadata_input_incorrect_data_type():
@@ -92,10 +92,12 @@ def test_accept_dataset_metadata_input_incorrect_data_type():
 def test_change_language():
     state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
     state.metadata.meta.dataset.name = LANGUAGE_OBJECT
-    output = Callbacks.update_dataset_metadata_language(SupportedLanguages.NORSK_BOKMÅL)
+    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
+    output = Callbacks.update_dataset_metadata_language()
     assert ENGLISH_NAME not in output
     assert BOKMÅL_NAME in output
-    output = Callbacks.update_dataset_metadata_language(SupportedLanguages.ENGLISH)
+    state.current_metadata_language = SupportedLanguages.ENGLISH
+    output = Callbacks.update_dataset_metadata_language()
     assert ENGLISH_NAME in output
     assert BOKMÅL_NAME not in output
 

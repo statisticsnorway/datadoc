@@ -1,4 +1,6 @@
 from enum import Enum
+import logging
+from typing import Dict, List
 from dash import dcc
 from datadoc_model.Enums import (
     Assessment,
@@ -7,6 +9,8 @@ from datadoc_model.Enums import (
     TemporalityType,
     UnitType,
 )
+from datadoc_model.LanguageStringsEnum import LanguageStringsEnum
+from datadoc_model.Enums import SupportedLanguages
 from datadoc import state
 from datadoc.frontend.fields.DisplayBase import (
     DisplayDatasetMetadata,
@@ -14,6 +18,20 @@ from datadoc.frontend.fields.DisplayBase import (
     NUMBER_KWARGS,
     get_multi_language_metadata,
 )
+
+logger = logging.getLogger(__name__)
+
+
+def generate_options_for_language(
+    enum: LanguageStringsEnum, language: SupportedLanguages
+) -> List[Dict]:
+    return [
+        {
+            "label": i.get_value_for_language(language),
+            "value": i.name,
+        }
+        for i in enum
+    ]
 
 
 class DatasetIdentifiers(str, Enum):
@@ -75,7 +93,6 @@ DISPLAY_DATASET = {
         obligatory=True,
         component=dcc.Dropdown,
         extra_kwargs=DROPDOWN_KWARGS,
-        options={"options": [{"label": i.name, "value": i.name} for i in DatasetState]},
     ),
     DatasetIdentifiers.NAME: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.NAME.value,

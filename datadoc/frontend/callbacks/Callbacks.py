@@ -5,14 +5,16 @@ from datadoc_model import Model
 from dash import Dash, Output, Input, ctx, ALL
 
 import datadoc.state as state
-from datadoc.Enums import SupportedLanguages
+from datadoc_model.Enums import SupportedLanguages, DatasetState
 from datadoc.utils import get_display_values
 from datadoc.frontend.fields.DisplayDataset import (
     MULTIPLE_LANGUAGE_DATASET_METADATA,
     NON_EDITABLE_DATASET_METADATA,
     OBLIGATORY_EDITABLE_DATASET_METADATA,
     OPTIONAL_DATASET_METADATA,
+    DatasetIdentifiers,
     DisplayDatasetMetadata,
+    generate_options_for_language,
 )
 from datadoc.frontend.fields.DisplayVariables import (
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,
@@ -106,6 +108,7 @@ def accept_variable_metadata_input(
 def accept_dataset_metadata_input(
     value: Any, metadata_identifier: str
 ) -> Tuple[bool, str]:
+    logger.debug(f"Received update {value = } for {metadata_identifier = }")
     try:
         if (
             metadata_identifier in MULTIPLE_LANGUAGE_DATASET_METADATA
@@ -115,6 +118,13 @@ def accept_dataset_metadata_input(
                 state.metadata.meta.dataset, value, metadata_identifier
             )
 
+        if (
+            metadata_identifier == DatasetIdentifiers.DATASET_STATE.value
+            and type(value) is str
+        ):
+            value = DatasetState[value]
+
+        logger.debug(f"Updating {value = } for {metadata_identifier = }")
         # Update the value in the model
         setattr(
             state.metadata.meta.dataset,
@@ -133,12 +143,15 @@ def accept_dataset_metadata_input(
     return show_error, error_explanation
 
 
-def update_dataset_metadata_language(language: SupportedLanguages) -> List[Any]:
+def update_global_language_state(language: SupportedLanguages):
+    logger.debug(f"Updating language: {language.name}")
+    state.current_metadata_language = language
+
+
+def update_dataset_metadata_language() -> List[Any]:
     """Update the global language setting with the chosen language.
     Return new values for ALL the dataset metadata inputs to allow
     editing of strings in the chosen language"""
-
-    state.current_metadata_language = language
     # The order of this list MUST match the order of display components, as defined
     # in dataset_variables in DataDocDash.py
     displayed_dataset_metadata: List[DisplayDatasetMetadata] = (
@@ -146,11 +159,14 @@ def update_dataset_metadata_language(language: SupportedLanguages) -> List[Any]:
         + OPTIONAL_DATASET_METADATA
         + NON_EDITABLE_DATASET_METADATA
     )
-    logger.debug(f"Updated language: {state.current_metadata_language.name}")
     return [
         m.value_getter(state.metadata.meta.dataset, m.identifier)
         for m in displayed_dataset_metadata
     ]
+
+
+def update_options_for_language() -> Dict:
+    return generate_options_for_language(DatasetState, state.current_metadata_language)
 
 
 def update_variable_table_language(
@@ -199,13 +215,24 @@ def register_callbacks(app: Dash) -> None:
 
     @app.callback(
         Output(
+            {
+                "type": DATASET_METADATA_INPUT,
+                "id": DatasetIdentifiers.DATASET_STATE.value,
+            },
+            "options",
+        ),
+        Output(
             {"type": DATASET_METADATA_INPUT, "id": ALL},
             "value",
         ),
         Input("language-dropdown", "value"),
     )
     def callback_change_language(language: str):
-        return update_dataset_metadata_language(SupportedLanguages(language))
+        update_global_language_state(SupportedLanguages(language))
+        return (
+            update_options_for_language(),
+            update_dataset_metadata_language(),
+        )
 
     @app.callback(
         Output("dataset-validation-error", "is_open"),

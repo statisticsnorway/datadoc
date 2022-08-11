@@ -52,7 +52,9 @@ class DataDocMetadata:
         self.metadata_document_full_path = self.dataset_directory.joinpath(
             self.metadata_document_name
         )
-        self.dataset_state = self.get_dataset_state(self.dataset_full_path)
+        self.dataset_state: DatasetState = self.get_dataset_state(
+            self.dataset_full_path
+        )
         self.dataset_version = self.get_dataset_version(self.dataset_stem)
         try:
             self.current_user = os.environ["JUPYTERHUB_USER"]
@@ -130,32 +132,20 @@ class DataDocMetadata:
 
         self.meta.dataset = Model.DataDocDataSet(
             short_name=self.dataset_stem,
-            assessment=None,
             dataset_state=self.dataset_state,
-            name=None,
-            data_source=None,
-            population_description=None,
-            administrative_status=AdministrativeStatus.DRAFT,
             version=self.dataset_version,
-            unit_type=None,
-            temporality_type=None,
-            description=None,
-            spatial_coverage_description=None,
-            id=None,
-            owner=None,
             data_source_path=str(self.dataset_full_path),
             created_date=self.current_datetime,
             created_by=self.current_user,
-            last_updated_date=None,
-            last_updated_by=None,
         )
 
         self.meta.variables = self.ds_schema.get_fields()
 
     def write_metadata_document(self) -> None:
         """Write all currently known metadata to file"""
-        json_str = json.dumps(self.meta.dict(), indent=4, sort_keys=False, default=str)
-        self.metadata_document_full_path.write_text(json_str, encoding="utf-8")
+        self.metadata_document_full_path.write_text(
+            self.meta.json(indent=4, sort_keys=False), encoding="utf-8"
+        )
         logger.info(f"Saved metadata document {self.metadata_document_full_path}")
 
     @property

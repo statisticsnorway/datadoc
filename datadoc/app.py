@@ -6,7 +6,6 @@ from typing import Type
 import dash_bootstrap_components as dbc
 from dash import Dash
 
-from datadoc.Enums import SupportedLanguages
 from datadoc.frontend.components.DatasetTab import get_dataset_tab
 from datadoc.frontend.components.VariablesTab import get_variables_tab
 from datadoc.frontend.components.Alerts import (
@@ -23,6 +22,7 @@ import datadoc.state as state
 from datadoc.frontend.callbacks.Callbacks import register_callbacks
 from datadoc.backend.DataDocMetadata import DataDocMetadata
 from datadoc.utils import running_in_notebook
+from datadoc_model.Enums import DatasetState
 
 logger = logging.getLogger(__name__)
 
@@ -69,6 +69,7 @@ def build_app(dash_class: Type[Dash]) -> Dash:
 
 
 def main(dataset_path: str = None):
+    logging.basicConfig(level=logging.DEBUG)
     if dataset_path is None:
         # Get the supplied command line argument
         parser = argparse.ArgumentParser()
@@ -84,15 +85,15 @@ def main(dataset_path: str = None):
     if running_in_notebook():
         logging.basicConfig(level=logging.WARNING)
         from jupyter_dash import JupyterDash
+
         JupyterDash.infer_jupyter_proxy_config()
         app = build_app(JupyterDash)
-        app.run_server(mode="inline")
+        app.run(mode="inline")
     else:
         # Assume running in server mode is better (largely for development purposes)
-        logging.basicConfig(level=logging.DEBUG)
         logger.debug("Starting in development mode")
         app = build_app(Dash)
-        app.run_server(debug=True)
+        app.run(debug=True)
 
 
 if __name__ == "__main__":
