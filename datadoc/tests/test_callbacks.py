@@ -1,15 +1,13 @@
-from copy import deepcopy
 import random
+from copy import deepcopy
 
-from datadoc_model.Enums import DatasetState, VariableRole
-from datadoc_model.Model import LanguageStrings, DataDocDataSet
-from datadoc.frontend.fields.DisplayVariables import VariableIdentifiers
-from datadoc.tests.utils import TEST_PARQUET_FILEPATH
 import datadoc.state as state
 from datadoc.backend.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.callbacks import Callbacks
-from datadoc_model.Enums import SupportedLanguages
-
+from datadoc.frontend.fields.DisplayVariables import VariableIdentifiers
+from datadoc.tests.utils import TEST_PARQUET_FILEPATH
+from datadoc_model.Enums import DatasetState, SupportedLanguages
+from datadoc_model.Model import DataDocDataSet, LanguageStrings
 
 DATA_ORIGINAL = [
     {

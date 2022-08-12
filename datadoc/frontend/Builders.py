@@ -1,7 +1,7 @@
 import re
-from typing import List
+
 import dash_bootstrap_components as dbc
-from dash import html, dcc
+from dash import dcc, html
 
 
 def make_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:

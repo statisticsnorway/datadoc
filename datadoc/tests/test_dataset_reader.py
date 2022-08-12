@@ -1,10 +1,6 @@
 import random
-from pytest import raises
 
-from datadoc_model.Model import DataDocVariable, LanguageStrings
-from datadoc_model.Enums import Datatype
 from datadoc import state
-from datadoc_model.Enums import SupportedLanguages
 from datadoc.backend.DatasetReader import (
     KNOWN_BOOLEAN_TYPES,
     KNOWN_DATETIME_TYPES,
@@ -13,6 +9,10 @@ from datadoc.backend.DatasetReader import (
     KNOWN_STRING_TYPES,
     DatasetReader,
 )
+from datadoc_model.Enums import Datatype, SupportedLanguages
+from datadoc_model.Model import DataDocVariable, LanguageStrings
+from pytest import raises
+
 from .utils import TEST_PARQUET_FILEPATH, TEST_SAS7BDAT_FILEPATH
 
 

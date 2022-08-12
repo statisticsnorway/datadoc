@@ -5,12 +5,12 @@ import os
 import pathlib
 from typing import Dict, Optional
 
-from datadoc_model.Enums import DatasetState
-from datadoc.backend.DatasetReader import DatasetReader
-from datadoc_model import Model
 import datadoc.frontend.fields.DisplayDataset as DisplayDataset
 import datadoc.frontend.fields.DisplayVariables as DisplayVariables
+from datadoc.backend.DatasetReader import DatasetReader
 from datadoc.utils import calculate_percentage
+from datadoc_model import Model
+from datadoc_model.Enums import DatasetState
 
 logger = logging.getLogger(__name__)
 
@@ -107,8 +107,8 @@ class DataDocMetadata:
     def read_metadata_document(self):
         fresh_metadata = {}
         if self.metadata_document_full_path.exists():
-            with open(self.metadata_document_full_path, "r", encoding="utf-8") as JSON:
-                fresh_metadata = json.load(JSON)
+            with open(self.metadata_document_full_path, encoding="utf-8") as file:
+                fresh_metadata = json.load(file)
             logger.info(
                 f"Opened existing metadata file {self.metadata_document_full_path}"
             )

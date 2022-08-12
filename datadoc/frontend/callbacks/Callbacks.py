@@ -1,27 +1,27 @@
 import logging
 from typing import Any, Dict, List, Optional, Tuple
-from pydantic import ValidationError
-from datadoc_model import Model
-from dash import Dash, Output, Input, ctx, ALL
 
 import datadoc.state as state
-from datadoc_model.Enums import SupportedLanguages, DatasetState
-from datadoc_model.LanguageStringsEnum import LanguageStringsEnum
-from datadoc.utils import get_display_values
+from dash import ALL, Dash, Input, Output, ctx
+from datadoc.frontend.components.DatasetTab import DATASET_METADATA_INPUT
 from datadoc.frontend.fields.DisplayDataset import (
+    DISPLAYED_DATASET_METADATA,
     DISPLAYED_DROPDOWN_DATASET_ENUMS,
     DISPLAYED_DROPDOWN_DATASET_METADATA,
     MULTIPLE_LANGUAGE_DATASET_METADATA,
-    DISPLAYED_DATASET_METADATA,
     DatasetIdentifiers,
 )
 from datadoc.frontend.fields.DisplayVariables import (
     DISPLAYED_DROPDOWN_VARIABLES_METADATA,
-    MULTIPLE_LANGUAGE_VARIABLES_METADATA,
     DISPLAYED_DROPDOWN_VARIABLES_TYPES,
+    MULTIPLE_LANGUAGE_VARIABLES_METADATA,
     VariableIdentifiers,
 )
-from datadoc.frontend.components.DatasetTab import DATASET_METADATA_INPUT
+from datadoc.utils import get_display_values
+from datadoc_model import Model
+from datadoc_model.Enums import DatasetState, SupportedLanguages
+from datadoc_model.LanguageStringsEnum import LanguageStringsEnum
+from pydantic import ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -212,11 +212,11 @@ def update_variable_table_dropdown_options_for_language(
         }
     """
     options = []
-    for type in DISPLAYED_DROPDOWN_VARIABLES_TYPES:
+    for field_type in DISPLAYED_DROPDOWN_VARIABLES_TYPES:
         value = (
             get_boolean_options_for_language(language)
-            if type is bool
-            else get_options_for_language(language, type)
+            if field_type is bool
+            else get_options_for_language(language, field_type)
         )
         options.append({"options": value})
     return dict(zip(DISPLAYED_DROPDOWN_VARIABLES_METADATA, options))

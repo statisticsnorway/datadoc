@@ -1,16 +1,13 @@
 import dash_bootstrap_components as dbc
-from dash import html, dcc
-
-from datadoc_model.Enums import SupportedLanguages
 import datadoc.state as state
-
+from dash import dcc, html
+from datadoc_model.Enums import SupportedLanguages
 
 COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
 header = dbc.CardBody(
     dbc.Row(
         children=[
-            # html.Link(rel="stylesheet", href="assets/bundle.css"),
             html.H1("DataDoc", className="ssb-title", style={"color": "white"}),
         ],
     ),

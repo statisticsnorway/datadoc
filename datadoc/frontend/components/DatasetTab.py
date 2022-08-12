@@ -1,7 +1,7 @@
 from typing import List
+
 import dash_bootstrap_components as dbc
 from dash import html
-
 from datadoc.frontend.Builders import make_ssb_styled_tab
 from datadoc.frontend.fields.DisplayDataset import (
     NON_EDITABLE_DATASET_METADATA,
@@ -9,7 +9,6 @@ from datadoc.frontend.fields.DisplayDataset import (
     OPTIONAL_DATASET_METADATA,
     DisplayDatasetMetadata,
 )
-
 
 DATASET_METADATA_INPUT = "dataset-metadata-input"
 

@@ -4,23 +4,22 @@ import os
 from typing import Type
 
 import dash_bootstrap_components as dbc
+import datadoc.state as state
 from dash import Dash
-
-from datadoc.frontend.components.DatasetTab import get_dataset_tab
-from datadoc.frontend.components.VariablesTab import get_variables_tab
+from datadoc.backend.DataDocMetadata import DataDocMetadata
+from datadoc.frontend.callbacks.Callbacks import register_callbacks
 from datadoc.frontend.components.Alerts import (
     dataset_validation_error,
-    variables_validation_error,
     success_toast,
+    variables_validation_error,
 )
+from datadoc.frontend.components.DatasetTab import get_dataset_tab
 from datadoc.frontend.components.HeaderBars import (
+    get_controls_bar,
     header,
     progress_bar,
-    get_controls_bar,
 )
-import datadoc.state as state
-from datadoc.frontend.callbacks.Callbacks import register_callbacks
-from datadoc.backend.DataDocMetadata import DataDocMetadata
+from datadoc.frontend.components.VariablesTab import get_variables_tab
 from datadoc.utils import running_in_notebook
 
 logger = logging.getLogger(__name__)

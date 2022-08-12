@@ -1,14 +1,15 @@
-from enum import Enum
 import logging
+from enum import Enum
 from typing import Dict, List
+
 from dash import dcc
-from datadoc_model import Model
 from datadoc.frontend.fields.DisplayBase import (
-    DisplayDatasetMetadata,
     DROPDOWN_KWARGS,
     NUMBER_KWARGS,
+    DisplayDatasetMetadata,
     get_multi_language_metadata,
 )
+from datadoc_model import Model
 
 logger = logging.getLogger(__name__)
 

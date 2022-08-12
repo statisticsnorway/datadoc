@@ -35,21 +35,8 @@ repos:
         entry: poetry run pyupgrade --py37-plus
         language: system
         types: [python]
-      # - id: mypy
-      #   name: mypy
-      #   entry: poetry run mypy .
-      #   require_serial: true
-      #   language: system
-      #   types: [python]
-      #   pass_filenames: false
       - id: flake8
         name: flake8
         entry: poetry run flake8
         language: system
         types: [python]
-      - id: kacl-verify
-        name: kacl-verify
-        entry: poetry run kacl-cli verify
-        language: system
-        files: "CHANGELOG.md"
-        pass_filenames: false

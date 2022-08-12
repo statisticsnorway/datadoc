@@ -1,10 +1,9 @@
 import dash_bootstrap_components as dbc
-from dash import html, dash_table
-
+import datadoc.state as state
+from dash import dash_table, html
 from datadoc.frontend.Builders import make_ssb_styled_tab
 from datadoc.frontend.fields.DisplayVariables import DISPLAY_VARIABLES
 from datadoc.utils import get_display_values
-import datadoc.state as state
 
 
 def get_variables_tab() -> dbc.Tab:

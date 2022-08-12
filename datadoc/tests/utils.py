@@ -1,6 +1,5 @@
 import os
 
-
 TEST_RESOURCES_DIRECTORY = "datadoc/tests/resources/"
 TEST_PARQUET_FILEPATH = os.path.join(TEST_RESOURCES_DIRECTORY, "person_data_v1.parquet")
 TEST_SAS7BDAT_FILEPATH = os.path.join(TEST_RESOURCES_DIRECTORY, "sasdata.sas7bdat")

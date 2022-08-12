@@ -1,8 +1,8 @@
 from enum import Enum
 
-from datadoc_model.LanguageStringsEnum import LanguageStringsEnum
-from datadoc_model import Model
 from datadoc.frontend.fields.DisplayBase import DisplayVariablesMetadata
+from datadoc_model import Model
+from datadoc_model.LanguageStringsEnum import LanguageStringsEnum
 
 
 class VariableIdentifiers(str, Enum):
@@ -152,6 +152,6 @@ DISPLAYED_DROPDOWN_VARIABLES_TYPES = []
 
 for m in DISPLAY_VARIABLES.values():
     if m.presentation == "dropdown":
-        type = Model.DataDocVariable.__fields__[m.identifier].type_
-        if issubclass(type, LanguageStringsEnum) or type is bool:
-            DISPLAYED_DROPDOWN_VARIABLES_TYPES.append(type)
+        field_type = Model.DataDocVariable.__fields__[m.identifier].type_
+        if issubclass(field_type, LanguageStringsEnum) or field_type is bool:
+            DISPLAYED_DROPDOWN_VARIABLES_TYPES.append(field_type)

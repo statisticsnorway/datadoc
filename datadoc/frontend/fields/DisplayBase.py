@@ -1,13 +1,12 @@
-from dataclasses import dataclass, field
 import logging
-from typing import Any, Dict, Optional, Type, List, Callable
-from pydantic import BaseModel
+from dataclasses import dataclass, field
+from typing import Any, Callable, Dict, List, Optional, Type
+
 from dash import dcc
 from dash.development.base_component import Component
-
-from datadoc_model.Enums import SupportedLanguages
-from datadoc_model.LanguageStrings import LanguageStrings
 from datadoc import state
+from datadoc_model.LanguageStrings import LanguageStrings
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
