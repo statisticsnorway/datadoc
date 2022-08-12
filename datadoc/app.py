@@ -22,7 +22,6 @@ import datadoc.state as state
 from datadoc.frontend.callbacks.Callbacks import register_callbacks
 from datadoc.backend.DataDocMetadata import DataDocMetadata
 from datadoc.utils import running_in_notebook
-from datadoc_model.Enums import DatasetState
 
 logger = logging.getLogger(__name__)
 

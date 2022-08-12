@@ -6,23 +6,22 @@ from dash import Dash, Output, Input, ctx, ALL
 
 import datadoc.state as state
 from datadoc_model.Enums import SupportedLanguages, DatasetState
+from datadoc_model.LanguageStringsEnum import LanguageStringsEnum
 from datadoc.utils import get_display_values
 from datadoc.frontend.fields.DisplayDataset import (
+    DISPLAYED_DROPDOWN_DATASET_ENUMS,
+    DISPLAYED_DROPDOWN_DATASET_METADATA,
     MULTIPLE_LANGUAGE_DATASET_METADATA,
-    NON_EDITABLE_DATASET_METADATA,
-    OBLIGATORY_EDITABLE_DATASET_METADATA,
-    OPTIONAL_DATASET_METADATA,
+    DISPLAYED_DATASET_METADATA,
     DatasetIdentifiers,
-    DisplayDatasetMetadata,
-    generate_options_for_language,
 )
 from datadoc.frontend.fields.DisplayVariables import (
+    DISPLAYED_DROPDOWN_VARIABLES_METADATA,
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,
+    DISPLAYED_DROPDOWN_VARIABLES_TYPES,
     VariableIdentifiers,
 )
-from datadoc.frontend.Builders import (
-    DATASET_METADATA_INPUT,
-)
+from datadoc.frontend.components.DatasetTab import DATASET_METADATA_INPUT
 
 logger = logging.getLogger(__name__)
 
@@ -50,9 +49,9 @@ def find_existing_language_string(
 def accept_variable_metadata_input(
     data: List[Dict], data_previous: List[Dict]
 ) -> Tuple[List[Dict], bool, str]:
-    updated_row_id = None
-    updated_column_id = None
-    new_value = None
+    updated_row_id: str = ""
+    updated_column_id: str = ""
+    new_value: Optional[str] = None
     show_error = False
     error_explanation = ""
     output_data = data
@@ -149,24 +148,78 @@ def update_global_language_state(language: SupportedLanguages):
 
 
 def update_dataset_metadata_language() -> List[Any]:
-    """Update the global language setting with the chosen language.
-    Return new values for ALL the dataset metadata inputs to allow
+    """Return new values for ALL the dataset metadata inputs to allow
     editing of strings in the chosen language"""
-    # The order of this list MUST match the order of display components, as defined
-    # in dataset_variables in DataDocDash.py
-    displayed_dataset_metadata: List[DisplayDatasetMetadata] = (
-        OBLIGATORY_EDITABLE_DATASET_METADATA
-        + OPTIONAL_DATASET_METADATA
-        + NON_EDITABLE_DATASET_METADATA
-    )
     return [
         m.value_getter(state.metadata.meta.dataset, m.identifier)
-        for m in displayed_dataset_metadata
+        for m in DISPLAYED_DATASET_METADATA
     ]
 
 
-def update_options_for_language() -> Dict:
-    return generate_options_for_language(DatasetState, state.current_metadata_language)
+def get_options_for_language(
+    language: SupportedLanguages, enum: LanguageStringsEnum
+) -> List[Dict[str, str]]:
+    """Generate the list of options based on the currently chosen language"""
+    return [
+        {
+            "label": i.get_value_for_language(language),
+            "value": i.name,
+        }
+        for i in enum
+    ]
+
+
+def get_boolean_options_for_language(language: SupportedLanguages):
+    true_labels = {
+        SupportedLanguages.ENGLISH: "Yes",
+        SupportedLanguages.NORSK_NYNORSK: "Ja",
+        SupportedLanguages.NORSK_BOKMÅL: "Ja",
+    }
+    false_labels = {
+        SupportedLanguages.ENGLISH: "No",
+        SupportedLanguages.NORSK_NYNORSK: "Nei",
+        SupportedLanguages.NORSK_BOKMÅL: "Nei",
+    }
+    return [
+        {
+            "label": f"{true_labels[language]}",
+            "value": True,
+        },
+        {
+            "label": f"{false_labels[language]}",
+            "value": False,
+        },
+    ]
+
+
+def update_variable_table_dropdown_options_for_language(
+    language: SupportedLanguages,
+) -> Dict[str, Dict[str, List[Dict[str, str]]]]:
+    """Retrieves enum options for dropdowns in the Datatable. Handles the
+    special case of boolean values which we represent in the Datatable
+    with a Dropdown but they're not backed by an Enum.
+
+    Example return structure:
+        {'data_type': {'options': [{'label': 'TEKST', 'value': 'STRING'},
+                                {'label': 'HELTALL', 'value': 'INTEGER'},
+                                {'label': 'DESIMALTALL', 'value': 'FLOAT'},
+                                {'label': 'DATOTID', 'value': 'DATETIME'},
+                                {'label': 'BOOLSK', 'value': 'BOOLEAN'}]},
+        'direct_person_identifying': {'options': [{'label': 'Ja', 'value': True},
+                                                {'label': 'Nei', 'value': False}]},
+        'temporality_type': {'options': [{'label': 'FAST', 'value': 'FIXED'},
+            ...
+        }
+    """
+    options = []
+    for type in DISPLAYED_DROPDOWN_VARIABLES_TYPES:
+        value = (
+            get_boolean_options_for_language(language)
+            if type is bool
+            else get_options_for_language(language, type)
+        )
+        options.append({"options": value})
+    return dict(zip(DISPLAYED_DROPDOWN_VARIABLES_METADATA, options))
 
 
 def update_variable_table_language(
@@ -214,13 +267,16 @@ def register_callbacks(app: Dash) -> None:
             return False
 
     @app.callback(
-        Output(
-            {
-                "type": DATASET_METADATA_INPUT,
-                "id": DatasetIdentifiers.DATASET_STATE.value,
-            },
-            "options",
-        ),
+        *[
+            Output(
+                {
+                    "type": DATASET_METADATA_INPUT,
+                    "id": m.identifier,
+                },
+                "options",
+            )
+            for m in DISPLAYED_DROPDOWN_DATASET_METADATA
+        ],
         Output(
             {"type": DATASET_METADATA_INPUT, "id": ALL},
             "value",
@@ -230,7 +286,10 @@ def register_callbacks(app: Dash) -> None:
     def callback_change_language(language: str):
         update_global_language_state(SupportedLanguages(language))
         return (
-            update_options_for_language(),
+            *(
+                get_options_for_language(SupportedLanguages(language), e)
+                for e in DISPLAYED_DROPDOWN_DATASET_ENUMS
+            ),
             update_dataset_metadata_language(),
         )
 
@@ -262,3 +321,11 @@ def register_callbacks(app: Dash) -> None:
             return update_variable_table_language(data, SupportedLanguages(language))
         else:
             return accept_variable_metadata_input(data, data_previous)
+
+    @app.callback(
+        Output("variables-table", "dropdown"),
+        Input("language-dropdown", "value"),
+    )
+    def callback_variable_table_dropdown_options(language: str):
+        language = SupportedLanguages(language)
+        return update_variable_table_dropdown_options_for_language(language)

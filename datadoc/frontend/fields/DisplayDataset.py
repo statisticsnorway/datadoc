@@ -2,16 +2,7 @@ from enum import Enum
 import logging
 from typing import Dict, List
 from dash import dcc
-from datadoc_model.Enums import (
-    Assessment,
-    DatasetState,
-    DatasetStatus,
-    TemporalityType,
-    UnitType,
-)
-from datadoc_model.LanguageStringsEnum import LanguageStringsEnum
-from datadoc_model.Enums import SupportedLanguages
-from datadoc import state
+from datadoc_model import Model
 from datadoc.frontend.fields.DisplayBase import (
     DisplayDatasetMetadata,
     DROPDOWN_KWARGS,
@@ -20,18 +11,6 @@ from datadoc.frontend.fields.DisplayBase import (
 )
 
 logger = logging.getLogger(__name__)
-
-
-def generate_options_for_language(
-    enum: LanguageStringsEnum, language: SupportedLanguages
-) -> List[Dict]:
-    return [
-        {
-            "label": i.get_value_for_language(language),
-            "value": i.name,
-        }
-        for i in enum
-    ]
 
 
 class DatasetIdentifiers(str, Enum):
@@ -59,7 +38,7 @@ class DatasetIdentifiers(str, Enum):
     METADATA_LAST_UPDATED_BY = "last_updated_by"
 
 
-DISPLAY_DATASET = {
+DISPLAY_DATASET: Dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
     DatasetIdentifiers.SHORT_NAME: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.SHORT_NAME.value,
         display_name="Kortnavn",
@@ -74,7 +53,6 @@ DISPLAY_DATASET = {
         description="Verdivurdering (sensitivitetsklassifisering) for datasettet.",
         component=dcc.Dropdown,
         extra_kwargs=DROPDOWN_KWARGS,
-        options={"options": [{"label": i.name, "value": i.name} for i in Assessment]},
     ),
     DatasetIdentifiers.DATASET_STATUS: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.DATASET_STATUS.value,
@@ -82,9 +60,6 @@ DISPLAY_DATASET = {
         description="Livssyklus for datasettet",
         component=dcc.Dropdown,
         extra_kwargs=DROPDOWN_KWARGS,
-        options={
-            "options": [{"label": i.name, "value": i.name} for i in DatasetStatus]
-        },
     ),
     DatasetIdentifiers.DATASET_STATE: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.DATASET_STATE.value,
@@ -128,7 +103,6 @@ DISPLAY_DATASET = {
         description="Primær enhetstype for datafil, datatabell eller datasett. Se  Vi jobber med en avklaring av behov for flere enhetstyper her.",
         component=dcc.Dropdown,
         extra_kwargs=DROPDOWN_KWARGS,
-        options={"options": [{"label": i.name, "value": i.name} for i in UnitType]},
     ),
     DatasetIdentifiers.TEMPORALITY_TYPE: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.TEMPORALITY_TYPE.value,
@@ -136,9 +110,6 @@ DISPLAY_DATASET = {
         description="Temporalitetstype. Settes enten for variabelforekomst eller datasett. Se Temporalitet, hendelser og forløp.",
         component=dcc.Dropdown,
         extra_kwargs=DROPDOWN_KWARGS,
-        options={
-            "options": [{"label": i.name, "value": i.name} for i in TemporalityType]
-        },
     ),
     DatasetIdentifiers.DESCRIPTION: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.DESCRIPTION.value,
@@ -228,3 +199,20 @@ OPTIONAL_DATASET_METADATA = [
 ]
 
 NON_EDITABLE_DATASET_METADATA = [m for m in DISPLAY_DATASET.values() if not m.editable]
+
+
+# The order of this list MUST match the order of display components, as defined in DatasetTab.py
+DISPLAYED_DATASET_METADATA: List[DisplayDatasetMetadata] = (
+    OBLIGATORY_EDITABLE_DATASET_METADATA
+    + OPTIONAL_DATASET_METADATA
+    + NON_EDITABLE_DATASET_METADATA
+)
+
+DISPLAYED_DROPDOWN_DATASET_METADATA = [
+    m for m in DISPLAYED_DATASET_METADATA if m.component == dcc.Dropdown
+]
+
+DISPLAYED_DROPDOWN_DATASET_ENUMS = [
+    Model.DataDocDataSet.__fields__[m.identifier].type_
+    for m in DISPLAYED_DROPDOWN_DATASET_METADATA
+]

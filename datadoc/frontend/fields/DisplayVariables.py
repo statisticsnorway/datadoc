@@ -1,6 +1,7 @@
 from enum import Enum
 
-from datadoc_model.Enums import Datatype, TemporalityType, VariableRole
+from datadoc_model.LanguageStringsEnum import LanguageStringsEnum
+from datadoc_model import Model
 from datadoc.frontend.fields.DisplayBase import DisplayVariablesMetadata
 
 
@@ -48,7 +49,6 @@ DISPLAY_VARIABLES = {
         description="Datatype",
         obligatory=True,
         presentation="dropdown",
-        options={"options": [{"label": i.name, "value": i.name} for i in Datatype]},
     ),
     VariableIdentifiers.VARIABLE_ROLE: DisplayVariablesMetadata(
         identifier=VariableIdentifiers.VARIABLE_ROLE.value,
@@ -56,7 +56,6 @@ DISPLAY_VARIABLES = {
         description="Variabelens rolle i datasett",
         obligatory=True,
         presentation="dropdown",
-        options={"options": [{"label": i.name, "value": i.name} for i in VariableRole]},
     ),
     VariableIdentifiers.DEFINITION_URI: DisplayVariablesMetadata(
         identifier=VariableIdentifiers.DEFINITION_URI.value,
@@ -70,12 +69,6 @@ DISPLAY_VARIABLES = {
         description="Direkte personidentifiserende informasjon (DPI)",
         obligatory=True,
         presentation="dropdown",
-        options={
-            "options": [
-                {"label": "Ja", "value": True},
-                {"label": "Nei", "value": False},
-            ]
-        },
     ),
     VariableIdentifiers.DATA_SOURCE: DisplayVariablesMetadata(
         identifier=VariableIdentifiers.DATA_SOURCE.value,
@@ -100,9 +93,6 @@ DISPLAY_VARIABLES = {
         display_name="Temporalitetstype",
         description="Temporalitetstype. Settes enten for variabelforekomst eller datasett. Se Temporalitet, hendelser og forløp.",
         presentation="dropdown",
-        options={
-            "options": [{"label": i.name, "value": i.name} for i in TemporalityType]
-        },
     ),
     VariableIdentifiers.MEASUREMENT_UNIT: DisplayVariablesMetadata(
         identifier=VariableIdentifiers.MEASUREMENT_UNIT.value,
@@ -153,3 +143,15 @@ DISPLAY_VARIABLES = {
 MULTIPLE_LANGUAGE_VARIABLES_METADATA = [
     m.identifier for m in DISPLAY_VARIABLES.values() if m.multiple_language_support
 ]
+
+DISPLAYED_DROPDOWN_VARIABLES_METADATA = [
+    m.identifier for m in DISPLAY_VARIABLES.values() if m.presentation == "dropdown"
+]
+
+DISPLAYED_DROPDOWN_VARIABLES_TYPES = []
+
+for m in DISPLAY_VARIABLES.values():
+    if m.presentation == "dropdown":
+        type = Model.DataDocVariable.__fields__[m.identifier].type_
+        if issubclass(type, LanguageStringsEnum) or type is bool:
+            DISPLAYED_DROPDOWN_VARIABLES_TYPES.append(type)

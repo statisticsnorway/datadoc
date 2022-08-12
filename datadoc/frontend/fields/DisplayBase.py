@@ -60,5 +60,4 @@ class DisplayVariablesMetadata(DisplayMetadata):
 class DisplayDatasetMetadata(DisplayMetadata):
     extra_kwargs: Dict[str, Any] = field(default_factory=kwargs_factory)
     component: Type[Component] = dcc.Input
-    options: Optional[Dict[str, List[Dict[str, str]]]] = None
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata

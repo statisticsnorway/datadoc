@@ -52,10 +52,7 @@ def test_accept_variable_metadata_input_new_data():
     state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
     output = Callbacks.accept_variable_metadata_input(DATA_VALID, DATA_ORIGINAL)
 
-    assert (
-        state.metadata.variables_lookup["pers_id"].variable_role
-        == VariableRole.IDENTIFIER
-    )
+    assert state.metadata.variables_lookup["pers_id"].variable_role == "IDENTIFIER"
     assert output[0] == DATA_VALID
     assert output[1] is False
     assert output[2] == ""

@@ -47,12 +47,6 @@ def get_variables_tab() -> dbc.Tab:
                         # Enable sorting and pagination
                         sort_action="native",
                         page_action="native",
-                        # Populate the options for all dropdown values
-                        dropdown={
-                            v.identifier: v.options
-                            for v in DISPLAY_VARIABLES.values()
-                            if v.options
-                        },
                     )
                 ),
             ],
