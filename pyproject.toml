@@ -24,8 +24,7 @@ dash = "^2.4.1"
 pydantic = "^1.9.1"
 dash-bootstrap-components = "^1.1.0"
 pandas = "^1.4.2"
-# ssb-datadoc-model = "0.1.0"
-ssb-datadoc-model = { path = "../datadoc-model", develop = true}
+ssb-datadoc-model = "0.1.2"
 
 [tool.poetry.dev-dependencies]
 jupyter = "^1.0.0"
