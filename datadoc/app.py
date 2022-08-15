@@ -4,10 +4,11 @@ import os
 from typing import Type
 
 import dash_bootstrap_components as dbc
-import datadoc.state as state
 from dash import Dash
+
+import datadoc.state as state
 from datadoc.backend.DataDocMetadata import DataDocMetadata
-from datadoc.frontend.callbacks.Callbacks import register_callbacks
+from datadoc.frontend.callbacks.register import register_callbacks
 from datadoc.frontend.components.Alerts import (
     dataset_validation_error,
     success_toast,
