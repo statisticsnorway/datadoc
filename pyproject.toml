@@ -24,7 +24,8 @@ dash = "^2.4.1"
 pydantic = "^1.9.1"
 dash-bootstrap-components = "^1.1.0"
 pandas = "^1.4.2"
-ssb-datadoc-model = "0.1.2"
+# ssb-datadoc-model = "0.1.2"
+ssb-datadoc-model = { path = "../datadoc-model", develop = true}
 
 [tool.poetry.dev-dependencies]
 jupyter = "^1.0.0"
@@ -57,7 +58,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.isort]
 profile = "black"
-src_paths = ["src", "tests"]
+src_paths = ["datadoc"]
 
 [tool.black]
 target-version = ["py37", "py38", "py39"]

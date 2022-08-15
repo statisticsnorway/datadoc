@@ -1,13 +1,15 @@
 import random
 from copy import deepcopy
 
+from datadoc_model.Enums import DatasetState, Datatype, SupportedLanguages
+from datadoc_model.Model import DataDocDataSet, DataDocVariable, LanguageStrings
+
 import datadoc.state as state
 from datadoc.backend.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.callbacks import Callbacks
+from datadoc.frontend.fields.DisplayDataset import DISPLAYED_DROPDOWN_DATASET_ENUMS
 from datadoc.frontend.fields.DisplayVariables import VariableIdentifiers
 from datadoc.tests.utils import TEST_PARQUET_FILEPATH
-from datadoc_model.Enums import DatasetState, SupportedLanguages
-from datadoc_model.Model import DataDocDataSet, LanguageStrings
 
 DATA_ORIGINAL = [
     {
@@ -84,7 +86,7 @@ def test_accept_dataset_metadata_input_incorrect_data_type():
     assert "validation error for DataDocDataSet" in output[1]
 
 
-def test_change_language():
+def test_update_dataset_metadata_language_strings():
     state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
     state.metadata.meta.dataset.name = LANGUAGE_OBJECT
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
@@ -95,6 +97,21 @@ def test_change_language():
     output = Callbacks.update_dataset_metadata_language()
     assert ENGLISH_NAME in output
     assert BOKMÅL_NAME not in output
+
+
+def test_update_dataset_metadata_language_enums():
+    state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
+    state.metadata.meta.dataset.dataset_state = DatasetState.PROCESSED_DATA
+    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
+    output = Callbacks.update_dataset_metadata_language()
+    assert DatasetState.PROCESSED_DATA.language_strings.en not in output
+    assert DatasetState.PROCESSED_DATA.language_strings.nb not in output
+    assert DatasetState.PROCESSED_DATA.name in output
+    state.current_metadata_language = SupportedLanguages.ENGLISH
+    output = Callbacks.update_dataset_metadata_language()
+    assert DatasetState.PROCESSED_DATA.language_strings.en not in output
+    assert DatasetState.PROCESSED_DATA.language_strings.nb not in output
+    assert DatasetState.PROCESSED_DATA.name in output
 
 
 def test_find_existing_language_string_no_existing_strings():
@@ -141,3 +158,44 @@ def test_nonetype_value_for_language_string():
     Callbacks.accept_variable_metadata_input(DATA_NONETYPE, DATA_ORIGINAL)
 
     assert state.metadata.variables_lookup["pers_id"].name == LANGUAGE_OBJECT
+
+
+def test_update_variable_table_dropdown_options_for_language():
+    options = Callbacks.update_variable_table_dropdown_options_for_language(
+        SupportedLanguages.NORSK_BOKMÅL
+    )
+    assert all(k in DataDocVariable.__fields__.keys() for k in options.keys())
+    assert all(list(v.keys()) == ["options"] for v in options.values())
+    assert all(
+        list(d.keys()) == ["label", "value"]
+        for v in options.values()
+        for d in list(v.values())[0]
+    )
+    assert [d["label"] for d in options["data_type"]["options"]] == [
+        i.get_value_for_language(SupportedLanguages.NORSK_BOKMÅL) for i in Datatype
+    ]
+
+
+def test_update_global_language_state():
+    language: SupportedLanguages = random.choice(list(SupportedLanguages))
+    Callbacks.update_global_language_state(language)
+    assert state.current_metadata_language == language
+
+
+def test_change_language_dataset_metadata():
+    state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
+    value = Callbacks.change_language_dataset_metadata(SupportedLanguages.NORSK_NYNORSK)
+    test = random.choice(DISPLAYED_DROPDOWN_DATASET_ENUMS)
+    assert isinstance(value, tuple)
+
+    for options in value[0:-1]:
+        assert all(list(d.keys()) == ["label", "value"] for d in options)
+
+        member_names = set(test._member_names_)
+        values = [i for d in options for i in d.values()]
+
+        if member_names.intersection(values):
+            assert {d["label"] for d in options} == {
+                e.get_value_for_language(SupportedLanguages.NORSK_NYNORSK) for e in test
+            }
+            assert {d["value"] for d in options} == {e.name for e in test}

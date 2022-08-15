@@ -1,15 +1,19 @@
 import logging
 from typing import Any, Dict, List, Optional, Tuple
 
-import datadoc.state as state
 from dash import ALL, Dash, Input, Output, ctx
+from datadoc_model import Model
+from datadoc_model.Enums import SupportedLanguages
+from datadoc_model.LanguageStringsEnum import LanguageStringsEnum
+from pydantic import ValidationError
+
+import datadoc.state as state
 from datadoc.frontend.components.DatasetTab import DATASET_METADATA_INPUT
 from datadoc.frontend.fields.DisplayDataset import (
     DISPLAYED_DATASET_METADATA,
     DISPLAYED_DROPDOWN_DATASET_ENUMS,
     DISPLAYED_DROPDOWN_DATASET_METADATA,
     MULTIPLE_LANGUAGE_DATASET_METADATA,
-    DatasetIdentifiers,
 )
 from datadoc.frontend.fields.DisplayVariables import (
     DISPLAYED_DROPDOWN_VARIABLES_METADATA,
@@ -18,10 +22,6 @@ from datadoc.frontend.fields.DisplayVariables import (
     VariableIdentifiers,
 )
 from datadoc.utils import get_display_values
-from datadoc_model import Model
-from datadoc_model.Enums import DatasetState, SupportedLanguages
-from datadoc_model.LanguageStringsEnum import LanguageStringsEnum
-from pydantic import ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -117,12 +117,6 @@ def accept_dataset_metadata_input(
                 state.metadata.meta.dataset, value, metadata_identifier
             )
 
-        if (
-            metadata_identifier == DatasetIdentifiers.DATASET_STATE.value
-            and type(value) is str
-        ):
-            value = DatasetState[value]
-
         logger.debug(f"Updating {value = } for {metadata_identifier = }")
         # Update the value in the model
         setattr(
@@ -154,6 +148,17 @@ def update_dataset_metadata_language() -> List[Any]:
         m.value_getter(state.metadata.meta.dataset, m.identifier)
         for m in DISPLAYED_DATASET_METADATA
     ]
+
+
+def change_language_dataset_metadata(language):
+    update_global_language_state(language)
+    return (
+        *(
+            get_options_for_language(language, e)
+            for e in DISPLAYED_DROPDOWN_DATASET_ENUMS
+        ),
+        update_dataset_metadata_language(),
+    )
 
 
 def get_options_for_language(
@@ -283,15 +288,8 @@ def register_callbacks(app: Dash) -> None:
         ),
         Input("language-dropdown", "value"),
     )
-    def callback_change_language(language: str):
-        update_global_language_state(SupportedLanguages(language))
-        return (
-            *(
-                get_options_for_language(SupportedLanguages(language), e)
-                for e in DISPLAYED_DROPDOWN_DATASET_ENUMS
-            ),
-            update_dataset_metadata_language(),
-        )
+    def callback_change_language_dataset_metadata(language: str):
+        return change_language_dataset_metadata(SupportedLanguages(language))
 
     @app.callback(
         Output("dataset-validation-error", "is_open"),
