@@ -4,6 +4,9 @@ klargjorte_data/person_data_v1__DOC.json
 # This file is changed every time we run it, avoid that being committed
 DataDoc.ipynb
 
+# Jetbrains IDE config
+.idea/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

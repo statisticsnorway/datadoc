@@ -75,7 +75,10 @@ def main(dataset_path: str = None):
         parser.add_argument("--dataset-path", help="Specify the path to a dataset")
         args = parser.parse_args()
         # Use example dataset if nothing specified
-        dataset = args.dataset_path or "./klargjorte_data/person_data_v1.parquet"
+        dataset = (
+            args.dataset_path
+            or f"{os.path.dirname(__file__)}/../klargjorte_data/person_data_v1.parquet"
+        )
     else:
         dataset = dataset_path
 
