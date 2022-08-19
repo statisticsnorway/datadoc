@@ -1,12 +1,14 @@
+import logging
 from dataclasses import dataclass, field
-from typing import Any, Dict, Optional, Type, List, Callable
-from pydantic import BaseModel
+from typing import Any, Callable, Dict, List, Optional, Type
+
 from dash import dcc
 from dash.development.base_component import Component
-
-from datadoc.Enums import SupportedLanguages
 from datadoc import state
+from datadoc_model.LanguageStrings import LanguageStrings
+from pydantic import BaseModel
 
+logger = logging.getLogger(__name__)
 
 INPUT_KWARGS = {
     "debounce": True,
@@ -30,10 +32,8 @@ def get_standard_metadata(metadata: BaseModel, identifier: str) -> Any:
     return metadata.dict()[identifier]
 
 
-def get_multi_language_metadata(
-    metadata: BaseModel, identifier: str
-) -> Optional[SupportedLanguages]:
-    value = getattr(metadata, identifier)
+def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> Optional[str]:
+    value: LanguageStrings = getattr(metadata, identifier)
     if value is None:
         return value
     return getattr(value, state.current_metadata_language)
@@ -59,5 +59,4 @@ class DisplayVariablesMetadata(DisplayMetadata):
 class DisplayDatasetMetadata(DisplayMetadata):
     extra_kwargs: Dict[str, Any] = field(default_factory=kwargs_factory)
     component: Type[Component] = dcc.Input
-    options: Optional[Dict[str, List[Dict[str, str]]]] = None
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata

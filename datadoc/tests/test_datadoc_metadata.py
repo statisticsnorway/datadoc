@@ -1,13 +1,14 @@
-from copy import copy
 import os
-from pathlib import PurePath
 import shutil
-import pytest
-from datadoc_model import Enums
+from copy import copy
+from pathlib import PurePath
 
-from datadoc_model.Enums import DatasetState
+import pytest
 from datadoc.backend.DataDocMetadata import DataDocMetadata
+from datadoc_model import Enums
+from datadoc_model.Enums import DatasetState
 from datadoc_model.Model import DataDocDataSet, DataDocVariable, MetadataDocument
+
 from .utils import (
     TEST_EXISTING_METADATA_FILE_NAME,
     TEST_EXISTING_METADATA_FILEPATH,

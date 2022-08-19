@@ -1,10 +1,10 @@
 import pathlib
 from abc import ABC, abstractmethod
-import pyarrow.parquet as pq
 from typing import List, Optional, TypeVar
-import pandas as pd
-from datadoc import state
 
+import pandas as pd
+import pyarrow.parquet as pq
+from datadoc import state
 from datadoc_model.Enums import Datatype
 from datadoc_model.Model import DataDocVariable
 
@@ -72,25 +72,26 @@ class DatasetReader(ABC):
     @staticmethod
     def for_file(dataset: str) -> TDatasetReader:
         """Factory method to return the correct subclass based on the given dataset file"""
-        SUPPORTED_FILE_TYPES = {
+        supported_file_types = {
             "parquet": DatasetReaderParquet,
             "sas7bdat": DatasetReaderSas7bdat,
         }
         try:
             file_type = str(pathlib.Path(dataset)).lower().split(".")[1]
+            # Extract the appropriate reader class from the SUPPORTED_FILE_TYPES dict and return an instance of it
+            reader = supported_file_types[file_type](dataset)
         except IndexError as e:
             # Thrown when just one element is returned from split, meaning there is no file extension supplied
             raise FileNotFoundError(
-                f"Could not recognise file type for provided {dataset = }. Supported file types are: {', '.join(SUPPORTED_FILE_TYPES.keys())}"
+                f"Could not recognise file type for provided {dataset = }. Supported file types are: {', '.join(supported_file_types.keys())}"
             ) from e
-        try:
-            # Extract the appropriate reader class from the SUPPORTED_FILE_TYPES dict and return and instance of it
-            return SUPPORTED_FILE_TYPES[file_type](dataset)
-        except KeyError:
+        except KeyError as e:
             # In this case the file type is not supported so we throw a helpful exception
             raise NotImplementedError(
-                f"{file_type = } is not supported. Please open one of the following supported files types: {', '.join(SUPPORTED_FILE_TYPES.keys())} or contact the maintainers to request support."
-            )
+                f"{file_type = } is not supported. Please open one of the following supported files types: {', '.join(supported_file_types.keys())} or contact the maintainers to request support."
+            ) from e
+        else:
+            return reader
 
     @staticmethod
     def transform_data_type(data_type: str) -> Optional[Datatype]:
@@ -113,7 +114,6 @@ class DatasetReader(ABC):
     @abstractmethod
     def get_fields(self) -> List[DataDocVariable]:
         """Abstract method, must be implemented by subclasses"""
-        pass
 
 
 class DatasetReaderParquet(DatasetReader):

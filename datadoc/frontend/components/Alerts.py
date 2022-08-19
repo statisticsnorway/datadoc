@@ -1,6 +1,5 @@
 import dash_bootstrap_components as dbc
 from dash import html
-
 from datadoc.frontend.Builders import make_ssb_warning_alert
 
 dataset_validation_error = make_ssb_warning_alert(

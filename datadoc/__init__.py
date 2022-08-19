@@ -1,3 +1,3 @@
-from datadoc.app import main
+from datadoc.app import main  # noqa
 
 __version__ = "0.1.1"
