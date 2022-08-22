@@ -4,11 +4,12 @@ from typing import List, Optional, TypeVar
 
 import pandas as pd
 import pyarrow.parquet as pq
-from datadoc import state
 from datadoc_model.Enums import Datatype
 from datadoc_model.Model import DataDocVariable
 
-TDatasetReader = TypeVar("TDatasetReader", bound="DatasetReader")
+from datadoc import state
+
+TDatasetParser = TypeVar("TDatasetParser", bound="DatasetParser")
 
 KNOWN_INTEGER_TYPES = (
     "int",
@@ -65,17 +66,18 @@ KNOWN_DATETIME_TYPES = (
 KNOWN_BOOLEAN_TYPES = ("bool", "bool_", "boolean")
 
 
-class DatasetReader(ABC):
-    def __init__(self, dataset):
+class DatasetParser(ABC):
+    def __init__(self, dataset: str):
         self.dataset = dataset
 
     @staticmethod
-    def for_file(dataset: str) -> TDatasetReader:
+    def for_file(dataset: str) -> TDatasetParser:
         """Factory method to return the correct subclass based on the given dataset file"""
         supported_file_types = {
-            "parquet": DatasetReaderParquet,
-            "sas7bdat": DatasetReaderSas7bdat,
+            "parquet": DatasetParserParquet,
+            "sas7bdat": DatasetParserSas7Bdat,
         }
+        file_type = "Unknown"
         try:
             file_type = str(pathlib.Path(dataset)).lower().split(".")[1]
             # Extract the appropriate reader class from the SUPPORTED_FILE_TYPES dict and return an instance of it
@@ -116,8 +118,8 @@ class DatasetReader(ABC):
         """Abstract method, must be implemented by subclasses"""
 
 
-class DatasetReaderParquet(DatasetReader):
-    def __init__(self, dataset):
+class DatasetParserParquet(DatasetParser):
+    def __init__(self, dataset: str):
         super().__init__(dataset)
 
     def get_fields(self) -> List[DataDocVariable]:
@@ -133,8 +135,8 @@ class DatasetReaderParquet(DatasetReader):
         return fields
 
 
-class DatasetReaderSas7bdat(DatasetReader):
-    def __init__(self, dataset):
+class DatasetParserSas7Bdat(DatasetParser):
+    def __init__(self, dataset: str):
         super().__init__(dataset)
 
     def get_fields(self) -> List[DataDocVariable]:

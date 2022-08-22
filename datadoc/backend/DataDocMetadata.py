@@ -5,12 +5,13 @@ import os
 import pathlib
 from typing import Dict, Optional
 
-import datadoc.frontend.fields.DisplayDataset as DisplayDataset
-import datadoc.frontend.fields.DisplayVariables as DisplayVariables
-from datadoc.backend.DatasetReader import DatasetReader
-from datadoc.utils import calculate_percentage
 from datadoc_model import Model
 from datadoc_model.Enums import DatasetState
+
+import datadoc.frontend.fields.DisplayDataset as DisplayDataset
+import datadoc.frontend.fields.DisplayVariables as DisplayVariables
+from datadoc.backend.DatasetParser import DatasetParser
+from datadoc.utils import calculate_percentage
 
 logger = logging.getLogger(__name__)
 
@@ -125,7 +126,7 @@ class DataDocMetadata:
         self.variables_lookup = {v.short_name: v for v in self.meta.variables}
 
     def generate_new_metadata_document(self):
-        self.ds_schema = DatasetReader.for_file(self.dataset)
+        self.ds_schema = DatasetParser.for_file(self.dataset)
 
         self.meta.dataset = Model.DataDocDataSet(
             short_name=self.dataset_stem,
