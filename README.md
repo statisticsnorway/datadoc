@@ -30,9 +30,8 @@ To install all required dependencies in a virtual environment run `poetry instal
 To run the project locally in Jupyter run:
 
 ```bash
-poetry shell
-ipython kernel install --user --name="datadoc"
-jupyter notebook
+poetry install
+poetry run jupyter lab
 ```
 
 A Jupyter instance should open in your browser. Once there, open the `*.ipynb` file. Before running it, select the correct interpreter via `Kernel > Change Kernel > datadoc`.
