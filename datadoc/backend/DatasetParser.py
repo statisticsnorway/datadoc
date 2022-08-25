@@ -79,7 +79,7 @@ class DatasetParser(ABC):
         }
         file_type = "Unknown"
         try:
-            file_type = str(pathlib.Path(dataset)).lower().split(".")[1]
+            file_type = str(pathlib.Path(dataset)).lower().split(".")[-1]
             # Extract the appropriate reader class from the SUPPORTED_FILE_TYPES dict and return an instance of it
             reader = supported_file_types[file_type](dataset)
         except IndexError as e:
