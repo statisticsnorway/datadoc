@@ -13,7 +13,7 @@ packages = [
 include = ["datadoc/*", "klargjorte_data/*"]
 
 [tool.poetry.scripts]
-datadoc = 'datadoc:main'
+datadoc = 'datadoc.app:main'
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -25,6 +25,8 @@ pydantic = "^1.9.1"
 dash-bootstrap-components = "^1.1.0"
 pandas = "^1.4.2"
 ssb-datadoc-model = "0.1.3"
+dapla-toolbelt = "^1.3.1"
+gcsfs = "^2022.7.1"
 
 [tool.poetry.dev-dependencies]
 ipykernel = "^6.13.0"

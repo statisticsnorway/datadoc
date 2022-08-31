@@ -1,5 +1,6 @@
 import random
 
+import pytest
 from datadoc_model.Enums import Datatype, SupportedLanguages
 from datadoc_model.Model import DataDocVariable, LanguageStrings
 from pytest import raises
@@ -14,7 +15,21 @@ from datadoc.backend.DatasetParser import (
     DatasetParser,
 )
 
-from .utils import TEST_PARQUET_FILEPATH, TEST_SAS7BDAT_FILEPATH
+from .utils import (
+    TEST_BUCKET_PARQUET_FILEPATH,
+    TEST_PARQUET_FILEPATH,
+    TEST_SAS7BDAT_FILEPATH,
+)
+
+
+@pytest.fixture()
+def local_parser():
+    return DatasetParser.for_file(TEST_PARQUET_FILEPATH)
+
+
+@pytest.fixture()
+def gcs_parser():
+    return DatasetParser.for_file(TEST_BUCKET_PARQUET_FILEPATH)
 
 
 def test_use_abstract_class_directly():
@@ -22,7 +37,8 @@ def test_use_abstract_class_directly():
         DatasetParser().get_fields()
 
 
-def test_get_fields_parquet():
+@pytest.mark.parametrize("parser", ["local_parser", "gcs_parser"])
+def test_get_fields_parquet(parser, request):
     expected_fields = [
         DataDocVariable(short_name="pers_id", data_type=Datatype.STRING),
         DataDocVariable(short_name="tidspunkt", data_type=Datatype.DATETIME),
@@ -33,9 +49,9 @@ def test_get_fields_parquet():
         DataDocVariable(short_name="fullf_utdanning", data_type=Datatype.STRING),
         DataDocVariable(short_name="hoveddiagnose", data_type=Datatype.STRING),
     ]
-
-    reader = DatasetParser.for_file(TEST_PARQUET_FILEPATH)
-    fields = reader.get_fields()
+    # Ugly pytest magic to get the actual fixture out
+    parser = request.getfixturevalue(parser)
+    fields = parser.get_fields()
 
     assert fields == expected_fields
 
@@ -70,7 +86,7 @@ def test_get_fields_unknown_file_type():
 
 
 def test_get_fields_no_extension_provided():
-    with raises(FileNotFoundError):
+    with raises(NotImplementedError):
         DatasetParser.for_file("my_dataset").get_fields()
 
 

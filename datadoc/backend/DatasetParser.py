@@ -8,6 +8,7 @@ from datadoc_model.Enums import Datatype
 from datadoc_model.Model import DataDocVariable
 
 from datadoc import state
+from datadoc.backend.StorageAdapter import StorageAdapter
 
 TDatasetParser = TypeVar("TDatasetParser", bound="DatasetParser")
 
@@ -68,7 +69,7 @@ KNOWN_BOOLEAN_TYPES = ("bool", "bool_", "boolean")
 
 class DatasetParser(ABC):
     def __init__(self, dataset: str):
-        self.dataset = dataset
+        self.dataset: StorageAdapter = StorageAdapter.for_path(dataset)
 
     @staticmethod
     def for_file(dataset: str) -> TDatasetParser:
@@ -124,7 +125,7 @@ class DatasetParserParquet(DatasetParser):
 
     def get_fields(self) -> List[DataDocVariable]:
         fields = []
-        data_table = pq.read_table(self.dataset)
+        data_table = pq.read_table(self.dataset.open())
         for data_field in data_table.schema:
             fields.append(
                 DataDocVariable(
@@ -142,7 +143,7 @@ class DatasetParserSas7Bdat(DatasetParser):
     def get_fields(self) -> List[DataDocVariable]:
         fields = []
         # Use an iterator to avoid reading in the entire dataset
-        sas_reader = pd.read_sas(self.dataset, iterator=True)
+        sas_reader = pd.read_sas(self.dataset.open(), format="sas7bdat", iterator=True)
 
         # Get the first row from the iterator
         row = next(sas_reader)
