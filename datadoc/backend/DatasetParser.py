@@ -5,6 +5,7 @@ from typing import List, Optional, TypeVar
 import pandas as pd
 import pyarrow.parquet as pq
 from datadoc_model.Enums import Datatype
+from datadoc_model.LanguageStrings import LanguageStrings
 from datadoc_model.Model import DataDocVariable
 
 from datadoc import state
@@ -89,7 +90,7 @@ class DatasetParser(ABC):
                 f"Could not recognise file type for provided {dataset = }. Supported file types are: {', '.join(supported_file_types.keys())}"
             ) from e
         except KeyError as e:
-            # In this case the file type is not supported so we throw a helpful exception
+            # In this case the file type is not supported, so we throw a helpful exception
             raise NotImplementedError(
                 f"{file_type = } is not supported. Please open one of the following supported files types: {', '.join(supported_file_types.keys())} or contact the maintainers to request support."
             ) from e
@@ -125,14 +126,15 @@ class DatasetParserParquet(DatasetParser):
 
     def get_fields(self) -> List[DataDocVariable]:
         fields = []
-        data_table = pq.read_table(self.dataset.open())
-        for data_field in data_table.schema:
-            fields.append(
-                DataDocVariable(
-                    short_name=data_field.name,
-                    data_type=self.transform_data_type(str(data_field.type)),
+        with self.dataset.open(mode="rb") as f:
+            data_table = pq.read_table(f)
+            for data_field in data_table.schema:
+                fields.append(
+                    DataDocVariable(
+                        short_name=data_field.name,
+                        data_type=self.transform_data_type(str(data_field.type)),
+                    )
                 )
-            )
         return fields
 
 
@@ -142,11 +144,12 @@ class DatasetParserSas7Bdat(DatasetParser):
 
     def get_fields(self) -> List[DataDocVariable]:
         fields = []
-        # Use an iterator to avoid reading in the entire dataset
-        sas_reader = pd.read_sas(self.dataset.open(), format="sas7bdat", iterator=True)
+        with self.dataset.open(mode="rb") as f:
+            # Use an iterator to avoid reading in the entire dataset
+            sas_reader = pd.read_sas(f, format="sas7bdat", iterator=True)
 
-        # Get the first row from the iterator
-        row = next(sas_reader)
+            # Get the first row from the iterator
+            row = next(sas_reader)
 
         # Get all the values from the row and loop through them
         for i, v in enumerate(row.values.tolist()[0]):
@@ -155,7 +158,9 @@ class DatasetParserSas7Bdat(DatasetParser):
                     short_name=sas_reader.columns[i].name,
                     # Assume labels are defined in the default language (NORSK_BOKMÅL)
                     # If this is not correct, the user may fix it via the UI
-                    name={state.current_metadata_language: sas_reader.columns[i].label},
+                    name=LanguageStrings(
+                        **{state.current_metadata_language: sas_reader.columns[i].label}
+                    ),
                     # Access the python type for the value and transform it to a DataDoc Data type
                     data_type=self.transform_data_type(type(v).__name__.lower()),
                 )
