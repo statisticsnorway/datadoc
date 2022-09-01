@@ -90,7 +90,7 @@ def main(dataset_path: str = None):
 
         JupyterDash.infer_jupyter_proxy_config()
         app = build_app(JupyterDash)
-        app.run(mode="inline")
+        app.run_server(mode="jupyterlab")
     else:
         # Assume running in server mode is better (largely for development purposes)
         logger.debug("Starting in development mode")
