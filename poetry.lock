@@ -1601,6 +1601,20 @@ pytest = ">=4.6"
 testing = ["virtualenv", "pytest-xdist", "six", "process-tests", "hunter", "fields"]
 
 [[package]]
+name = "pytest-mock"
+version = "3.8.2"
+description = "Thin-wrapper around the mock package for easier use with pytest"
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+pytest = ">=5.0"
+
+[package.extras]
+dev = ["pre-commit", "tox", "pytest-asyncio"]
+
+[[package]]
 name = "python-box"
 version = "6.0.2"
 description = "Advanced Python dictionaries with dot notation access"
@@ -2029,7 +2043,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "512e33dade645658622acdebd9c44acb2b5c372ac3f0583a03e9b630fb1acda3"
+content-hash = "febf8dbeeff27e6d93a7e2544d2fa723564f9ab068a2cc6c9dcbb54ff9642129"
 
 [metadata.files]
 aiohttp = [
@@ -3359,6 +3373,10 @@ pytest = [
 pytest-cov = [
     {file = "pytest-cov-3.0.0.tar.gz", hash = "sha256:e7f0f5b1617d2210a2cabc266dfe2f4c75a8d32fb89eafb7ad9d06f6d076d470"},
     {file = "pytest_cov-3.0.0-py3-none-any.whl", hash = "sha256:578d5d15ac4a25e5f961c938b85a05b09fdaae9deef3bb6de9a6e766622ca7a6"},
+]
+pytest-mock = [
+    {file = "pytest-mock-3.8.2.tar.gz", hash = "sha256:77f03f4554392558700295e05aed0b1096a20d4a60a4f3ddcde58b0c31c8fca2"},
+    {file = "pytest_mock-3.8.2-py3-none-any.whl", hash = "sha256:8a9e226d6c0ef09fcf20c94eb3405c388af438a90f3e39687f84166da82d5948"},
 ]
 python-box = [
     {file = "python-box-6.0.2.tar.gz", hash = "sha256:c15f09fa2a8730702115396b490ddc17dde3d4276a4f24eb754e35f102c41347"},

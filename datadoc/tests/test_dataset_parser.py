@@ -15,11 +15,7 @@ from datadoc.backend.DatasetParser import (
     DatasetParser,
 )
 
-from .utils import (
-    TEST_BUCKET_PARQUET_FILEPATH,
-    TEST_PARQUET_FILEPATH,
-    TEST_SAS7BDAT_FILEPATH,
-)
+from .utils import TEST_PARQUET_FILEPATH, TEST_SAS7BDAT_FILEPATH
 
 
 @pytest.fixture()
@@ -27,18 +23,12 @@ def local_parser():
     return DatasetParser.for_file(TEST_PARQUET_FILEPATH)
 
 
-@pytest.fixture()
-def gcs_parser():
-    return DatasetParser.for_file(TEST_BUCKET_PARQUET_FILEPATH)
-
-
 def test_use_abstract_class_directly():
     with raises(TypeError):
         DatasetParser().get_fields()
 
 
-@pytest.mark.parametrize("parser", ["local_parser", "gcs_parser"])
-def test_get_fields_parquet(parser, request):
+def test_get_fields_parquet(local_parser):
     expected_fields = [
         DataDocVariable(short_name="pers_id", data_type=Datatype.STRING),
         DataDocVariable(short_name="tidspunkt", data_type=Datatype.DATETIME),
@@ -49,9 +39,7 @@ def test_get_fields_parquet(parser, request):
         DataDocVariable(short_name="fullf_utdanning", data_type=Datatype.STRING),
         DataDocVariable(short_name="hoveddiagnose", data_type=Datatype.STRING),
     ]
-    # Ugly pytest magic to get the actual fixture out
-    parser = request.getfixturevalue(parser)
-    fields = parser.get_fields()
+    fields = local_parser.get_fields()
 
     assert fields == expected_fields
 
