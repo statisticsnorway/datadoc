@@ -6,16 +6,15 @@ Document datasets in Statistics Norway
 
 ## Usage
 
+![DataDoc in use](./doc/change-language-example.gif)
+
 ### From Jupyter
 
 1. Open <https://jupyter.dapla-staging.ssb.no> or another Jupyter Lab environment
-
 1. Run `pip install ssb-datadoc` in the terminal
 1. Upload a dataset to your Jupyter server (e.g. <https://github.com/statisticsnorway/datadoc/blob/master/klargjorte_data/person_data_v1.parquet>)
 1. Run `from datadoc import main; main("./person_data_v1.parquet")` in a notebook
 1. Datadoc will open in a new tab
-
-![DataDoc in use](./doc/change-language-example.gif)
 
 ## Contributing
 
