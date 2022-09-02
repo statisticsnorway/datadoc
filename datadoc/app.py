@@ -72,20 +72,20 @@ def main(dataset_path: str = None):
     if dataset_path is None:
         # Get the supplied command line argument
         parser = argparse.ArgumentParser()
-        parser.add_argument("--dataset-path", help="Specify the path to a dataset")
-        args = parser.parse_args()
-        # Use example dataset if nothing specified
-        dataset = (
-            args.dataset_path
-            or f"{os.path.dirname(__file__)}/../klargjorte_data/person_data_v1.parquet"
+        parser.add_argument(
+            "dataset_path",
+            help="Specify the path to a dataset",
+            nargs="?",
+            default=f"{os.path.dirname(__file__)}/../klargjorte_data/person_data_v1.parquet",
         )
+        dataset = parser.parse_args().dataset_path
     else:
         dataset = dataset_path
 
     state.metadata = DataDocMetadata(dataset)
 
     if running_in_notebook():
-        logging.basicConfig(level=logging.WARNING)
+        logging.basicConfig(level=logging.INFO)
         from jupyter_dash import JupyterDash
 
         JupyterDash.infer_jupyter_proxy_config()

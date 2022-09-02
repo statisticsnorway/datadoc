@@ -11,7 +11,7 @@ Document datasets in Statistics Norway
 1. Open <https://jupyter.dapla-staging.ssb.no> or another Jupyter Lab environment
 
 1. Run `pip install ssb-datadoc` in the terminal
-1. Upload a dataset to your Jupyter server f.eks <https://github.com/statisticsnorway/datadoc/blob/master/klargjorte_data/person_data_v1.parquet>
+1. Upload a dataset to your Jupyter server (e.g. <https://github.com/statisticsnorway/datadoc/blob/master/klargjorte_data/person_data_v1.parquet>)
 1. Run `from datadoc import main; main("./person_data_v1.parquet")` in a notebook
 1. Datadoc will open in a new tab
 
@@ -59,7 +59,7 @@ poetry run poe test
 To run the project locally:
 
 ```shell
-poetry run poe datadoc --dataset-path "gs://ssb-staging-dapla-felles-data-delt/datadoc/klargjorte_data/person_data_v1.parquet"
+poetry run poe datadoc "gs://ssb-staging-dapla-felles-data-delt/datadoc/klargjorte_data/person_data_v1.parquet"
 ```
 
 ### Run project locally in Jupyter
