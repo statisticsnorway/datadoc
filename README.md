@@ -4,40 +4,86 @@
 
 Document datasets in Statistics Norway
 
-## Usage example
+## Usage
 
-1. Run `from datadoc import main; main("./path/to/your/dataset")` to run Datadoc on a dataset of your choosing.
-1. Complete metadata as you desire
-1. Click `Lagre` to save a metadata document together with your dataset
+### From Jupyter
 
-### If the datadoc package is not installed
+1. Open <https://jupyter.dapla-staging.ssb.no> or another Jupyter Lab environment
 
-1. Clone this repo to your Jupyter instance (or local machine)
-1. Open the `DataDoc.ipynb` Notebook and run the cell to see the example dataset
+1. Run `pip install ssb-datadoc` in the terminal
+1. Upload a dataset to your Jupyter server f.eks <https://github.com/statisticsnorway/datadoc/blob/master/klargjorte_data/person_data_v1.parquet>
+1. Run `from datadoc import main; main("./person_data_v1.parquet")` in a notebook
+1. Datadoc will open in a new tab
 
 ![DataDoc in use](./doc/change-language-example.gif)
 
 ## Contributing
 
+### Prerequisites
+
+- Python >3.8 (3.10 is preferred)
+- Poetry, install via `curl -sSL https://install.python-poetry.org | python3 -`
+
 ### Dependency Management
 
-Poetry is used for dependency management.
+Poetry is used for dependency management. Upon cloning this project first install necessary dependencies, then run the tests to verify everything is working.
 
-To install all required dependencies in a virtual environment run `poetry install`. To add a new dependency to the project run `poetry add <package name>`.
+#### Install all dependencies
+
+```shell
+poetry install
+```
+
+### Add dependencies
+
+#### Main
+
+```shell
+poetry add <python package name>
+```
+
+#### Dev
+
+```shell
+poetry add --group dev <python package name>
+```
+
+### Run tests
+
+```shell
+poetry run poe test
+```
+
+### Run project locally
+
+To run the project locally:
+
+```shell
+poetry run poe datadoc --dataset-path "gs://ssb-staging-dapla-felles-data-delt/datadoc/klargjorte_data/person_data_v1.parquet"
+```
 
 ### Run project locally in Jupyter
 
 To run the project locally in Jupyter run:
 
-```bash
-poetry install
-poetry run jupyter lab
+```shell
+poetry run poe jupyter
 ```
 
-A Jupyter instance should open in your browser. Once there, open the `*.ipynb` file. Before running it, select the correct interpreter via `Kernel > Change Kernel > datadoc`.
+A Jupyter instance should open in your browser. Open and run the cells in the `.ipynb` file to demo datadoc.
 
-### Run tests
+### Bump version
 
-1. Install dev dependencies (see [Dependency Management](#dependency-management))
-1. Run `poetry shell` to open a shell in the Virtual Environment for the project
-1. Run `pytest` in the root of the project
+```shell
+poetry run poe bump-patch-version
+```
+
+> :warning: Run this on the default branch
+
+This command will:
+
+1. Increment version strings in files
+1. Commit the changes
+1. Tag the commit with the new version
+
+Then just run `git push origin --tags` to push the changes and trigger the release process.
