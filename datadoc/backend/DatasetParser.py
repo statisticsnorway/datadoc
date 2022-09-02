@@ -4,11 +4,14 @@ from typing import List, Optional, TypeVar
 
 import pandas as pd
 import pyarrow.parquet as pq
-from datadoc import state
 from datadoc_model.Enums import Datatype
+from datadoc_model.LanguageStrings import LanguageStrings
 from datadoc_model.Model import DataDocVariable
 
-TDatasetReader = TypeVar("TDatasetReader", bound="DatasetReader")
+from datadoc import state
+from datadoc.backend.StorageAdapter import StorageAdapter
+
+TDatasetParser = TypeVar("TDatasetParser", bound="DatasetParser")
 
 KNOWN_INTEGER_TYPES = (
     "int",
@@ -65,19 +68,20 @@ KNOWN_DATETIME_TYPES = (
 KNOWN_BOOLEAN_TYPES = ("bool", "bool_", "boolean")
 
 
-class DatasetReader(ABC):
-    def __init__(self, dataset):
-        self.dataset = dataset
+class DatasetParser(ABC):
+    def __init__(self, dataset: str):
+        self.dataset: StorageAdapter = StorageAdapter.for_path(dataset)
 
     @staticmethod
-    def for_file(dataset: str) -> TDatasetReader:
+    def for_file(dataset: str) -> TDatasetParser:
         """Factory method to return the correct subclass based on the given dataset file"""
         supported_file_types = {
-            "parquet": DatasetReaderParquet,
-            "sas7bdat": DatasetReaderSas7bdat,
+            "parquet": DatasetParserParquet,
+            "sas7bdat": DatasetParserSas7Bdat,
         }
+        file_type = "Unknown"
         try:
-            file_type = str(pathlib.Path(dataset)).lower().split(".")[1]
+            file_type = str(pathlib.Path(dataset)).lower().split(".")[-1]
             # Extract the appropriate reader class from the SUPPORTED_FILE_TYPES dict and return an instance of it
             reader = supported_file_types[file_type](dataset)
         except IndexError as e:
@@ -86,7 +90,7 @@ class DatasetReader(ABC):
                 f"Could not recognise file type for provided {dataset = }. Supported file types are: {', '.join(supported_file_types.keys())}"
             ) from e
         except KeyError as e:
-            # In this case the file type is not supported so we throw a helpful exception
+            # In this case the file type is not supported, so we throw a helpful exception
             raise NotImplementedError(
                 f"{file_type = } is not supported. Please open one of the following supported files types: {', '.join(supported_file_types.keys())} or contact the maintainers to request support."
             ) from e
@@ -116,34 +120,36 @@ class DatasetReader(ABC):
         """Abstract method, must be implemented by subclasses"""
 
 
-class DatasetReaderParquet(DatasetReader):
-    def __init__(self, dataset):
+class DatasetParserParquet(DatasetParser):
+    def __init__(self, dataset: str):
         super().__init__(dataset)
 
     def get_fields(self) -> List[DataDocVariable]:
         fields = []
-        data_table = pq.read_table(self.dataset)
-        for data_field in data_table.schema:
-            fields.append(
-                DataDocVariable(
-                    short_name=data_field.name,
-                    data_type=self.transform_data_type(str(data_field.type)),
+        with self.dataset.open(mode="rb") as f:
+            data_table = pq.read_table(f)
+            for data_field in data_table.schema:
+                fields.append(
+                    DataDocVariable(
+                        short_name=data_field.name,
+                        data_type=self.transform_data_type(str(data_field.type)),
+                    )
                 )
-            )
         return fields
 
 
-class DatasetReaderSas7bdat(DatasetReader):
-    def __init__(self, dataset):
+class DatasetParserSas7Bdat(DatasetParser):
+    def __init__(self, dataset: str):
         super().__init__(dataset)
 
     def get_fields(self) -> List[DataDocVariable]:
         fields = []
-        # Use an iterator to avoid reading in the entire dataset
-        sas_reader = pd.read_sas(self.dataset, iterator=True)
+        with self.dataset.open(mode="rb") as f:
+            # Use an iterator to avoid reading in the entire dataset
+            sas_reader = pd.read_sas(f, format="sas7bdat", iterator=True)
 
-        # Get the first row from the iterator
-        row = next(sas_reader)
+            # Get the first row from the iterator
+            row = next(sas_reader)
 
         # Get all the values from the row and loop through them
         for i, v in enumerate(row.values.tolist()[0]):
@@ -152,7 +158,9 @@ class DatasetReaderSas7bdat(DatasetReader):
                     short_name=sas_reader.columns[i].name,
                     # Assume labels are defined in the default language (NORSK_BOKMÅL)
                     # If this is not correct, the user may fix it via the UI
-                    name={state.current_metadata_language: sas_reader.columns[i].label},
+                    name=LanguageStrings(
+                        **{state.current_metadata_language: sas_reader.columns[i].label}
+                    ),
                     # Access the python type for the value and transform it to a DataDoc Data type
                     data_type=self.transform_data_type(type(v).__name__.lower()),
                 )
