@@ -79,12 +79,18 @@ class DataDocMetadata:
         if dataset is None:
             return None
         dataset_path_parts = list(pathlib.Path(dataset).parts)
-        if "kildedata" in dataset_path_parts:
+        if "utdata" in dataset_path_parts:
+            return DatasetState.OUTPUT_DATA
+        elif "statistikk" in dataset_path_parts:
+            return DatasetState.STATISTIC
+        elif "klargjorte-data" in dataset_path_parts:
+            return DatasetState.PROCESSED_DATA
+        elif "klargjorte_data" in dataset_path_parts:
+            return DatasetState.PROCESSED_DATA
+        elif "kildedata" in dataset_path_parts:
             return DatasetState.SOURCE_DATA
         elif "inndata" in dataset_path_parts:
             return DatasetState.INPUT_DATA
-        elif "klargjorte_data" in dataset_path_parts:
-            return DatasetState.PROCESSED_DATA
         else:
             return None
 

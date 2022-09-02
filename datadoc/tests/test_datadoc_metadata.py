@@ -2,6 +2,7 @@ import os
 import shutil
 from copy import copy
 from pathlib import PurePath
+from typing import List, Tuple
 
 import pytest
 from datadoc_model import Enums
@@ -23,13 +24,15 @@ def metadata():
     yield DataDocMetadata(TEST_PARQUET_FILEPATH)
 
 
-@pytest.fixture
-def make_paths():
+def make_paths() -> List[Tuple[str, DatasetState]]:
     split_path = list(PurePath(TEST_PARQUET_FILEPATH).parts)
     initial_data = [
         ("kildedata", DatasetState.SOURCE_DATA),
         ("inndata", DatasetState.INPUT_DATA),
+        ("roskildedata/klargjorte-data", DatasetState.PROCESSED_DATA),
         ("klargjorte_data", DatasetState.PROCESSED_DATA),
+        ("klargjorte-data", DatasetState.PROCESSED_DATA),
+        ("statistikk", DatasetState.STATISTIC),
         ("", None),
     ]
     test_data = []
@@ -57,10 +60,12 @@ def existing_metadata_file():
     yield None  # Dummy value, No need to return anything in particular here
 
 
-def test_get_dataset_state(metadata, make_paths):
-    for path, expected_result in make_paths:
-        actual_state = metadata.get_dataset_state(path)
-        assert actual_state == expected_result
+@pytest.mark.parametrize(("path", "expected_result"), make_paths())
+def test_get_dataset_state(
+    path: str, expected_result: DatasetState, metadata: DataDocMetadata
+):
+    actual_state = metadata.get_dataset_state(path)
+    assert actual_state == expected_result
 
 
 def test_get_dataset_state_none(metadata):
