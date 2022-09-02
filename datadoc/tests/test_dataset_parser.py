@@ -1,27 +1,34 @@
 import random
 
+import pytest
+from datadoc_model.Enums import Datatype, SupportedLanguages
+from datadoc_model.Model import DataDocVariable, LanguageStrings
+from pytest import raises
+
 from datadoc import state
-from datadoc.backend.DatasetReader import (
+from datadoc.backend.DatasetParser import (
     KNOWN_BOOLEAN_TYPES,
     KNOWN_DATETIME_TYPES,
     KNOWN_FLOAT_TYPES,
     KNOWN_INTEGER_TYPES,
     KNOWN_STRING_TYPES,
-    DatasetReader,
+    DatasetParser,
 )
-from datadoc_model.Enums import Datatype, SupportedLanguages
-from datadoc_model.Model import DataDocVariable, LanguageStrings
-from pytest import raises
 
 from .utils import TEST_PARQUET_FILEPATH, TEST_SAS7BDAT_FILEPATH
 
 
+@pytest.fixture()
+def local_parser():
+    return DatasetParser.for_file(TEST_PARQUET_FILEPATH)
+
+
 def test_use_abstract_class_directly():
     with raises(TypeError):
-        DatasetReader().get_fields()
+        DatasetParser().get_fields()
 
 
-def test_get_fields_parquet():
+def test_get_fields_parquet(local_parser):
     expected_fields = [
         DataDocVariable(short_name="pers_id", data_type=Datatype.STRING),
         DataDocVariable(short_name="tidspunkt", data_type=Datatype.DATETIME),
@@ -32,9 +39,7 @@ def test_get_fields_parquet():
         DataDocVariable(short_name="fullf_utdanning", data_type=Datatype.STRING),
         DataDocVariable(short_name="hoveddiagnose", data_type=Datatype.STRING),
     ]
-
-    reader = DatasetReader.for_file(TEST_PARQUET_FILEPATH)
-    fields = reader.get_fields()
+    fields = local_parser.get_fields()
 
     assert fields == expected_fields
 
@@ -57,7 +62,7 @@ def test_get_fields_sas7bdat():
         ),
     ]
 
-    reader = DatasetReader.for_file(TEST_SAS7BDAT_FILEPATH)
+    reader = DatasetParser.for_file(TEST_SAS7BDAT_FILEPATH)
     fields = reader.get_fields()
 
     assert fields == expected_fields
@@ -65,18 +70,18 @@ def test_get_fields_sas7bdat():
 
 def test_get_fields_unknown_file_type():
     with raises(NotImplementedError):
-        DatasetReader.for_file("my_dataset.csv").get_fields()
+        DatasetParser.for_file("my_dataset.csv").get_fields()
 
 
 def test_get_fields_no_extension_provided():
-    with raises(FileNotFoundError):
-        DatasetReader.for_file("my_dataset").get_fields()
+    with raises(NotImplementedError):
+        DatasetParser.for_file("my_dataset").get_fields()
 
 
 def test_transform_datatype_unknown_type():
     expected = None
     input_data = "definitely not a known data type"
-    actual = DatasetReader.transform_data_type(input_data)
+    actual = DatasetParser.transform_data_type(input_data)
     assert actual == expected
 
 
@@ -89,5 +94,5 @@ def test_transform_datatype():
         (Datatype.BOOLEAN, KNOWN_BOOLEAN_TYPES),
     ]:
         input_data = random.choice(input_options)
-        actual = DatasetReader.transform_data_type(input_data)
+        actual = DatasetParser.transform_data_type(input_data)
         assert actual == expected

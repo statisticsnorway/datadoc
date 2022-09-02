@@ -95,7 +95,7 @@ def main(dataset_path: str = None):
         # Assume running in server mode is better (largely for development purposes)
         logger.debug("Starting in development mode")
         app = build_app(Dash)
-        app.run(debug=True)
+        app.run(debug=True, use_reloader=False)
 
 
 if __name__ == "__main__":

@@ -2,12 +2,14 @@ import os
 import shutil
 from copy import copy
 from pathlib import PurePath
+from typing import List, Tuple
 
 import pytest
-from datadoc.backend.DataDocMetadata import DataDocMetadata
 from datadoc_model import Enums
 from datadoc_model.Enums import DatasetState
 from datadoc_model.Model import DataDocDataSet, DataDocVariable, MetadataDocument
+
+from datadoc.backend.DataDocMetadata import DataDocMetadata
 
 from .utils import (
     TEST_EXISTING_METADATA_FILE_NAME,
@@ -22,13 +24,15 @@ def metadata():
     yield DataDocMetadata(TEST_PARQUET_FILEPATH)
 
 
-@pytest.fixture
-def make_paths():
+def make_paths() -> List[Tuple[str, DatasetState]]:
     split_path = list(PurePath(TEST_PARQUET_FILEPATH).parts)
     initial_data = [
         ("kildedata", DatasetState.SOURCE_DATA),
         ("inndata", DatasetState.INPUT_DATA),
+        ("roskildedata/klargjorte-data", DatasetState.PROCESSED_DATA),
         ("klargjorte_data", DatasetState.PROCESSED_DATA),
+        ("klargjorte-data", DatasetState.PROCESSED_DATA),
+        ("statistikk", DatasetState.STATISTIC),
         ("", None),
     ]
     test_data = []
@@ -38,7 +42,7 @@ def make_paths():
         new_path = copy(split_path)
         new_path.insert(-2, to_insert)
         new_path = PurePath("").joinpath(*new_path)
-        test_data.append((new_path, state))
+        test_data.append((str(new_path), state))
 
     return test_data
 
@@ -56,14 +60,16 @@ def existing_metadata_file():
     yield None  # Dummy value, No need to return anything in particular here
 
 
-def test_get_dataset_state(metadata, make_paths):
-    for path, expected_result in make_paths:
-        actual_state = metadata.get_dataset_state(path)
-        assert actual_state == expected_result
+@pytest.mark.parametrize(("path", "expected_result"), make_paths())
+def test_get_dataset_state(
+    path: str, expected_result: DatasetState, metadata: DataDocMetadata
+):
+    actual_state = metadata.get_dataset_state(path)
+    assert actual_state == expected_result
 
 
-def test_get_dataset_state_no_parameter_supplied(metadata):
-    assert metadata.get_dataset_state() is None
+def test_get_dataset_state_none(metadata):
+    assert metadata.get_dataset_state(None) is None
 
 
 def test_existing_metadata_file(existing_metadata_file, metadata, remove_document_file):
@@ -85,11 +91,11 @@ def test_metadata_document_percent_complete(metadata):
     assert metadata.percent_complete == 11
 
 
-def test_get_dataset_version(metadata):
-    assert metadata.get_dataset_version(metadata.dataset_stem) == "1"
+def test_get_dataset_version(metadata: DataDocMetadata):
+    assert metadata.get_dataset_version(metadata.short_name) == "1"
 
 
-def test_get_dataset_version_unknown(metadata):
+def test_get_dataset_version_unknown(metadata: DataDocMetadata):
     assert metadata.get_dataset_version("person_data.parquet") is None
 
 
