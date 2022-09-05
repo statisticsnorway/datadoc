@@ -25,7 +25,7 @@ Document datasets in Statistics Norway
 
 ### Dependency Management
 
-Poetry is used for dependency management. Upon cloning this project first install necessary dependencies, then run the tests to verify everything is working.
+Poetry is used for dependency management. [Poe the Poet](https://github.com/nat-n/poethepoet) is used for running poe tasks within poetry's virtualenv. Upon cloning this project first install necessary dependencies, then run the tests to verify everything is working.
 
 #### Install all dependencies
 
