@@ -9,10 +9,8 @@ repository = "https://github.com/statisticsnorway/datadoc"
 
 classifiers = [
     "Development Status :: 3 - Alpha",
-    "Environment :: Jupyterlab",
     "Framework :: Dash",
     "Typing :: Typed"
-
 ]
 
 packages = [
