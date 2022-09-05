@@ -1,4 +1,3 @@
-import datetime
 import json
 import logging
 import os
@@ -12,16 +11,20 @@ import datadoc.frontend.fields.DisplayDataset as DisplayDataset
 import datadoc.frontend.fields.DisplayVariables as DisplayVariables
 from datadoc.backend.DatasetParser import DatasetParser
 from datadoc.backend.StorageAdapter import StorageAdapter
-from datadoc.utils import calculate_percentage
+from datadoc.utils import calculate_percentage, get_timestamp_now
 
 logger = logging.getLogger(__name__)
 
 OBLIGATORY_DATASET_METADATA = [
-    m.identifier for m in DisplayDataset.DISPLAY_DATASET.values() if m.obligatory
+    m.identifier
+    for m in DisplayDataset.DISPLAY_DATASET.values()
+    if m.obligatory and m.editable
 ]
 
 OBLIGATORY_VARIABLES_METADATA = [
-    m.identifier for m in DisplayVariables.DISPLAY_VARIABLES.values() if m.obligatory
+    m.identifier
+    for m in DisplayVariables.DISPLAY_VARIABLES.values()
+    if m.obligatory and m.editable
 ]
 
 # These don't vary at runtime so we calculate them as constants here
@@ -61,7 +64,6 @@ class DataDocMetadata:
             logger.warning(
                 f"JUPYTERHUB_USER env variable not set, using {self.current_user} as placeholder"
             )
-        self.current_datetime = str(datetime.datetime.now())
 
         self.meta: "Model.MetadataDocument" = Model.MetadataDocument(
             percentage_complete=0,
@@ -146,7 +148,6 @@ class DataDocMetadata:
             dataset_state=self.dataset_state,
             version=self.get_dataset_version(self.short_name),
             data_source_path=self.dataset,
-            created_date=self.current_datetime,
             created_by=self.current_user,
         )
 
@@ -154,6 +155,11 @@ class DataDocMetadata:
 
     def write_metadata_document(self) -> None:
         """Write all currently known metadata to file"""
+        timestamp = get_timestamp_now()
+        if self.meta.dataset.created_date is None:
+            self.meta.dataset.created_date = timestamp
+        self.meta.dataset.last_updated_date = timestamp
+        self.meta.dataset.last_updated_by = self.current_user
         self.metadata_document.write_text(self.meta.json(indent=4, sort_keys=False))
         logger.info(f"Saved metadata document {self.metadata_document.location}")
 

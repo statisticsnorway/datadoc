@@ -1,3 +1,5 @@
+import datetime
+
 from datadoc_model import Model
 from datadoc_model.Enums import SupportedLanguages
 
@@ -30,3 +32,7 @@ def get_display_values(
             value = value.dict()[current_language.value]
         return_dict[field_name] = value
     return return_dict
+
+
+def get_timestamp_now() -> str:
+    return str(datetime.datetime.now())

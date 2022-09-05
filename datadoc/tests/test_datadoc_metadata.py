@@ -88,7 +88,7 @@ def test_metadata_document_percent_complete(metadata):
     )
     metadata.meta = document
 
-    assert metadata.percent_complete == 11
+    assert metadata.percent_complete == 19
 
 
 def test_get_dataset_version(metadata: DataDocMetadata):
