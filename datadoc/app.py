@@ -68,7 +68,7 @@ def build_app(dash_class: Type[Dash]) -> Dash:
 
 
 def main(dataset_path: str = None):
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     if dataset_path is None:
         # Get the supplied command line argument
         parser = argparse.ArgumentParser()
@@ -85,7 +85,6 @@ def main(dataset_path: str = None):
     state.metadata = DataDocMetadata(dataset)
 
     if running_in_notebook():
-        logging.basicConfig(level=logging.INFO)
         from jupyter_dash import JupyterDash
 
         JupyterDash.infer_jupyter_proxy_config()
