@@ -1,6 +1,6 @@
 # Datadoc
 
-![Datadoc Unit tests](https://github.com/statisticsnorway/datadoc/actions/workflows/unit-tests.yml/badge.svg) ![Code coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/mmwinther/0c0c5bdfc360b59254f2c32d65914025/raw/pytest-coverage-badge-datadoc.json) ![PyPI version](https://img.shields.io/pypi/v/ssb-datadoc) ![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)
+![Datadoc Unit tests](https://github.com/statisticsnorway/datadoc/actions/workflows/unit-tests.yml/badge.svg) ![Code coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/mmwinther/0c0c5bdfc360b59254f2c32d65914025/raw/pytest-coverage-badge-datadoc.json) [![PyPI version](https://img.shields.io/pypi/v/ssb-datadoc)](https://pypi.org/project/ssb-datadoc/) ![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)
 
 Document datasets in Statistics Norway
 
