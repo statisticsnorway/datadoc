@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import pathlib
+from datetime import datetime
 from typing import Dict, Optional
 
 from datadoc_model import Model
@@ -45,6 +46,8 @@ NUM_OBLIGATORY_VARIABLES_FIELDS = len(
 
 METADATA_DOCUMENT_FILE_SUFFIX = "__DOC.json"
 
+PLACEHOLDER_USERNAME = "default_user@ssb.no"
+
 
 class DataDocMetadata:
     def __init__(self, dataset):
@@ -60,7 +63,7 @@ class DataDocMetadata:
         try:
             self.current_user = os.environ["JUPYTERHUB_USER"]
         except KeyError:
-            self.current_user = "default_user@ssb.no"
+            self.current_user = PLACEHOLDER_USERNAME
             logger.warning(
                 f"JUPYTERHUB_USER env variable not set, using {self.current_user} as placeholder"
             )
@@ -155,7 +158,7 @@ class DataDocMetadata:
 
     def write_metadata_document(self) -> None:
         """Write all currently known metadata to file"""
-        timestamp = get_timestamp_now()
+        timestamp: datetime = get_timestamp_now()
         if self.meta.dataset.created_date is None:
             self.meta.dataset.created_date = timestamp
         self.meta.dataset.last_updated_date = timestamp

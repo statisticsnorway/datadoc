@@ -34,5 +34,5 @@ def get_display_values(
     return return_dict
 
 
-def get_timestamp_now() -> str:
-    return str(datetime.datetime.now())
+def get_timestamp_now() -> datetime:
+    return datetime.datetime.now()
