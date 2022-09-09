@@ -11,7 +11,7 @@ Document datasets in Statistics Norway
 ### From Jupyter
 
 1. Open <https://jupyter.dapla-staging.ssb.no> or another Jupyter Lab environment
-1. Run `pip install ssb-datadoc` in the terminal
+1. Run `pip install ssb-datadoc[gcs]` in the terminal
 1. Upload a dataset to your Jupyter server (e.g. <https://github.com/statisticsnorway/datadoc/blob/master/klargjorte_data/person_data_v1.parquet>)
 1. Run `from datadoc import main; main("./person_data_v1.parquet")` in a notebook
 1. Datadoc will open in a new tab
@@ -30,7 +30,7 @@ Poetry is used for dependency management. [Poe the Poet](https://github.com/nat-
 #### Install all dependencies
 
 ```shell
-poetry install
+poetry install --all-extras
 ```
 
 ### Add dependencies
