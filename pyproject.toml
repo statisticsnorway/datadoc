@@ -30,8 +30,11 @@ pydantic = "^1.9.1"
 dash-bootstrap-components = "^1.1.0"
 pandas = "^1.4.2"
 ssb-datadoc-model = "0.1.3"
-dapla-toolbelt = "^1.3.1"
-gcsfs = "^2022.7.1"
+dapla-toolbelt = { version = "^1.3.1", optional = true }
+gcsfs = { version = "^2022.7.1", optional = true }
+
+[tool.poetry.extras]
+gcs = ["dapla-toolbelt", "gcsfs"]
 
 [tool.poetry.group.dev.dependencies]
 jupyterlab = "^3.4.5"

@@ -5,9 +5,6 @@ from io import IOBase, TextIOWrapper
 from typing import Protocol
 from urllib.parse import urlsplit, urlunsplit
 
-from dapla import AuthClient, FileClient
-from gcsfs import GCSFileSystem
-
 GCS_PROTOCOL_PREFIX = "gs://"
 
 logger = logging.getLogger(__name__)
@@ -16,17 +13,23 @@ logger = logging.getLogger(__name__)
 class GCSObject:
     def __init__(self, path: str):
         self._url = urlsplit(path)
+        try:
+            from dapla import AuthClient, FileClient
+            if AuthClient.is_ready():
+                # Running on Dapla, rely on dapla-toolbelt for auth
+                self.fs = FileClient.get_gcs_file_system()
+            else:
+                # All other environments, rely on Standard Google credential system
+                # If this doesn't work for you, try running the following commands:
+                #
+                # gcloud auth application-default revoke
+                # gcloud auth application-default login
+                from gcsfs import GCSFileSystem
+                self.fs = GCSFileSystem()
 
-        if AuthClient.is_ready():
-            # Running on Dapla, rely on dapla-toolbelt for auth
-            self.fs = FileClient.get_gcs_file_system()
-        else:
-            # All other environments, rely on Standard Google credential system
-            # If this doesn't work for you, try running the following commands:
-            #
-            # gcloud auth application-default revoke
-            # gcloud auth application-default login
-            self.fs = GCSFileSystem()
+        except ImportError:
+            msg = f"Missing support for GCS. Install datadoc with 'pip install ssb-datadoc[gcs]'"
+            raise ImportError(msg)
 
     def _rebuild_url(self, new_path: str) -> str:
         return urlunsplit((self._url.scheme, self._url.netloc, new_path, None, None))
