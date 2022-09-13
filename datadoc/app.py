@@ -90,12 +90,19 @@ def main(dataset_path: str = None):
 
         JupyterDash.infer_jupyter_proxy_config()
         app = build_app(JupyterDash)
-        app.run_server(mode="jupyterlab")
+        app.run_server(mode="jupyterlab", port=_pick_random_port())
     else:
         # Assume running in server mode is better (largely for development purposes)
         logger.debug("Starting in development mode")
         app = build_app(Dash)
         app.run(debug=True, use_reloader=False)
+
+
+def _pick_random_port():
+    import socket
+    sock = socket.socket()
+    sock.bind(('', 0))
+    return sock.getsockname()[1]
 
 
 if __name__ == "__main__":
