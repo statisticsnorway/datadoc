@@ -21,7 +21,7 @@ from datadoc.frontend.components.HeaderBars import (
     progress_bar,
 )
 from datadoc.frontend.components.VariablesTab import get_variables_tab
-from datadoc.utils import running_in_notebook
+from datadoc.utils import running_in_notebook, pick_random_port
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +90,7 @@ def main(dataset_path: str = None):
 
         JupyterDash.infer_jupyter_proxy_config()
         app = build_app(JupyterDash)
-        app.run_server(mode="jupyterlab")
+        app.run_server(mode="jupyterlab", port=pick_random_port())
     else:
         # Assume running in server mode is better (largely for development purposes)
         logger.debug("Starting in development mode")
