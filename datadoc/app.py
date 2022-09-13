@@ -33,7 +33,6 @@ def build_app(dash_class: Type[Dash]) -> Dash:
     app = dash_class(
         name=NAME,
         title=NAME,
-        external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP],
         assets_folder=f"{os.path.dirname(__file__)}/assets",
     )
 
