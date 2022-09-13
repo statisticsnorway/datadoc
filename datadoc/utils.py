@@ -30,3 +30,12 @@ def get_display_values(
             value = value.dict()[current_language.value]
         return_dict[field_name] = value
     return return_dict
+
+
+def pick_random_port():
+    """Pick a random free port number. The function will bind a socket to port 0, and
+    a random free port from 1024 to 65535 will be selected by the operating system."""
+    import socket
+    sock = socket.socket()
+    sock.bind(('', 0))
+    return sock.getsockname()[1]
