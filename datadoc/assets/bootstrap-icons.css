@@ -8,7 +8,7 @@ url("./fonts/bootstrap-icons.woff?524846017b983fc8ded9325d94ed40f3") format("wof
 [class^="bi-"]::before,
 [class*=" bi-"]::before {
   display: inline-block;
-  font-family: bootstrap-icons !important;
+  font-family: bootstrap-icons, sans-serif; !important;
   font-style: normal;
   font-weight: normal !important;
   font-variant: normal;
