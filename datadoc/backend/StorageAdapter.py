@@ -15,6 +15,7 @@ class GCSObject:
         self._url = urlsplit(path)
         try:
             from dapla import AuthClient, FileClient
+
             if AuthClient.is_ready():
                 # Running on Dapla, rely on dapla-toolbelt for auth
                 self.fs = FileClient.get_gcs_file_system()
@@ -25,11 +26,12 @@ class GCSObject:
                 # gcloud auth application-default revoke
                 # gcloud auth application-default login
                 from gcsfs import GCSFileSystem
+
                 self.fs = GCSFileSystem()
 
         except ImportError:
-            msg = f"Missing support for GCS. Install datadoc with 'pip install ssb-datadoc[gcs]'"
-            raise ImportError(msg)
+            msg = "Missing support for GCS. Install datadoc with 'pip install ssb-datadoc[gcs]'"
+            raise ImportError(msg)  # noqa: TC200
 
     def _rebuild_url(self, new_path: str) -> str:
         return urlunsplit((self._url.scheme, self._url.netloc, new_path, None, None))
