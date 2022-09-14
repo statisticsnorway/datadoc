@@ -1,5 +1,0 @@
-[run]
-omit =
-    datadoc/tests/*
-    datadoc/__init__.py
-    datadoc/frontend/callbacks/register.py

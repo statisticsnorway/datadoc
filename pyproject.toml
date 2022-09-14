@@ -82,6 +82,13 @@ src_paths = ["datadoc"]
 target-version = ["py37", "py38", "py39"]
 include = '\.pyi?$'
 
+[tool.coverage.run]
+omit = [
+    "datadoc/tests/*",
+    "datadoc/__init__.py",
+    "datadoc/frontend/callbacks/register.py",
+]
+
 [tool.flake8]
 ignore = [
     # Line break occurred before a binary operator (W503)
