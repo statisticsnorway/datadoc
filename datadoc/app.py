@@ -21,7 +21,7 @@ from datadoc.frontend.components.HeaderBars import (
     progress_bar,
 )
 from datadoc.frontend.components.VariablesTab import get_variables_tab
-from datadoc.utils import running_in_notebook, pick_random_port
+from datadoc.utils import pick_random_port, running_in_notebook
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +67,7 @@ def build_app(dash_class: Type[Dash]) -> Dash:
 
 
 def main(dataset_path: str = None):
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     if dataset_path is None:
         # Get the supplied command line argument
         parser = argparse.ArgumentParser()
@@ -84,7 +84,6 @@ def main(dataset_path: str = None):
     state.metadata = DataDocMetadata(dataset)
 
     if running_in_notebook():
-        logging.basicConfig(level=logging.INFO)
         from jupyter_dash import JupyterDash
 
         JupyterDash.infer_jupyter_proxy_config()

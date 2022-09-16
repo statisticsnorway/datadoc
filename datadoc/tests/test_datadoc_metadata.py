@@ -1,6 +1,7 @@
 import os
 import shutil
 from copy import copy
+from datetime import datetime
 from pathlib import PurePath
 from typing import List, Tuple
 
@@ -9,7 +10,7 @@ from datadoc_model import Enums
 from datadoc_model.Enums import DatasetState
 from datadoc_model.Model import DataDocDataSet, DataDocVariable, MetadataDocument
 
-from datadoc.backend.DataDocMetadata import DataDocMetadata
+from datadoc.backend.DataDocMetadata import PLACEHOLDER_USERNAME, DataDocMetadata
 
 from .utils import (
     TEST_EXISTING_METADATA_FILE_NAME,
@@ -18,9 +19,19 @@ from .utils import (
     TEST_RESOURCES_DIRECTORY,
 )
 
+dummy_timestamp = datetime(2022, 1, 1)
+
+
+@pytest.fixture()
+def mock_timestamp(mocker):
+    mocker.patch(
+        "datadoc.backend.DataDocMetadata.get_timestamp_now",
+        return_value=dummy_timestamp,
+    )
+
 
 @pytest.fixture
-def metadata():
+def metadata(mock_timestamp):
     yield DataDocMetadata(TEST_PARQUET_FILEPATH)
 
 
@@ -88,7 +99,7 @@ def test_metadata_document_percent_complete(metadata):
     )
     metadata.meta = document
 
-    assert metadata.percent_complete == 11
+    assert metadata.percent_complete == 19
 
 
 def test_get_dataset_version(metadata: DataDocMetadata):
@@ -99,8 +110,23 @@ def test_get_dataset_version_unknown(metadata: DataDocMetadata):
     assert metadata.get_dataset_version("person_data.parquet") is None
 
 
-def test_write_metadata_document(metadata, remove_document_file):
+def test_write_metadata_document(metadata: DataDocMetadata, remove_document_file):
     metadata.write_metadata_document()
     assert os.path.exists(
         os.path.join(TEST_RESOURCES_DIRECTORY, TEST_EXISTING_METADATA_FILE_NAME)
     )
+    assert metadata.meta.dataset.last_updated_by == PLACEHOLDER_USERNAME
+    assert metadata.meta.dataset.created_date == dummy_timestamp
+    assert metadata.meta.dataset.last_updated_date == dummy_timestamp
+
+
+def test_write_metadata_document_existing_document(
+    existing_metadata_file, metadata: DataDocMetadata, remove_document_file
+):
+    original_created_date: datetime = metadata.meta.dataset.created_date
+    original_created_by = metadata.meta.dataset.created_by
+    metadata.write_metadata_document()
+    assert metadata.meta.dataset.created_by == original_created_by
+    assert metadata.meta.dataset.created_date == original_created_date
+    assert metadata.meta.dataset.last_updated_by == PLACEHOLDER_USERNAME
+    assert metadata.meta.dataset.last_updated_date == dummy_timestamp
