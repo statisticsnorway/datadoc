@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v1
         with:
-          python-version: 3.8
+          python-version: "3.10"
       - uses: Gr1N/setup-poetry@v7
       - uses: actions/cache@v2
         with:
@@ -30,13 +30,13 @@ jobs:
         run: poetry --version
       - name: Install dependencies
         run: |
-          poetry install
+          poetry install --all-extras
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
-          poetry run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          poetry run pflake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+          poetry run pflake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Run unit tests
         run: |
           set -o pipefail; poetry run pytest -v --cache-clear --junitxml=pytest.xml --cov-report=term-missing --cov=datadoc | tee pytest-coverage.txt

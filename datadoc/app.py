@@ -21,7 +21,7 @@ from datadoc.frontend.components.HeaderBars import (
     progress_bar,
 )
 from datadoc.frontend.components.VariablesTab import get_variables_tab
-from datadoc.utils import running_in_notebook
+from datadoc.utils import pick_random_port, running_in_notebook
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,6 @@ def build_app(dash_class: Type[Dash]) -> Dash:
     app = dash_class(
         name=NAME,
         title=NAME,
-        external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP],
         assets_folder=f"{os.path.dirname(__file__)}/assets",
     )
 
@@ -89,7 +88,7 @@ def main(dataset_path: str = None):
 
         JupyterDash.infer_jupyter_proxy_config()
         app = build_app(JupyterDash)
-        app.run_server(mode="jupyterlab")
+        app.run_server(mode="jupyterlab", port=pick_random_port())
     else:
         # Assume running in server mode is better (largely for development purposes)
         logger.debug("Starting in development mode")
