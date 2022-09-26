@@ -3,13 +3,15 @@ from enum import Enum
 from typing import Dict, List
 
 from dash import dcc
+from datadoc_model import Model
+
 from datadoc.frontend.fields.DisplayBase import (
     DROPDOWN_KWARGS,
     NUMBER_KWARGS,
     DisplayDatasetMetadata,
+    get_metadata_and_stringify,
     get_multi_language_metadata,
 )
-from datadoc_model import Model
 
 logger = logging.getLogger(__name__)
 
@@ -137,6 +139,7 @@ DISPLAY_DATASET: Dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         description="Unik SSB-identifikator for datasettet (løpenummer)",
         obligatory=True,
         editable=False,
+        value_getter=get_metadata_and_stringify,
     ),
     DatasetIdentifiers.OWNER: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.OWNER.value,

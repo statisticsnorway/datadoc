@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import pathlib
+import uuid
 from datetime import datetime
 from typing import Dict, Optional
 
@@ -140,6 +141,9 @@ class DataDocMetadata:
                 self.extract_metadata_from_dataset()
         else:
             self.extract_metadata_from_dataset()
+
+        if self.meta.dataset.id is None:
+            self.meta.dataset.id = uuid.uuid4()
 
         self.variables_lookup = {v.short_name: v for v in self.meta.variables}
 
