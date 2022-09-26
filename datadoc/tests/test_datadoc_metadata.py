@@ -1,9 +1,11 @@
+import json
 import os
 import shutil
 from copy import copy
 from datetime import datetime
 from pathlib import PurePath
 from typing import List, Tuple
+from uuid import UUID
 
 import pytest
 from datadoc_model import Enums
@@ -15,6 +17,7 @@ from datadoc.backend.DataDocMetadata import PLACEHOLDER_USERNAME, DataDocMetadat
 from .utils import (
     TEST_EXISTING_METADATA_FILE_NAME,
     TEST_EXISTING_METADATA_FILEPATH,
+    TEST_EXISTING_METADATA_WITH_VALID_ID_FILEPATH,
     TEST_PARQUET_FILEPATH,
     TEST_RESOURCES_DIRECTORY,
 )
@@ -65,10 +68,20 @@ def remove_document_file() -> None:
 
 
 @pytest.fixture
-def existing_metadata_file():
+def existing_metadata_file() -> str:
     # Setup by copying the file into the relevant directory
     shutil.copy(TEST_EXISTING_METADATA_FILEPATH, TEST_RESOURCES_DIRECTORY)
-    yield None  # Dummy value, No need to return anything in particular here
+    return os.path.join(TEST_RESOURCES_DIRECTORY, TEST_EXISTING_METADATA_FILE_NAME)
+
+
+@pytest.fixture
+def existing_metadata_with_valid_id_file() -> str:
+    # Setup by copying the file into the relevant directory
+    shutil.copy(
+        TEST_EXISTING_METADATA_WITH_VALID_ID_FILEPATH,
+        os.path.join(TEST_RESOURCES_DIRECTORY, TEST_EXISTING_METADATA_FILE_NAME),
+    )
+    return os.path.join(TEST_RESOURCES_DIRECTORY, TEST_EXISTING_METADATA_FILE_NAME)
 
 
 @pytest.mark.parametrize(("path", "expected_result"), make_paths())
@@ -130,3 +143,40 @@ def test_write_metadata_document_existing_document(
     assert metadata.meta.dataset.created_date == original_created_date
     assert metadata.meta.dataset.last_updated_by == PLACEHOLDER_USERNAME
     assert metadata.meta.dataset.last_updated_date == dummy_timestamp
+
+
+def test_metadata_id(metadata: DataDocMetadata):
+    assert isinstance(metadata.meta.dataset.id, UUID)
+
+
+def test_existing_metadata_none_id(
+    existing_metadata_file, metadata: DataDocMetadata, remove_document_file
+):
+    pre_open_id = ""
+    post_write_id = ""
+    with open(existing_metadata_file) as f:
+        pre_open_id = json.load(f)["dataset"]["id"]
+    assert pre_open_id is None
+    assert isinstance(metadata.meta.dataset.id, UUID)
+    metadata.write_metadata_document()
+    with open(existing_metadata_file) as f:
+        post_write_id = json.load(f)["dataset"]["id"]
+    assert post_write_id == str(metadata.meta.dataset.id)
+
+
+def test_existing_metadata_valid_id(
+    existing_metadata_with_valid_id_file,
+    metadata: DataDocMetadata,
+    remove_document_file,
+):
+    pre_open_id = ""
+    post_write_id = ""
+    with open(existing_metadata_with_valid_id_file) as f:
+        pre_open_id = json.load(f)["dataset"]["id"]
+    assert pre_open_id is not None
+    assert isinstance(metadata.meta.dataset.id, UUID)
+    assert str(metadata.meta.dataset.id) == pre_open_id
+    metadata.write_metadata_document()
+    with open(existing_metadata_with_valid_id_file) as f:
+        post_write_id = json.load(f)["dataset"]["id"]
+    assert post_write_id == pre_open_id

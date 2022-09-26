@@ -4,9 +4,10 @@ from typing import Any, Callable, Dict, List, Optional, Type
 
 from dash import dcc
 from dash.development.base_component import Component
-from datadoc import state
 from datadoc_model.LanguageStrings import LanguageStrings
 from pydantic import BaseModel
+
+from datadoc import state
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +31,10 @@ def kwargs_factory():
 
 def get_standard_metadata(metadata: BaseModel, identifier: str) -> Any:
     return metadata.dict()[identifier]
+
+
+def get_metadata_and_stringify(metadata: BaseModel, identifier: str) -> Any:
+    return str(metadata.dict()[identifier])
 
 
 def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> Optional[str]:

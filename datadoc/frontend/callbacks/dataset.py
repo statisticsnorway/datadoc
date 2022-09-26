@@ -1,6 +1,7 @@
 import logging
-from typing import Any, List, Tuple
+from typing import Any, Dict, List, Tuple
 
+from datadoc_model.Enums import SupportedLanguages
 from pydantic import ValidationError
 
 import datadoc.state as state
@@ -59,7 +60,9 @@ def update_dataset_metadata_language() -> List[Any]:
     ]
 
 
-def change_language_dataset_metadata(language):
+def change_language_dataset_metadata(
+    language: SupportedLanguages,
+) -> tuple[tuple[List[Dict[str, str]], ...], List]:
     update_global_language_state(language)
     return (
         *(
