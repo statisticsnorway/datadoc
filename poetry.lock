@@ -191,7 +191,7 @@ python-versions = "*"
 name = "beautifulsoup4"
 version = "4.11.1"
 description = "Screen-scraping library"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6.0"
 
@@ -2206,7 +2206,7 @@ python-versions = ">=3.7"
 name = "soupsieve"
 version = "2.3.2.post1"
 description = "A modern CSS selector implementation for Beautiful Soup."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -2466,7 +2466,7 @@ gcs = ["dapla-toolbelt", "gcsfs"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">3.10,<4.0"
-content-hash = "cd68fc861452de4a03fccf5248396be91c457e6b3a5b29d70777b62c1c17b0c6"
+content-hash = "2a9a30a071673d41961737e855ac7aa66aa71261150f46ab02cc1177f3c999cb"
 
 [metadata.files]
 aiohttp = [
