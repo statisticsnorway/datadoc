@@ -1,7 +1,9 @@
 import dash_bootstrap_components as dbc
+from dash import dash_table, dcc, html
+
 import datadoc.state as state
-from dash import dash_table, html
 from datadoc.frontend.Builders import make_ssb_styled_tab
+from datadoc.frontend.fields.DisplayBase import DROPDOWN_KWARGS, INPUT_KWARGS
 from datadoc.frontend.fields.DisplayVariables import DISPLAY_VARIABLES
 from datadoc.utils import get_display_values
 
@@ -47,6 +49,44 @@ def get_variables_tab() -> dbc.Tab:
                         sort_action="native",
                         page_action="native",
                     )
+                ),
+                dbc.Card(
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                dcc.Input(
+                                    id="vardok-search-text",
+                                    placeholder="Søk i Vardok",
+                                    **INPUT_KWARGS,
+                                ),
+                                width=4,
+                            ),
+                            dbc.Col(
+                                dbc.Button(
+                                    "Søk",
+                                    id="vardok-search-button",
+                                    class_name="ssb-btn primary-btn",
+                                ),
+                                width=1,
+                            ),
+                            dbc.Col(
+                                dcc.Dropdown(id="vardok-dropdown", **DROPDOWN_KWARGS),
+                                width=4,
+                            ),
+                            dbc.Col(
+                                dbc.Button(
+                                    "OK",
+                                    id="vardok-ok-button",
+                                    disabled=True,
+                                    class_name="ssb-btn primary-btn",
+                                ),
+                                width=1,
+                            ),
+                        ],
+                        justify="center",
+                        align="center",
+                    ),
+                    style={"width": "48rem", "align": "center"},
                 ),
             ],
         ),

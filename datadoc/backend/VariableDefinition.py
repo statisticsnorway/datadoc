@@ -35,7 +35,7 @@ def get_search_results(search_text: str) -> ResultSet:
         VARDOK_SEARCH_URI,
         params=f"q='{search_text}'&ref=conceptvariable&sort=score+desc",
     )
-    soup = BeautifulSoup(response.text)
+    soup = BeautifulSoup(response.text, "html.parser")
     return soup.find_all("th", "header")
 
 

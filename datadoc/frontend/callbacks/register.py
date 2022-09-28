@@ -4,6 +4,7 @@ from dash import ALL, Dash, Input, Output, ctx
 from datadoc_model.Enums import SupportedLanguages
 
 import datadoc.state as state
+from datadoc.backend.VariableDefinition import search_vardok
 from datadoc.frontend.callbacks.dataset import (
     accept_dataset_metadata_input,
     change_language_dataset_metadata,
@@ -22,7 +23,7 @@ from datadoc.frontend.fields.DisplayDataset import DISPLAYED_DROPDOWN_DATASET_ME
 # implementations should be in other functions, to enable unit testing
 
 
-def register_callbacks(app: Dash) -> None:
+def register_callbacks(app: Dash) -> None:  # noqa C901
     @app.callback(
         Output("progress-bar", "value"),
         Output("progress-bar", "label"),
@@ -103,3 +104,23 @@ def register_callbacks(app: Dash) -> None:
     def callback_variable_table_dropdown_options(language: str):
         language = SupportedLanguages(language)
         return update_variable_table_dropdown_options_for_language(language)
+
+    @app.callback(
+        Output("vardok-dropdown", "options"),
+        Output("vardok-dropdown", "value"),
+        Output("vardok-ok-button", "disabled"),
+        Input("vardok-search-text", "value"),
+        Input("vardok-search-button", "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def callback_search_vardok(search_term: str, n_clicks: int):
+        search_results = search_vardok(search_term)
+        try:
+            first_result = search_results[0].title
+        except IndexError:
+            first_result = None
+        return (
+            [definition.title for definition in search_results],
+            first_result,
+            len(search_results) == 0,
+        )
