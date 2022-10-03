@@ -23,7 +23,7 @@ datadoc = 'datadoc.app:main'
 [tool.poetry.dependencies]
 python = ">3.10,<4.0"
 requests = ">=2.27.1"
-pyarrow = ">=8.0.0"
+pyarrow = ">=8.0.0, >=9.0.0"
 jupyter-dash = ">=0.4.2"
 dash = ">=2.4.1"
 pydantic = ">=1.9.1"
