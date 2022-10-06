@@ -21,7 +21,7 @@ packages = [
 datadoc = 'datadoc.app:main'
 
 [tool.poetry.dependencies]
-python = ">3.10,<4.0"
+python = ">=3.10,<4.0"
 requests = ">=2.27.1"
 pyarrow = ">=8.0.0"
 jupyter-dash = ">=0.4.2"

@@ -10,9 +10,9 @@ from ..backend.DataDocMetadata import DataDocMetadata
 from ..backend.StorageAdapter import StorageAdapter
 from .utils import (
     TEST_BUCKET_PARQUET_FILEPATH,
+    TEST_EXISTING_METADATA_DIRECTORY,
     TEST_EXISTING_METADATA_FILE_NAME,
-    TEST_EXISTING_METADATA_FILEPATH,
-    TEST_EXISTING_METADATA_WITH_VALID_ID_FILEPATH,
+    TEST_EXISTING_METADATA_WITH_VALID_ID_DIRECTORY,
     TEST_PARQUET_FILEPATH,
     TEST_RESOURCES_DIRECTORY,
     TEST_RESOURCES_METADATA_DOCUMENT,
@@ -46,7 +46,7 @@ def remove_document_file() -> None:
 
 @pytest.fixture()
 def existing_metadata_path():
-    return TEST_EXISTING_METADATA_FILEPATH
+    return TEST_EXISTING_METADATA_DIRECTORY
 
 
 @pytest.fixture
@@ -61,7 +61,7 @@ def existing_metadata_file(existing_metadata_path) -> str:
 
 @pytest.fixture
 @pytest.mark.parametrize(
-    "existing_metadata_path", [TEST_EXISTING_METADATA_WITH_VALID_ID_FILEPATH]
+    "existing_metadata_path", [TEST_EXISTING_METADATA_WITH_VALID_ID_DIRECTORY]
 )
 def existing_metadata_with_valid_id_file(existing_metadata_file) -> str:
     return existing_metadata_file

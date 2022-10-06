@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from datadoc_model.Enums import SupportedLanguages
 from pydantic import ValidationError
@@ -14,9 +14,30 @@ from datadoc.frontend.fields.DisplayDataset import (
     DISPLAYED_DATASET_METADATA,
     DISPLAYED_DROPDOWN_DATASET_ENUMS,
     MULTIPLE_LANGUAGE_DATASET_METADATA,
+    DatasetIdentifiers,
 )
 
 logger = logging.getLogger(__name__)
+
+
+def process_keyword(value: str) -> Optional[List[str]]:
+    if value is None:
+        return None
+    return [item.strip() for item in value.split(",")]
+
+
+def process_special_cases(value: Any, metadata_identifier: str):
+    """
+    docstring
+    """
+    if metadata_identifier == DatasetIdentifiers.KEYWORD.value:
+        value = process_keyword(value)
+    if metadata_identifier in MULTIPLE_LANGUAGE_DATASET_METADATA:
+        value = find_existing_language_string(
+            state.metadata.meta.dataset, value, metadata_identifier
+        )
+
+    return value
 
 
 def accept_dataset_metadata_input(
@@ -24,13 +45,7 @@ def accept_dataset_metadata_input(
 ) -> Tuple[bool, str]:
     logger.debug(f"Received update {value = } for {metadata_identifier = }")
     try:
-        if (
-            metadata_identifier in MULTIPLE_LANGUAGE_DATASET_METADATA
-            and type(value) is str
-        ):
-            value = find_existing_language_string(
-                state.metadata.meta.dataset, value, metadata_identifier
-            )
+        value = process_special_cases(value, metadata_identifier)
 
         logger.debug(f"Updating {value = } for {metadata_identifier = }")
         # Update the value in the model

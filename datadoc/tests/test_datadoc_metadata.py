@@ -14,8 +14,8 @@ from datadoc_model.Model import DataDocDataSet, DataDocVariable, MetadataDocumen
 from datadoc.backend.DataDocMetadata import PLACEHOLDER_USERNAME, DataDocMetadata
 
 from .utils import (
+    TEST_EXISTING_METADATA_DIRECTORY,
     TEST_EXISTING_METADATA_FILE_NAME,
-    TEST_EXISTING_METADATA_WITH_VALID_ID_FILEPATH,
     TEST_PARQUET_FILEPATH,
     TEST_RESOURCES_DIRECTORY,
 )
@@ -72,7 +72,7 @@ def test_metadata_document_percent_complete(metadata):
     )
     metadata.meta = document
 
-    assert metadata.percent_complete == 19
+    assert metadata.percent_complete == 17
 
 
 def test_get_dataset_version(metadata: DataDocMetadata):
@@ -90,9 +90,9 @@ def test_write_metadata_document(
     assert os.path.exists(
         os.path.join(TEST_RESOURCES_DIRECTORY, TEST_EXISTING_METADATA_FILE_NAME)
     )
-    assert metadata.meta.dataset.last_updated_by == PLACEHOLDER_USERNAME
-    assert metadata.meta.dataset.created_date == dummy_timestamp
-    assert metadata.meta.dataset.last_updated_date == dummy_timestamp
+    assert metadata.meta.dataset.metadata_last_updated_by == PLACEHOLDER_USERNAME
+    assert metadata.meta.dataset.metadata_created_date == dummy_timestamp
+    assert metadata.meta.dataset.metadata_last_updated_date == dummy_timestamp
 
 
 def test_write_metadata_document_existing_document(
@@ -101,19 +101,22 @@ def test_write_metadata_document_existing_document(
     metadata: DataDocMetadata,
     remove_document_file,
 ):
-    original_created_date: datetime = metadata.meta.dataset.created_date
-    original_created_by = metadata.meta.dataset.created_by
+    original_created_date: datetime = metadata.meta.dataset.metadata_created_date
+    original_created_by = metadata.meta.dataset.metadata_created_by
     metadata.write_metadata_document()
-    assert metadata.meta.dataset.created_by == original_created_by
-    assert metadata.meta.dataset.created_date == original_created_date
-    assert metadata.meta.dataset.last_updated_by == PLACEHOLDER_USERNAME
-    assert metadata.meta.dataset.last_updated_date == dummy_timestamp
+    assert metadata.meta.dataset.metadata_created_by == original_created_by
+    assert metadata.meta.dataset.metadata_created_date == original_created_date
+    assert metadata.meta.dataset.metadata_last_updated_by == PLACEHOLDER_USERNAME
+    assert metadata.meta.dataset.metadata_last_updated_date == dummy_timestamp
 
 
 def test_metadata_id(metadata: DataDocMetadata):
     assert isinstance(metadata.meta.dataset.id, UUID)
 
 
+@pytest.mark.parametrize(
+    "existing_metadata_path", [TEST_EXISTING_METADATA_DIRECTORY / "invalid_id_field"]
+)
 def test_existing_metadata_none_id(
     existing_metadata_file, metadata: DataDocMetadata, remove_document_file
 ):
@@ -130,7 +133,7 @@ def test_existing_metadata_none_id(
 
 
 @pytest.mark.parametrize(
-    "existing_metadata_path", [TEST_EXISTING_METADATA_WITH_VALID_ID_FILEPATH]
+    "existing_metadata_path", [TEST_EXISTING_METADATA_DIRECTORY / "valid_id_field"]
 )
 def test_existing_metadata_valid_id(
     existing_metadata_file,

@@ -33,7 +33,7 @@ def get_standard_metadata(metadata: BaseModel, identifier: str) -> Any:
     return metadata.dict()[identifier]
 
 
-def get_metadata_and_stringify(metadata: BaseModel, identifier: str) -> Any:
+def get_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str:
     return str(metadata.dict()[identifier])
 
 
@@ -42,6 +42,13 @@ def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> Optiona
     if value is None:
         return value
     return getattr(value, state.current_metadata_language)
+
+
+def get_list_of_strings(metadata: BaseModel, identifier: str) -> str:
+    value: List[str] = getattr(metadata, identifier)
+    if value is None:
+        return ""
+    return ", ".join(value)
 
 
 @dataclass
