@@ -12,6 +12,7 @@ from datadoc_model.Enums import DatasetState
 import datadoc.frontend.fields.DisplayDataset as DisplayDataset
 import datadoc.frontend.fields.DisplayVariables as DisplayVariables
 from datadoc.backend.DatasetParser import DatasetParser
+from datadoc.backend.ModelBackwardsCompatibility import upgrade_metadata
 from datadoc.backend.StorageAdapter import StorageAdapter
 from datadoc.utils import calculate_percentage, get_timestamp_now
 
@@ -71,7 +72,7 @@ class DataDocMetadata:
 
         self.meta: "Model.MetadataDocument" = Model.MetadataDocument(
             percentage_complete=0,
-            document_version=1,
+            document_version=Model.MODEL_VERSION,
             dataset=Model.DataDocDataSet(),
             variables=[],
         )
@@ -123,6 +124,8 @@ class DataDocMetadata:
                 logger.info(
                     f"Opened existing metadata file {self.metadata_document.location}"
                 )
+
+                fresh_metadata = upgrade_metadata(fresh_metadata, Model.MODEL_VERSION)
 
                 variables_list = fresh_metadata.pop("variables", None)
 

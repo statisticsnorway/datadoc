@@ -1,6 +1,6 @@
 {
     "percentage_complete": 39,
-    "document_version": "1",
+    "document_version": "0.1.1",
     "dataset": {
         "short_name": "person_data_v1",
         "assessment": "OPEN",
@@ -19,7 +19,7 @@
         "description": null,
         "subject_field": null,
         "spatial_coverage_description": null,
-        "id": "143fca77-ef56-419c-a1e1-d69c4199f020",
+        "id": null,
         "owner": null,
         "data_source_path": "klargjorte_data/person_data_v1.parquet",
         "created_date": "2022-07-13 17:28:01.617657",

@@ -1,6 +1,5 @@
 import json
 import os
-import shutil
 from copy import copy
 from datetime import datetime
 from pathlib import PurePath
@@ -16,26 +15,10 @@ from datadoc.backend.DataDocMetadata import PLACEHOLDER_USERNAME, DataDocMetadat
 
 from .utils import (
     TEST_EXISTING_METADATA_FILE_NAME,
-    TEST_EXISTING_METADATA_FILEPATH,
     TEST_EXISTING_METADATA_WITH_VALID_ID_FILEPATH,
     TEST_PARQUET_FILEPATH,
     TEST_RESOURCES_DIRECTORY,
 )
-
-dummy_timestamp = datetime(2022, 1, 1)
-
-
-@pytest.fixture()
-def mock_timestamp(mocker):
-    mocker.patch(
-        "datadoc.backend.DataDocMetadata.get_timestamp_now",
-        return_value=dummy_timestamp,
-    )
-
-
-@pytest.fixture
-def metadata(mock_timestamp):
-    yield DataDocMetadata(TEST_PARQUET_FILEPATH)
 
 
 def make_paths() -> List[Tuple[str, DatasetState]]:
@@ -59,29 +42,6 @@ def make_paths() -> List[Tuple[str, DatasetState]]:
         test_data.append((str(new_path), state))
 
     return test_data
-
-
-@pytest.fixture
-def remove_document_file() -> None:
-    yield None  # Dummy value, No need to return anything in particular here
-    os.remove(os.path.join(TEST_RESOURCES_DIRECTORY, TEST_EXISTING_METADATA_FILE_NAME))
-
-
-@pytest.fixture
-def existing_metadata_file() -> str:
-    # Setup by copying the file into the relevant directory
-    shutil.copy(TEST_EXISTING_METADATA_FILEPATH, TEST_RESOURCES_DIRECTORY)
-    return os.path.join(TEST_RESOURCES_DIRECTORY, TEST_EXISTING_METADATA_FILE_NAME)
-
-
-@pytest.fixture
-def existing_metadata_with_valid_id_file() -> str:
-    # Setup by copying the file into the relevant directory
-    shutil.copy(
-        TEST_EXISTING_METADATA_WITH_VALID_ID_FILEPATH,
-        os.path.join(TEST_RESOURCES_DIRECTORY, TEST_EXISTING_METADATA_FILE_NAME),
-    )
-    return os.path.join(TEST_RESOURCES_DIRECTORY, TEST_EXISTING_METADATA_FILE_NAME)
 
 
 @pytest.mark.parametrize(("path", "expected_result"), make_paths())
@@ -123,7 +83,9 @@ def test_get_dataset_version_unknown(metadata: DataDocMetadata):
     assert metadata.get_dataset_version("person_data.parquet") is None
 
 
-def test_write_metadata_document(metadata: DataDocMetadata, remove_document_file):
+def test_write_metadata_document(
+    dummy_timestamp, metadata: DataDocMetadata, remove_document_file
+):
     metadata.write_metadata_document()
     assert os.path.exists(
         os.path.join(TEST_RESOURCES_DIRECTORY, TEST_EXISTING_METADATA_FILE_NAME)
@@ -134,7 +96,10 @@ def test_write_metadata_document(metadata: DataDocMetadata, remove_document_file
 
 
 def test_write_metadata_document_existing_document(
-    existing_metadata_file, metadata: DataDocMetadata, remove_document_file
+    dummy_timestamp,
+    existing_metadata_file,
+    metadata: DataDocMetadata,
+    remove_document_file,
 ):
     original_created_date: datetime = metadata.meta.dataset.created_date
     original_created_by = metadata.meta.dataset.created_by
@@ -164,19 +129,22 @@ def test_existing_metadata_none_id(
     assert post_write_id == str(metadata.meta.dataset.id)
 
 
+@pytest.mark.parametrize(
+    "existing_metadata_path", [TEST_EXISTING_METADATA_WITH_VALID_ID_FILEPATH]
+)
 def test_existing_metadata_valid_id(
-    existing_metadata_with_valid_id_file,
+    existing_metadata_file,
     metadata: DataDocMetadata,
     remove_document_file,
 ):
     pre_open_id = ""
     post_write_id = ""
-    with open(existing_metadata_with_valid_id_file) as f:
+    with open(existing_metadata_file) as f:
         pre_open_id = json.load(f)["dataset"]["id"]
     assert pre_open_id is not None
     assert isinstance(metadata.meta.dataset.id, UUID)
     assert str(metadata.meta.dataset.id) == pre_open_id
     metadata.write_metadata_document()
-    with open(existing_metadata_with_valid_id_file) as f:
+    with open(existing_metadata_file) as f:
         post_write_id = json.load(f)["dataset"]["id"]
     assert post_write_id == pre_open_id

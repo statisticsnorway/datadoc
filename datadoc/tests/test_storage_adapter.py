@@ -2,7 +2,6 @@ import pathlib
 
 import pytest
 
-from datadoc.tests.storage_adapter_fixtures import *  # noqa pytest magic
 from datadoc.tests.utils import TEST_BUCKET_PARQUET_FILEPATH, TEST_PARQUET_FILEPATH
 
 from ..backend.StorageAdapter import GCSObject, LocalFile, StorageAdapter
@@ -31,7 +30,7 @@ def test_open(file: StorageAdapter, request):
     [
         (
             "local_parquet_file",
-            str(pathlib.Path(TEST_PARQUET_FILEPATH).parent.absolute()),
+            str(TEST_PARQUET_FILEPATH.parent.absolute()),
         ),
         (
             "bucket_object_parquet_file",
@@ -46,11 +45,11 @@ def test_parent(file: StorageAdapter, expected_parent: str, request):
 
 
 @pytest.mark.parametrize(
-    ("file", "expected"),
+    ("known_file", "expected"),
     [
         (
             "local_parquet_file",
-            "/".join([TEST_PARQUET_FILEPATH, "extra"]),
+            TEST_PARQUET_FILEPATH / "extra",
         ),
         (
             "bucket_object_parquet_file",
@@ -58,18 +57,20 @@ def test_parent(file: StorageAdapter, expected_parent: str, request):
         ),
     ],
 )
-def test_joinpath(file: StorageAdapter, expected: str, request):
+def test_joinpath(known_file: StorageAdapter, expected: str, request):
     # Ugly pytest magic to get the actual fixture out
-    file = request.getfixturevalue(file)
-    file.joinpath("extra")
-    assert file.location == expected
+    actual_file = request.getfixturevalue(known_file)
+    actual_file.joinpath("extra")
+    assert pathlib.Path(actual_file.location) == pathlib.Path(expected)
 
 
-@pytest.mark.parametrize("file", ["local_parquet_file", "bucket_object_parquet_file"])
-def test_exists(file: StorageAdapter, request):
+@pytest.mark.parametrize(
+    "known_file", ["local_parquet_file", "bucket_object_parquet_file"]
+)
+def test_exists(known_file: StorageAdapter, request):
     # Ugly pytest magic to get the actual fixture out
-    file = request.getfixturevalue(file)
-    assert file.exists()
+    actual_file = request.getfixturevalue(known_file)
+    assert actual_file.exists()
 
 
 def test_write_text_local_file(local_parquet_file: StorageAdapter, request):
