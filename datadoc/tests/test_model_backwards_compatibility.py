@@ -52,4 +52,8 @@ def test_backwards_compatibility(
     pprint(f"{in_file_values = }")
     pprint(f"{read_in_values = }")
 
-    assert all([v in read_in_values for v in in_file_values])
+    missing_values = [v for v in in_file_values if v not in read_in_values]
+    if missing_values:
+        raise AssertionError(
+            f"Some values were not successfully read in! {missing_values = }"
+        )
