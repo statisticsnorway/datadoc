@@ -71,6 +71,8 @@ build-backend = "poetry.core.masonry.api"
 [tool.poe.tasks]
 test = "pytest -vvvv --cache-clear --cov-report=term-missing --cov=."
 bump-patch-version = "bump2version patch"
+bump-minor-version = "bump2version minor"
+bump-major-version = "bump2version major"
 jupyter = "jupyter lab"
 datadoc = "python datadoc/app.py"
 
