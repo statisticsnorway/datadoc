@@ -2,7 +2,7 @@ import logging
 import os
 import pathlib
 from io import IOBase, TextIOWrapper
-from typing import Protocol
+from typing import Protocol, Union
 from urllib.parse import urlsplit, urlunsplit
 
 GCS_PROTOCOL_PREFIX = "gs://"
@@ -87,10 +87,11 @@ class LocalFile:
 
 class StorageAdapter(Protocol):
     @staticmethod
-    def for_path(path: str):
+    def for_path(path: Union[str, pathlib.Path]) -> "StorageAdapter":
         """
         Return a concrete class implementing this Protocol based on the structure of the path.
         """
+        path = str(path)
         if path.startswith(GCS_PROTOCOL_PREFIX):
             return GCSObject(path)
         else:

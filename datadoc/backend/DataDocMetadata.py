@@ -12,6 +12,7 @@ from datadoc_model.Enums import DatasetState
 import datadoc.frontend.fields.DisplayDataset as DisplayDataset
 import datadoc.frontend.fields.DisplayVariables as DisplayVariables
 from datadoc.backend.DatasetParser import DatasetParser
+from datadoc.backend.ModelBackwardsCompatibility import upgrade_metadata
 from datadoc.backend.StorageAdapter import StorageAdapter
 from datadoc.utils import calculate_percentage, get_timestamp_now
 
@@ -71,7 +72,7 @@ class DataDocMetadata:
 
         self.meta: "Model.MetadataDocument" = Model.MetadataDocument(
             percentage_complete=0,
-            document_version=1,
+            document_version=Model.MODEL_VERSION,
             dataset=Model.DataDocDataSet(),
             variables=[],
         )
@@ -124,6 +125,8 @@ class DataDocMetadata:
                     f"Opened existing metadata file {self.metadata_document.location}"
                 )
 
+                fresh_metadata = upgrade_metadata(fresh_metadata, Model.MODEL_VERSION)
+
                 variables_list = fresh_metadata.pop("variables", None)
 
                 self.meta.variables = [
@@ -163,10 +166,10 @@ class DataDocMetadata:
     def write_metadata_document(self) -> None:
         """Write all currently known metadata to file"""
         timestamp: datetime = get_timestamp_now()
-        if self.meta.dataset.created_date is None:
-            self.meta.dataset.created_date = timestamp
-        self.meta.dataset.last_updated_date = timestamp
-        self.meta.dataset.last_updated_by = self.current_user
+        if self.meta.dataset.metadata_created_date is None:
+            self.meta.dataset.metadata_created_date = timestamp
+        self.meta.dataset.metadata_last_updated_date = timestamp
+        self.meta.dataset.metadata_last_updated_by = self.current_user
         self.metadata_document.write_text(self.meta.json(indent=4, sort_keys=False))
         logger.info(f"Saved metadata document {self.metadata_document.location}")
 

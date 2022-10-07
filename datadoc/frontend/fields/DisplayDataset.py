@@ -9,6 +9,7 @@ from datadoc.frontend.fields.DisplayBase import (
     DROPDOWN_KWARGS,
     NUMBER_KWARGS,
     DisplayDatasetMetadata,
+    get_list_of_strings,
     get_metadata_and_stringify,
     get_multi_language_metadata,
 )
@@ -27,18 +28,22 @@ class DatasetIdentifiers(str, Enum):
     DATA_SOURCE = "data_source"
     POPULATION_DESCRIPTION = "population_description"
     VERSION = "version"
+    VERSION_DESCRIPTION = "version_description"
     UNIT_TYPE = "unit_type"
     TEMPORALITY_TYPE = "temporality_type"
     DESCRIPTION = "description"
     SUBJECT_FIELD = "subject_field"
+    KEYWORD = "keyword"
     SPATIAL_COVERAGE_DESCRIPTION = "spatial_coverage_description"
     ID = "id"
     OWNER = "owner"
     DATA_SOURCE_PATH = "data_source_path"
-    METADATA_CREATED_DATE = "created_date"
-    METADATA_CREATED_BY = "created_by"
-    METADATA_LAST_UPDATED_DATE = "last_updated_date"
-    METADATA_LAST_UPDATED_BY = "last_updated_by"
+    METADATA_CREATED_DATE = "metadata_created_date"
+    METADATA_CREATED_BY = "metadata_created_by"
+    METADATA_LAST_UPDATED_DATE = "metadata_last_updated_date"
+    METADATA_LAST_UPDATED_BY = "metadata_last_updated_by"
+    CONTAINS_DATA_FROM = "contains_data_from"
+    CONTAINS_DATA_UNTIL = "contains_data_until"
 
 
 DISPLAY_DATASET: Dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
@@ -100,6 +105,11 @@ DISPLAY_DATASET: Dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         extra_kwargs=NUMBER_KWARGS,
         obligatory=True,
     ),
+    DatasetIdentifiers.VERSION_DESCRIPTION: DisplayDatasetMetadata(
+        identifier=DatasetIdentifiers.VERSION_DESCRIPTION.value,
+        display_name="Versjonsbeskrivelse",
+        description="Årsak/grunnlag for denne versjonen av datasettet i form av beskrivende tekst.",
+    ),
     DatasetIdentifiers.UNIT_TYPE: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.UNIT_TYPE.value,
         display_name="Enhetstype",
@@ -126,6 +136,12 @@ DISPLAY_DATASET: Dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         description="Primær statistikkområdet som datasettet inngår i",
         obligatory=True,
         multiple_language_support=True,
+    ),
+    DatasetIdentifiers.KEYWORD: DisplayDatasetMetadata(
+        identifier=DatasetIdentifiers.KEYWORD.value,
+        display_name="Nøkkelord",
+        description="En kommaseparert liste med søkbare nøkkelord som kan bidra til utvikling av effektive filtrerings- og søketjeneste.",
+        value_getter=get_list_of_strings,
     ),
     DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION.value,
@@ -183,6 +199,20 @@ DISPLAY_DATASET: Dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         description="Siste endring utført av person. Kun til bruk i SSB.",
         obligatory=True,
         editable=False,
+    ),
+    DatasetIdentifiers.CONTAINS_DATA_FROM: DisplayDatasetMetadata(
+        identifier=DatasetIdentifiers.CONTAINS_DATA_FROM.value,
+        display_name="Inneholder data f.o.m.",
+        description="ÅÅÅÅ-MM-DD",
+        obligatory=True,
+        editable=True,
+    ),
+    DatasetIdentifiers.CONTAINS_DATA_UNTIL: DisplayDatasetMetadata(
+        identifier=DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
+        display_name="Inneholder data t.o.m.",
+        description="ÅÅÅÅ-MM-DD",
+        obligatory=True,
+        editable=True,
     ),
 }
 

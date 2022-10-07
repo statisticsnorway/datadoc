@@ -51,8 +51,8 @@ NYNORSK_NAME = "Nynorsk Name"
 LANGUAGE_OBJECT = LanguageStrings(en=ENGLISH_NAME, nb=BOKMÅL_NAME)
 
 
-def test_accept_variable_metadata_input_no_change_in_data():
-    state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
+def test_accept_variable_metadata_input_no_change_in_data(metadata):
+    state.metadata = metadata
     output = accept_variable_metadata_input(DATA_ORIGINAL, DATA_ORIGINAL)
     assert output[0] == DATA_ORIGINAL
     assert output[1] is False
@@ -60,7 +60,7 @@ def test_accept_variable_metadata_input_no_change_in_data():
 
 
 def test_accept_variable_metadata_input_new_data():
-    state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
+    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     output = accept_variable_metadata_input(DATA_VALID, DATA_ORIGINAL)
 
     assert state.metadata.variables_lookup["pers_id"].variable_role == "IDENTIFIER"
@@ -70,7 +70,7 @@ def test_accept_variable_metadata_input_new_data():
 
 
 def test_accept_variable_metadata_input_incorrect_data_type():
-    state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
+    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     previous_metadata = deepcopy(state.metadata.meta.variables)
     output = accept_variable_metadata_input(DATA_INVALID, DATA_ORIGINAL)
 
@@ -81,7 +81,7 @@ def test_accept_variable_metadata_input_incorrect_data_type():
 
 
 def test_accept_dataset_metadata_input_new_data():
-    state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
+    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     output = accept_dataset_metadata_input(DatasetState.INPUT_DATA, "dataset_state")
     assert output[0] is False
     assert output[1] == ""
@@ -89,14 +89,14 @@ def test_accept_dataset_metadata_input_new_data():
 
 
 def test_accept_dataset_metadata_input_incorrect_data_type():
-    state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
+    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     output = accept_dataset_metadata_input(3.1415, "dataset_state")
     assert output[0] is True
     assert "validation error for DataDocDataSet" in output[1]
 
 
 def test_update_dataset_metadata_language_strings():
-    state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
+    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     state.metadata.meta.dataset.name = LANGUAGE_OBJECT
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     output = update_dataset_metadata_language()
@@ -109,7 +109,7 @@ def test_update_dataset_metadata_language_strings():
 
 
 def test_update_dataset_metadata_language_enums():
-    state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
+    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     state.metadata.meta.dataset.dataset_state = DatasetState.PROCESSED_DATA
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     output = update_dataset_metadata_language()
@@ -145,7 +145,7 @@ def test_find_existing_language_string_pre_existing_strings():
 
 
 def test_update_variable_table_language():
-    state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
+    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     test_variable = random.choice([v.short_name for v in state.metadata.meta.variables])
     state.metadata.variables_lookup[test_variable].name = LANGUAGE_OBJECT
     output = update_variable_table_language(
@@ -161,7 +161,7 @@ def test_update_variable_table_language():
 
 
 def test_nonetype_value_for_language_string():
-    state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
+    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     state.metadata.variables_lookup["pers_id"].name = LANGUAGE_OBJECT
     state.current_metadata_language = SupportedLanguages.NORSK_NYNORSK
     accept_variable_metadata_input(DATA_NONETYPE, DATA_ORIGINAL)
@@ -192,7 +192,7 @@ def test_update_global_language_state():
 
 
 def test_change_language_dataset_metadata():
-    state.metadata = DataDocMetadata(TEST_PARQUET_FILEPATH)
+    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     value = change_language_dataset_metadata(SupportedLanguages.NORSK_NYNORSK)
     test = random.choice(DISPLAYED_DROPDOWN_DATASET_ENUMS)
     assert isinstance(value, tuple)
