@@ -57,7 +57,7 @@ LANGUAGE_OBJECT = LanguageStrings(en=ENGLISH_NAME, nb=BOKMÅL_NAME)
 
 @pytest.fixture
 def active_cell():
-    return {"row": 1, "column": 1, "column_id": "name", "row_id": None}
+    return {"row": 1, "column": 1, "column_id": "short_name", "row_id": None}
 
 
 def test_accept_variable_metadata_input_no_change_in_data(metadata, active_cell):
@@ -179,11 +179,11 @@ def test_update_variable_table_language():
     assert name == BOKMÅL_NAME
 
 
-def test_nonetype_value_for_language_string():
+def test_nonetype_value_for_language_string(active_cell):
     state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     state.metadata.variables_lookup["pers_id"].name = LANGUAGE_OBJECT
     state.current_metadata_language = SupportedLanguages.NORSK_NYNORSK
-    accept_variable_metadata_input(DATA_NONETYPE, DATA_ORIGINAL)
+    accept_variable_metadata_input(DATA_NONETYPE, active_cell, DATA_ORIGINAL)
 
     assert state.metadata.variables_lookup["pers_id"].name == LANGUAGE_OBJECT
 

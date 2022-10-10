@@ -3,7 +3,10 @@ from dash import dash_table, html
 
 import datadoc.state as state
 from datadoc.frontend.Builders import make_ssb_styled_tab
-from datadoc.frontend.fields.DisplayVariables import DISPLAY_VARIABLES
+from datadoc.frontend.fields.DisplayVariables import (
+    DISPLAY_VARIABLES,
+    VariableIdentifiers,
+)
 from datadoc.utils import get_display_values
 
 
@@ -31,6 +34,8 @@ def get_variables_tab() -> dbc.Tab:
                                 "hideable": variable.editable,
                             }
                             for variable in DISPLAY_VARIABLES.values()
+                            if variable.identifier
+                            != VariableIdentifiers.IDENTIFIER.value  # TODO: Remove this from the model, for now we hide it
                         ],
                         # Non-obligatory variables are hidden by default
                         hidden_columns=[
