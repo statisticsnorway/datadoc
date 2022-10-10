@@ -1,6 +1,7 @@
 import dash_bootstrap_components as dbc
-import datadoc.state as state
 from dash import dash_table, html
+
+import datadoc.state as state
 from datadoc.frontend.Builders import make_ssb_styled_tab
 from datadoc.frontend.fields.DisplayVariables import DISPLAY_VARIABLES
 from datadoc.utils import get_display_values
@@ -47,8 +48,10 @@ def get_variables_tab() -> dbc.Tab:
                         sort_action="native",
                         page_action="native",
                         # Enable filtering
-                        filter_action='native',
-                        filter_options={"case": "insensitive"}
+                        filter_action="native",
+                        filter_options={"case": "insensitive"},
+                        # Use horizontal scroll
+                        style_table={"overflowX": "auto"},
                     )
                 ),
             ],
