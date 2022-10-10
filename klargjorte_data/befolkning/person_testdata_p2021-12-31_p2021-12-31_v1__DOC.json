@@ -1,0 +1,212 @@
+{
+    "percentage_complete": 82,
+    "document_version": "1",
+    "dataset": {
+        "short_name": "person_testdata_p2021-12-31_p2021-12-31",
+        "assessment": "PROTECTED",
+        "dataset_status": "DRAFT",
+        "dataset_state": "PROCESSED_DATA",
+        "name": {
+            "en": "",
+            "nn": "",
+            "nb": "Persondata demo datasett"
+        },
+        "data_source": {
+            "en": "",
+            "nn": "",
+            "nb": "Skatteetaten, FREG og personskatt"
+        },
+        "population_description": {
+            "en": "",
+            "nn": "",
+            "nb": "Alle bosatte i Norge"
+        },
+        "version": "1",
+        "unit_type": "PERSON",
+        "temporality_type": "STATUS",
+        "description": {
+            "en": "",
+            "nn": "",
+            "nb": "Person-data til demo og testing av DataDoc"
+        },
+        "subject_field": {
+            "en": "",
+            "nn": "",
+            "nb": "befolkning"
+        },
+        "spatial_coverage_description": {
+            "en": "",
+            "nn": "",
+            "nb": "Norge"
+        },
+        "id": "https://www.ssb.no/dataset/dd30535a461911edb",
+        "owner": {
+            "en": "",
+            "nn": "",
+            "nb": "Seksjon NNN"
+        },
+        "data_source_path": "/klargjorte_data/befolkning/person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+        "created_date": "2022-10-07T09:35:01.192898",
+        "created_by": "default_user@ssb.no",
+        "last_updated_date": null,
+        "last_updated_by": null
+    },
+    "variables": [
+        {
+            "short_name": "fnr",
+            "name": {
+                "en": "",
+                "nn": "",
+                "nb": "F\u00f8dselsnummer"
+            },
+            "data_type": "STRING",
+            "variable_role": "IDENTIFIER",
+            "definition_uri": "https://www.ssb.no/a/metadata/conceptvariable/vardok/26/nb",
+            "direct_person_identifying": true,
+            "data_source": null,
+            "population_description": null,
+            "comment": null,
+            "temporality_type": null,
+            "measurement_unit": null,
+            "format": null,
+            "classification_uri": null,
+            "sentinel_value_uri": null,
+            "invalid_value_description": null,
+            "id": null,
+            "contains_data_from": null,
+            "contains_data_until": null
+        },
+        {
+            "short_name": "sivilstand",
+            "name": {
+                "en": "",
+                "nn": "",
+                "nb": "Sivilstand"
+            },
+            "data_type": "STRING",
+            "variable_role": "MEASURE",
+            "definition_uri": "https://www.ssb.no/a/metadata/conceptvariable/vardok/91/nb",
+            "direct_person_identifying": false,
+            "data_source": null,
+            "population_description": null,
+            "comment": null,
+            "temporality_type": null,
+            "measurement_unit": null,
+            "format": null,
+            "classification_uri": null,
+            "sentinel_value_uri": null,
+            "invalid_value_description": null,
+            "id": null,
+            "contains_data_from": null,
+            "contains_data_until": null
+        },
+        {
+            "short_name": "bostedskommune",
+            "name": {
+                "en": "",
+                "nn": "",
+                "nb": "Bostedskommune"
+            },
+            "data_type": "STRING",
+            "variable_role": "MEASURE",
+            "definition_uri": "https://www.ssb.no/a/metadata/conceptvariable/vardok/94/nb",
+            "direct_person_identifying": false,
+            "data_source": null,
+            "population_description": null,
+            "comment": null,
+            "temporality_type": null,
+            "measurement_unit": null,
+            "format": null,
+            "classification_uri": null,
+            "sentinel_value_uri": null,
+            "invalid_value_description": null,
+            "id": null,
+            "contains_data_from": null,
+            "contains_data_until": null
+        },
+        {
+            "short_name": "inntekt",
+            "name": {
+                "en": "",
+                "nn": "",
+                "nb": "Alminnelig inntekt"
+            },
+            "data_type": "INTEGER",
+            "variable_role": "MEASURE",
+            "definition_uri": "https://www.ssb.no/a/metadata/conceptvariable/vardok/3495/nb",
+            "direct_person_identifying": false,
+            "data_source": null,
+            "population_description": null,
+            "comment": null,
+            "temporality_type": null,
+            "measurement_unit": {
+                "en": "",
+                "nn": "",
+                "nb": "NOK"
+            },
+            "format": null,
+            "classification_uri": null,
+            "sentinel_value_uri": null,
+            "invalid_value_description": null,
+            "id": null,
+            "contains_data_from": null,
+            "contains_data_until": null
+        },
+        {
+            "short_name": "bankinnskudd",
+            "name": {
+                "en": "",
+                "nn": "",
+                "nb": "Bankinnskudd totalt"
+            },
+            "data_type": "INTEGER",
+            "variable_role": "MEASURE",
+            "definition_uri": "https://www.ssb.no/a/metadata/conceptvariable/vardok/591/nb",
+            "direct_person_identifying": false,
+            "data_source": null,
+            "population_description": null,
+            "comment": null,
+            "temporality_type": null,
+            "measurement_unit": {
+                "en": "",
+                "nn": "",
+                "nb": "NOK"
+            },
+            "format": null,
+            "classification_uri": null,
+            "sentinel_value_uri": null,
+            "invalid_value_description": null,
+            "id": null,
+            "contains_data_from": null,
+            "contains_data_until": null
+        },
+        {
+            "short_name": "dato",
+            "name": {
+                "en": "",
+                "nn": "",
+                "nb": "Registreringsdato"
+            },
+            "data_type": "DATETIME",
+            "variable_role": "START_TIME",
+            "definition_uri": null,
+            "direct_person_identifying": false,
+            "data_source": null,
+            "population_description": null,
+            "comment": {
+                "en": "",
+                "nn": "",
+                "nb": "M\u00e5letidspunkt for data"
+            },
+            "temporality_type": null,
+            "measurement_unit": null,
+            "format": "YYYY-MM-DD",
+            "classification_uri": null,
+            "sentinel_value_uri": null,
+            "invalid_value_description": null,
+            "id": null,
+            "contains_data_from": null,
+            "contains_data_until": null
+        }
+    ]
+}
