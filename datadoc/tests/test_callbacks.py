@@ -1,6 +1,7 @@
 import random
 from copy import deepcopy
 
+import pytest
 from datadoc_model.Enums import DatasetState, Datatype, SupportedLanguages
 from datadoc_model.Model import DataDocDataSet, DataDocVariable, LanguageStrings
 
@@ -43,6 +44,9 @@ DATA_INVALID = [
         "variable_role": 3.1415,
     },
 ]
+DATA_CLEAR_URI = [
+    {"short_name": "pers_id", "variable_role": None, "definition_uri": ""},
+]
 
 ENGLISH_NAME = "English Name"
 BOKMÅL_NAME = "Bokmål Name"
@@ -51,17 +55,22 @@ NYNORSK_NAME = "Nynorsk Name"
 LANGUAGE_OBJECT = LanguageStrings(en=ENGLISH_NAME, nb=BOKMÅL_NAME)
 
 
-def test_accept_variable_metadata_input_no_change_in_data(metadata):
+@pytest.fixture
+def active_cell():
+    return {"row": 1, "column": 1, "column_id": "name", "row_id": None}
+
+
+def test_accept_variable_metadata_input_no_change_in_data(metadata, active_cell):
     state.metadata = metadata
-    output = accept_variable_metadata_input(DATA_ORIGINAL, DATA_ORIGINAL)
+    output = accept_variable_metadata_input(DATA_ORIGINAL, active_cell, DATA_ORIGINAL)
     assert output[0] == DATA_ORIGINAL
     assert output[1] is False
     assert output[2] == ""
 
 
-def test_accept_variable_metadata_input_new_data():
+def test_accept_variable_metadata_input_new_data(active_cell):
     state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
-    output = accept_variable_metadata_input(DATA_VALID, DATA_ORIGINAL)
+    output = accept_variable_metadata_input(DATA_VALID, active_cell, DATA_ORIGINAL)
 
     assert state.metadata.variables_lookup["pers_id"].variable_role == "IDENTIFIER"
     assert output[0] == DATA_VALID
@@ -69,10 +78,20 @@ def test_accept_variable_metadata_input_new_data():
     assert output[2] == ""
 
 
-def test_accept_variable_metadata_input_incorrect_data_type():
+def test_accept_variable_metadata_clear_string(active_cell):
+    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
+    output = accept_variable_metadata_input(DATA_CLEAR_URI, active_cell, DATA_ORIGINAL)
+
+    assert state.metadata.variables_lookup["pers_id"].definition_uri is None
+    assert output[0] == DATA_CLEAR_URI
+    assert output[1] is False
+    assert output[2] == ""
+
+
+def test_accept_variable_metadata_input_incorrect_data_type(active_cell):
     state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     previous_metadata = deepcopy(state.metadata.meta.variables)
-    output = accept_variable_metadata_input(DATA_INVALID, DATA_ORIGINAL)
+    output = accept_variable_metadata_input(DATA_INVALID, active_cell, DATA_ORIGINAL)
 
     assert output[0] == DATA_ORIGINAL
     assert output[1] is True

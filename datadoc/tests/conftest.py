@@ -24,7 +24,7 @@ def dummy_timestamp():
     return datetime(2022, 1, 1)
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_timestamp(mocker, dummy_timestamp):
     mocker.patch(
         "datadoc.backend.DataDocMetadata.get_timestamp_now",
@@ -44,7 +44,7 @@ def remove_document_file() -> None:
     full_path.unlink()
 
 
-@pytest.fixture()
+@pytest.fixture
 def existing_metadata_path():
     return TEST_EXISTING_METADATA_DIRECTORY
 
@@ -67,26 +67,26 @@ def existing_metadata_with_valid_id_file(existing_metadata_file) -> str:
     return existing_metadata_file
 
 
-@pytest.fixture()
+@pytest.fixture
 def clear_state():
     state.metadata = None
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_gcsfs_open(mocker):
     mock = mocker.patch("gcsfs.GCSFileSystem.open")
     return mock
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_gcsfs_exists(mocker):
     mock = mocker.patch("gcsfs.GCSFileSystem.exists")
     mock.return_value = True
     return mock
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_pathlib_write_text(mocker):
     mock = mocker.patch("pathlib.Path.write_text")
     return mock
