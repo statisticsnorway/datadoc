@@ -1,8 +1,9 @@
 from enum import Enum
 
-from datadoc.frontend.fields.DisplayBase import DisplayVariablesMetadata
 from datadoc_model import Model
 from datadoc_model.LanguageStringsEnum import LanguageStringsEnum
+
+from datadoc.frontend.fields.DisplayBase import DisplayVariablesMetadata
 
 
 class VariableIdentifiers(str, Enum):
@@ -125,7 +126,7 @@ DISPLAY_VARIABLES = {
         identifier=VariableIdentifiers.IDENTIFIER.value,
         display_name="Unik ID",
         description="Unik SSB identifikator for variabelforekomsten i datasettet",
-        obligatory=True,
+        obligatory=False,
         editable=False,
     ),
     VariableIdentifiers.CONTAINS_DATA_FROM: DisplayVariablesMetadata(

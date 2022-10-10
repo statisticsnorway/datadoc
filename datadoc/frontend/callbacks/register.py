@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Tuple
 
-from dash import ALL, Dash, Input, Output, ctx
+from dash import ALL, Dash, Input, Output, State, ctx
 from datadoc_model.Enums import SupportedLanguages
 
 import datadoc.state as state
@@ -83,18 +83,19 @@ def register_callbacks(app: Dash) -> None:
         Output("variables-table", "data"),
         Output("variables-validation-error", "is_open"),
         Output("variables-validation-explanation", "children"),
+        State("variables-table", "active_cell"),
         Input("variables-table", "data"),
-        Input("variables-table", "data_previous"),
+        State("variables-table", "data_previous"),
         Input("language-dropdown", "value"),
         prevent_initial_call=True,
     )
     def callback_variable_table(
-        data: List[Dict], data_previous: List[Dict], language: str
+        active_cell: Dict, data: List[Dict], data_previous: List[Dict], language: str
     ) -> Tuple[List[Dict], bool, str]:
         if ctx.triggered_id == "language-dropdown":
             return update_variable_table_language(data, SupportedLanguages(language))
         else:
-            return accept_variable_metadata_input(data, data_previous)
+            return accept_variable_metadata_input(data, active_cell, data_previous)
 
     @app.callback(
         Output("variables-table", "dropdown"),

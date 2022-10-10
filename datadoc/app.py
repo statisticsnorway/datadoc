@@ -91,6 +91,7 @@ def main(dataset_path: str = None):
         app.run_server(mode="jupyterlab", port=pick_random_port())
     else:
         # Assume running in server mode is better (largely for development purposes)
+        logging.basicConfig(level=logging.DEBUG, force=True)
         logger.debug("Starting in development mode")
         app = build_app(Dash)
         app.run(debug=True, use_reloader=False)

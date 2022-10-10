@@ -1,8 +1,12 @@
 import dash_bootstrap_components as dbc
-import datadoc.state as state
 from dash import dash_table, html
+
+import datadoc.state as state
 from datadoc.frontend.Builders import make_ssb_styled_tab
-from datadoc.frontend.fields.DisplayVariables import DISPLAY_VARIABLES
+from datadoc.frontend.fields.DisplayVariables import (
+    DISPLAY_VARIABLES,
+    VariableIdentifiers,
+)
 from datadoc.utils import get_display_values
 
 
@@ -30,6 +34,8 @@ def get_variables_tab() -> dbc.Tab:
                                 "hideable": variable.editable,
                             }
                             for variable in DISPLAY_VARIABLES.values()
+                            if variable.identifier
+                            != VariableIdentifiers.IDENTIFIER.value  # TODO: Remove this from the model, for now we hide it
                         ],
                         # Non-obligatory variables are hidden by default
                         hidden_columns=[
@@ -47,8 +53,10 @@ def get_variables_tab() -> dbc.Tab:
                         sort_action="native",
                         page_action="native",
                         # Enable filtering
-                        filter_action='native',
-                        filter_options={"case": "insensitive"}
+                        filter_action="native",
+                        filter_options={"case": "insensitive"},
+                        # Use horizontal scroll
+                        style_table={"overflowX": "auto"},
                     )
                 ),
             ],

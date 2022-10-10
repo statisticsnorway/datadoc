@@ -43,51 +43,74 @@ def get_boolean_options_for_language(language: SupportedLanguages):
     ]
 
 
+def get_metadata_field(data, data_previous, active_cell) -> str:
+    for i in range(len(data)):
+        # First strategy to find which column we're in; diff the current and previous data
+        update_diff = list(data[i].items() - data_previous[i].items())
+        if update_diff:
+            metadata_field = update_diff[-1][0]
+            return (
+                metadata_field  # We're only interested in one change so we break here
+            )
+
+    # When copy/pasting the diff fails, so we fall back to the active cell
+    metadata_field = active_cell["column_id"]
+    return metadata_field
+
+
+def handle_multi_language_metadata(
+    metadata_field, new_value, updated_row_id
+) -> Optional[str]:
+    if type(new_value) is str:
+        return find_existing_language_string(
+            state.metadata.variables_lookup[updated_row_id],
+            new_value,
+            metadata_field,
+        )
+    elif new_value is None:
+        # This edge case occurs when the user removes the text in an input field
+        # We want to ensure we only remove the content for the current language,
+        # not create a new blank object!
+        return find_existing_language_string(
+            state.metadata.variables_lookup[updated_row_id],
+            "",
+            metadata_field,
+        )
+    else:
+        return new_value
+
+
 def accept_variable_metadata_input(
-    data: List[Dict], data_previous: List[Dict]
+    data: List[Dict],
+    active_cell: Dict,
+    data_previous: List[Dict],
 ) -> Tuple[List[Dict], bool, str]:
-    updated_row_id: str = ""
-    updated_column_id: str = ""
-    new_value: Optional[str] = None
     show_error = False
     error_explanation = ""
     output_data = data
-    update_diff = []
-    # What has changed?
-    for i in range(len(data)):
-        update_diff = list(data[i].items() - data_previous[i].items())
-        if update_diff:
-            updated_row_id = data[i][VariableIdentifiers.SHORT_NAME.value]
-            updated_column_id = update_diff[-1][0]
-            new_value = update_diff[-1][-1]
-            break  # We're only interested in one change so we break here
+    metadata_field = get_metadata_field(data, data_previous, active_cell)
 
-    if update_diff:
+    for row_index in range(len(data)):
+        # Update all the variables for this column to ensure we read in the value
+        new_value = data[row_index][metadata_field]
+        updated_row_id = data[row_index][VariableIdentifiers.SHORT_NAME.value]
+
         try:
-            if updated_column_id in MULTIPLE_LANGUAGE_VARIABLES_METADATA:
-                if type(new_value) is str:
-                    new_value = find_existing_language_string(
-                        state.metadata.variables_lookup[updated_row_id],
-                        new_value,
-                        updated_column_id,
-                    )
-                elif new_value is None:
-                    # This edge case occurs when the user removes the text in an input field
-                    # We want to ensure we only remove the content for the current language,
-                    # not create a new blank object!
-                    new_value = find_existing_language_string(
-                        state.metadata.variables_lookup[updated_row_id],
-                        "",
-                        updated_column_id,
-                    )
+            if metadata_field in MULTIPLE_LANGUAGE_VARIABLES_METADATA:
+                new_value = handle_multi_language_metadata(
+                    metadata_field, new_value, updated_row_id
+                )
+            elif new_value == "":
+                # Allow clearing non-multiple-language text fields
+                new_value = None
 
             logger.debug(
-                f"Row: {updated_row_id} Column: {updated_column_id} New value: {new_value}"
+                f"{row_index = } | {updated_row_id = } | {metadata_field = } | {new_value = }"
             )
             # Write the value to the variables structure
             setattr(
                 state.metadata.variables_lookup[updated_row_id],
-                updated_column_id,
+                metadata_field,
                 new_value,
             )
         except ValidationError as e:

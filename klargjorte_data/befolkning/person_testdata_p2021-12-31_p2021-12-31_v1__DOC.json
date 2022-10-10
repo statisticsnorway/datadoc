@@ -1,6 +1,6 @@
 {
-    "percentage_complete": 82,
-    "document_version": "1",
+    "percentage_complete": 97,
+    "document_version": "1.0.0",
     "dataset": {
         "short_name": "person_testdata_p2021-12-31_p2021-12-31",
         "assessment": "PROTECTED",
@@ -22,6 +22,7 @@
             "nb": "Alle bosatte i Norge"
         },
         "version": "1",
+        "version_description": "Opprettelse",
         "unit_type": "PERSON",
         "temporality_type": "STATUS",
         "description": {
@@ -34,28 +35,34 @@
             "nn": "",
             "nb": "befolkning"
         },
+        "keyword": [
+            "befolkning",
+            "skatt"
+        ],
         "spatial_coverage_description": {
             "en": "",
             "nn": "",
             "nb": "Norge"
         },
-        "id": "https://www.ssb.no/dataset/dd30535a461911edb",
+        "id": "2f72477a-f051-43ee-bf8b-0d8f47b5e0a7",
         "owner": {
             "en": "",
             "nn": "",
             "nb": "Seksjon NNN"
         },
         "data_source_path": "/klargjorte_data/befolkning/person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
-        "created_date": "2022-10-07T09:35:01.192898",
-        "created_by": "default_user@ssb.no",
-        "last_updated_date": null,
-        "last_updated_by": null
+        "metadata_created_date": "2022-10-07T09:35:01.192898",
+        "metadata_created_by": "default_user@ssb.no",
+        "metadata_last_updated_date": "2022-10-10T13:00:12.259945",
+        "metadata_last_updated_by": "default_user@ssb.no",
+        "contains_data_from": "2021-12-31",
+        "contains_data_until": "2021-12-31"
     },
     "variables": [
         {
             "short_name": "fnr",
             "name": {
-                "en": "",
+                "en": "Personal number",
                 "nn": "",
                 "nb": "F\u00f8dselsnummer"
             },
@@ -79,7 +86,7 @@
         {
             "short_name": "sivilstand",
             "name": {
-                "en": "",
+                "en": "Marital status",
                 "nn": "",
                 "nb": "Sivilstand"
             },
@@ -103,7 +110,7 @@
         {
             "short_name": "bostedskommune",
             "name": {
-                "en": "",
+                "en": "Residential district",
                 "nn": "",
                 "nb": "Bostedskommune"
             },
@@ -127,7 +134,7 @@
         {
             "short_name": "inntekt",
             "name": {
-                "en": "",
+                "en": "Income",
                 "nn": "",
                 "nb": "Alminnelig inntekt"
             },
@@ -155,7 +162,7 @@
         {
             "short_name": "bankinnskudd",
             "name": {
-                "en": "",
+                "en": "Bank transfer (total)",
                 "nn": "",
                 "nb": "Bankinnskudd totalt"
             },
@@ -183,7 +190,7 @@
         {
             "short_name": "dato",
             "name": {
-                "en": "",
+                "en": "Date of registration",
                 "nn": "",
                 "nb": "Registreringsdato"
             },
