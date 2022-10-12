@@ -92,8 +92,9 @@ def main(dataset_path: str = None):
 
         JupyterDash.infer_jupyter_proxy_config()
         app = build_app(JupyterDash)
-        app.run_server(mode="jupyterlab", port=pick_random_port())
-        logger.info(f"Server running, open app at {app.config['url']}")
+        port = pick_random_port()
+        app.run_server(mode="jupyterlab", port=port)
+        logger.info(f"Server running on port {port}")
     else:
         # Assume running in server mode is better (largely for development purposes)
         logging.basicConfig(level=logging.DEBUG, force=True)
