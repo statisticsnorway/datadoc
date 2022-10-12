@@ -5,6 +5,7 @@ from typing import Type
 
 import dash_bootstrap_components as dbc
 from dash import Dash
+from datadoc_model.Enums import SupportedLanguages
 
 import datadoc
 import datadoc.state as state
@@ -84,6 +85,7 @@ def main(dataset_path: str = None):
     logger.info(f"Starting Datadoc v{datadoc.__version__}")
 
     state.metadata = DataDocMetadata(dataset)
+    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
 
     if running_in_notebook():
         from jupyter_dash import JupyterDash

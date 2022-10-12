@@ -17,4 +17,4 @@ if TYPE_CHECKING:
 # Global metadata container
 metadata: "DataDocMetadata"
 
-current_metadata_language: SupportedLanguages = SupportedLanguages.NORSK_BOKMÅL
+current_metadata_language: SupportedLanguages
