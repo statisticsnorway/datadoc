@@ -6,6 +6,7 @@ from typing import Type
 import dash_bootstrap_components as dbc
 from dash import Dash
 
+import datadoc
 import datadoc.state as state
 from datadoc.backend.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.callbacks.register import register_callbacks
@@ -80,6 +81,7 @@ def main(dataset_path: str = None):
         dataset = parser.parse_args().dataset_path
     else:
         dataset = dataset_path
+    logger.info(f"Starting Datadoc v{datadoc.__version__}")
 
     state.metadata = DataDocMetadata(dataset)
 
@@ -89,6 +91,7 @@ def main(dataset_path: str = None):
         JupyterDash.infer_jupyter_proxy_config()
         app = build_app(JupyterDash)
         app.run_server(mode="jupyterlab", port=pick_random_port())
+        logger.info(f"Server running, open app at {app.config['url']}")
     else:
         # Assume running in server mode is better (largely for development purposes)
         logging.basicConfig(level=logging.DEBUG, force=True)

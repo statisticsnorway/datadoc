@@ -168,6 +168,8 @@ class DataDocMetadata:
         timestamp: datetime = get_timestamp_now()
         if self.meta.dataset.metadata_created_date is None:
             self.meta.dataset.metadata_created_date = timestamp
+        if self.meta.dataset.metadata_created_by is None:
+            self.meta.dataset.metadata_created_by = self.current_user
         self.meta.dataset.metadata_last_updated_date = timestamp
         self.meta.dataset.metadata_last_updated_by = self.current_user
         self.metadata_document.write_text(self.meta.json(indent=4, sort_keys=False))

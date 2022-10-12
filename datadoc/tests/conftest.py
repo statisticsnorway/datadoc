@@ -20,7 +20,7 @@ from .utils import (
 
 
 @pytest.fixture
-def dummy_timestamp():
+def dummy_timestamp() -> datetime:
     return datetime(2022, 1, 1)
 
 
