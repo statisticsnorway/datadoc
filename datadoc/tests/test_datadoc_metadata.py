@@ -84,15 +84,39 @@ def test_get_dataset_version_unknown(metadata: DataDocMetadata):
 
 
 def test_write_metadata_document(
-    dummy_timestamp, metadata: DataDocMetadata, remove_document_file
+    dummy_timestamp: datetime, metadata: DataDocMetadata, remove_document_file
 ):
     metadata.write_metadata_document()
-    assert os.path.exists(
-        os.path.join(TEST_RESOURCES_DIRECTORY, TEST_EXISTING_METADATA_FILE_NAME)
-    )
-    assert metadata.meta.dataset.metadata_last_updated_by == PLACEHOLDER_USERNAME
+    written_document = TEST_RESOURCES_DIRECTORY / TEST_EXISTING_METADATA_FILE_NAME
+    assert os.path.exists(written_document)
     assert metadata.meta.dataset.metadata_created_date == dummy_timestamp
+    assert metadata.meta.dataset.metadata_created_by == PLACEHOLDER_USERNAME
     assert metadata.meta.dataset.metadata_last_updated_date == dummy_timestamp
+    assert metadata.meta.dataset.metadata_last_updated_by == PLACEHOLDER_USERNAME
+
+    with open(written_document) as f:
+        written_metadata = json.loads(f.read())
+
+    assert (
+        # Use our pydantic model to read in the datetime string so we get the correct format
+        DataDocDataSet(
+            metadata_created_date=written_metadata["dataset"]["metadata_created_date"]
+        ).metadata_created_date
+        == dummy_timestamp
+    )
+    assert written_metadata["dataset"]["metadata_created_by"] == PLACEHOLDER_USERNAME
+    assert (
+        # Use our pydantic model to read in the datetime string so we get the correct format
+        DataDocDataSet(
+            metadata_last_updated_date=written_metadata["dataset"][
+                "metadata_last_updated_date"
+            ]
+        ).metadata_last_updated_date
+        == dummy_timestamp
+    )
+    assert (
+        written_metadata["dataset"]["metadata_last_updated_by"] == PLACEHOLDER_USERNAME
+    )
 
 
 def test_write_metadata_document_existing_document(

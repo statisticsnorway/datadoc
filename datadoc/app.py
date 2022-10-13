@@ -5,7 +5,9 @@ from typing import Type
 
 import dash_bootstrap_components as dbc
 from dash import Dash
+from datadoc_model.Enums import SupportedLanguages
 
+import datadoc
 import datadoc.state as state
 from datadoc.backend.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.callbacks.register import register_callbacks
@@ -80,15 +82,19 @@ def main(dataset_path: str = None):
         dataset = parser.parse_args().dataset_path
     else:
         dataset = dataset_path
+    logger.info(f"Starting Datadoc v{datadoc.__version__}")
 
     state.metadata = DataDocMetadata(dataset)
+    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
 
     if running_in_notebook():
         from jupyter_dash import JupyterDash
 
         JupyterDash.infer_jupyter_proxy_config()
         app = build_app(JupyterDash)
-        app.run_server(mode="jupyterlab", port=pick_random_port())
+        port = pick_random_port()
+        app.run_server(mode="jupyterlab", port=port)
+        logger.info(f"Server running on port {port}")
     else:
         # Assume running in server mode is better (largely for development purposes)
         logging.basicConfig(level=logging.DEBUG, force=True)
