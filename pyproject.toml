@@ -2,8 +2,8 @@
 name = "ssb-datadoc"
 version = "0.2.1"
 description = "Document dataset metadata. For use in Statistics Norway's metadata system."
-authors = ["Statistics Norway <mmw@ssb.no>"]
-license = "Apache-2.0"
+authors = ["Statistics Norway <stat-dev@ssb.no>"]
+license = "MIT"
 readme = "README.md"
 repository = "https://github.com/statisticsnorway/datadoc"
 
