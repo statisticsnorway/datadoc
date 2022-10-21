@@ -175,3 +175,16 @@ def test_existing_metadata_valid_id(
     with open(existing_metadata_file) as f:
         post_write_id = json.load(f)["dataset"]["id"]
     assert post_write_id == pre_open_id
+
+
+def test_variable_role_default_value(metadata: DataDocMetadata):
+    assert all(
+        [
+            v.variable_role == Enums.VariableRole.MEASURE.value
+            for v in metadata.meta.variables
+        ]
+    )
+
+
+def test_direct_person_identifying_default_value(metadata: DataDocMetadata):
+    assert all([not v.direct_person_identifying for v in metadata.meta.variables])

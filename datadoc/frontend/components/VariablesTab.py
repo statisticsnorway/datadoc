@@ -49,15 +49,22 @@ def get_variables_tab() -> dbc.Tab:
                             for v in DISPLAY_VARIABLES.values()
                         },
                         editable=True,
+                        # Exclude short_name column from scrolling
+                        fixed_columns={"headers": True, "data": 1},
                         # Enable sorting and pagination
                         sort_action="native",
                         page_action="native",
+                        page_size=20,
                         # Enable filtering
                         filter_action="native",
                         filter_options={"case": "insensitive"},
-                        # Use horizontal scroll
-                        style_table={"overflowX": "auto"},
-                    )
+                        # Use horizontal scroll, keep full width
+                        style_table={
+                            "overflowX": "auto",
+                            "minWidth": "100%",
+                            "accentColor": "black",
+                        },
+                    ),
                 ),
             ],
         ),
