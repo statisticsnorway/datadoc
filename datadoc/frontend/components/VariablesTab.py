@@ -54,6 +54,7 @@ def get_variables_tab() -> dbc.Tab:
                         # Enable sorting and pagination
                         sort_action="native",
                         page_action="native",
+                        page_size=20,
                         # Enable filtering
                         filter_action="native",
                         filter_options={"case": "insensitive"},
@@ -63,7 +64,7 @@ def get_variables_tab() -> dbc.Tab:
                             "minWidth": "100%",
                             "accentColor": "black",
                         },
-                    )
+                    ),
                 ),
             ],
         ),
