@@ -58,7 +58,11 @@ def get_variables_tab() -> dbc.Tab:
                         filter_action="native",
                         filter_options={"case": "insensitive"},
                         # Use horizontal scroll, keep full width
-                        style_table={"overflowX": "auto", "minWidth": "100%"},
+                        style_table={
+                            "overflowX": "auto",
+                            "minWidth": "100%",
+                            "accentColor": "black",
+                        },
                     )
                 ),
             ],
