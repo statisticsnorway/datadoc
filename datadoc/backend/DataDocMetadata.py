@@ -148,6 +148,14 @@ class DataDocMetadata:
         if self.meta.dataset.id is None:
             self.meta.dataset.id = uuid.uuid4()
 
+        # Set default values for variables where appropriate
+        v: Model.DataDocVariable
+        for v in self.meta.variables:
+            if v.variable_role is None:
+                v.variable_role = Model.Enums.VariableRole.MEASURE
+            if v.direct_person_identifying is None:
+                v.direct_person_identifying = False
+
         self.variables_lookup = {v.short_name: v for v in self.meta.variables}
 
     def extract_metadata_from_dataset(self):
