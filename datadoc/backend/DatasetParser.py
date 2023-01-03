@@ -1,4 +1,5 @@
 import pathlib
+import re
 from abc import ABC, abstractmethod
 from typing import List, Optional, TypeVar
 
@@ -78,10 +79,13 @@ class DatasetParser(ABC):
         supported_file_types = {
             "parquet": DatasetParserParquet,
             "sas7bdat": DatasetParserSas7Bdat,
+            "parquet.gzip": DatasetParserParquet,
         }
         file_type = "Unknown"
         try:
             file_type = str(pathlib.Path(dataset)).lower().split(".")[-1]
+            match = re.search(r'(.parquet.gzip)', str(pathlib.Path(dataset)).lower())
+            file_type = "parquet.gzip" if match else file_type
             # Extract the appropriate reader class from the SUPPORTED_FILE_TYPES dict and return an instance of it
             reader = supported_file_types[file_type](dataset)
         except IndexError as e:
