@@ -14,13 +14,7 @@ from datadoc.backend.DatasetParser import (
     KNOWN_STRING_TYPES,
     DatasetParser,
 )
-
-from .utils import TEST_PARQUET_FILEPATH, TEST_SAS7BDAT_FILEPATH
-
-
-@pytest.fixture()
-def local_parser():
-    return DatasetParser.for_file(TEST_PARQUET_FILEPATH)
+from .utils import TEST_PARQUET_FILEPATH, TEST_SAS7BDAT_FILEPATH, TEST_PARQUET_GZIP_FILEPATH
 
 
 def test_use_abstract_class_directly():
@@ -28,6 +22,12 @@ def test_use_abstract_class_directly():
         DatasetParser().get_fields()
 
 
+@pytest.mark.parametrize(
+    "local_parser",
+    [DatasetParser.for_file(TEST_PARQUET_FILEPATH),
+     DatasetParser.for_file(TEST_PARQUET_GZIP_FILEPATH)
+     ],
+)
 def test_get_fields_parquet(local_parser):
     expected_fields = [
         DataDocVariable(short_name="pers_id", data_type=Datatype.STRING),
