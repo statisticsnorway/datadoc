@@ -84,6 +84,7 @@ class DatasetParser(ABC):
         file_type = "Unknown"
         try:
             file_type = str(pathlib.Path(dataset)).lower().split(".")[-1]
+            # Gzipped parquet files can be read with DatasetParserParquet
             match = re.search(r'(.parquet.gzip)', str(pathlib.Path(dataset)).lower())
             file_type = "parquet.gzip" if match else file_type
             # Extract the appropriate reader class from the SUPPORTED_FILE_TYPES dict and return an instance of it
