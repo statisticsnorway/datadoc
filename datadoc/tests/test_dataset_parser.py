@@ -17,8 +17,6 @@ from datadoc.backend.DatasetParser import (
 from .utils import TEST_PARQUET_FILEPATH, TEST_SAS7BDAT_FILEPATH, TEST_PARQUET_GZIP_FILEPATH
 
 
-
-
 def test_use_abstract_class_directly():
     with raises(TypeError):
         DatasetParser().get_fields()
