@@ -52,16 +52,19 @@ PLACEHOLDER_USERNAME = "default_user@ssb.no"
 
 
 class DataDocMetadata:
-    def __init__(self, dataset):
+    def __init__(self, dataset: Optional[str]):
         self.dataset: str = dataset
-        self.short_name: str = pathlib.Path(
-            self.dataset
-        ).stem  # filename without file ending
-        self.metadata_document: StorageAdapter = StorageAdapter.for_path(
-            StorageAdapter.for_path(self.dataset).parent()
-        )
-        self.metadata_document.joinpath(self.short_name + METADATA_DOCUMENT_FILE_SUFFIX)
-        self.dataset_state: DatasetState = self.get_dataset_state(self.dataset)
+        if self.dataset:
+            self.short_name: str = pathlib.Path(
+                self.dataset
+            ).stem  # filename without file ending
+            self.metadata_document: StorageAdapter = StorageAdapter.for_path(
+                StorageAdapter.for_path(self.dataset).parent()
+            )
+            self.metadata_document.joinpath(
+                self.short_name + METADATA_DOCUMENT_FILE_SUFFIX
+            )
+            self.dataset_state: DatasetState = self.get_dataset_state(self.dataset)
         try:
             self.current_user = os.environ["JUPYTERHUB_USER"]
         except KeyError:
@@ -79,7 +82,8 @@ class DataDocMetadata:
 
         self.variables_lookup: Dict[str, "Model.DataDocVariable"] = {}
 
-        self.read_metadata_document()
+        if self.dataset:
+            self.read_metadata_document()
 
     def get_dataset_state(self, dataset: str) -> Optional[DatasetState]:
         """Use the path to attempt to guess the state of the dataset"""

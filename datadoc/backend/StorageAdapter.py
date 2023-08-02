@@ -29,9 +29,9 @@ class GCSObject:
 
                 self.fs = GCSFileSystem()
 
-        except ImportError:
+        except ImportError as e:
             msg = "Missing support for GCS. Install datadoc with 'pip install ssb-datadoc[gcs]'"
-            raise ImportError(msg)  # noqa: TC200
+            raise ImportError(msg) from e  # noqa: TC200
 
     def _rebuild_url(self, new_path: str) -> str:
         return urlunsplit((self._url.scheme, self._url.netloc, new_path, None, None))

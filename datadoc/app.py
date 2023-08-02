@@ -1,4 +1,3 @@
-import argparse
 import logging
 import os
 from typing import Type
@@ -68,20 +67,11 @@ def build_app(dash_class: Type[Dash]) -> Dash:
     return app
 
 
-def main(dataset_path: str = None):
+def main(dataset_path: str = None) -> Dash:
     logging.basicConfig(level=logging.INFO)
-    if dataset_path is None:
-        # Get the supplied command line argument
-        parser = argparse.ArgumentParser()
-        parser.add_argument(
-            "dataset_path",
-            help="Specify the path to a dataset",
-            nargs="?",
-            default=f"{os.path.dirname(__file__)}/../klargjorte_data/person_data_v1.parquet",
-        )
-        dataset = parser.parse_args().dataset_path
-    else:
+    if dataset_path is not None:
         dataset = dataset_path
+    dataset = None
     logger.info(f"Starting Datadoc v{datadoc.__version__}")
 
     state.metadata = DataDocMetadata(dataset)
@@ -100,7 +90,9 @@ def main(dataset_path: str = None):
         logging.basicConfig(level=logging.DEBUG, force=True)
         logger.debug("Starting in development mode")
         app = build_app(Dash)
-        app.run(debug=True, use_reloader=False)
+        app.run(port=8050)
+
+    return app
 
 
 if __name__ == "__main__":

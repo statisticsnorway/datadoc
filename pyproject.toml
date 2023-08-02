@@ -10,12 +10,10 @@ repository = "https://github.com/statisticsnorway/datadoc"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Framework :: Dash",
-    "Typing :: Typed"
+    "Typing :: Typed",
 ]
 
-packages = [
-    { include = "datadoc" },
-]
+packages = [{ include = "datadoc" }]
 
 [tool.poetry.scripts]
 datadoc = 'datadoc.app:main'
@@ -30,11 +28,9 @@ pydantic = ">=1.9.1"
 dash-bootstrap-components = ">=1.1.0"
 pandas = ">=1.4.2"
 ssb-datadoc-model = "2.0.0"
-dapla-toolbelt = { version = ">=1.3.3", optional = true }
-gcsfs = { version = ">=2022.7.1", optional = true }
-
-[tool.poetry.extras]
-gcs = ["dapla-toolbelt", "gcsfs"]
+dapla-toolbelt = ">=1.3.3"
+gcsfs = ">=2022.7.1"
+gunicorn = "^21.2.0"
 
 [tool.poetry.group.dev.dependencies]
 jupyterlab = ">=3.4.5"
@@ -115,19 +111,29 @@ ignore = [
 ]
 # pep8-naming
 classmethod-decorators = [
-  "classmethod",  # built-in
-  "validator",  # pydantic
-  "root_validator",  # pydantic
-  ]
+    "classmethod",    # built-in
+    "validator",      # pydantic
+    "root_validator", # pydantic
+]
 
-enable-extensions = "G"  # flake8-logging-format
+enable-extensions = "G" # flake8-logging-format
 
 per-file-ignores = [
     # star imports in `__init__.py` files are ok
-    "*/__init__.py:F401"
-    ]
+    "*/__init__.py:F401",
+]
 
 # Enables maccabe complexity checks
 max-complexity = 10
 
-exclude = [".git","__pycache__","old","build","dist",".venv",".eggs",".tox",".ipynb_checkpoints"]
+exclude = [
+    ".git",
+    "__pycache__",
+    "old",
+    "build",
+    "dist",
+    ".venv",
+    ".eggs",
+    ".tox",
+    ".ipynb_checkpoints",
+]
