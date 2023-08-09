@@ -5,9 +5,9 @@ ARG PYTHON_VERSION=3.11
 ARG POETRY_VERSION=1.5.0
 
 #
-# Stage: staging
+# Stage: build
 #
-FROM python:$PYTHON_VERSION as staging
+FROM python:$PYTHON_VERSION as build
 ARG PACKAGE_NAME
 ARG APP_PATH
 ARG POETRY_VERSION
@@ -31,13 +31,6 @@ WORKDIR $APP_PATH
 COPY ./poetry.lock ./pyproject.toml ./README.md ./
 COPY ./$PACKAGE_NAME ./$PACKAGE_NAME
 
-#
-# Stage: build
-#
-FROM staging as build
-ARG APP_PATH
-
-WORKDIR $APP_PATH
 RUN poetry build --format wheel
 RUN poetry export --format constraints.txt --output constraints.txt --without-hashes
 
@@ -57,6 +50,10 @@ ENV \
     PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PIP_DEFAULT_TIMEOUT=100
+
+RUN useradd --create-home appuser
+USER appuser
+ENV PATH="/home/appuser/.local/bin:$PATH"
 
 # Get build artifact wheel and install it respecting dependency versions
 WORKDIR $APP_PATH
