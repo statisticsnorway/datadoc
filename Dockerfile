@@ -32,26 +32,6 @@ COPY ./poetry.lock ./pyproject.toml ./README.md ./
 COPY ./$PACKAGE_NAME ./$PACKAGE_NAME
 
 #
-# Stage: development
-#
-FROM staging as development
-ARG PACKAGE_NAME
-ARG APP_PATH
-
-# Install project in editable mode and with development dependencies
-WORKDIR $APP_PATH
-RUN poetry install
-
-# In development mode we use the default flask webserver
-ENV FLASK_APP=$PACKAGE_NAME \
-    FLASK_ENV=development \
-    FLASK_RUN_HOST=0.0.0.0 \
-    FLASK_RUN_PORT=8888
-
-ENTRYPOINT ["poetry", "run"]
-CMD ["flask", "run"]
-
-#
 # Stage: build
 #
 FROM staging as build
@@ -59,12 +39,12 @@ ARG APP_PATH
 
 WORKDIR $APP_PATH
 RUN poetry build --format wheel
-RUN poetry export --format requirements.txt --output constraints.txt --without-hashes
+RUN poetry export --format constraints.txt --output constraints.txt --without-hashes
 
 #
 # Stage: production
 #
-FROM python:$PYTHON_VERSION as production
+FROM python:"${PYTHON_VERSION}-slim" as production
 ARG PACKAGE_NAME
 ARG APP_PATH
 
@@ -87,4 +67,4 @@ RUN pip install ./$APP_NAME*.whl --constraint constraints.txt
 # export PACKAGE_NAME as environment variable for the CMD
 ENV PACKAGE_NAME=$PACKAGE_NAME
 
-CMD exec gunicorn --bind 0.0.0.0:8050 --workers 1 --threads 1 --timeout 0 "$PACKAGE_NAME.app:server"
+CMD exec gunicorn --bind 0.0.0.0:8050 --workers 1 --threads 1 --timeout 0 "$PACKAGE_NAME.wsgi:server"

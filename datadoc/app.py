@@ -26,6 +26,7 @@ from datadoc.utils import get_app_version, pick_random_port, running_in_notebook
 logger = logging.getLogger(__name__)
 
 NAME = "Datadoc"
+DATADOC_DATASET_PATH_ENV_VAR = "DATADOC_DATASET_PATH"
 
 
 def build_app(dash_class: Type[Dash]) -> Dash:
@@ -69,7 +70,10 @@ def get_app(dataset_path: str = None) -> Dash:
     logging.basicConfig(level=logging.INFO)
     if dataset_path is not None:
         dataset = dataset_path
-    elif path_from_env := os.getenv("DATADOC_DATASET_PATH"):
+    elif path_from_env := os.getenv(DATADOC_DATASET_PATH_ENV_VAR):
+        logger.info(
+            f"Dataset path from {DATADOC_DATASET_PATH_ENV_VAR}: '{path_from_env}'"
+        )
         dataset = path_from_env
 
     logger.info(f"Datadoc version v{get_app_version()}")
