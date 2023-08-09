@@ -71,9 +71,10 @@ def main(dataset_path: str = None) -> Dash:
     logging.basicConfig(level=logging.INFO)
     if dataset_path is not None:
         dataset = dataset_path
-    dataset = None
-    logger.info(f"Starting Datadoc v{datadoc.__version__}")
+    elif path_from_env := os.getenv("DATADOC_DATASET_PATH"):
+        dataset = path_from_env
 
+    logger.info(f"Datadoc version v{datadoc.__version__}")
     state.metadata = DataDocMetadata(dataset)
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
 
@@ -82,6 +83,17 @@ def main(dataset_path: str = None) -> Dash:
 
         JupyterDash.infer_jupyter_proxy_config()
         app = build_app(JupyterDash)
+    else:
+        app = build_app(Dash)
+
+    return app
+
+
+app = main()
+server = app.server
+
+if __name__ == "__main__":
+    if running_in_notebook():
         port = pick_random_port()
         app.run_server(mode="jupyterlab", port=port)
         logger.info(f"Server running on port {port}")
@@ -89,11 +101,4 @@ def main(dataset_path: str = None) -> Dash:
         # Assume running in server mode is better (largely for development purposes)
         logging.basicConfig(level=logging.DEBUG, force=True)
         logger.debug("Starting in development mode")
-        app = build_app(Dash)
-        app.run(port=8050)
-
-    return app
-
-
-if __name__ == "__main__":
-    main()
+        app.run(debug=True, use_reloader=False)

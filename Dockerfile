@@ -87,4 +87,4 @@ RUN pip install ./$APP_NAME*.whl --constraint constraints.txt
 # export PACKAGE_NAME as environment variable for the CMD
 ENV PACKAGE_NAME=$PACKAGE_NAME
 
-CMD exec gunicorn --bind 0.0.0.0:8050 --workers 1 --threads 1 --timeout 0 "$PACKAGE_NAME.app:main()"
+CMD exec gunicorn --bind 0.0.0.0:8050 --workers 1 --threads 1 --timeout 0 "$PACKAGE_NAME.app:server"
