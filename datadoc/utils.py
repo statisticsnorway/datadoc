@@ -46,3 +46,9 @@ def pick_random_port() -> int:
 
 def get_timestamp_now() -> datetime:
     return datetime.datetime.now()
+
+
+def get_app_version() -> str:
+    import pkg_resources
+
+    return pkg_resources.get_distribution("ssb-datadoc").version
