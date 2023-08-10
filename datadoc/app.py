@@ -1,4 +1,3 @@
-import argparse
 import logging
 import os
 from typing import Type
@@ -7,7 +6,6 @@ import dash_bootstrap_components as dbc
 from dash import Dash
 from datadoc_model.Enums import SupportedLanguages
 
-import datadoc
 import datadoc.state as state
 from datadoc.backend.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.callbacks.register import register_callbacks
@@ -23,15 +21,15 @@ from datadoc.frontend.components.HeaderBars import (
     progress_bar,
 )
 from datadoc.frontend.components.VariablesTab import get_variables_tab
-from datadoc.utils import pick_random_port, running_in_notebook
+from datadoc.utils import get_app_version, pick_random_port, running_in_notebook
 
 logger = logging.getLogger(__name__)
 
 NAME = "Datadoc"
+DATADOC_DATASET_PATH_ENV_VAR = "DATADOC_DATASET_PATH"
 
 
 def build_app(dash_class: Type[Dash]) -> Dash:
-
     app = dash_class(
         name=NAME,
         title=NAME,
@@ -68,22 +66,17 @@ def build_app(dash_class: Type[Dash]) -> Dash:
     return app
 
 
-def main(dataset_path: str = None):
+def get_app(dataset_path: str = None) -> Dash:
     logging.basicConfig(level=logging.INFO)
-    if dataset_path is None:
-        # Get the supplied command line argument
-        parser = argparse.ArgumentParser()
-        parser.add_argument(
-            "dataset_path",
-            help="Specify the path to a dataset",
-            nargs="?",
-            default=f"{os.path.dirname(__file__)}/../klargjorte_data/person_data_v1.parquet",
-        )
-        dataset = parser.parse_args().dataset_path
-    else:
+    if dataset_path is not None:
         dataset = dataset_path
-    logger.info(f"Starting Datadoc v{datadoc.__version__}")
+    elif path_from_env := os.getenv(DATADOC_DATASET_PATH_ENV_VAR):
+        logger.info(
+            f"Dataset path from {DATADOC_DATASET_PATH_ENV_VAR}: '{path_from_env}'"
+        )
+        dataset = path_from_env
 
+    logger.info(f"Datadoc version v{get_app_version()}")
     state.metadata = DataDocMetadata(dataset)
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
 
@@ -92,6 +85,15 @@ def main(dataset_path: str = None):
 
         JupyterDash.infer_jupyter_proxy_config()
         app = build_app(JupyterDash)
+    else:
+        app = build_app(Dash)
+
+    return app
+
+
+def main(dataset_path: str = None):
+    app = get_app(dataset_path)
+    if running_in_notebook():
         port = pick_random_port()
         app.run_server(mode="jupyterlab", port=port)
         logger.info(f"Server running on port {port}")
@@ -99,7 +101,6 @@ def main(dataset_path: str = None):
         # Assume running in server mode is better (largely for development purposes)
         logging.basicConfig(level=logging.DEBUG, force=True)
         logger.debug("Starting in development mode")
-        app = build_app(Dash)
         app.run(debug=True, use_reloader=False)
 
 
