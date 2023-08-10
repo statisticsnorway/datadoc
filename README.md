@@ -74,7 +74,7 @@ A Jupyter instance should open in your browser. Open and run the cells in the `.
 ## Running the Dockerized Application Locally
 ```bash
 docker run -p 8050:8050 \
--e DATADOC_DATASET_PATH="gs://ssb-staging-dapla-felles-data-delt/datadoc/klargjorte_data/person_data_v1.parquet" \
+-e DATADOC_DATASET_PATH="gs://my-bucket/my-dataset.parquet" \
 -v $HOME/.config/gcloud/application_default_credentials.json/:/application_default_credentials.json \
 -e GOOGLE_APPLICATION_CREDENTIALS="/application_default_credentials.json" \
 datadoc
