@@ -71,6 +71,15 @@ poetry run poe jupyter
 
 A Jupyter instance should open in your browser. Open and run the cells in the `.ipynb` file to demo datadoc.
 
+## Running the Dockerized Application Locally
+```bash
+docker run -p 8050:8050 \
+-e DATADOC_DATASET_PATH="gs://my-bucket/my-dataset.parquet" \
+-v $HOME/.config/gcloud/application_default_credentials.json/:/application_default_credentials.json \
+-e GOOGLE_APPLICATION_CREDENTIALS="/application_default_credentials.json" \
+datadoc
+```
+
 ### Bump version
 
 ```shell
