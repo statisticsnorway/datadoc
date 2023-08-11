@@ -5,6 +5,8 @@ from typing import Type
 import dash_bootstrap_components as dbc
 from dash import Dash
 from datadoc_model.Enums import SupportedLanguages
+from flask import Flask
+from flask_healthz import healthz
 
 import datadoc.state as state
 from datadoc.backend.DataDocMetadata import DataDocMetadata
@@ -86,7 +88,15 @@ def get_app(dataset_path: str = None) -> Dash:
         JupyterDash.infer_jupyter_proxy_config()
         app = build_app(JupyterDash)
     else:
+        server = Flask(__name__)
+        server.register_blueprint(healthz, url_prefix="/healthz")
+        server.config["HEALTHZ"] = {
+            "live": lambda: True,
+            "ready": lambda: True,
+            "startup": lambda: True,
+        }
         app = build_app(Dash)
+        app.server = server
 
     return app
 
