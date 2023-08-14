@@ -7,6 +7,7 @@ import datadoc.state as state
 from datadoc.frontend.callbacks.dataset import (
     accept_dataset_metadata_input,
     change_language_dataset_metadata,
+    open_dataset,
 )
 from datadoc.frontend.callbacks.variables import (
     accept_variable_metadata_input,
@@ -22,6 +23,7 @@ from datadoc.frontend.fields.DisplayDataset import DISPLAYED_DROPDOWN_DATASET_ME
 # implementations should be in other functions, to enable unit testing
 
 
+# noqa
 def register_callbacks(app: Dash) -> None:
     @app.callback(
         Output("progress-bar", "value"),
@@ -34,7 +36,7 @@ def register_callbacks(app: Dash) -> None:
         return completion, f"{completion}%"
 
     @app.callback(
-        Output("success-message", "is_open"),
+        Output("saved-metadata-success", "is_open"),
         Input("save-button", "n_clicks"),
         prevent_initial_call=True,
     )
@@ -104,3 +106,15 @@ def register_callbacks(app: Dash) -> None:
     def callback_variable_table_dropdown_options(language: str):
         language = SupportedLanguages(language)
         return update_variable_table_dropdown_options_for_language(language)
+
+    @app.callback(
+        Output("opened-dataset-success", "is_open"),
+        Input("open-button", "n_clicks"),
+        State("dataset-path-input", "value"),
+    )
+    def callback_open_dataset(n_clicks: int, dataset_path: str):
+        if n_clicks and n_clicks > 0:
+            open_dataset(dataset_path)
+            return True
+        else:
+            return False

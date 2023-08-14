@@ -1,7 +1,8 @@
 import dash_bootstrap_components as dbc
-import datadoc.state as state
 from dash import dcc, html
-from datadoc_model.Enums import SupportedLanguages
+
+from datadoc.frontend.Builders import make_ssb_button
+from datadoc.frontend.callbacks.dataset import get_dataset_path
 
 COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
@@ -27,33 +28,38 @@ def get_controls_bar() -> dbc.CardBody:
             dbc.Row(
                 [
                     dbc.Col(
-                        dbc.Button(
+                        dbc.Row(
                             [
-                                html.I(
-                                    className="bi bi-save",
-                                    style={"padding-right": "10px"},
+                                dbc.Col(
+                                    dcc.Input(
+                                        value=get_dataset_path(),
+                                        size="60",
+                                        id="dataset-path-input",
+                                    ),
+                                    align="center",
+                                    width="auto",
                                 ),
-                                "   Lagre",
-                            ],
-                            class_name="ssb-btn primary-btn",
-                            id="save-button",
-                        ),
+                                dbc.Col(
+                                    make_ssb_button(
+                                        text="Åpne",
+                                        icon_class="bi bi-folder2-open",
+                                        button_id="open-button",
+                                    ),
+                                    width=1,
+                                ),
+                            ]
+                        )
                     ),
                     dbc.Col(
-                        dcc.Dropdown(
-                            id="language-dropdown",
-                            searchable=False,
-                            value=state.current_metadata_language.value,
-                            className="ssb-dropdown",
-                            options=[
-                                {"label": i.name, "value": i.value}
-                                for i in SupportedLanguages
-                            ],
+                        make_ssb_button(
+                            text="Lagre",
+                            icon_class="bi bi-save",
+                            button_id="save-button",
                         ),
-                        align="end",
-                        width="auto",
+                        width=1,
                     ),
-                ]
+                ],
+                justify="between",
             )
         ],
     )

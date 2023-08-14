@@ -60,8 +60,10 @@ WORKDIR $APP_PATH
 COPY --from=build $APP_PATH/dist/*.whl ./
 COPY --from=build $APP_PATH/constraints.txt ./
 RUN pip install ./$APP_NAME*.whl --constraint constraints.txt
+COPY ./$PACKAGE_NAME/gunicorn.conf.py ./
 
-# export PACKAGE_NAME as environment variable for the CMD
+# export environment variables for the CMD
 ENV PACKAGE_NAME=$PACKAGE_NAME
+ENV APP_PATH=$APP_PATH
 
-CMD exec gunicorn --bind 0.0.0.0:8050 --workers 1 --threads 1 --timeout 0 "$PACKAGE_NAME.wsgi:server"
+CMD exec gunicorn --config "./gunicorn.conf.py" "$PACKAGE_NAME.wsgi:server"
