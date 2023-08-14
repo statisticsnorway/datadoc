@@ -12,6 +12,7 @@ from datadoc.backend.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.callbacks.register_callbacks import register_callbacks
 from datadoc.frontend.components.Alerts import (
     dataset_validation_error,
+    opened_dataset_error,
     opened_dataset_success,
     saved_metadata_success,
     variables_validation_error,
@@ -60,6 +61,7 @@ def build_app(dash_class: Type[Dash]) -> Dash:
             get_language_dropdown(),
             variables_validation_error,
             dataset_validation_error,
+            opened_dataset_error,
             saved_metadata_success,
             opened_dataset_success,
         ],

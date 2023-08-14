@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from enum import Enum, auto
 
 import dash_bootstrap_components as dbc
-from dash import dcc, html
+from dash import html
 
 
 class AlertTypes(Enum):
@@ -54,14 +54,13 @@ def make_ssb_alert(
         is_open=False,
         dismissable=True,
         fade=True,
-        class_name=alert.alert_class_name,
         color=alert.color,
-        duration=5000,
+        duration=5000 if alert_type == AlertTypes.SUCCESS else None,
         children=[
             html.H5(
                 title,
             ),
-            dcc.Markdown(
+            html.P(
                 id=content_identifier,
             ),
         ],

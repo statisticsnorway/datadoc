@@ -14,6 +14,13 @@ variables_validation_error = make_ssb_alert(
     "variables-validation-explanation",
 )
 
+opened_dataset_error = make_ssb_alert(
+    AlertTypes.WARNING,
+    "opened-dataset-error",
+    "Kunne ikke åpne datasettet",
+    "opened-dataset-error-explanation",
+)
+
 saved_metadata_success = make_ssb_alert(
     AlertTypes.SUCCESS,
     "saved-metadata-success",

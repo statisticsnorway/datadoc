@@ -1,3 +1,4 @@
+import traceback
 from typing import Any, Dict, List, Tuple
 
 from dash import ALL, Dash, Input, Output, State, ctx
@@ -108,13 +109,32 @@ def register_callbacks(app: Dash) -> None:
 
     @app.callback(
         Output("opened-dataset-success", "is_open"),
+        Output("opened-dataset-error", "is_open"),
+        Output("opened-dataset-error-explanation", "children"),
         Output("language-dropdown", "value"),  # Used to force reload of metadata
         Input("open-button", "n_clicks"),
         State("dataset-path-input", "value"),
     )
-    def callback_open_dataset(n_clicks: int, dataset_path: str):
-        if n_clicks and n_clicks > 0:
+    def callback_open_dataset(
+        n_clicks: int, dataset_path: str
+    ) -> Tuple[bool, bool, str, SupportedLanguages]:
+        try:
             open_dataset(dataset_path)
-            return True, state.current_metadata_language.value
+        except FileNotFoundError:
+            return (
+                False,
+                True,
+                f"Datasettet '{dataset_path}' finnes ikke.",
+                state.current_metadata_language.value,
+            )
+        except Exception as e:
+            return (
+                False,
+                True,
+                "\n".join(traceback.format_exception_only(type(e), e)),
+                state.current_metadata_language.value,
+            )
+        if n_clicks and n_clicks > 0:
+            return True, False, "", state.current_metadata_language.value
         else:
-            return False, state.current_metadata_language.value
+            return False, False, "", state.current_metadata_language.value
