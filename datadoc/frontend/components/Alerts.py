@@ -1,4 +1,4 @@
-from datadoc.frontend.Builders import AlertTypes, make_ssb_alert
+from datadoc.frontend.components.Builders import AlertTypes, make_ssb_alert
 
 dataset_validation_error = make_ssb_alert(
     AlertTypes.WARNING,

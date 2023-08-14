@@ -3,13 +3,13 @@ import os
 from typing import Type
 
 import dash_bootstrap_components as dbc
-from dash import Dash, dcc
+from dash import Dash
 from datadoc_model.Enums import SupportedLanguages
 from flask_healthz import healthz
 
 import datadoc.state as state
 from datadoc.backend.DataDocMetadata import DataDocMetadata
-from datadoc.frontend.callbacks.register import register_callbacks
+from datadoc.frontend.callbacks.register_callbacks import register_callbacks
 from datadoc.frontend.components.Alerts import (
     dataset_validation_error,
     opened_dataset_success,
@@ -19,6 +19,7 @@ from datadoc.frontend.components.Alerts import (
 from datadoc.frontend.components.DatasetTab import get_dataset_tab
 from datadoc.frontend.components.HeaderBars import (
     get_controls_bar,
+    get_language_dropdown,
     header,
     progress_bar,
 )
@@ -56,23 +57,7 @@ def build_app(dash_class: Type[Dash]) -> Dash:
                     ),
                 ],
             ),
-            dbc.Row(
-                dbc.Col(
-                    dcc.Dropdown(
-                        id="language-dropdown",
-                        searchable=False,
-                        value=state.current_metadata_language.value,
-                        className="ssb-dropdown",
-                        options=[
-                            {"label": i.name, "value": i.value}
-                            for i in SupportedLanguages
-                        ],
-                    ),
-                    align="center",
-                    width={"size": "auto"},
-                ),
-                justify="end",
-            ),
+            get_language_dropdown(),
             variables_validation_error,
             dataset_validation_error,
             saved_metadata_success,
