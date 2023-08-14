@@ -122,7 +122,7 @@ per-file-ignores = [
     # star imports in `__init__.py` files are ok
     "*/__init__.py:F401",
     # this complexity simplifies other areas
-    "datadoc/frontend/callbacks/register.py:C901",
+    "datadoc/frontend/callbacks/register_callbacks.py:C901",
 ]
 
 # Enables maccabe complexity checks
