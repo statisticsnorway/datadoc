@@ -45,6 +45,11 @@ def build_app(dash_class: Type[Dash]) -> Dash:
             header,
             progress_bar,
             get_controls_bar(),
+            variables_validation_error,
+            dataset_validation_error,
+            opened_dataset_error,
+            saved_metadata_success,
+            opened_dataset_success,
             dbc.CardBody(
                 style={"padding": "4px"},
                 children=[
@@ -59,11 +64,6 @@ def build_app(dash_class: Type[Dash]) -> Dash:
                 ],
             ),
             get_language_dropdown(),
-            variables_validation_error,
-            dataset_validation_error,
-            opened_dataset_error,
-            saved_metadata_success,
-            opened_dataset_success,
         ],
     )
 
@@ -73,6 +73,7 @@ def build_app(dash_class: Type[Dash]) -> Dash:
 
 
 def get_app(dataset_path: str = None) -> Dash:
+    logging.basicConfig(level=logging.INFO, force=True)
     logger.info(f"Datadoc version v{get_app_version()}")
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     state.metadata = DataDocMetadata(None)
