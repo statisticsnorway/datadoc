@@ -11,16 +11,16 @@ Document datasets in Statistics Norway
 ### From Jupyter
 
 1. Open <https://jupyter.dapla-staging.ssb.no> or another Jupyter Lab environment
-1. Datadoc comes preinstalled in Statistics Norway environments. Elsewhere, run Run `pip install ssb-datadoc[gcs]` to install
+1. Datadoc comes preinstalled in Statistics Norway environments. Elsewhere, run Run `pip install ssb-datadoc` to install
 1. Upload a dataset to your Jupyter server (e.g. <https://github.com/statisticsnorway/datadoc/blob/master/klargjorte_data/befolkning/person_testdata_p2021-12-31_p2021-12-31_v1.parquet>)
 1. Run the [demo.ipynb](./demo.ipynb) Notebook
-1. Datadoc will open in a new tab
+1. Datadoc will open in the notebook
 
 ## Contributing
 
 ### Prerequisites
 
-- Python >3.8 (3.10 is preferred)
+- Python >=3.10
 - Poetry, install via `curl -sSL https://install.python-poetry.org | python3 -`
 
 ### Dependency Management
@@ -58,7 +58,7 @@ poetry run poe test
 To run the project locally:
 
 ```shell
-poetry run poe datadoc "gs://ssb-staging-dapla-felles-data-delt/datadoc/klargjorte_data/person_data_v1.parquet"
+poetry run poe datadoc
 ```
 
 ### Run project locally in Jupyter
@@ -72,9 +72,9 @@ poetry run poe jupyter
 A Jupyter instance should open in your browser. Open and run the cells in the `.ipynb` file to demo datadoc.
 
 ## Running the Dockerized Application Locally
+
 ```bash
 docker run -p 8050:8050 \
--e DATADOC_DATASET_PATH="gs://my-bucket/my-dataset.parquet" \
 -v $HOME/.config/gcloud/application_default_credentials.json/:/application_default_credentials.json \
 -e GOOGLE_APPLICATION_CREDENTIALS="/application_default_credentials.json" \
 datadoc

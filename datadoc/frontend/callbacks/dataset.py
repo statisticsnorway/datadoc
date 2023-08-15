@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any
+import os
+import typing as t
 
 from pydantic import ValidationError
 
 from datadoc import state
+from datadoc.backend.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.callbacks.utils import (
     find_existing_language_string,
     get_options_for_language,
@@ -18,10 +20,34 @@ from datadoc.frontend.fields.DisplayDataset import (
     DatasetIdentifiers,
 )
 
-if TYPE_CHECKING:
+if t.TYPE_CHECKING:
+    from pathlib import Path
+
     from datadoc_model.Enums import SupportedLanguages
 
 logger = logging.getLogger(__name__)
+
+DATADOC_DATASET_PATH_ENV_VAR = "DATADOC_DATASET_PATH"
+
+
+def get_dataset_path() -> str | Path | None:
+    if state.metadata.dataset is not None:
+        return state.metadata.dataset
+    elif path_from_env := os.getenv(DATADOC_DATASET_PATH_ENV_VAR):
+        logger.info(
+            f"Dataset path from {DATADOC_DATASET_PATH_ENV_VAR}: '{path_from_env}'",
+        )
+        dataset = path_from_env
+    else:
+        dataset = None
+
+    return dataset
+
+
+def open_dataset(dataset_path: str | Path | None = None) -> None:
+    dataset = dataset_path or get_dataset_path()
+    state.metadata = DataDocMetadata(dataset)
+    logger.info(f"Opened dataset {dataset}")
 
 
 def process_keyword(value: str) -> list[str] | None:
@@ -30,7 +56,7 @@ def process_keyword(value: str) -> list[str] | None:
     return [item.strip() for item in value.split(",")]
 
 
-def process_special_cases(value: Any, metadata_identifier: str):
+def process_special_cases(value: t.Any, metadata_identifier: str):
     """Docstring."""
     if metadata_identifier == DatasetIdentifiers.KEYWORD.value:
         value = process_keyword(value)
@@ -45,7 +71,7 @@ def process_special_cases(value: Any, metadata_identifier: str):
 
 
 def accept_dataset_metadata_input(
-    value: Any,
+    value: t.Any,
     metadata_identifier: str,
 ) -> tuple[bool, str]:
     logger.debug(f"Received update {value = } for {metadata_identifier = }")
@@ -71,7 +97,7 @@ def accept_dataset_metadata_input(
     return show_error, error_explanation
 
 
-def update_dataset_metadata_language() -> list[Any]:
+def update_dataset_metadata_language() -> list[t.Any]:
     """Return new values for ALL the dataset metadata inputs to allow
     editing of strings in the chosen language.
     """

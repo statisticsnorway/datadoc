@@ -156,17 +156,14 @@ def update_variable_table_dropdown_options_for_language(
 
 
 def update_variable_table_language(
-    data: list[dict],
     language: SupportedLanguages,
 ) -> tuple[list[dict], bool, str]:
     state.current_metadata_language = language
     new_data = []
-    for row in data:
+    for v in state.metadata.meta.variables:
         new_data.append(
             get_display_values(
-                state.metadata.variables_lookup[
-                    row[VariableIdentifiers.SHORT_NAME.value]
-                ],
+                v,
                 state.current_metadata_language,
             ),
         )

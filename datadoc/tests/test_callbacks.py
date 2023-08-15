@@ -174,7 +174,6 @@ def test_update_variable_table_language():
     test_variable = random.choice([v.short_name for v in state.metadata.meta.variables])
     state.metadata.variables_lookup[test_variable].name = LANGUAGE_OBJECT
     output = update_variable_table_language(
-        [v.dict() for v in state.metadata.meta.variables],
         SupportedLanguages.NORSK_BOKMÅL,
     )
     name = next(

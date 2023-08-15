@@ -190,22 +190,23 @@ files = [
 
 [[package]]
 name = "argon2-cffi"
-version = "21.3.0"
-description = "The secure Argon2 password hashing algorithm."
+version = "23.1.0"
+description = "Argon2 for Python"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "argon2-cffi-21.3.0.tar.gz", hash = "sha256:d384164d944190a7dd7ef22c6aa3ff197da12962bd04b17f64d4e93d934dba5b"},
-    {file = "argon2_cffi-21.3.0-py3-none-any.whl", hash = "sha256:8c976986f2c5c0e5000919e6de187906cfd81fb1c72bf9d88c01177e77da7f80"},
+    {file = "argon2_cffi-23.1.0-py3-none-any.whl", hash = "sha256:c670642b78ba29641818ab2e68bd4e6a78ba53b7eff7b4c3815ae16abf91c7ea"},
+    {file = "argon2_cffi-23.1.0.tar.gz", hash = "sha256:879c3e79a2729ce768ebb7d36d4609e3a78a4ca2ec3a9f12286ca057e3d0db08"},
 ]
 
 [package.dependencies]
 argon2-cffi-bindings = "*"
 
 [package.extras]
-dev = ["cogapp", "coverage[toml] (>=5.0.2)", "furo", "hypothesis", "pre-commit", "pytest", "sphinx", "sphinx-notfound-page", "tomli"]
-docs = ["furo", "sphinx", "sphinx-notfound-page"]
-tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pytest"]
+dev = ["argon2-cffi[tests,typing]", "tox (>4)"]
+docs = ["furo", "myst-parser", "sphinx", "sphinx-copybutton", "sphinx-notfound-page"]
+tests = ["hypothesis", "pytest"]
+typing = ["mypy"]
 
 [[package]]
 name = "argon2-cffi-bindings"
@@ -1054,6 +1055,20 @@ Werkzeug = ">=2.2.2"
 [package.extras]
 async = ["asgiref (>=3.2)"]
 dotenv = ["python-dotenv"]
+
+[[package]]
+name = "flask-healthz"
+version = "0.0.3"
+description = "A simple module to allow you to easily add health endpoints to your Flask application"
+optional = false
+python-versions = ">=3.6.1,<4.0.0"
+files = [
+    {file = "flask-healthz-0.0.3.tar.gz", hash = "sha256:d854208b7bde3ef847d069b10f3f8143f61720b3ee5eb10f63d727ff68c90e7f"},
+    {file = "flask_healthz-0.0.3-py3-none-any.whl", hash = "sha256:e01bf4c1d0e0b2538a444ddf63915c7338a4adabe725186cec6553d3f45d1c33"},
+]
+
+[package.dependencies]
+flask = "<3.0"
 
 [[package]]
 name = "fqdn"
@@ -4376,4 +4391,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "f30afe798da67b7f4f640c5453f85084ebaa086e49c65d953065895279e6f6d5"
+content-hash = "107ebde311bed8a7c57559ae27fa5796faaa07902d550140f7b39e3432e3f240"

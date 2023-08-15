@@ -87,10 +87,11 @@ class DataDocMetadata:
         self.variables_lookup: dict[str, Model.DataDocVariable] = {}
 
         if self.dataset:
-            self.read_metadata_document()
+            self.extract_metadata_from_files()
 
     def get_dataset_state(
-        self: t.Self @ DataDocMetadata, dataset: str,
+        self: t.Self @ DataDocMetadata,
+        dataset: str,
     ) -> DatasetState | None:
         """Use the path to attempt to guess the state of the dataset."""
         if dataset is None:
@@ -113,7 +114,8 @@ class DataDocMetadata:
         return None
 
     def get_dataset_version(
-        self: t.Self @ DataDocMetadata, dataset_stem: str,
+        self: t.Self @ DataDocMetadata,
+        dataset_stem: str,
     ) -> str | None:
         """Find version information if exists in filename.
 
@@ -132,7 +134,7 @@ class DataDocMetadata:
                 return last_filename_element[1:]
         return None
 
-    def read_metadata_document(self: t.Self @ DataDocMetadata) -> None:
+    def extract_metadata_from_files(self: t.Self @ DataDocMetadata) -> None:
         """Read metadata from a dataset.
 
         If a metadata document already exists, read in the metadata from that instead.
