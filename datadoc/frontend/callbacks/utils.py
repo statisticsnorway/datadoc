@@ -1,10 +1,15 @@
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 from datadoc_model import Model
-from datadoc_model.Enums import SupportedLanguages
-from datadoc_model.LanguageStringsEnum import LanguageStringsEnum
 
 from datadoc import state
+
+if TYPE_CHECKING:
+    from datadoc_model.Enums import SupportedLanguages
+    from datadoc_model.LanguageStringsEnum import LanguageStringsEnum
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +34,7 @@ def get_options_for_language(
 
 
 def find_existing_language_string(
-    metadata_model_object: "Model.DataDocBaseModel",
+    metadata_model_object: Model.DataDocBaseModel,
     value: str,
     metadata_identifier: str,
 ) -> Model.LanguageStrings | None:

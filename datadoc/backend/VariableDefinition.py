@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from xml.dom.minidom import parseString
 
 import requests

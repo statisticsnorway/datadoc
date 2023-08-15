@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 from datadoc_model.Enums import SupportedLanguages

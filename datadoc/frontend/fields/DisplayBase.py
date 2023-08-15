@@ -1,16 +1,19 @@
+from __future__ import annotations
+
 import logging
-from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
 from dash import dcc
-from dash.development.base_component import Component
-from pydantic import BaseModel
 
 from datadoc import state
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from dash.development.base_component import Component
     from datadoc_model.LanguageStrings import LanguageStrings
+    from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 

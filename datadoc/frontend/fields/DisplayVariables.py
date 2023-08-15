@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import Enum
 
 from datadoc_model import Model

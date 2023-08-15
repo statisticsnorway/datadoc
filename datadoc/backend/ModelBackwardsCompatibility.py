@@ -1,5 +1,10 @@
-from collections.abc import Callable
+from __future__ import annotations
+
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 VERSION_FIELD_NAME = "document_version"
 
@@ -13,7 +18,7 @@ class UnknownModelVersionError(Exception):
         return f"Document Version ({self.supplied_version}) of discovered file is not supported"
 
 
-SUPPORTED_VERSIONS: dict[str, "BackwardsCompatibleVersion"] = {}
+SUPPORTED_VERSIONS: dict[str, BackwardsCompatibleVersion] = {}
 
 
 @dataclass()

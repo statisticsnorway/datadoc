@@ -1,7 +1,8 @@
-import logging
-from typing import Any
+from __future__ import annotations
 
-from datadoc_model.Enums import SupportedLanguages
+import logging
+from typing import TYPE_CHECKING, Any
+
 from pydantic import ValidationError
 
 from datadoc import state
@@ -16,6 +17,9 @@ from datadoc.frontend.fields.DisplayDataset import (
     MULTIPLE_LANGUAGE_DATASET_METADATA,
     DatasetIdentifiers,
 )
+
+if TYPE_CHECKING:
+    from datadoc_model.Enums import SupportedLanguages
 
 logger = logging.getLogger(__name__)
 

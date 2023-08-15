@@ -1,9 +1,8 @@
-import random
+"""Tests for the DatasetParser class."""
 
 import pytest
 from datadoc_model.Enums import Datatype, SupportedLanguages
 from datadoc_model.Model import DataDocVariable, LanguageStrings
-from pytest import raises
 
 from datadoc import state
 from datadoc.backend.DatasetParser import (
@@ -13,6 +12,7 @@ from datadoc.backend.DatasetParser import (
     KNOWN_INTEGER_TYPES,
     KNOWN_STRING_TYPES,
     DatasetParser,
+    DatasetParserParquet,
 )
 
 from .utils import (
@@ -23,7 +23,7 @@ from .utils import (
 
 
 def test_use_abstract_class_directly():
-    with raises(TypeError):
+    with pytest.raises(TypeError):
         DatasetParser().get_fields()
 
 
@@ -34,7 +34,7 @@ def test_use_abstract_class_directly():
         DatasetParser.for_file(TEST_PARQUET_GZIP_FILEPATH),
     ],
 )
-def test_get_fields_parquet(local_parser):
+def test_get_fields_parquet(local_parser: DatasetParserParquet):
     expected_fields = [
         DataDocVariable(short_name="pers_id", data_type=Datatype.STRING),
         DataDocVariable(short_name="tidspunkt", data_type=Datatype.DATETIME),
@@ -77,12 +77,12 @@ def test_get_fields_sas7bdat():
 
 
 def test_get_fields_unknown_file_type():
-    with raises(NotImplementedError):
+    with pytest.raises(NotImplementedError):
         DatasetParser.for_file("my_dataset.csv").get_fields()
 
 
 def test_get_fields_no_extension_provided():
-    with raises(NotImplementedError):
+    with pytest.raises(NotImplementedError):
         DatasetParser.for_file("my_dataset").get_fields()
 
 
@@ -93,14 +93,16 @@ def test_transform_datatype_unknown_type():
     assert actual == expected
 
 
-def test_transform_datatype():
-    for expected, input_options in [
-        (Datatype.INTEGER, KNOWN_INTEGER_TYPES),
-        (Datatype.FLOAT, KNOWN_FLOAT_TYPES),
-        (Datatype.STRING, KNOWN_STRING_TYPES),
-        (Datatype.DATETIME, KNOWN_DATETIME_TYPES),
-        (Datatype.BOOLEAN, KNOWN_BOOLEAN_TYPES),
-    ]:
-        input_data = random.choice(input_options)
-        actual = DatasetParser.transform_data_type(input_data)
-        assert actual == expected
+@pytest.mark.parametrize(
+    ("expected", "concrete_type"),
+    [
+        *[(Datatype.INTEGER, i) for i in KNOWN_INTEGER_TYPES],
+        *[(Datatype.FLOAT, i) for i in KNOWN_FLOAT_TYPES],
+        *[(Datatype.STRING, i) for i in KNOWN_STRING_TYPES],
+        *[(Datatype.DATETIME, i) for i in KNOWN_DATETIME_TYPES],
+        *[(Datatype.BOOLEAN, i) for i in KNOWN_BOOLEAN_TYPES],
+    ],
+)
+def test_transform_datatype(expected: Datatype, concrete_type: str):
+    actual = DatasetParser.transform_data_type(concrete_type)
+    assert actual == expected

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 
 from datadoc_model.Enums import SupportedLanguages
