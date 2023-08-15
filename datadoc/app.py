@@ -1,6 +1,5 @@
 import logging
 import os
-from typing import Type
 
 import dash_bootstrap_components as dbc
 from dash import Dash
@@ -32,8 +31,8 @@ logger = logging.getLogger(__name__)
 NAME = "Datadoc"
 
 
-def build_app(dash_class: Type[Dash]) -> Dash:
-    app = dash_class(
+def build_app() -> Dash:
+    app = Dash(
         name=NAME,
         title=NAME,
         assets_folder=f"{os.path.dirname(__file__)}/assets",
@@ -76,31 +75,27 @@ def get_app(dataset_path: str = None) -> Dash:
     logging.basicConfig(level=logging.INFO, force=True)
     logger.info(f"Datadoc version v{get_app_version()}")
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
-    state.metadata = DataDocMetadata(None)
-
-    if running_in_notebook():
-        from jupyter_dash import JupyterDash
-
-        JupyterDash.infer_jupyter_proxy_config()
-        app = build_app(JupyterDash)
-    else:
-        app = build_app(Dash)
-        app.server.register_blueprint(healthz, url_prefix="/healthz")
-        app.server.config["HEALTHZ"] = {
-            "live": lambda: True,
-            "ready": lambda: True,
-            "startup": lambda: True,
-        }
-        logger.info("Built app with endpoints configured on /healthz")
+    state.metadata = DataDocMetadata(dataset_path)
+    app = build_app()
+    app.server.register_blueprint(healthz, url_prefix="/healthz")
+    app.server.config["HEALTHZ"] = {
+        "live": lambda: True,
+        "ready": lambda: True,
+        "startup": lambda: True,
+    }
+    logger.info("Built app with endpoints configured on /healthz")
 
     return app
 
 
 def main(dataset_path: str = None):
+    logging.basicConfig(level=logging.DEBUG, force=True)
+    logger.info(f"Starting app with {dataset_path = }")
     app = get_app(dataset_path)
     if running_in_notebook():
+        logger.info("Running in notebook")
         port = pick_random_port()
-        app.run_server(mode="jupyterlab", port=port)
+        app.run(jupyter_height=1000, port=port)
         logger.info(f"Server running on port {port}")
     else:
         # Assume running in server mode is better (largely for development purposes)
