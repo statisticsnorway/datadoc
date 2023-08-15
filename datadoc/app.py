@@ -1,22 +1,25 @@
 import logging
 import os
-from typing import Type
 
 import dash_bootstrap_components as dbc
 from dash import Dash
 from datadoc_model.Enums import SupportedLanguages
+from flask_healthz import healthz
 
 import datadoc.state as state
 from datadoc.backend.DataDocMetadata import DataDocMetadata
-from datadoc.frontend.callbacks.register import register_callbacks
+from datadoc.frontend.callbacks.register_callbacks import register_callbacks
 from datadoc.frontend.components.Alerts import (
     dataset_validation_error,
-    success_toast,
+    opened_dataset_error,
+    opened_dataset_success,
+    saved_metadata_success,
     variables_validation_error,
 )
 from datadoc.frontend.components.DatasetTab import get_dataset_tab
 from datadoc.frontend.components.HeaderBars import (
     get_controls_bar,
+    get_language_dropdown,
     header,
     progress_bar,
 )
@@ -26,11 +29,10 @@ from datadoc.utils import get_app_version, pick_random_port, running_in_notebook
 logger = logging.getLogger(__name__)
 
 NAME = "Datadoc"
-DATADOC_DATASET_PATH_ENV_VAR = "DATADOC_DATASET_PATH"
 
 
-def build_app(dash_class: Type[Dash]) -> Dash:
-    app = dash_class(
+def build_app() -> Dash:
+    app = Dash(
         name=NAME,
         title=NAME,
         assets_folder=f"{os.path.dirname(__file__)}/assets",
@@ -42,6 +44,11 @@ def build_app(dash_class: Type[Dash]) -> Dash:
             header,
             progress_bar,
             get_controls_bar(),
+            variables_validation_error,
+            dataset_validation_error,
+            opened_dataset_error,
+            saved_metadata_success,
+            opened_dataset_success,
             dbc.CardBody(
                 style={"padding": "4px"},
                 children=[
@@ -55,9 +62,7 @@ def build_app(dash_class: Type[Dash]) -> Dash:
                     ),
                 ],
             ),
-            variables_validation_error,
-            dataset_validation_error,
-            success_toast,
+            get_language_dropdown(),
         ],
     )
 
@@ -67,35 +72,30 @@ def build_app(dash_class: Type[Dash]) -> Dash:
 
 
 def get_app(dataset_path: str = None) -> Dash:
-    logging.basicConfig(level=logging.INFO)
-    if dataset_path is not None:
-        dataset = dataset_path
-    elif path_from_env := os.getenv(DATADOC_DATASET_PATH_ENV_VAR):
-        logger.info(
-            f"Dataset path from {DATADOC_DATASET_PATH_ENV_VAR}: '{path_from_env}'"
-        )
-        dataset = path_from_env
-
+    logging.basicConfig(level=logging.INFO, force=True)
     logger.info(f"Datadoc version v{get_app_version()}")
-    state.metadata = DataDocMetadata(dataset)
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
-
-    if running_in_notebook():
-        from jupyter_dash import JupyterDash
-
-        JupyterDash.infer_jupyter_proxy_config()
-        app = build_app(JupyterDash)
-    else:
-        app = build_app(Dash)
+    state.metadata = DataDocMetadata(dataset_path)
+    app = build_app()
+    app.server.register_blueprint(healthz, url_prefix="/healthz")
+    app.server.config["HEALTHZ"] = {
+        "live": lambda: True,
+        "ready": lambda: True,
+        "startup": lambda: True,
+    }
+    logger.info("Built app with endpoints configured on /healthz")
 
     return app
 
 
 def main(dataset_path: str = None):
+    logging.basicConfig(level=logging.DEBUG, force=True)
+    logger.info(f"Starting app with {dataset_path = }")
     app = get_app(dataset_path)
     if running_in_notebook():
+        logger.info("Running in notebook")
         port = pick_random_port()
-        app.run_server(mode="jupyterlab", port=port)
+        app.run(jupyter_height=1000, port=port)
         logger.info(f"Server running on port {port}")
     else:
         # Assume running in server mode is better (largely for development purposes)

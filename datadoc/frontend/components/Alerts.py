@@ -1,51 +1,36 @@
-import dash_bootstrap_components as dbc
-from dash import html
-from datadoc.frontend.Builders import make_ssb_warning_alert
+from datadoc.frontend.components.Builders import AlertTypes, make_ssb_alert
 
-dataset_validation_error = make_ssb_warning_alert(
+dataset_validation_error = make_ssb_alert(
+    AlertTypes.WARNING,
     "dataset-validation-error",
-    "Failed validation",
+    "Validering feilet",
     "dataset-validation-explanation",
 )
 
-variables_validation_error = make_ssb_warning_alert(
+variables_validation_error = make_ssb_alert(
+    AlertTypes.WARNING,
     "variables-validation-error",
-    "Failed validation",
+    "Validering feilet",
     "variables-validation-explanation",
 )
 
-success_toast = dbc.Alert(
-    id="success-message",
-    is_open=False,
-    dismissable=True,
-    fade=True,
-    class_name="ssb-dialog",
-    children=[
-        dbc.Row(
-            [
-                dbc.Col(
-                    width=3,
-                    children=[
-                        html.Div(
-                            className="ssb-dialog icon-panel",
-                            children=[
-                                html.I(
-                                    className="bi bi-check-circle",
-                                ),
-                            ],
-                        )
-                    ],
-                ),
-                dbc.Col(
-                    [
-                        html.H5(
-                            "Lagret metadata",
-                        ),
-                    ]
-                ),
-            ],
-            align="center",
-        )
-    ],
-    color="success",
+opened_dataset_error = make_ssb_alert(
+    AlertTypes.WARNING,
+    "opened-dataset-error",
+    "Kunne ikke åpne datasettet",
+    "opened-dataset-error-explanation",
+)
+
+saved_metadata_success = make_ssb_alert(
+    AlertTypes.SUCCESS,
+    "saved-metadata-success",
+    "Lagret metadata",
+    "saved-metadata-success-explanation",
+)
+
+opened_dataset_success = make_ssb_alert(
+    AlertTypes.SUCCESS,
+    "opened-dataset-success",
+    "Åpnet datasett",
+    "opened-dataset-success-explanation",
 )

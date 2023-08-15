@@ -83,7 +83,7 @@ class DataDocMetadata:
         self.variables_lookup: Dict[str, "Model.DataDocVariable"] = {}
 
         if self.dataset:
-            self.read_metadata_document()
+            self.extract_metadata_from_files()
 
     def get_dataset_state(self, dataset: str) -> Optional[DatasetState]:
         """Use the path to attempt to guess the state of the dataset"""
@@ -119,7 +119,7 @@ class DataDocMetadata:
                 return last_filename_element[1:]
         return None
 
-    def read_metadata_document(self):
+    def extract_metadata_from_files(self):
         fresh_metadata = {}
         if self.metadata_document.exists():
             try:

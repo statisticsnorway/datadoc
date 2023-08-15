@@ -1,10 +1,13 @@
 import logging
+import os
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from datadoc_model.Enums import SupportedLanguages
 from pydantic import ValidationError
 
 import datadoc.state as state
+from datadoc.backend.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.callbacks.utils import (
     find_existing_language_string,
     get_options_for_language,
@@ -18,6 +21,28 @@ from datadoc.frontend.fields.DisplayDataset import (
 )
 
 logger = logging.getLogger(__name__)
+
+DATADOC_DATASET_PATH_ENV_VAR = "DATADOC_DATASET_PATH"
+
+
+def get_dataset_path() -> str | Path | None:
+    if state.metadata.dataset is not None:
+        return state.metadata.dataset
+    elif path_from_env := os.getenv(DATADOC_DATASET_PATH_ENV_VAR):
+        logger.info(
+            f"Dataset path from {DATADOC_DATASET_PATH_ENV_VAR}: '{path_from_env}'"
+        )
+        dataset = path_from_env
+    else:
+        dataset = None
+
+    return dataset
+
+
+def open_dataset(dataset_path: str | Path | None = None) -> None:
+    dataset = dataset_path or get_dataset_path()
+    state.metadata = DataDocMetadata(dataset)
+    logger.info(f"Opened dataset {dataset}")
 
 
 def process_keyword(value: str) -> Optional[List[str]]:
