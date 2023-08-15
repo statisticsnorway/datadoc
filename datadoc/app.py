@@ -1,5 +1,12 @@
+"""Top-level entrypoint, configuration and layout for the datadoc app.
+
+Members of this module should not be imported into any sub-modules, this will cause circular imports.
+"""
+from __future__ import annotations
+
 import logging
 import os
+from pathlib import Path
 
 import dash_bootstrap_components as dbc
 from dash import Dash
@@ -29,10 +36,11 @@ DATADOC_DATASET_PATH_ENV_VAR = "DATADOC_DATASET_PATH"
 
 
 def build_app(dash_class: type[Dash]) -> Dash:
+    """Instantiate the Dash app object, define the layout, register callbacks."""
     app = dash_class(
         name=NAME,
         title=NAME,
-        assets_folder=f"{os.path.dirname(__file__)}/assets",
+        assets_folder=f"{Path(__file__).parent}/assets",
     )
 
     app.layout = dbc.Container(
@@ -66,16 +74,19 @@ def build_app(dash_class: type[Dash]) -> Dash:
 
 
 def get_app(dataset_path: str | None = None) -> Dash:
+    """Centralize all the ugliness around initializing the app."""
     logging.basicConfig(level=logging.INFO)
     if dataset_path is not None:
         dataset = dataset_path
     elif path_from_env := os.getenv(DATADOC_DATASET_PATH_ENV_VAR):
         logger.info(
-            f"Dataset path from {DATADOC_DATASET_PATH_ENV_VAR}: '{path_from_env}'",
+            "Dataset path from %s: '%s'",
+            DATADOC_DATASET_PATH_ENV_VAR,
+            path_from_env,
         )
         dataset = path_from_env
 
-    logger.info(f"Datadoc version v{get_app_version()}")
+    logger.info("Datadoc version v%s", get_app_version())
     state.metadata = DataDocMetadata(dataset)
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
 
@@ -90,12 +101,13 @@ def get_app(dataset_path: str | None = None) -> Dash:
     return app
 
 
-def main(dataset_path: str | None = None):
+def main(dataset_path: str | None = None) -> None:
+    """Entrypoint when running as a script."""
     app = get_app(dataset_path)
     if running_in_notebook():
         port = pick_random_port()
         app.run_server(mode="jupyterlab", port=port)
-        logger.info(f"Server running on port {port}")
+        logger.info("Server running on port %s", port)
     else:
         # Assume running in server mode is better (largely for development purposes)
         logging.basicConfig(level=logging.DEBUG, force=True)

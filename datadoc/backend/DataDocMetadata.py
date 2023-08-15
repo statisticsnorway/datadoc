@@ -1,12 +1,16 @@
+"""Handle reading, updating and writing of metadata."""
+from __future__ import annotations
+
 import json
 import logging
 import os
 import pathlib
+import typing as t
 import uuid
 from typing import TYPE_CHECKING
 
 from datadoc_model import Model
-from datadoc_model.Enums import DatasetState
+from datadoc_model.Enums import DatasetState, SupportedLanguages
 
 from datadoc.backend.DatasetParser import DatasetParser
 from datadoc.backend.ModelBackwardsCompatibility import upgrade_metadata
@@ -45,7 +49,13 @@ PLACEHOLDER_USERNAME = "default_user@ssb.no"
 
 
 class DataDocMetadata:
-    def __init__(self, dataset: str | None) -> None:
+    """Handle reading, updating and writing of metadata."""
+
+    def __init__(
+        self: t.Self @ DataDocMetadata,
+        dataset: str | None,
+    ) -> None:
+        """Read in a dataset if supplied, otherwise naively instantiate the class."""
         self.dataset: str = dataset
         if self.dataset:
             self.short_name: str = pathlib.Path(
@@ -63,64 +73,78 @@ class DataDocMetadata:
         except KeyError:
             self.current_user = PLACEHOLDER_USERNAME
             logger.warning(
-                f"JUPYTERHUB_USER env variable not set, using {self.current_user} as placeholder",
+                "JUPYTERHUB_USER env variable not set, using %s as placeholder",
+                self.current_user,
             )
 
-        self.meta: "Model.MetadataDocument" = Model.MetadataDocument(
+        self.meta: Model.MetadataDocument = Model.MetadataDocument(
             percentage_complete=0,
             document_version=Model.MODEL_VERSION,
             dataset=Model.DataDocDataSet(),
             variables=[],
         )
 
-        self.variables_lookup: dict[str, "Model.DataDocVariable"] = {}
+        self.variables_lookup: dict[str, Model.DataDocVariable] = {}
 
         if self.dataset:
             self.read_metadata_document()
 
-    def get_dataset_state(self, dataset: str) -> DatasetState | None:
+    def get_dataset_state(
+        self: t.Self @ DataDocMetadata, dataset: str,
+    ) -> DatasetState | None:
         """Use the path to attempt to guess the state of the dataset."""
         if dataset is None:
             return None
-        dataset_path_parts = list(pathlib.Path(dataset).parts)
-        if "utdata" in dataset_path_parts:
-            return DatasetState.OUTPUT_DATA
-        elif "statistikk" in dataset_path_parts:
-            return DatasetState.STATISTIC
-        elif "klargjorte-data" in dataset_path_parts:
-            return DatasetState.PROCESSED_DATA
-        elif "klargjorte_data" in dataset_path_parts:
-            return DatasetState.PROCESSED_DATA
-        elif "kildedata" in dataset_path_parts:
-            return DatasetState.SOURCE_DATA
-        elif "inndata" in dataset_path_parts:
-            return DatasetState.INPUT_DATA
-        else:
-            return None
+        dataset_path_parts = set(pathlib.Path(dataset).parts)
+        for state in DatasetState:
+            # We assume that files are saved in the Norwegian language as specified by SSB.
+            norwegian_dataset_state_path_part = state.get_value_for_language(
+                SupportedLanguages.NORSK_BOKMÅL,
+            ).lower()
+            norwegian_dataset_state_path_part_variations = {
+                norwegian_dataset_state_path_part.replace(" ", x) for x in ["-", "_"]
+            }
+            # Match on any of the variations anywhere in the path.
+            if norwegian_dataset_state_path_part_variations.intersection(
+                dataset_path_parts,
+            ):
+                return state
 
-    def get_dataset_version(self, dataset_stem: str) -> str | None:
-        """Find version information if exists in filename,
-        eg. 'v1' in filename 'person_data_v1.parquet'.
+        return None
+
+    def get_dataset_version(
+        self: t.Self @ DataDocMetadata, dataset_stem: str,
+    ) -> str | None:
+        """Find version information if exists in filename.
+
+        eg. 'v1' in filename 'person_data_v1.parquet'
         """
-        splitted_file_name = str(dataset_stem).split("_")
-        if len(splitted_file_name) >= 2:
-            last_filename_element = str(splitted_file_name[-1])
+        minimum_elements_in_file_name: t.Final[int] = 2
+        minimum_characters_in_version_string: t.Final[int] = 2
+        split_file_name = str(dataset_stem).split("_")
+        if len(split_file_name) >= minimum_elements_in_file_name:
+            last_filename_element = str(split_file_name[-1])
             if (
-                len(last_filename_element) >= 2
+                len(last_filename_element) >= minimum_characters_in_version_string
                 and last_filename_element[0:1] == "v"
                 and last_filename_element[1:].isdigit()
             ):
                 return last_filename_element[1:]
         return None
 
-    def read_metadata_document(self):
+    def read_metadata_document(self: t.Self @ DataDocMetadata) -> None:
+        """Read metadata from a dataset.
+
+        If a metadata document already exists, read in the metadata from that instead.
+        """
         fresh_metadata = {}
         if self.metadata_document.exists():
             try:
                 with self.metadata_document.open(mode="r", encoding="utf-8") as file:
                     fresh_metadata = json.load(file)
                 logger.info(
-                    f"Opened existing metadata file {self.metadata_document.location}",
+                    "Opened existing metadata file %s",
+                    self.metadata_document.location,
                 )
 
                 fresh_metadata = upgrade_metadata(fresh_metadata, Model.MODEL_VERSION)
@@ -135,8 +159,9 @@ class DataDocMetadata:
                 )
             except json.JSONDecodeError:
                 logger.warning(
-                    f"Could not open existing metadata file {self.metadata_document.location}. \
+                    "Could not open existing metadata file %s. \
                     Falling back to collecting data from the dataset",
+                    self.metadata_document.location,
                     exc_info=True,
                 )
                 self.extract_metadata_from_dataset()
@@ -156,7 +181,12 @@ class DataDocMetadata:
 
         self.variables_lookup = {v.short_name: v for v in self.meta.variables}
 
-    def extract_metadata_from_dataset(self):
+    def extract_metadata_from_dataset(self: t.Self @ DataDocMetadata) -> None:
+        """Obtain what metadata we can from the dataset itself.
+
+        This makes it easier for the user by 'pre-filling' certain fields.
+        Certain elements are dependent on the dataset being saved according to SSB's standard.
+        """
         self.ds_schema = DatasetParser.for_file(self.dataset)
 
         self.meta.dataset = Model.DataDocDataSet(
@@ -169,7 +199,7 @@ class DataDocMetadata:
 
         self.meta.variables = self.ds_schema.get_fields()
 
-    def write_metadata_document(self) -> None:
+    def write_metadata_document(self: t.Self @ DataDocMetadata) -> None:
         """Write all currently known metadata to file."""
         timestamp: datetime = get_timestamp_now()
         if self.meta.dataset.metadata_created_date is None:
@@ -179,10 +209,10 @@ class DataDocMetadata:
         self.meta.dataset.metadata_last_updated_date = timestamp
         self.meta.dataset.metadata_last_updated_by = self.current_user
         self.metadata_document.write_text(self.meta.json(indent=4, sort_keys=False))
-        logger.info(f"Saved metadata document {self.metadata_document.location}")
+        logger.info("Saved metadata document %s", self.metadata_document.location)
 
     @property
-    def percent_complete(self) -> int:
+    def percent_complete(self: t.Self @ DataDocMetadata) -> int:
         """The percentage of obligatory metadata completed.
 
         A metadata field is counted as complete when any non-None value is

@@ -85,20 +85,6 @@ exclude = [
 ]
 ignore = ["A003", "B008", "E501"]
 select = ["ALL"]
-#     "A",
-#     "B",
-#     "C4",
-#     "C9",
-#     "E",
-#     "ERA",
-#     "F",
-#     "I",
-#     "N",
-#     "S",
-#     "TRY",
-#     "UP",
-#     "W",
-# ]
 
 [tool.ruff.mccabe]
 max-complexity = 10
