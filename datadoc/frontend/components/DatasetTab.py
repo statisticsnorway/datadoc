@@ -1,7 +1,6 @@
-from typing import List
-
 import dash_bootstrap_components as dbc
 from dash import html
+
 from datadoc.frontend.Builders import make_ssb_styled_tab
 from datadoc.frontend.fields.DisplayDataset import (
     NON_EDITABLE_DATASET_METADATA,
@@ -15,7 +14,7 @@ DATASET_METADATA_INPUT = "dataset-metadata-input"
 
 def make_dataset_metadata_accordion_item(
     title: str,
-    metadata_inputs: List[DisplayDatasetMetadata],
+    metadata_inputs: list[DisplayDatasetMetadata],
 ) -> dbc.AccordionItem:
     return dbc.AccordionItem(
         title=title,
@@ -36,7 +35,7 @@ def make_dataset_metadata_accordion_item(
                         width=5,
                     ),
                     dbc.Col(width=4),
-                ]
+                ],
             )
             for i in metadata_inputs
         ],

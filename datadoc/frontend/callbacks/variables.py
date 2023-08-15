@@ -1,10 +1,9 @@
 import logging
-from typing import Dict, List, Optional, Tuple
 
 from datadoc_model.Enums import SupportedLanguages
 from pydantic import ValidationError
 
-import datadoc.state as state
+from datadoc import state
 from datadoc.frontend.callbacks.utils import (
     find_existing_language_string,
     get_options_for_language,
@@ -48,19 +47,17 @@ def get_metadata_field(data, data_previous, active_cell) -> str:
         # First strategy to find which column we're in; diff the current and previous data
         update_diff = list(data[i].items() - data_previous[i].items())
         if update_diff:
-            metadata_field = update_diff[-1][0]
-            return (
-                metadata_field  # We're only interested in one change so we break here
-            )
+            return update_diff[-1][0]
 
     # When copy/pasting the diff fails, so we fall back to the active cell
-    metadata_field = active_cell["column_id"]
-    return metadata_field
+    return active_cell["column_id"]
 
 
 def handle_multi_language_metadata(
-    metadata_field, new_value, updated_row_id
-) -> Optional[str]:
+    metadata_field,
+    new_value,
+    updated_row_id,
+) -> str | None:
     if type(new_value) is str:
         return find_existing_language_string(
             state.metadata.variables_lookup[updated_row_id],
@@ -81,10 +78,10 @@ def handle_multi_language_metadata(
 
 
 def accept_variable_metadata_input(
-    data: List[Dict],
-    active_cell: Dict,
-    data_previous: List[Dict],
-) -> Tuple[List[Dict], bool, str]:
+    data: list[dict],
+    active_cell: dict,
+    data_previous: list[dict],
+) -> tuple[list[dict], bool, str]:
     show_error = False
     error_explanation = ""
     output_data = data
@@ -98,14 +95,16 @@ def accept_variable_metadata_input(
         try:
             if metadata_field in MULTIPLE_LANGUAGE_VARIABLES_METADATA:
                 new_value = handle_multi_language_metadata(
-                    metadata_field, new_value, updated_row_id
+                    metadata_field,
+                    new_value,
+                    updated_row_id,
                 )
             elif new_value == "":
                 # Allow clearing non-multiple-language text fields
                 new_value = None
 
             logger.debug(
-                f"{row_index = } | {updated_row_id = } | {metadata_field = } | {new_value = }"
+                f"{row_index = } | {updated_row_id = } | {metadata_field = } | {new_value = }",
             )
             # Write the value to the variables structure
             setattr(
@@ -126,7 +125,7 @@ def accept_variable_metadata_input(
 
 def update_variable_table_dropdown_options_for_language(
     language: SupportedLanguages,
-) -> Dict[str, Dict[str, List[Dict[str, str]]]]:
+) -> dict[str, dict[str, list[dict[str, str]]]]:
     """Retrieves enum options for dropdowns in the Datatable. Handles the
     special case of boolean values which we represent in the Datatable
     with a Dropdown but they're not backed by an Enum.
@@ -155,9 +154,9 @@ def update_variable_table_dropdown_options_for_language(
 
 
 def update_variable_table_language(
-    data: List[Dict],
+    data: list[dict],
     language: SupportedLanguages,
-) -> Tuple[List[Dict], bool, str]:
+) -> tuple[list[dict], bool, str]:
     state.current_metadata_language = language
     new_data = []
     for row in data:
@@ -167,7 +166,7 @@ def update_variable_table_language(
                     row[VariableIdentifiers.SHORT_NAME.value]
                 ],
                 state.current_metadata_language,
-            )
+            ),
         )
     logger.debug(f"Updated variable table language: {language.name}")
     return new_data, False, ""

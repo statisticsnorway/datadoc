@@ -3,7 +3,6 @@ import os
 from copy import copy
 from datetime import datetime
 from pathlib import PurePath
-from typing import List, Tuple
 from uuid import UUID
 
 import pytest
@@ -21,7 +20,7 @@ from .utils import (
 )
 
 
-def make_paths() -> List[Tuple[str, DatasetState]]:
+def make_paths() -> list[tuple[str, DatasetState]]:
     split_path = list(PurePath(TEST_PARQUET_FILEPATH).parts)
     initial_data = [
         ("kildedata", DatasetState.SOURCE_DATA),
@@ -38,7 +37,7 @@ def make_paths() -> List[Tuple[str, DatasetState]]:
     for to_insert, state in initial_data:
         new_path = copy(split_path)
         new_path.insert(-2, to_insert)
-        new_path = PurePath("").joinpath(*new_path)
+        new_path = PurePath().joinpath(*new_path)
         test_data.append((str(new_path), state))
 
     return test_data
@@ -46,7 +45,9 @@ def make_paths() -> List[Tuple[str, DatasetState]]:
 
 @pytest.mark.parametrize(("path", "expected_result"), make_paths())
 def test_get_dataset_state(
-    path: str, expected_result: DatasetState, metadata: DataDocMetadata
+    path: str,
+    expected_result: DatasetState,
+    metadata: DataDocMetadata,
 ):
     actual_state = metadata.get_dataset_state(path)
     assert actual_state == expected_result
@@ -84,7 +85,9 @@ def test_get_dataset_version_unknown(metadata: DataDocMetadata):
 
 
 def test_write_metadata_document(
-    dummy_timestamp: datetime, metadata: DataDocMetadata, remove_document_file
+    dummy_timestamp: datetime,
+    metadata: DataDocMetadata,
+    remove_document_file,
 ):
     metadata.write_metadata_document()
     written_document = TEST_RESOURCES_DIRECTORY / TEST_EXISTING_METADATA_FILE_NAME
@@ -100,7 +103,7 @@ def test_write_metadata_document(
     assert (
         # Use our pydantic model to read in the datetime string so we get the correct format
         DataDocDataSet(
-            metadata_created_date=written_metadata["dataset"]["metadata_created_date"]
+            metadata_created_date=written_metadata["dataset"]["metadata_created_date"],
         ).metadata_created_date
         == dummy_timestamp
     )
@@ -110,7 +113,7 @@ def test_write_metadata_document(
         DataDocDataSet(
             metadata_last_updated_date=written_metadata["dataset"][
                 "metadata_last_updated_date"
-            ]
+            ],
         ).metadata_last_updated_date
         == dummy_timestamp
     )
@@ -139,10 +142,13 @@ def test_metadata_id(metadata: DataDocMetadata):
 
 
 @pytest.mark.parametrize(
-    "existing_metadata_path", [TEST_EXISTING_METADATA_DIRECTORY / "invalid_id_field"]
+    "existing_metadata_path",
+    [TEST_EXISTING_METADATA_DIRECTORY / "invalid_id_field"],
 )
 def test_existing_metadata_none_id(
-    existing_metadata_file, metadata: DataDocMetadata, remove_document_file
+    existing_metadata_file,
+    metadata: DataDocMetadata,
+    remove_document_file,
 ):
     pre_open_id = ""
     post_write_id = ""
@@ -157,7 +163,8 @@ def test_existing_metadata_none_id(
 
 
 @pytest.mark.parametrize(
-    "existing_metadata_path", [TEST_EXISTING_METADATA_DIRECTORY / "valid_id_field"]
+    "existing_metadata_path",
+    [TEST_EXISTING_METADATA_DIRECTORY / "valid_id_field"],
 )
 def test_existing_metadata_valid_id(
     existing_metadata_file,
@@ -179,12 +186,10 @@ def test_existing_metadata_valid_id(
 
 def test_variable_role_default_value(metadata: DataDocMetadata):
     assert all(
-        [
-            v.variable_role == Enums.VariableRole.MEASURE.value
-            for v in metadata.meta.variables
-        ]
+        v.variable_role == Enums.VariableRole.MEASURE.value
+        for v in metadata.meta.variables
     )
 
 
 def test_direct_person_identifying_default_value(metadata: DataDocMetadata):
-    assert all([not v.direct_person_identifying for v in metadata.meta.variables])
+    assert all(not v.direct_person_identifying for v in metadata.meta.variables)

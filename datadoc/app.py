@@ -1,12 +1,11 @@
 import logging
 import os
-from typing import Type
 
 import dash_bootstrap_components as dbc
 from dash import Dash
 from datadoc_model.Enums import SupportedLanguages
 
-import datadoc.state as state
+from datadoc import state
 from datadoc.backend.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.callbacks.register import register_callbacks
 from datadoc.frontend.components.Alerts import (
@@ -29,7 +28,7 @@ NAME = "Datadoc"
 DATADOC_DATASET_PATH_ENV_VAR = "DATADOC_DATASET_PATH"
 
 
-def build_app(dash_class: Type[Dash]) -> Dash:
+def build_app(dash_class: type[Dash]) -> Dash:
     app = dash_class(
         name=NAME,
         title=NAME,
@@ -66,13 +65,13 @@ def build_app(dash_class: Type[Dash]) -> Dash:
     return app
 
 
-def get_app(dataset_path: str = None) -> Dash:
+def get_app(dataset_path: str | None = None) -> Dash:
     logging.basicConfig(level=logging.INFO)
     if dataset_path is not None:
         dataset = dataset_path
     elif path_from_env := os.getenv(DATADOC_DATASET_PATH_ENV_VAR):
         logger.info(
-            f"Dataset path from {DATADOC_DATASET_PATH_ENV_VAR}: '{path_from_env}'"
+            f"Dataset path from {DATADOC_DATASET_PATH_ENV_VAR}: '{path_from_env}'",
         )
         dataset = path_from_env
 
@@ -91,7 +90,7 @@ def get_app(dataset_path: str = None) -> Dash:
     return app
 
 
-def main(dataset_path: str = None):
+def main(dataset_path: str | None = None):
     app = get_app(dataset_path)
     if running_in_notebook():
         port = pick_random_port()

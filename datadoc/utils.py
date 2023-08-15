@@ -5,7 +5,7 @@ from datadoc_model.Enums import SupportedLanguages
 
 
 def running_in_notebook() -> bool:
-    """Return True if running in Jupyter Notebook"""
+    """Return True if running in Jupyter Notebook."""
     try:
         return get_ipython().__class__.__name__ == "ZMQInteractiveShell"  # type: ignore
     except NameError:
@@ -17,15 +17,17 @@ def running_in_notebook() -> bool:
 
 
 def calculate_percentage(completed: int, total: int) -> int:
-    """Calculate percentage as a rounded integer"""
+    """Calculate percentage as a rounded integer."""
     return round((completed / total) * 100)
 
 
 def get_display_values(
-    variable: Model.DataDocVariable, current_language: SupportedLanguages
+    variable: Model.DataDocVariable,
+    current_language: SupportedLanguages,
 ) -> dict:
     """Return a dictionary representation of Model.DataDocVariable with strings in
-    the currently selected language"""
+    the currently selected language.
+    """
     return_dict = {}
     for field_name, value in variable:
         if isinstance(value, Model.LanguageStrings):
@@ -36,7 +38,8 @@ def get_display_values(
 
 def pick_random_port() -> int:
     """Pick a random free port number. The function will bind a socket to port 0, and
-    a random free port from 1024 to 65535 will be selected by the operating system."""
+    a random free port from 1024 to 65535 will be selected by the operating system.
+    """
     import socket
 
     sock = socket.socket()

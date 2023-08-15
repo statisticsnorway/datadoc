@@ -1,7 +1,8 @@
 import dash_bootstrap_components as dbc
-import datadoc.state as state
 from dash import dcc, html
 from datadoc_model.Enums import SupportedLanguages
+
+from datadoc import state
 
 COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
@@ -53,7 +54,7 @@ def get_controls_bar() -> dbc.CardBody:
                         align="end",
                         width="auto",
                     ),
-                ]
-            )
+                ],
+            ),
         ],
     )

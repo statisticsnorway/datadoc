@@ -3,18 +3,19 @@ import logging
 import os
 import pathlib
 import uuid
-from datetime import datetime
-from typing import Dict, Optional
+from typing import TYPE_CHECKING
 
 from datadoc_model import Model
 from datadoc_model.Enums import DatasetState
 
-import datadoc.frontend.fields.DisplayDataset as DisplayDataset
-import datadoc.frontend.fields.DisplayVariables as DisplayVariables
 from datadoc.backend.DatasetParser import DatasetParser
 from datadoc.backend.ModelBackwardsCompatibility import upgrade_metadata
 from datadoc.backend.StorageAdapter import StorageAdapter
+from datadoc.frontend.fields import DisplayDataset, DisplayVariables
 from datadoc.utils import calculate_percentage, get_timestamp_now
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -32,18 +33,10 @@ OBLIGATORY_VARIABLES_METADATA = [
 
 # These don't vary at runtime so we calculate them as constants here
 NUM_OBLIGATORY_DATASET_FIELDS = len(
-    [
-        k
-        for k in Model.DataDocDataSet().dict().keys()
-        if k in OBLIGATORY_DATASET_METADATA
-    ]
+    [k for k in Model.DataDocDataSet().dict() if k in OBLIGATORY_DATASET_METADATA],
 )
 NUM_OBLIGATORY_VARIABLES_FIELDS = len(
-    [
-        k
-        for k in Model.DataDocVariable().dict().keys()
-        if k in OBLIGATORY_VARIABLES_METADATA
-    ]
+    [k for k in Model.DataDocVariable().dict() if k in OBLIGATORY_VARIABLES_METADATA],
 )
 
 METADATA_DOCUMENT_FILE_SUFFIX = "__DOC.json"
@@ -52,17 +45,17 @@ PLACEHOLDER_USERNAME = "default_user@ssb.no"
 
 
 class DataDocMetadata:
-    def __init__(self, dataset: Optional[str]):
+    def __init__(self, dataset: str | None) -> None:
         self.dataset: str = dataset
         if self.dataset:
             self.short_name: str = pathlib.Path(
-                self.dataset
+                self.dataset,
             ).stem  # filename without file ending
             self.metadata_document: StorageAdapter = StorageAdapter.for_path(
-                StorageAdapter.for_path(self.dataset).parent()
+                StorageAdapter.for_path(self.dataset).parent(),
             )
             self.metadata_document.joinpath(
-                self.short_name + METADATA_DOCUMENT_FILE_SUFFIX
+                self.short_name + METADATA_DOCUMENT_FILE_SUFFIX,
             )
             self.dataset_state: DatasetState = self.get_dataset_state(self.dataset)
         try:
@@ -70,7 +63,7 @@ class DataDocMetadata:
         except KeyError:
             self.current_user = PLACEHOLDER_USERNAME
             logger.warning(
-                f"JUPYTERHUB_USER env variable not set, using {self.current_user} as placeholder"
+                f"JUPYTERHUB_USER env variable not set, using {self.current_user} as placeholder",
             )
 
         self.meta: "Model.MetadataDocument" = Model.MetadataDocument(
@@ -80,13 +73,13 @@ class DataDocMetadata:
             variables=[],
         )
 
-        self.variables_lookup: Dict[str, "Model.DataDocVariable"] = {}
+        self.variables_lookup: dict[str, "Model.DataDocVariable"] = {}
 
         if self.dataset:
             self.read_metadata_document()
 
-    def get_dataset_state(self, dataset: str) -> Optional[DatasetState]:
-        """Use the path to attempt to guess the state of the dataset"""
+    def get_dataset_state(self, dataset: str) -> DatasetState | None:
+        """Use the path to attempt to guess the state of the dataset."""
         if dataset is None:
             return None
         dataset_path_parts = list(pathlib.Path(dataset).parts)
@@ -105,9 +98,10 @@ class DataDocMetadata:
         else:
             return None
 
-    def get_dataset_version(self, dataset_stem: str) -> Optional[str]:
+    def get_dataset_version(self, dataset_stem: str) -> str | None:
         """Find version information if exists in filename,
-        eg. 'v1' in filename 'person_data_v1.parquet'"""
+        eg. 'v1' in filename 'person_data_v1.parquet'.
+        """
         splitted_file_name = str(dataset_stem).split("_")
         if len(splitted_file_name) >= 2:
             last_filename_element = str(splitted_file_name[-1])
@@ -126,7 +120,7 @@ class DataDocMetadata:
                 with self.metadata_document.open(mode="r", encoding="utf-8") as file:
                     fresh_metadata = json.load(file)
                 logger.info(
-                    f"Opened existing metadata file {self.metadata_document.location}"
+                    f"Opened existing metadata file {self.metadata_document.location}",
                 )
 
                 fresh_metadata = upgrade_metadata(fresh_metadata, Model.MODEL_VERSION)
@@ -137,7 +131,7 @@ class DataDocMetadata:
                     Model.DataDocVariable(**v) for v in variables_list
                 ]
                 self.meta.dataset = Model.DataDocDataSet(
-                    **fresh_metadata.pop("dataset", None)
+                    **fresh_metadata.pop("dataset", None),
                 )
             except json.JSONDecodeError:
                 logger.warning(
@@ -176,7 +170,7 @@ class DataDocMetadata:
         self.meta.variables = self.ds_schema.get_fields()
 
     def write_metadata_document(self) -> None:
-        """Write all currently known metadata to file"""
+        """Write all currently known metadata to file."""
         timestamp: datetime = get_timestamp_now()
         if self.meta.dataset.metadata_created_date is None:
             self.meta.dataset.metadata_created_date = timestamp
@@ -193,15 +187,15 @@ class DataDocMetadata:
 
         A metadata field is counted as complete when any non-None value is
         assigned. Used for a live progress bar in the UI, as well as being
-        saved in the datadoc as a simple quality indicator."""
-
+        saved in the datadoc as a simple quality indicator.
+        """
         num_all_fields = NUM_OBLIGATORY_DATASET_FIELDS
         num_set_fields = len(
             [
                 k
                 for k, v in self.meta.dataset.dict().items()
                 if k in OBLIGATORY_DATASET_METADATA and v is not None
-            ]
+            ],
         )
 
         for variable in self.meta.variables:
@@ -211,7 +205,7 @@ class DataDocMetadata:
                     k
                     for k, v in variable.dict().items()
                     if k in OBLIGATORY_VARIABLES_METADATA and v is not None
-                ]
+                ],
             )
 
         return calculate_percentage(num_set_fields, num_all_fields)

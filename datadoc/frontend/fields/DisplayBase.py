@@ -1,13 +1,16 @@
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Type
+from typing import TYPE_CHECKING, Any
 
 from dash import dcc
 from dash.development.base_component import Component
-from datadoc_model.LanguageStrings import LanguageStrings
 from pydantic import BaseModel
 
 from datadoc import state
+
+if TYPE_CHECKING:
+    from datadoc_model.LanguageStrings import LanguageStrings
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +28,8 @@ DROPDOWN_KWARGS = {
 
 def kwargs_factory():
     """For initialising the field extra_kwargs. We aren't allowed to
-    directly assign a mutable type like a dict to a dataclass field"""
+    directly assign a mutable type like a dict to a dataclass field.
+    """
     return INPUT_KWARGS
 
 
@@ -37,7 +41,7 @@ def get_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str:
     return str(metadata.dict()[identifier])
 
 
-def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> Optional[str]:
+def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> str | None:
     value: LanguageStrings = getattr(metadata, identifier)
     if value is None:
         return value
@@ -45,7 +49,7 @@ def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> Optiona
 
 
 def get_list_of_strings(metadata: BaseModel, identifier: str) -> str:
-    value: List[str] = getattr(metadata, identifier)
+    value: list[str] = getattr(metadata, identifier)
     if value is None:
         return ""
     return ", ".join(value)
@@ -63,12 +67,12 @@ class DisplayMetadata:
 
 @dataclass
 class DisplayVariablesMetadata(DisplayMetadata):
-    options: Optional[Dict[str, List[Dict[str, str]]]] = None
-    presentation: Optional[str] = "input"
+    options: dict[str, list[dict[str, str]]] | None = None
+    presentation: str | None = "input"
 
 
 @dataclass
 class DisplayDatasetMetadata(DisplayMetadata):
-    extra_kwargs: Dict[str, Any] = field(default_factory=kwargs_factory)
-    component: Type[Component] = dcc.Input
+    extra_kwargs: dict[str, Any] = field(default_factory=kwargs_factory)
+    component: type[Component] = dcc.Input
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata

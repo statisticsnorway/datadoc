@@ -84,21 +84,21 @@ exclude = [
     ".ipynb_checkpoints",
 ]
 ignore = ["A003", "B008", "E501"]
-select = [
-    "A",
-    "B",
-    "C4",
-    "C9",
-    "E",
-    "ERA",
-    "F",
-    "I",
-    "N",
-    "S",
-    "TRY",
-    "UP",
-    "W",
-]
+select = ["ALL"]
+#     "A",
+#     "B",
+#     "C4",
+#     "C9",
+#     "E",
+#     "ERA",
+#     "F",
+#     "I",
+#     "N",
+#     "S",
+#     "TRY",
+#     "UP",
+#     "W",
+# ]
 
 [tool.ruff.mccabe]
 max-complexity = 10
@@ -108,3 +108,11 @@ classmethod-decorators = ["classmethod", "validator", "root_validator"]
 
 [tool.ruff.per-file-ignores]
 "*/__init__.py" = ["F401"]
+"datadoc/tests/*" = [
+    # asserts are encouraged in pytest
+    "S101",
+    # return annotations don't add value for test functions
+    "ANN201",
+    # docstrings are overkill for test functions
+    "D103",
+]

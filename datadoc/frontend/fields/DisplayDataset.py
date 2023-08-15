@@ -1,6 +1,5 @@
 import logging
 from enum import Enum
-from typing import Dict, List
 
 from dash import dcc
 from datadoc_model import Model
@@ -18,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 class DatasetIdentifiers(str, Enum):
-    """As defined here: https://statistics-norway.atlassian.net/l/c/aoSfEWJU"""
+    """As defined here: https://statistics-norway.atlassian.net/l/c/aoSfEWJU."""
 
     SHORT_NAME = "short_name"
     ASSESSMENT = "assessment"
@@ -46,7 +45,7 @@ class DatasetIdentifiers(str, Enum):
     CONTAINS_DATA_UNTIL = "contains_data_until"
 
 
-DISPLAY_DATASET: Dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
+DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
     DatasetIdentifiers.SHORT_NAME: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.SHORT_NAME.value,
         display_name="Kortnavn",
@@ -236,7 +235,7 @@ NON_EDITABLE_DATASET_METADATA = [m for m in DISPLAY_DATASET.values() if not m.ed
 
 
 # The order of this list MUST match the order of display components, as defined in DatasetTab.py
-DISPLAYED_DATASET_METADATA: List[DisplayDatasetMetadata] = (
+DISPLAYED_DATASET_METADATA: list[DisplayDatasetMetadata] = (
     OBLIGATORY_EDITABLE_DATASET_METADATA
     + OPTIONAL_DATASET_METADATA
     + NON_EDITABLE_DATASET_METADATA

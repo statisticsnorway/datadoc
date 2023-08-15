@@ -1,9 +1,9 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 from dash import ALL, Dash, Input, Output, State, ctx
 from datadoc_model.Enums import SupportedLanguages
 
-import datadoc.state as state
+from datadoc import state
 from datadoc.frontend.callbacks.dataset import (
     accept_dataset_metadata_input,
     change_language_dataset_metadata,
@@ -29,7 +29,7 @@ def register_callbacks(app: Dash) -> None:
         Input({"type": DATASET_METADATA_INPUT, "id": ALL}, "value"),
         Input("variables-table", "data"),
     )
-    def callback_update_progress(value, data) -> Tuple[int, str]:
+    def callback_update_progress(value, data) -> tuple[int, str]:
         completion = state.metadata.percent_complete
         return completion, f"{completion}%"
 
@@ -73,10 +73,11 @@ def register_callbacks(app: Dash) -> None:
         Input({"type": DATASET_METADATA_INPUT, "id": ALL}, "value"),
         prevent_initial_call=True,
     )
-    def callback_accept_dataset_metadata_input(value: Any) -> Tuple[bool, str]:
+    def callback_accept_dataset_metadata_input(value: Any) -> tuple[bool, str]:
         # Get the ID of the input that changed. This MUST match the attribute name defined in DataDocDataSet
         return accept_dataset_metadata_input(
-            ctx.triggered[0]["value"], ctx.triggered_id["id"]
+            ctx.triggered[0]["value"],
+            ctx.triggered_id["id"],
         )
 
     @app.callback(
@@ -90,8 +91,11 @@ def register_callbacks(app: Dash) -> None:
         prevent_initial_call=True,
     )
     def callback_variable_table(
-        active_cell: Dict, data: List[Dict], data_previous: List[Dict], language: str
-    ) -> Tuple[List[Dict], bool, str]:
+        active_cell: dict,
+        data: list[dict],
+        data_previous: list[dict],
+        language: str,
+    ) -> tuple[list[dict], bool, str]:
         if ctx.triggered_id == "language-dropdown":
             return update_variable_table_language(data, SupportedLanguages(language))
         else:

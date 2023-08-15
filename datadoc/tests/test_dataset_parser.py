@@ -14,7 +14,12 @@ from datadoc.backend.DatasetParser import (
     KNOWN_STRING_TYPES,
     DatasetParser,
 )
-from .utils import TEST_PARQUET_FILEPATH, TEST_SAS7BDAT_FILEPATH, TEST_PARQUET_GZIP_FILEPATH
+
+from .utils import (
+    TEST_PARQUET_FILEPATH,
+    TEST_PARQUET_GZIP_FILEPATH,
+    TEST_SAS7BDAT_FILEPATH,
+)
 
 
 def test_use_abstract_class_directly():
@@ -24,9 +29,10 @@ def test_use_abstract_class_directly():
 
 @pytest.mark.parametrize(
     "local_parser",
-    [DatasetParser.for_file(TEST_PARQUET_FILEPATH),
-     DatasetParser.for_file(TEST_PARQUET_GZIP_FILEPATH)
-     ],
+    [
+        DatasetParser.for_file(TEST_PARQUET_FILEPATH),
+        DatasetParser.for_file(TEST_PARQUET_GZIP_FILEPATH),
+    ],
 )
 def test_get_fields_parquet(local_parser):
     expected_fields = [
@@ -53,7 +59,9 @@ def test_get_fields_sas7bdat():
             data_type=Datatype.STRING,
         ),
         DataDocVariable(
-            short_name="tall", name=LanguageStrings(nb="Tall"), data_type=Datatype.FLOAT
+            short_name="tall",
+            name=LanguageStrings(nb="Tall"),
+            data_type=Datatype.FLOAT,
         ),
         DataDocVariable(
             short_name="dato",

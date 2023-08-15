@@ -1,5 +1,6 @@
 import dash_bootstrap_components as dbc
 from dash import html
+
 from datadoc.frontend.Builders import make_ssb_warning_alert
 
 dataset_validation_error = make_ssb_warning_alert(
@@ -33,7 +34,7 @@ success_toast = dbc.Alert(
                                     className="bi bi-check-circle",
                                 ),
                             ],
-                        )
+                        ),
                     ],
                 ),
                 dbc.Col(
@@ -41,11 +42,11 @@ success_toast = dbc.Alert(
                         html.H5(
                             "Lagret metadata",
                         ),
-                    ]
+                    ],
                 ),
             ],
             align="center",
-        )
+        ),
     ],
     color="success",
 )

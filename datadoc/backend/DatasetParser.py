@@ -1,7 +1,7 @@
 import pathlib
 import re
 from abc import ABC, abstractmethod
-from typing import List, Optional, TypeVar
+from typing import TypeVar
 
 import pandas as pd
 import pyarrow.parquet as pq
@@ -70,12 +70,12 @@ KNOWN_BOOLEAN_TYPES = ("bool", "bool_", "boolean")
 
 
 class DatasetParser(ABC):
-    def __init__(self, dataset: str):
+    def __init__(self, dataset: str) -> None:
         self.dataset: StorageAdapter = StorageAdapter.for_path(dataset)
 
     @staticmethod
     def for_file(dataset: str) -> TDatasetParser:
-        """Factory method to return the correct subclass based on the given dataset file"""
+        """Factory method to return the correct subclass based on the given dataset file."""
         supported_file_types = {
             "parquet": DatasetParserParquet,
             "sas7bdat": DatasetParserSas7Bdat,
@@ -85,25 +85,27 @@ class DatasetParser(ABC):
         try:
             file_type = str(pathlib.Path(dataset)).lower().split(".")[-1]
             # Gzipped parquet files can be read with DatasetParserParquet
-            match = re.search(r'(.parquet.gzip)', str(pathlib.Path(dataset)).lower())
+            match = re.search(r"(.parquet.gzip)", str(pathlib.Path(dataset)).lower())
             file_type = "parquet.gzip" if match else file_type
             # Extract the appropriate reader class from the SUPPORTED_FILE_TYPES dict and return an instance of it
             reader = supported_file_types[file_type](dataset)
         except IndexError as e:
             # Thrown when just one element is returned from split, meaning there is no file extension supplied
+            msg = f"Could not recognise file type for provided {dataset = }. Supported file types are: {', '.join(supported_file_types.keys())}"
             raise FileNotFoundError(
-                f"Could not recognise file type for provided {dataset = }. Supported file types are: {', '.join(supported_file_types.keys())}"
+                msg,
             ) from e
         except KeyError as e:
             # In this case the file type is not supported, so we throw a helpful exception
+            msg = f"{file_type = } is not supported. Please open one of the following supported files types: {', '.join(supported_file_types.keys())} or contact the maintainers to request support."
             raise NotImplementedError(
-                f"{file_type = } is not supported. Please open one of the following supported files types: {', '.join(supported_file_types.keys())} or contact the maintainers to request support."
+                msg,
             ) from e
         else:
             return reader
 
     @staticmethod
-    def transform_data_type(data_type: str) -> Optional[Datatype]:
+    def transform_data_type(data_type: str) -> Datatype | None:
         v_data_type = data_type.lower()
         if v_data_type in KNOWN_INTEGER_TYPES:
             return Datatype.INTEGER
@@ -121,15 +123,15 @@ class DatasetParser(ABC):
             return None
 
     @abstractmethod
-    def get_fields(self) -> List[DataDocVariable]:
-        """Abstract method, must be implemented by subclasses"""
+    def get_fields(self) -> list[DataDocVariable]:
+        """Abstract method, must be implemented by subclasses."""
 
 
 class DatasetParserParquet(DatasetParser):
-    def __init__(self, dataset: str):
+    def __init__(self, dataset: str) -> None:
         super().__init__(dataset)
 
-    def get_fields(self) -> List[DataDocVariable]:
+    def get_fields(self) -> list[DataDocVariable]:
         fields = []
         with self.dataset.open(mode="rb") as f:
             data_table = pq.read_table(f)
@@ -138,16 +140,16 @@ class DatasetParserParquet(DatasetParser):
                     DataDocVariable(
                         short_name=data_field.name,
                         data_type=self.transform_data_type(str(data_field.type)),
-                    )
+                    ),
                 )
         return fields
 
 
 class DatasetParserSas7Bdat(DatasetParser):
-    def __init__(self, dataset: str):
+    def __init__(self, dataset: str) -> None:
         super().__init__(dataset)
 
-    def get_fields(self) -> List[DataDocVariable]:
+    def get_fields(self) -> list[DataDocVariable]:
         fields = []
         with self.dataset.open(mode="rb") as f:
             # Use an iterator to avoid reading in the entire dataset
@@ -164,11 +166,15 @@ class DatasetParserSas7Bdat(DatasetParser):
                     # Assume labels are defined in the default language (NORSK_BOKMÅL)
                     # If this is not correct, the user may fix it via the UI
                     name=LanguageStrings(
-                        **{state.current_metadata_language: sas_reader.columns[i].label}
+                        **{
+                            state.current_metadata_language: sas_reader.columns[
+                                i
+                            ].label,
+                        },
                     ),
                     # Access the python type for the value and transform it to a DataDoc Data type
                     data_type=self.transform_data_type(type(v).__name__.lower()),
-                )
+                ),
             )
 
         return fields

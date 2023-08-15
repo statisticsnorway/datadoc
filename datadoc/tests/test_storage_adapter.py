@@ -2,9 +2,8 @@ import pathlib
 
 import pytest
 
+from datadoc.backend.StorageAdapter import GCSObject, LocalFile, StorageAdapter
 from datadoc.tests.utils import TEST_BUCKET_PARQUET_FILEPATH, TEST_PARQUET_FILEPATH
-
-from ..backend.StorageAdapter import GCSObject, LocalFile, StorageAdapter
 
 
 @pytest.mark.parametrize(
@@ -53,7 +52,7 @@ def test_parent(file: StorageAdapter, expected_parent: str, request):
         ),
         (
             "bucket_object_parquet_file",
-            "/".join([TEST_BUCKET_PARQUET_FILEPATH, "extra"]),
+            f"{TEST_BUCKET_PARQUET_FILEPATH}/extra",
         ),
     ],
 )
@@ -65,7 +64,8 @@ def test_joinpath(known_file: StorageAdapter, expected: str, request):
 
 
 @pytest.mark.parametrize(
-    "known_file", ["local_parquet_file", "bucket_object_parquet_file"]
+    "known_file",
+    ["local_parquet_file", "bucket_object_parquet_file"],
 )
 def test_exists(known_file: StorageAdapter, request):
     # Ugly pytest magic to get the actual fixture out

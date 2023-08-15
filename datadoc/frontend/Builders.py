@@ -17,7 +17,9 @@ def make_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:
 
 
 def make_ssb_warning_alert(
-    alert_identifier: str, title: str, content_identifier: str
+    alert_identifier: str,
+    title: str,
+    content_identifier: str,
 ) -> dbc.Alert:
     return dbc.Alert(
         id=alert_identifier,
@@ -38,7 +40,7 @@ def make_ssb_warning_alert(
                                         className="bi bi-exclamation-triangle",
                                     ),
                                 ],
-                            )
+                            ),
                         ],
                     ),
                     dbc.Col(
@@ -49,10 +51,10 @@ def make_ssb_warning_alert(
                             dcc.Markdown(
                                 id=content_identifier,
                             ),
-                        ]
+                        ],
                     ),
                 ],
-            )
+            ),
         ],
         color="danger",
     )

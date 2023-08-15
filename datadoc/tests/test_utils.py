@@ -1,7 +1,8 @@
-from datadoc.tests.test_callbacks import BOKMÅL_NAME, LANGUAGE_OBJECT
-from datadoc.utils import calculate_percentage, get_display_values, running_in_notebook
 from datadoc_model.Enums import SupportedLanguages
 from datadoc_model.Model import DataDocVariable
+
+from datadoc.tests.test_callbacks import BOKMÅL_NAME, LANGUAGE_OBJECT
+from datadoc.utils import calculate_percentage, get_display_values, running_in_notebook
 
 
 def test_not_running_in_notebook():

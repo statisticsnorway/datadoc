@@ -4,11 +4,11 @@ from pprint import pprint
 import pytest
 
 from datadoc.backend.DataDocMetadata import DataDocMetadata
-
-from ..backend.ModelBackwardsCompatibility import (
+from datadoc.backend.ModelBackwardsCompatibility import (
     UnknownModelVersionError,
     upgrade_metadata,
 )
+
 from .utils import TEST_COMPATIBILITY_DIRECTORY
 
 BACKWARDS_COMPATIBLE_VERSION_DIRECTORIES = [
@@ -39,7 +39,9 @@ def test_existing_metadata_unknown_model_version():
     ids=BACKWARDS_COMPATIBLE_VERSION_NAMES,
 )
 def test_backwards_compatibility(
-    existing_metadata_file, metadata: DataDocMetadata, remove_document_file
+    existing_metadata_file,
+    metadata: DataDocMetadata,
+    remove_document_file,
 ):
     # Parameterise with all known backwards compatible versions
     with open(existing_metadata_file) as f:
@@ -54,6 +56,7 @@ def test_backwards_compatibility(
 
     missing_values = [v for v in in_file_values if v not in read_in_values]
     if missing_values:
+        msg = f"Some values were not successfully read in! {missing_values = }"
         raise AssertionError(
-            f"Some values were not successfully read in! {missing_values = }"
+            msg,
         )

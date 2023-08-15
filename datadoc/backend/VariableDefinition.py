@@ -5,7 +5,7 @@ import requests
 
 class VariableDefinition:
     # TODO: Denne skal gå mot ny VarDef, men bruker foreløpig gamle VarDok!
-    def __init__(self, vardef_id):
+    def __init__(self, vardef_id) -> None:
         self.vardef_id = vardef_id
         self.vardef_uri = (
             "https://www.ssb.no/a/xml/metadata/conceptvariable/vardok/"

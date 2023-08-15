@@ -5,7 +5,7 @@ import pytest
 from datadoc_model.Enums import DatasetState, Datatype, SupportedLanguages
 from datadoc_model.Model import DataDocDataSet, DataDocVariable, LanguageStrings
 
-import datadoc.state as state
+from datadoc import state
 from datadoc.backend.DataDocMetadata import DataDocMetadata
 from datadoc.frontend.callbacks.dataset import (
     accept_dataset_metadata_input,
@@ -55,7 +55,7 @@ NYNORSK_NAME = "Nynorsk Name"
 LANGUAGE_OBJECT = LanguageStrings(en=ENGLISH_NAME, nb=BOKMÅL_NAME)
 
 
-@pytest.fixture
+@pytest.fixture()
 def active_cell():
     return {"row": 1, "column": 1, "column_id": "short_name", "row_id": None}
 
@@ -146,7 +146,9 @@ def test_find_existing_language_string_no_existing_strings():
     dataset_metadata = DataDocDataSet()
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     language_strings = find_existing_language_string(
-        dataset_metadata, BOKMÅL_NAME, "name"
+        dataset_metadata,
+        BOKMÅL_NAME,
+        "name",
     )
     assert language_strings == LanguageStrings(nb=BOKMÅL_NAME)
 
@@ -156,10 +158,14 @@ def test_find_existing_language_string_pre_existing_strings():
     dataset_metadata.name = LANGUAGE_OBJECT
     state.current_metadata_language = SupportedLanguages.NORSK_NYNORSK
     language_strings = find_existing_language_string(
-        dataset_metadata, NYNORSK_NAME, "name"
+        dataset_metadata,
+        NYNORSK_NAME,
+        "name",
     )
     assert language_strings == LanguageStrings(
-        nb=BOKMÅL_NAME, en=ENGLISH_NAME, nn=NYNORSK_NAME
+        nb=BOKMÅL_NAME,
+        en=ENGLISH_NAME,
+        nn=NYNORSK_NAME,
     )
 
 
@@ -171,11 +177,11 @@ def test_update_variable_table_language():
         [v.dict() for v in state.metadata.meta.variables],
         SupportedLanguages.NORSK_BOKMÅL,
     )
-    name = [
+    name = next(
         d[VariableIdentifiers.NAME.value]
         for d in output[0]
         if d[VariableIdentifiers.SHORT_NAME.value] == test_variable
-    ][0]
+    )
     assert name == BOKMÅL_NAME
 
 
@@ -190,14 +196,14 @@ def test_nonetype_value_for_language_string(active_cell):
 
 def test_update_variable_table_dropdown_options_for_language():
     options = update_variable_table_dropdown_options_for_language(
-        SupportedLanguages.NORSK_BOKMÅL
+        SupportedLanguages.NORSK_BOKMÅL,
     )
-    assert all(k in DataDocVariable.__fields__.keys() for k in options.keys())
+    assert all(k in DataDocVariable.__fields__ for k in options)
     assert all(list(v.keys()) == ["options"] for v in options.values())
     assert all(
         list(d.keys()) == ["label", "value"]
         for v in options.values()
-        for d in list(v.values())[0]
+        for d in next(iter(v.values()))
     )
     assert [d["label"] for d in options["data_type"]["options"]] == [
         i.get_value_for_language(SupportedLanguages.NORSK_BOKMÅL) for i in Datatype
