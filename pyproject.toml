@@ -70,6 +70,7 @@ bump-patch-version = "bump2version patch"
 bump-minor-version = "bump2version minor"
 bump-major-version = "bump2version major"
 jupyter = "jupyter lab"
+install-kernel = "python -m ipykernel install --user --name datadoc"
 datadoc = "python datadoc/app.py"
 
 [tool.isort]
