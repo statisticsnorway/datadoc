@@ -1,7 +1,14 @@
+"""Abstractions for dataset file formats.
+
+Handles reading in the data and transforming data types to generic metadata types.
+"""
+
+from __future__ import annotations
+
 import pathlib
 import re
+import typing as t
 from abc import ABC, abstractmethod
-from typing import TypeVar
 
 import pandas as pd
 import pyarrow.parquet as pq
@@ -12,7 +19,7 @@ from datadoc_model.Model import DataDocVariable
 from datadoc import state
 from datadoc.backend.StorageAdapter import StorageAdapter
 
-TDatasetParser = TypeVar("TDatasetParser", bound="DatasetParser")
+TDatasetParser = t.TypeVar("TDatasetParser", bound="DatasetParser")
 
 KNOWN_INTEGER_TYPES = (
     "int",
@@ -69,13 +76,36 @@ KNOWN_DATETIME_TYPES = (
 KNOWN_BOOLEAN_TYPES = ("bool", "bool_", "boolean")
 
 
+TYPE_CORRESPONDENCE: list[tuple[list[str], Datatype]] = [
+    (KNOWN_INTEGER_TYPES, Datatype.INTEGER),
+    (KNOWN_FLOAT_TYPES, Datatype.FLOAT),
+    (KNOWN_STRING_TYPES, Datatype.STRING),
+    (KNOWN_DATETIME_TYPES, Datatype.DATETIME),
+    (KNOWN_BOOLEAN_TYPES, Datatype.BOOLEAN),
+]
+TYPE_MAP: dict[str:Datatype] = {}
+for concrete_type, abstract_type in TYPE_CORRESPONDENCE:
+    TYPE_MAP.update({c: abstract_type for c in concrete_type})
+
+
 class DatasetParser(ABC):
-    def __init__(self, dataset: str) -> None:
+    """Abstract Base Class for all Dataset parsers.
+
+    Implements:
+    - A static factory method to get the correct implementation for each file extension.
+    - A static method for data type conversion.
+
+    Requires implementation by subclasses:
+    - A method to extract variables (columns) from the dataset, so they may be documented.
+    """
+
+    def __init__(self: t.Self @ DatasetParser, dataset: str) -> None:
+        """Initialize for a given dataset."""
         self.dataset: StorageAdapter = StorageAdapter.for_path(dataset)
 
     @staticmethod
     def for_file(dataset: str) -> TDatasetParser:
-        """Factory method to return the correct subclass based on the given dataset file."""
+        """Return the correct subclass based on the given dataset file."""
         supported_file_types = {
             "parquet": DatasetParserParquet,
             "sas7bdat": DatasetParserSas7Bdat,
@@ -106,50 +136,52 @@ class DatasetParser(ABC):
 
     @staticmethod
     def transform_data_type(data_type: str) -> Datatype | None:
-        v_data_type = data_type.lower()
-        if v_data_type in KNOWN_INTEGER_TYPES:
-            return Datatype.INTEGER
-        elif v_data_type in KNOWN_FLOAT_TYPES:
-            return Datatype.FLOAT
-        elif v_data_type in KNOWN_STRING_TYPES:
-            return Datatype.STRING
-        elif v_data_type in KNOWN_DATETIME_TYPES:
-            return Datatype.DATETIME
-        elif v_data_type in KNOWN_BOOLEAN_TYPES:
-            return Datatype.BOOLEAN
-        else:
-            # Unknown data type. There's no need to throw an exception here,
-            # the user can still define the data type manually in the GUI
-            return None
+        """Transform a concrete data type to an abstract data type.
+
+        In statistical metadata, one is not interested in how the data is
+        technically stored, but in the meaning of the data type. Because of
+        this, we transform known data types to their abstract metadata
+        representations.
+
+        If we encounter a data type we don't know, we just ignore it and let
+        the user handle it in the GUI.
+        """
+        return TYPE_MAP.get(data_type.lower(), None)
 
     @abstractmethod
-    def get_fields(self) -> list[DataDocVariable]:
+    def get_fields(self: t.Self @ DatasetParser) -> list[DataDocVariable]:
         """Abstract method, must be implemented by subclasses."""
 
 
 class DatasetParserParquet(DatasetParser):
-    def __init__(self, dataset: str) -> None:
+    """Concrete implementation for parsing parquet files."""
+
+    def __init__(self: t.Self @ DatasetParserParquet, dataset: str) -> None:
+        """Use the super init method."""
         super().__init__(dataset)
 
-    def get_fields(self) -> list[DataDocVariable]:
-        fields = []
+    def get_fields(self: t.Self @ DatasetParserParquet) -> list[DataDocVariable]:
+        """Extract the fields from this dataset."""
         with self.dataset.open(mode="rb") as f:
             data_table = pq.read_table(f)
-            for data_field in data_table.schema:
-                fields.append(
-                    DataDocVariable(
-                        short_name=data_field.name,
-                        data_type=self.transform_data_type(str(data_field.type)),
-                    ),
-                )
-        return fields
+        return [
+            DataDocVariable(
+                short_name=data_field.name,
+                data_type=self.transform_data_type(str(data_field.type)),
+            )
+            for data_field in data_table.schema
+        ]
 
 
 class DatasetParserSas7Bdat(DatasetParser):
-    def __init__(self, dataset: str) -> None:
+    """Concrete implementation for parsing SAS7BDAT files."""
+
+    def __init__(self: t.Self @ DatasetParserSas7Bdat, dataset: str) -> None:
+        """Use the super init method."""
         super().__init__(dataset)
 
-    def get_fields(self) -> list[DataDocVariable]:
+    def get_fields(self: t.Self @ DatasetParserSas7Bdat) -> list[DataDocVariable]:
+        """Extract the fields from this dataset."""
         fields = []
         with self.dataset.open(mode="rb") as f:
             # Use an iterator to avoid reading in the entire dataset
@@ -159,7 +191,7 @@ class DatasetParserSas7Bdat(DatasetParser):
             row = next(sas_reader)
 
         # Get all the values from the row and loop through them
-        for i, v in enumerate(row.values.tolist()[0]):
+        for i, v in enumerate(row.to_numpy().tolist()[0]):
             fields.append(
                 DataDocVariable(
                     short_name=sas_reader.columns[i].name,
