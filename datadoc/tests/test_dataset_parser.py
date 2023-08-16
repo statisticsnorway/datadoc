@@ -5,7 +5,7 @@ from datadoc_model.Enums import Datatype, SupportedLanguages
 from datadoc_model.Model import DataDocVariable, LanguageStrings
 
 from datadoc import state
-from datadoc.backend.DatasetParser import (
+from datadoc.backend.dataset_parser import (
     KNOWN_BOOLEAN_TYPES,
     KNOWN_DATETIME_TYPES,
     KNOWN_FLOAT_TYPES,

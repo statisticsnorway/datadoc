@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 from datadoc_model import Model
 from datadoc_model.Enums import DatasetState, SupportedLanguages
 
-from datadoc.backend.DatasetParser import DatasetParser
+from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.ModelBackwardsCompatibility import upgrade_metadata
 from datadoc.backend.StorageAdapter import StorageAdapter
 from datadoc.frontend.fields import DisplayDataset, DisplayVariables
