@@ -1,29 +1,35 @@
+"""Top-level entrypoint, configuration and layout for the datadoc app.
+
+Members of this module should not be imported into any sub-modules, this will cause circular imports.
+"""
+from __future__ import annotations
+
 import logging
-import os
+from pathlib import Path
 
 import dash_bootstrap_components as dbc
 from dash import Dash
 from datadoc_model.Enums import SupportedLanguages
 from flask_healthz import healthz
 
-import datadoc.state as state
-from datadoc.backend.DataDocMetadata import DataDocMetadata
+from datadoc import state
+from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.frontend.callbacks.register_callbacks import register_callbacks
-from datadoc.frontend.components.Alerts import (
+from datadoc.frontend.components.alerts import (
     dataset_validation_error,
     opened_dataset_error,
     opened_dataset_success,
     saved_metadata_success,
     variables_validation_error,
 )
-from datadoc.frontend.components.DatasetTab import get_dataset_tab
-from datadoc.frontend.components.HeaderBars import (
-    get_controls_bar,
-    get_language_dropdown,
+from datadoc.frontend.components.control_bars import (
+    build_controls_bar,
+    build_language_dropdown,
     header,
     progress_bar,
 )
-from datadoc.frontend.components.VariablesTab import get_variables_tab
+from datadoc.frontend.components.dataset_tab import build_dataset_tab
+from datadoc.frontend.components.variables_tab import build_variables_tab
 from datadoc.utils import get_app_version, pick_random_port, running_in_notebook
 
 logger = logging.getLogger(__name__)
@@ -32,10 +38,11 @@ NAME = "Datadoc"
 
 
 def build_app() -> Dash:
+    """Instantiate the Dash app object, define the layout, register callbacks."""
     app = Dash(
         name=NAME,
         title=NAME,
-        assets_folder=f"{os.path.dirname(__file__)}/assets",
+        assets_folder=f"{Path(__file__).parent}/assets",
     )
 
     app.layout = dbc.Container(
@@ -43,7 +50,7 @@ def build_app() -> Dash:
         children=[
             header,
             progress_bar,
-            get_controls_bar(),
+            build_controls_bar(),
             variables_validation_error,
             dataset_validation_error,
             opened_dataset_error,
@@ -56,13 +63,13 @@ def build_app() -> Dash:
                         id="tabs",
                         class_name="ssb-tabs",
                         children=[
-                            get_dataset_tab(),
-                            get_variables_tab(),
+                            build_dataset_tab(),
+                            build_variables_tab(),
                         ],
                     ),
                 ],
             ),
-            get_language_dropdown(),
+            build_language_dropdown(),
         ],
     )
 
@@ -71,9 +78,10 @@ def build_app() -> Dash:
     return app
 
 
-def get_app(dataset_path: str = None) -> Dash:
+def get_app(dataset_path: str | None = None) -> Dash:
+    """Centralize all the ugliness around initializing the app."""
     logging.basicConfig(level=logging.INFO, force=True)
-    logger.info(f"Datadoc version v{get_app_version()}")
+    logger.info("Datadoc version v%s", get_app_version())
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     state.metadata = DataDocMetadata(dataset_path)
     app = build_app()
@@ -88,15 +96,16 @@ def get_app(dataset_path: str = None) -> Dash:
     return app
 
 
-def main(dataset_path: str = None):
+def main(dataset_path: str | None = None) -> None:
+    """Entrypoint when running as a script."""
     logging.basicConfig(level=logging.DEBUG, force=True)
-    logger.info(f"Starting app with {dataset_path = }")
+    logger.info("Starting app with dataset_path = %s", dataset_path)
     app = get_app(dataset_path)
     if running_in_notebook():
         logger.info("Running in notebook")
         port = pick_random_port()
         app.run(jupyter_height=1000, port=port)
-        logger.info(f"Server running on port {port}")
+        logger.info("Server running on port %s", port)
     else:
         # Assume running in server mode is better (largely for development purposes)
         logging.basicConfig(level=logging.DEBUG, force=True)

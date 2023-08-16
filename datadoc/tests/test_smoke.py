@@ -1,6 +1,8 @@
-import datadoc.state as state
+"""Smoke tests."""
+
+from datadoc import state
 from datadoc.app import build_app
-from datadoc.backend.DataDocMetadata import DataDocMetadata
+from datadoc.backend.datadoc_metadata import DataDocMetadata
 
 from .utils import TEST_PARQUET_FILEPATH
 

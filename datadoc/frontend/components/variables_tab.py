@@ -1,17 +1,22 @@
+"""Components and layout for the Variables metadata tab."""
+
+from __future__ import annotations
+
 import dash_bootstrap_components as dbc
 from dash import dash_table, html
 
-import datadoc.state as state
-from datadoc.frontend.components.Builders import make_ssb_styled_tab
-from datadoc.frontend.fields.DisplayVariables import (
+from datadoc import state
+from datadoc.frontend.components.builders import build_ssb_styled_tab
+from datadoc.frontend.fields.display_variables import (
     DISPLAY_VARIABLES,
     VariableIdentifiers,
 )
 from datadoc.utils import get_display_values
 
 
-def get_variables_tab() -> dbc.Tab:
-    return make_ssb_styled_tab(
+def build_variables_tab() -> dbc.Tab:
+    """Build the Variables metadata tab."""
+    return build_ssb_styled_tab(
         "Variabler",
         dbc.Container(
             children=[
@@ -35,7 +40,7 @@ def get_variables_tab() -> dbc.Tab:
                             }
                             for variable in DISPLAY_VARIABLES.values()
                             if variable.identifier
-                            != VariableIdentifiers.IDENTIFIER.value  # TODO: Remove this from the model, for now we hide it
+                            != VariableIdentifiers.IDENTIFIER.value  # Should be removed from the model, for now we hide it
                         ],
                         # Non-obligatory variables are hidden by default
                         hidden_columns=[

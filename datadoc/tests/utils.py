@@ -1,3 +1,5 @@
+"""Utility values and functions for tests."""
+
 from pathlib import Path
 
 TEST_BUCKET_PARQUET_FILEPATH = "gs://ssb-staging-dapla-felles-data-delt/datadoc/klargjorte_data/person_data_v1.parquet"

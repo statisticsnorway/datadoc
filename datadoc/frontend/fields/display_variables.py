@@ -1,13 +1,17 @@
+"""Functionality for displaying variables metadata."""
+
+from __future__ import annotations
+
 from enum import Enum
 
 from datadoc_model import Model
 from datadoc_model.LanguageStringsEnum import LanguageStringsEnum
 
-from datadoc.frontend.fields.DisplayBase import DisplayVariablesMetadata
+from datadoc.frontend.fields.display_base import DisplayVariablesMetadata
 
 
 class VariableIdentifiers(str, Enum):
-    """As defined here: https://statistics-norway.atlassian.net/wiki/spaces/MPD/pages/3042869256/Variabelforekomst"""
+    """As defined here: https://statistics-norway.atlassian.net/wiki/spaces/MPD/pages/3042869256/Variabelforekomst."""
 
     SHORT_NAME = "short_name"
     NAME = "name"

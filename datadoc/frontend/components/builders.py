@@ -1,3 +1,5 @@
+"""Factory functions for different components are defined here."""
+
 import re
 from dataclasses import dataclass
 from enum import Enum, auto
@@ -7,17 +9,22 @@ from dash import html
 
 
 class AlertTypes(Enum):
+    """Types of alerts."""
+
     SUCCESS = auto()
     WARNING = auto()
 
 
 @dataclass
 class AlertType:
+    """Attributes of a concrete alert type."""
+
     alert_class_name: str
     color: str
 
     @staticmethod
     def get_type(alert_type: AlertTypes) -> "AlertType":
+        """Get a concrete alert type based on the given enum values."""
         return ALERT_TYPES[alert_type]
 
 
@@ -33,7 +40,8 @@ ALERT_TYPES = {
 }
 
 
-def make_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:
+def build_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:
+    """Make a Dash Tab according to SSBs Design System."""
     return dbc.Tab(
         label=label,
         # Replace all whitespace with dashes
@@ -45,9 +53,13 @@ def make_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:
     )
 
 
-def make_ssb_alert(
-    alert_type: AlertTypes, alert_identifier: str, title: str, content_identifier: str
+def build_ssb_alert(
+    alert_type: AlertTypes,
+    alert_identifier: str,
+    title: str,
+    content_identifier: str,
 ) -> dbc.Alert:
+    """Make a Dash Alert according to SSBs Design System."""
     alert = AlertType.get_type(alert_type)
     return dbc.Alert(
         id=alert_identifier,
@@ -67,7 +79,8 @@ def make_ssb_alert(
     )
 
 
-def make_ssb_button(text: str, icon_class: str, button_id: str) -> dbc.Button:
+def build_ssb_button(text: str, icon_class: str, button_id: str) -> dbc.Button:
+    """Make a Dash Button according to SSBs Design System."""
     return dbc.Button(
         [
             html.I(

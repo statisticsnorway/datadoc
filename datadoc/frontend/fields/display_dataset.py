@@ -1,15 +1,18 @@
+"""Functionality for displaying dataset metadata."""
+
+from __future__ import annotations
+
 import logging
 from enum import Enum
-from typing import Dict, List
 
 from dash import dcc
 from datadoc_model import Model
 
-from datadoc.frontend.fields.DisplayBase import (
+from datadoc.frontend.fields.display_base import (
     DROPDOWN_KWARGS,
     NUMBER_KWARGS,
     DisplayDatasetMetadata,
-    get_list_of_strings,
+    get_comma_separated_string,
     get_metadata_and_stringify,
     get_multi_language_metadata,
 )
@@ -18,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class DatasetIdentifiers(str, Enum):
-    """As defined here: https://statistics-norway.atlassian.net/l/c/aoSfEWJU"""
+    """As defined here: https://statistics-norway.atlassian.net/l/c/aoSfEWJU."""
 
     SHORT_NAME = "short_name"
     ASSESSMENT = "assessment"
@@ -46,7 +49,7 @@ class DatasetIdentifiers(str, Enum):
     CONTAINS_DATA_UNTIL = "contains_data_until"
 
 
-DISPLAY_DATASET: Dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
+DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
     DatasetIdentifiers.SHORT_NAME: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.SHORT_NAME.value,
         display_name="Kortnavn",
@@ -141,7 +144,7 @@ DISPLAY_DATASET: Dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         identifier=DatasetIdentifiers.KEYWORD.value,
         display_name="Nøkkelord",
         description="En kommaseparert liste med søkbare nøkkelord som kan bidra til utvikling av effektive filtrerings- og søketjeneste.",
-        value_getter=get_list_of_strings,
+        value_getter=get_comma_separated_string,
     ),
     DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION.value,
@@ -236,7 +239,7 @@ NON_EDITABLE_DATASET_METADATA = [m for m in DISPLAY_DATASET.values() if not m.ed
 
 
 # The order of this list MUST match the order of display components, as defined in DatasetTab.py
-DISPLAYED_DATASET_METADATA: List[DisplayDatasetMetadata] = (
+DISPLAYED_DATASET_METADATA: list[DisplayDatasetMetadata] = (
     OBLIGATORY_EDITABLE_DATASET_METADATA
     + OPTIONAL_DATASET_METADATA
     + NON_EDITABLE_DATASET_METADATA
