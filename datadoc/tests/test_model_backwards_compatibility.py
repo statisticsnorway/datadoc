@@ -40,7 +40,7 @@ def test_existing_metadata_unknown_model_version():
     BACKWARDS_COMPATIBLE_VERSION_DIRECTORIES,
     ids=BACKWARDS_COMPATIBLE_VERSION_NAMES,
 )
-@pytest.mark.usefixtures("_remove_document_file")
+@pytest.mark.usefixtures("remove_document_file")
 def test_backwards_compatibility(
     existing_metadata_file: str,
     metadata: DataDocMetadata,

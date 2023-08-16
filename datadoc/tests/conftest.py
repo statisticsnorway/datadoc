@@ -1,7 +1,8 @@
 """Shared fixtures and configuration."""
 
 import shutil
-from datetime import datetime
+import traceback
+from datetime import datetime, timezone
 from pathlib import Path
 from unittest import mock
 
@@ -26,13 +27,13 @@ from .utils import (
 
 @pytest.fixture()
 def dummy_timestamp() -> datetime:
-    return datetime(2022, 1, 1, tzinfo=datetime.timezone.utc)
+    return datetime(2022, 1, 1, tzinfo=timezone.utc)
 
 
 @pytest.fixture()
 def _mock_timestamp(mocker: MockerFixture, dummy_timestamp: datetime) -> None:
     mocker.patch(
-        "datadoc.backend.DataDocMetadata.get_timestamp_now",
+        "datadoc.backend.datadoc_metadata.get_timestamp_now",
         return_value=dummy_timestamp,
     )
 
@@ -46,7 +47,11 @@ def metadata(_mock_timestamp: None) -> DataDocMetadata:
 def remove_document_file() -> None:
     yield None  # Dummy value, No need to return anything in particular here
     full_path = TEST_RESOURCES_DIRECTORY / TEST_EXISTING_METADATA_FILE_NAME
-    full_path.unlink()
+    try:
+        full_path.unlink()
+    except FileNotFoundError as e:
+        print("File not deleted on teardown, exception caught:")  # noqa: T201
+        traceback.print_exception(type(e), e)
 
 
 @pytest.fixture()

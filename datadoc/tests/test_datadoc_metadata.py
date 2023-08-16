@@ -62,7 +62,7 @@ def test_get_dataset_state_none(metadata: DataDocMetadata):
     assert metadata.get_dataset_state(None) is None
 
 
-@pytest.mark.usefixtures("existing_metadata_file", "_remove_document_file")
+@pytest.mark.usefixtures("existing_metadata_file", "remove_document_file")
 def test_existing_metadata_file(
     metadata: DataDocMetadata,
 ):
@@ -92,7 +92,7 @@ def test_get_dataset_version_unknown(metadata: DataDocMetadata):
     assert metadata.get_dataset_version("person_data.parquet") is None
 
 
-@pytest.mark.usefixtures("_remove_document_file")
+@pytest.mark.usefixtures("remove_document_file")
 def test_write_metadata_document(
     dummy_timestamp: datetime,
     metadata: DataDocMetadata,
@@ -130,7 +130,7 @@ def test_write_metadata_document(
     )
 
 
-@pytest.mark.usefixtures("existing_metadata_file", "_remove_document_file")
+@pytest.mark.usefixtures("existing_metadata_file", "remove_document_file")
 def test_write_metadata_document_existing_document(
     dummy_timestamp: datetime,
     metadata: DataDocMetadata,
@@ -152,7 +152,7 @@ def test_metadata_id(metadata: DataDocMetadata):
     "existing_metadata_path",
     [TEST_EXISTING_METADATA_DIRECTORY / "invalid_id_field"],
 )
-@pytest.mark.usefixtures("_remove_document_file")
+@pytest.mark.usefixtures("remove_document_file")
 def test_existing_metadata_none_id(
     existing_metadata_file: str,
     metadata: DataDocMetadata,
@@ -173,7 +173,7 @@ def test_existing_metadata_none_id(
     "existing_metadata_path",
     [TEST_EXISTING_METADATA_DIRECTORY / "valid_id_field"],
 )
-@pytest.mark.usefixtures("_remove_document_file")
+@pytest.mark.usefixtures("remove_document_file")
 def test_existing_metadata_valid_id(
     existing_metadata_file: str,
     metadata: DataDocMetadata,
