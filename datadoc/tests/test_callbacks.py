@@ -9,7 +9,7 @@ from datadoc_model.Enums import DatasetState, Datatype, SupportedLanguages
 from datadoc_model.Model import DataDocDataSet, DataDocVariable, LanguageStrings
 
 from datadoc import state
-from datadoc.backend.DataDocMetadata import DataDocMetadata
+from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.frontend.callbacks.dataset import (
     accept_dataset_metadata_input,
     change_language_dataset_metadata,

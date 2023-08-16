@@ -10,7 +10,7 @@ from datadoc_model.Enums import SupportedLanguages
 from pytest_mock import MockerFixture
 
 from datadoc import state
-from datadoc.backend.DataDocMetadata import DataDocMetadata
+from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.StorageAdapter import StorageAdapter
 
 from .utils import (

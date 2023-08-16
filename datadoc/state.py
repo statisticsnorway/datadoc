@@ -15,7 +15,7 @@ from datadoc_model.Enums import SupportedLanguages
 if TYPE_CHECKING:
     # This is only needed for a type hint so we put the import inside
     # this check to avoid circular imports
-    from datadoc.backend.DataDocMetadata import DataDocMetadata
+    from datadoc.backend.datadoc_metadata import DataDocMetadata
 
 
 # Global metadata container

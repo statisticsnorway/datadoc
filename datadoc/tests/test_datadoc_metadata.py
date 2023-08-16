@@ -12,7 +12,7 @@ from datadoc_model import Enums
 from datadoc_model.Enums import DatasetState
 from datadoc_model.Model import DataDocDataSet, DataDocVariable, MetadataDocument
 
-from datadoc.backend.DataDocMetadata import PLACEHOLDER_USERNAME, DataDocMetadata
+from datadoc.backend.datadoc_metadata import PLACEHOLDER_USERNAME, DataDocMetadata
 
 from .utils import (
     TEST_EXISTING_METADATA_DIRECTORY,

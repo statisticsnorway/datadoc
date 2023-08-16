@@ -10,7 +10,7 @@ import typing as t
 from pydantic import ValidationError
 
 from datadoc import state
-from datadoc.backend.DataDocMetadata import DataDocMetadata
+from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.frontend.callbacks.utils import (
     MetadataInputTypes,
     find_existing_language_string,

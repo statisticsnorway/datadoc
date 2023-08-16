@@ -13,7 +13,7 @@ from datadoc_model.Enums import SupportedLanguages
 from flask_healthz import healthz
 
 from datadoc import state
-from datadoc.backend.DataDocMetadata import DataDocMetadata
+from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.frontend.callbacks.register_callbacks import register_callbacks
 from datadoc.frontend.components.Alerts import (
     dataset_validation_error,
