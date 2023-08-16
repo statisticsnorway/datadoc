@@ -1,3 +1,6 @@
+"""Tests for the callbacks package."""
+from __future__ import annotations
+
 import random
 from copy import deepcopy
 
@@ -13,7 +16,10 @@ from datadoc.frontend.callbacks.dataset import (
     update_dataset_metadata_language,
     update_global_language_state,
 )
-from datadoc.frontend.callbacks.utils import find_existing_language_string
+from datadoc.frontend.callbacks.utils import (
+    MetadataInputTypes,
+    find_existing_language_string,
+)
 from datadoc.frontend.callbacks.variables import (
     accept_variable_metadata_input,
     update_variable_table_dropdown_options_for_language,
@@ -56,11 +62,14 @@ LANGUAGE_OBJECT = LanguageStrings(en=ENGLISH_NAME, nb=BOKMÅL_NAME)
 
 
 @pytest.fixture()
-def active_cell():
+def active_cell() -> dict[str, MetadataInputTypes]:
     return {"row": 1, "column": 1, "column_id": "short_name", "row_id": None}
 
 
-def test_accept_variable_metadata_input_no_change_in_data(metadata, active_cell):
+def test_accept_variable_metadata_input_no_change_in_data(
+    metadata: DataDocMetadata,
+    active_cell: dict[str, MetadataInputTypes],
+):
     state.metadata = metadata
     output = accept_variable_metadata_input(DATA_ORIGINAL, active_cell, DATA_ORIGINAL)
     assert output[0] == DATA_ORIGINAL
@@ -68,7 +77,9 @@ def test_accept_variable_metadata_input_no_change_in_data(metadata, active_cell)
     assert output[2] == ""
 
 
-def test_accept_variable_metadata_input_new_data(active_cell):
+def test_accept_variable_metadata_input_new_data(
+    active_cell: dict[str, MetadataInputTypes],
+):
     state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     output = accept_variable_metadata_input(DATA_VALID, active_cell, DATA_ORIGINAL)
 
@@ -78,7 +89,9 @@ def test_accept_variable_metadata_input_new_data(active_cell):
     assert output[2] == ""
 
 
-def test_accept_variable_metadata_clear_string(active_cell):
+def test_accept_variable_metadata_clear_string(
+    active_cell: dict[str, MetadataInputTypes],
+):
     state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     output = accept_variable_metadata_input(DATA_CLEAR_URI, active_cell, DATA_ORIGINAL)
 
@@ -88,7 +101,9 @@ def test_accept_variable_metadata_clear_string(active_cell):
     assert output[2] == ""
 
 
-def test_accept_variable_metadata_input_incorrect_data_type(active_cell):
+def test_accept_variable_metadata_input_incorrect_data_type(
+    active_cell: dict[str, MetadataInputTypes],
+):
     state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     previous_metadata = deepcopy(state.metadata.meta.variables)
     output = accept_variable_metadata_input(DATA_INVALID, active_cell, DATA_ORIGINAL)
@@ -171,7 +186,9 @@ def test_find_existing_language_string_pre_existing_strings():
 
 def test_update_variable_table_language():
     state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
-    test_variable = random.choice([v.short_name for v in state.metadata.meta.variables])
+    test_variable = random.choice(  # noqa: S311 not for cryptographic purposes
+        [v.short_name for v in state.metadata.meta.variables],
+    )
     state.metadata.variables_lookup[test_variable].name = LANGUAGE_OBJECT
     output = update_variable_table_language(
         SupportedLanguages.NORSK_BOKMÅL,
@@ -184,7 +201,7 @@ def test_update_variable_table_language():
     assert name == BOKMÅL_NAME
 
 
-def test_nonetype_value_for_language_string(active_cell):
+def test_nonetype_value_for_language_string(active_cell: dict[str, MetadataInputTypes]):
     state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     state.metadata.variables_lookup["pers_id"].name = LANGUAGE_OBJECT
     state.current_metadata_language = SupportedLanguages.NORSK_NYNORSK
@@ -210,7 +227,11 @@ def test_update_variable_table_dropdown_options_for_language():
 
 
 def test_update_global_language_state():
-    language: SupportedLanguages = random.choice(list(SupportedLanguages))
+    language: SupportedLanguages = (
+        random.choice(  # noqa: S311 not for cryptographic purposes
+            list(SupportedLanguages),
+        )
+    )
     update_global_language_state(language)
     assert state.current_metadata_language == language
 
@@ -218,13 +239,15 @@ def test_update_global_language_state():
 def test_change_language_dataset_metadata():
     state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     value = change_language_dataset_metadata(SupportedLanguages.NORSK_NYNORSK)
-    test = random.choice(DISPLAYED_DROPDOWN_DATASET_ENUMS)
+    test = random.choice(  # noqa: S311 not for cryptographic purposes
+        DISPLAYED_DROPDOWN_DATASET_ENUMS,
+    )
     assert isinstance(value, tuple)
 
     for options in value[0:-1]:
         assert all(list(d.keys()) == ["label", "value"] for d in options)
 
-        member_names = set(test._member_names_)
+        member_names = set(test._member_names_)  # noqa: SLF001
         values = [i for d in options for i in d.values()]
 
         if member_names.intersection(values):

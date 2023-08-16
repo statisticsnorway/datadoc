@@ -1,5 +1,7 @@
+"""Tests for the ModelBackwardsCompatibility class."""
+
 import json
-from pprint import pprint
+from pathlib import Path
 
 import pytest
 
@@ -38,21 +40,19 @@ def test_existing_metadata_unknown_model_version():
     BACKWARDS_COMPATIBLE_VERSION_DIRECTORIES,
     ids=BACKWARDS_COMPATIBLE_VERSION_NAMES,
 )
+@pytest.mark.usefixtures("_remove_document_file")
 def test_backwards_compatibility(
-    existing_metadata_file,
+    existing_metadata_file: str,
     metadata: DataDocMetadata,
-    remove_document_file,
 ):
     # Parameterise with all known backwards compatible versions
-    with open(existing_metadata_file) as f:
+    with Path.open(existing_metadata_file) as f:
         file_metadata = json.loads(f.read())
 
     in_file_values = [
         v for v in file_metadata["dataset"].values() if v not in ["", None]
     ]
     read_in_values = json.loads(metadata.meta.dataset.json(exclude_none=True)).values()
-    pprint(f"{in_file_values = }")
-    pprint(f"{read_in_values = }")
 
     missing_values = [v for v in in_file_values if v not in read_in_values]
     if missing_values:

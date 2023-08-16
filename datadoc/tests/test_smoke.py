@@ -1,3 +1,5 @@
+"""Smoke tests."""
+
 from datadoc import state
 from datadoc.app import build_app
 from datadoc.backend.DataDocMetadata import DataDocMetadata

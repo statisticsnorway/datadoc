@@ -1,3 +1,5 @@
+"""Verify that we are in sync with the Model."""
+
 from datadoc_model.Model import DataDocDataSet, DataDocVariable
 
 from datadoc.frontend.fields.DisplayDataset import DISPLAY_DATASET, DatasetIdentifiers

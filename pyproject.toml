@@ -105,3 +105,5 @@ classmethod-decorators = ["classmethod", "validator", "root_validator"]
     # docstrings are overkill for test functions
     "D103",
 ]
+# This filename is a convention for Gunicorn
+"datadoc/gunicorn.conf.py" = ["N999"]
