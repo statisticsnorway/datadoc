@@ -15,7 +15,7 @@ from flask_healthz import healthz
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.frontend.callbacks.register_callbacks import register_callbacks
-from datadoc.frontend.components.Alerts import (
+from datadoc.frontend.components.alerts import (
     dataset_validation_error,
     opened_dataset_error,
     opened_dataset_success,
