@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from datadoc.backend.datadoc_metadata import DataDocMetadata
-from datadoc.backend.ModelBackwardsCompatibility import (
+from datadoc.backend.model_backwards_compatibility import (
     UnknownModelVersionError,
     upgrade_metadata,
 )
