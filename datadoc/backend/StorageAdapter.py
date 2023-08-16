@@ -44,8 +44,10 @@ class GCSObject:
             msg = "Missing support for GCS. Install datadoc with 'pip install ssb-datadoc[gcs]'"
             raise ImportError(msg) from e
 
-    def _rebuild_url(self: t.Self @ GCSObject, new_path: str) -> str:
-        return urlunsplit((self._url.scheme, self._url.netloc, new_path, None, None))
+    def _rebuild_url(self: t.Self @ GCSObject, new_path: str | pathlib.Path) -> str:
+        return urlunsplit(
+            (self._url.scheme, self._url.netloc, str(new_path), None, None),
+        )
 
     def open(self: t.Self @ GCSObject, **kwargs: dict[str, t.Any]) -> IOBase:
         """Return a file-like-object."""
@@ -61,7 +63,9 @@ class GCSObject:
 
         In-place operation.
         """
-        self._url = urlsplit(self._rebuild_url(pathlib.Path(self._url.path) / part))
+        self._url = urlsplit(
+            self._rebuild_url(pathlib.Path(self._url.path) / part),
+        )
 
     def exists(self: t.Self @ GCSObject) -> bool:
         """Return True if the object exists."""
