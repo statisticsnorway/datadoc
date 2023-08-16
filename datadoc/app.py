@@ -22,14 +22,14 @@ from datadoc.frontend.components.Alerts import (
     saved_metadata_success,
     variables_validation_error,
 )
-from datadoc.frontend.components.DatasetTab import get_dataset_tab
+from datadoc.frontend.components.DatasetTab import build_dataset_tab
 from datadoc.frontend.components.HeaderBars import (
-    get_controls_bar,
-    get_language_dropdown,
+    build_controls_bar,
+    build_language_dropdown,
     header,
     progress_bar,
 )
-from datadoc.frontend.components.VariablesTab import get_variables_tab
+from datadoc.frontend.components.VariablesTab import build_variables_tab
 from datadoc.utils import get_app_version, pick_random_port, running_in_notebook
 
 logger = logging.getLogger(__name__)
@@ -50,7 +50,7 @@ def build_app() -> Dash:
         children=[
             header,
             progress_bar,
-            get_controls_bar(),
+            build_controls_bar(),
             variables_validation_error,
             dataset_validation_error,
             opened_dataset_error,
@@ -63,13 +63,13 @@ def build_app() -> Dash:
                         id="tabs",
                         class_name="ssb-tabs",
                         children=[
-                            get_dataset_tab(),
-                            get_variables_tab(),
+                            build_dataset_tab(),
+                            build_variables_tab(),
                         ],
                     ),
                 ],
             ),
-            get_language_dropdown(),
+            build_language_dropdown(),
         ],
     )
 

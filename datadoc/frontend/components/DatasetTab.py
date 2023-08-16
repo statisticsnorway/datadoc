@@ -1,9 +1,11 @@
+"""Components and layout for the Dataset metadata tab."""
+
 from __future__ import annotations
 
 import dash_bootstrap_components as dbc
 from dash import html
 
-from datadoc.frontend.components.Builders import make_ssb_styled_tab
+from datadoc.frontend.components.Builders import build_ssb_styled_tab
 from datadoc.frontend.fields.DisplayDataset import (
     NON_EDITABLE_DATASET_METADATA,
     OBLIGATORY_EDITABLE_DATASET_METADATA,
@@ -14,10 +16,14 @@ from datadoc.frontend.fields.DisplayDataset import (
 DATASET_METADATA_INPUT = "dataset-metadata-input"
 
 
-def make_dataset_metadata_accordion_item(
+def build_dataset_metadata_accordion_item(
     title: str,
     metadata_inputs: list[DisplayDatasetMetadata],
 ) -> dbc.AccordionItem:
+    """Build a Dash AccordionItem for the given Metadata inputs.
+
+    Typically used to categorize metadata fields.
+    """
     return dbc.AccordionItem(
         title=title,
         children=[
@@ -44,8 +50,9 @@ def make_dataset_metadata_accordion_item(
     )
 
 
-def get_dataset_tab() -> dbc.Tab:
-    return make_ssb_styled_tab(
+def build_dataset_tab() -> dbc.Tab:
+    """Build the Dataset metadata tab."""
+    return build_ssb_styled_tab(
         "Datasett",
         dbc.Container(
             [
@@ -53,15 +60,15 @@ def get_dataset_tab() -> dbc.Tab:
                 dbc.Accordion(
                     always_open=True,
                     children=[
-                        make_dataset_metadata_accordion_item(
+                        build_dataset_metadata_accordion_item(
                             "Obligatorisk",
                             OBLIGATORY_EDITABLE_DATASET_METADATA,
                         ),
-                        make_dataset_metadata_accordion_item(
+                        build_dataset_metadata_accordion_item(
                             "Valgfritt",
                             OPTIONAL_DATASET_METADATA,
                         ),
-                        make_dataset_metadata_accordion_item(
+                        build_dataset_metadata_accordion_item(
                             "Maskingenerert",
                             NON_EDITABLE_DATASET_METADATA,
                         ),
