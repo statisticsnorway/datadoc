@@ -6,7 +6,7 @@ import dash_bootstrap_components as dbc
 from dash import html
 
 from datadoc.frontend.components.builders import build_ssb_styled_tab
-from datadoc.frontend.fields.DisplayDataset import (
+from datadoc.frontend.fields.display_dataset import (
     NON_EDITABLE_DATASET_METADATA,
     OBLIGATORY_EDITABLE_DATASET_METADATA,
     OPTIONAL_DATASET_METADATA,

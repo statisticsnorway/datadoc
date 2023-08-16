@@ -17,7 +17,7 @@ from datadoc.frontend.callbacks.utils import (
     get_options_for_language,
     update_global_language_state,
 )
-from datadoc.frontend.fields.DisplayDataset import (
+from datadoc.frontend.fields.display_dataset import (
     DISPLAYED_DATASET_METADATA,
     DISPLAYED_DROPDOWN_DATASET_ENUMS,
     MULTIPLE_LANGUAGE_DATASET_METADATA,
