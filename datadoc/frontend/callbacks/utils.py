@@ -1,3 +1,5 @@
+"""Functions which aren't directly called from a decorated callback."""
+
 from __future__ import annotations
 
 import logging
@@ -14,8 +16,12 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def update_global_language_state(language: SupportedLanguages):
-    logger.debug(f"Updating language: {language.name}")
+MetadataInputTypes: type = str | int | float | None
+
+
+def update_global_language_state(language: SupportedLanguages) -> None:
+    """Update global language state."""
+    logger.debug("Updating language: %s", language.name)
     state.current_metadata_language = language
 
 
@@ -38,6 +44,7 @@ def find_existing_language_string(
     value: str,
     metadata_identifier: str,
 ) -> Model.LanguageStrings | None:
+    """Get or create a LanguageStrings object and return it."""
     # In this case we need to set the string to the correct language code
     language_strings = getattr(metadata_model_object, metadata_identifier)
     if language_strings is None:

@@ -7,7 +7,7 @@ from datadoc_model.Enums import SupportedLanguages
 def running_in_notebook() -> bool:
     """Return True if running in Jupyter Notebook."""
     try:
-        return get_ipython().__class__.__name__ == "ZMQInteractiveShell"  # type: ignore
+        return get_ipython().__class__.__name__ == "ZMQInteractiveShell"
     except NameError:
         # The get_ipython method is globally available in ipython interpreters
         # as used in Jupyter. However it is not available in other python
@@ -31,8 +31,9 @@ def get_display_values(
     return_dict = {}
     for field_name, value in variable:
         if isinstance(value, Model.LanguageStrings):
-            value = value.dict()[current_language.value]
-        return_dict[field_name] = value
+            return_dict[field_name] = value.dict()[current_language.value]
+        else:
+            return_dict[field_name] = value
     return return_dict
 
 

@@ -1,3 +1,5 @@
+"""Callback functions to do with variables metadata."""
+
 from __future__ import annotations
 
 import logging
@@ -7,6 +9,7 @@ from pydantic import ValidationError
 
 from datadoc import state
 from datadoc.frontend.callbacks.utils import (
+    MetadataInputTypes,
     find_existing_language_string,
     get_options_for_language,
 )
@@ -21,7 +24,14 @@ from datadoc.utils import get_display_values
 logger = logging.getLogger(__name__)
 
 
-def get_boolean_options_for_language(language: SupportedLanguages):
+def get_boolean_options_for_language(
+    language: SupportedLanguages,
+) -> list[dict[str, bool | str]]:
+    """Get boolean options for the given language.
+
+    The Dash Datatable has no good support for boolean
+    choices, so we use a Dropdown.
+    """
     true_labels = {
         SupportedLanguages.ENGLISH: "Yes",
         SupportedLanguages.NORSK_NYNORSK: "Ja",
@@ -44,29 +54,30 @@ def get_boolean_options_for_language(language: SupportedLanguages):
     ]
 
 
-def get_metadata_field(data, data_previous, active_cell) -> str:
+def get_metadata_field(
+    data: list[dict],
+    data_previous: list[dict],
+    active_cell: dict,
+) -> str:
+    """Find which field (column in the data table) has been updated."""
     for i in range(len(data)):
-        # First strategy to find which column we're in; diff the current and previous data
+        # Find which column we're in; by diffing the current and previous data
         update_diff = list(data[i].items() - data_previous[i].items())
         if update_diff:
             return update_diff[-1][0]
 
-    # When copy/pasting the diff fails, so we fall back to the active cell
+    # When diffing fails, we fall back to the active cell (this happens
+    # when the user pastes a value into the Data Table)
     return active_cell["column_id"]
 
 
 def handle_multi_language_metadata(
-    metadata_field,
-    new_value,
-    updated_row_id,
+    metadata_field: str,
+    new_value: MetadataInputTypes,
+    updated_row_id: str,
 ) -> str | None:
-    if type(new_value) is str:
-        return find_existing_language_string(
-            state.metadata.variables_lookup[updated_row_id],
-            new_value,
-            metadata_field,
-        )
-    elif new_value is None:
+    """Handle updates to fields which support multiple languages."""
+    if new_value is None:
         # This edge case occurs when the user removes the text in an input field
         # We want to ensure we only remove the content for the current language,
         # not create a new blank object!
@@ -75,8 +86,15 @@ def handle_multi_language_metadata(
             "",
             metadata_field,
         )
-    else:
-        return new_value
+
+    if isinstance(new_value, str):
+        return find_existing_language_string(
+            state.metadata.variables_lookup[updated_row_id],
+            new_value,
+            metadata_field,
+        )
+
+    return new_value
 
 
 def accept_variable_metadata_input(
@@ -84,14 +102,15 @@ def accept_variable_metadata_input(
     active_cell: dict,
     data_previous: list[dict],
 ) -> tuple[list[dict], bool, str]:
+    """Validate and save the value when variable metadata is updated."""
     show_error = False
     error_explanation = ""
     output_data = data
-    metadata_field = get_metadata_field(data, data_previous, active_cell)
+    metadata_field: str = get_metadata_field(data, data_previous, active_cell)
 
     for row_index in range(len(data)):
         # Update all the variables for this column to ensure we read in the value
-        new_value = data[row_index][metadata_field]
+        new_value: MetadataInputTypes = data[row_index][metadata_field]
         updated_row_id = data[row_index][VariableIdentifiers.SHORT_NAME.value]
 
         try:
@@ -105,9 +124,6 @@ def accept_variable_metadata_input(
                 # Allow clearing non-multiple-language text fields
                 new_value = None
 
-            logger.debug(
-                f"{row_index = } | {updated_row_id = } | {metadata_field = } | {new_value = }",
-            )
             # Write the value to the variables structure
             setattr(
                 state.metadata.variables_lookup[updated_row_id],
@@ -120,7 +136,7 @@ def accept_variable_metadata_input(
             output_data = data_previous
             logger.debug("Caught ValidationError:", exc_info=True)
         else:
-            logger.debug(f"Successfully updated {updated_row_id} with {new_value}")
+            logger.debug("Successfully updated %s with %s", updated_row_id, new_value)
 
     return output_data, show_error, error_explanation
 
@@ -128,8 +144,9 @@ def accept_variable_metadata_input(
 def update_variable_table_dropdown_options_for_language(
     language: SupportedLanguages,
 ) -> dict[str, dict[str, list[dict[str, str]]]]:
-    """Retrieves enum options for dropdowns in the Datatable. Handles the
-    special case of boolean values which we represent in the Datatable
+    """Retrieve enum options for dropdowns in the Datatable.
+
+    Handles the special case of boolean values which we represent in the Datatable
     with a Dropdown but they're not backed by an Enum.
 
     Example return structure:
@@ -152,20 +169,23 @@ def update_variable_table_dropdown_options_for_language(
             else get_options_for_language(language, field_type)
         )
         options.append({"options": value})
-    return dict(zip(DISPLAYED_DROPDOWN_VARIABLES_METADATA, options))
+    return dict(zip(DISPLAYED_DROPDOWN_VARIABLES_METADATA, options, strict=True))
 
 
 def update_variable_table_language(
     language: SupportedLanguages,
 ) -> tuple[list[dict], bool, str]:
+    """Get data in the relevant language."""
     state.current_metadata_language = language
-    new_data = []
-    for v in state.metadata.meta.variables:
-        new_data.append(
+    logger.debug("Updated variable table language: %s", language.name)
+    return (
+        [
             get_display_values(
                 v,
                 state.current_metadata_language,
-            ),
-        )
-    logger.debug(f"Updated variable table language: {language.name}")
-    return new_data, False, ""
+            )
+            for v in state.metadata.meta.variables
+        ],
+        False,  # Don't show validation error
+        "",  # No validation explanation needed
+    )
