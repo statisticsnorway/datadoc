@@ -11,7 +11,7 @@ from pytest_mock import MockerFixture
 
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
-from datadoc.backend.StorageAdapter import StorageAdapter
+from datadoc.backend.storage_adapter import StorageAdapter
 
 from .utils import (
     TEST_BUCKET_PARQUET_FILEPATH,

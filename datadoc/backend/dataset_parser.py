@@ -17,7 +17,7 @@ from datadoc_model.LanguageStrings import LanguageStrings
 from datadoc_model.Model import DataDocVariable
 
 from datadoc import state
-from datadoc.backend.StorageAdapter import StorageAdapter
+from datadoc.backend.storage_adapter import StorageAdapter
 
 TDatasetParser = t.TypeVar("TDatasetParser", bound="DatasetParser")
 

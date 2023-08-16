@@ -4,7 +4,7 @@ import pathlib
 
 import pytest
 
-from datadoc.backend.StorageAdapter import GCSObject, LocalFile, StorageAdapter
+from datadoc.backend.storage_adapter import GCSObject, LocalFile, StorageAdapter
 from datadoc.tests.utils import TEST_BUCKET_PARQUET_FILEPATH, TEST_PARQUET_FILEPATH
 
 

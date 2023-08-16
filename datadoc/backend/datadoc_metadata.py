@@ -14,7 +14,7 @@ from datadoc_model.Enums import DatasetState, SupportedLanguages
 
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
-from datadoc.backend.StorageAdapter import StorageAdapter
+from datadoc.backend.storage_adapter import StorageAdapter
 from datadoc.frontend.fields import DisplayDataset, DisplayVariables
 from datadoc.utils import calculate_percentage, get_timestamp_now
 
