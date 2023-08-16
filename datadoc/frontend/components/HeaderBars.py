@@ -8,7 +8,7 @@ from datadoc_model.Enums import SupportedLanguages
 
 from datadoc import state
 from datadoc.frontend.callbacks.dataset import get_dataset_path
-from datadoc.frontend.components.Builders import build_ssb_button
+from datadoc.frontend.components.builders import build_ssb_button
 from datadoc.utils import get_app_version
 
 COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}

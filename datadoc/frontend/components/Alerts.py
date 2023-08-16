@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datadoc.frontend.components.Builders import AlertTypes, build_ssb_alert
+from datadoc.frontend.components.builders import AlertTypes, build_ssb_alert
 
 dataset_validation_error = build_ssb_alert(
     AlertTypes.WARNING,
