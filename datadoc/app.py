@@ -99,7 +99,7 @@ def get_app(dataset_path: str | None = None) -> Dash:
 def main(dataset_path: str | None = None) -> None:
     """Entrypoint when running as a script."""
     logging.basicConfig(level=logging.DEBUG, force=True)
-    logger.info(f"Starting app with {dataset_path = }")
+    logger.info("Starting app with dataset_path = %s", dataset_path)
     app = get_app(dataset_path)
     if running_in_notebook():
         logger.info("Running in notebook")

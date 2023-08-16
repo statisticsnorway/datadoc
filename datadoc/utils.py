@@ -1,3 +1,5 @@
+"""General utilities."""
+
 import datetime
 
 from datadoc_model import Model
@@ -25,9 +27,7 @@ def get_display_values(
     variable: Model.DataDocVariable,
     current_language: SupportedLanguages,
 ) -> dict:
-    """Return a dictionary representation of Model.DataDocVariable with strings in
-    the currently selected language.
-    """
+    """Return a dictionary representation of Model.DataDocVariable with strings in the currently selected language."""
     return_dict = {}
     for field_name, value in variable:
         if isinstance(value, Model.LanguageStrings):
@@ -38,8 +38,10 @@ def get_display_values(
 
 
 def pick_random_port() -> int:
-    """Pick a random free port number. The function will bind a socket to port 0, and
-    a random free port from 1024 to 65535 will be selected by the operating system.
+    """Pick a random free port number.
+
+    The function will bind a socket to port 0, and a random free port from
+    1024 to 65535 will be selected by the operating system.
     """
     import socket
 
@@ -49,10 +51,12 @@ def pick_random_port() -> int:
 
 
 def get_timestamp_now() -> datetime:
-    return datetime.datetime.now()
+    """Return a timestamp for the current moment."""
+    return datetime.datetime.now(tz=datetime.timezone.utc)
 
 
 def get_app_version() -> str:
+    """Get the version of the Datadoc package."""
     import pkg_resources
 
     return pkg_resources.get_distribution("ssb-datadoc").version
