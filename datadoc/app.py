@@ -29,7 +29,7 @@ from datadoc.frontend.components.control_bars import (
     progress_bar,
 )
 from datadoc.frontend.components.dataset_tab import build_dataset_tab
-from datadoc.frontend.components.VariablesTab import build_variables_tab
+from datadoc.frontend.components.variables_tab import build_variables_tab
 from datadoc.utils import get_app_version, pick_random_port, running_in_notebook
 
 logger = logging.getLogger(__name__)
