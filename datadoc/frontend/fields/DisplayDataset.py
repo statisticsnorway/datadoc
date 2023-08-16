@@ -8,7 +8,7 @@ from enum import Enum
 from dash import dcc
 from datadoc_model import Model
 
-from datadoc.frontend.fields.DisplayBase import (
+from datadoc.frontend.fields.display_base import (
     DROPDOWN_KWARGS,
     NUMBER_KWARGS,
     DisplayDatasetMetadata,

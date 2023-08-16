@@ -7,7 +7,7 @@ from enum import Enum
 from datadoc_model import Model
 from datadoc_model.LanguageStringsEnum import LanguageStringsEnum
 
-from datadoc.frontend.fields.DisplayBase import DisplayVariablesMetadata
+from datadoc.frontend.fields.display_base import DisplayVariablesMetadata
 
 
 class VariableIdentifiers(str, Enum):
