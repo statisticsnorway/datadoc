@@ -22,13 +22,13 @@ from datadoc.frontend.components.alerts import (
     saved_metadata_success,
     variables_validation_error,
 )
-from datadoc.frontend.components.DatasetTab import build_dataset_tab
-from datadoc.frontend.components.HeaderBars import (
+from datadoc.frontend.components.control_bars import (
     build_controls_bar,
     build_language_dropdown,
     header,
     progress_bar,
 )
+from datadoc.frontend.components.DatasetTab import build_dataset_tab
 from datadoc.frontend.components.VariablesTab import build_variables_tab
 from datadoc.utils import get_app_version, pick_random_port, running_in_notebook
 
