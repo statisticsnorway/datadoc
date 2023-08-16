@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-MetadataInputTypes: type = str | int | float | None
+MetadataInputTypes: type = str | int | float | bool | None
 
 
 def update_global_language_state(language: SupportedLanguages) -> None:

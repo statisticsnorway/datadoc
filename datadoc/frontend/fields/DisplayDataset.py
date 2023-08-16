@@ -1,3 +1,5 @@
+"""Functionality for displaying dataset metadata."""
+
 from __future__ import annotations
 
 import logging
@@ -10,7 +12,7 @@ from datadoc.frontend.fields.DisplayBase import (
     DROPDOWN_KWARGS,
     NUMBER_KWARGS,
     DisplayDatasetMetadata,
-    get_list_of_strings,
+    get_comma_separated_string,
     get_metadata_and_stringify,
     get_multi_language_metadata,
 )
@@ -142,7 +144,7 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         identifier=DatasetIdentifiers.KEYWORD.value,
         display_name="Nøkkelord",
         description="En kommaseparert liste med søkbare nøkkelord som kan bidra til utvikling av effektive filtrerings- og søketjeneste.",
-        value_getter=get_list_of_strings,
+        value_getter=get_comma_separated_string,
     ),
     DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION.value,

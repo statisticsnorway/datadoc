@@ -1,3 +1,5 @@
+"""Functionality for displaying variables metadata."""
+
 from __future__ import annotations
 
 from enum import Enum
