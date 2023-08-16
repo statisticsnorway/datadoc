@@ -22,7 +22,7 @@ from datadoc.frontend.callbacks.variables import (
     update_variable_table_dropdown_options_for_language,
     update_variable_table_language,
 )
-from datadoc.frontend.components.DatasetTab import DATASET_METADATA_INPUT
+from datadoc.frontend.components.dataset_tab import DATASET_METADATA_INPUT
 from datadoc.frontend.fields.DisplayDataset import DISPLAYED_DROPDOWN_DATASET_METADATA
 
 if TYPE_CHECKING:

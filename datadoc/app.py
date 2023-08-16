@@ -28,7 +28,7 @@ from datadoc.frontend.components.control_bars import (
     header,
     progress_bar,
 )
-from datadoc.frontend.components.DatasetTab import build_dataset_tab
+from datadoc.frontend.components.dataset_tab import build_dataset_tab
 from datadoc.frontend.components.VariablesTab import build_variables_tab
 from datadoc.utils import get_app_version, pick_random_port, running_in_notebook
 
