@@ -3,7 +3,7 @@
 from datadoc_model.Model import DataDocDataSet, DataDocVariable
 
 from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET, DatasetIdentifiers
-from datadoc.frontend.fields.DisplayVariables import (
+from datadoc.frontend.fields.display_variables import (
     DISPLAY_VARIABLES,
     VariableIdentifiers,
 )

@@ -13,7 +13,7 @@ from datadoc.frontend.callbacks.utils import (
     find_existing_language_string,
     get_options_for_language,
 )
-from datadoc.frontend.fields.DisplayVariables import (
+from datadoc.frontend.fields.display_variables import (
     DISPLAYED_DROPDOWN_VARIABLES_METADATA,
     DISPLAYED_DROPDOWN_VARIABLES_TYPES,
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,

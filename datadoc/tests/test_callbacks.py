@@ -26,7 +26,7 @@ from datadoc.frontend.callbacks.variables import (
     update_variable_table_language,
 )
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_ENUMS
-from datadoc.frontend.fields.DisplayVariables import VariableIdentifiers
+from datadoc.frontend.fields.display_variables import VariableIdentifiers
 from datadoc.tests.utils import TEST_PARQUET_FILEPATH
 
 DATA_ORIGINAL = [

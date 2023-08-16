@@ -15,7 +15,7 @@ from datadoc_model.Enums import DatasetState, SupportedLanguages
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
 from datadoc.backend.storage_adapter import StorageAdapter
-from datadoc.frontend.fields import DisplayVariables, display_dataset
+from datadoc.frontend.fields import display_dataset, display_variables
 from datadoc.utils import calculate_percentage, get_timestamp_now
 
 if TYPE_CHECKING:
@@ -31,7 +31,7 @@ OBLIGATORY_DATASET_METADATA = [
 
 OBLIGATORY_VARIABLES_METADATA = [
     m.identifier
-    for m in DisplayVariables.DISPLAY_VARIABLES.values()
+    for m in display_variables.DISPLAY_VARIABLES.values()
     if m.obligatory and m.editable
 ]
 

@@ -7,7 +7,7 @@ from dash import dash_table, html
 
 from datadoc import state
 from datadoc.frontend.components.builders import build_ssb_styled_tab
-from datadoc.frontend.fields.DisplayVariables import (
+from datadoc.frontend.fields.display_variables import (
     DISPLAY_VARIABLES,
     VariableIdentifiers,
 )
