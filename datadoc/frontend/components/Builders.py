@@ -46,7 +46,10 @@ def make_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:
 
 
 def make_ssb_alert(
-    alert_type: AlertTypes, alert_identifier: str, title: str, content_identifier: str
+    alert_type: AlertTypes,
+    alert_identifier: str,
+    title: str,
+    content_identifier: str,
 ) -> dbc.Alert:
     alert = AlertType.get_type(alert_type)
     return dbc.Alert(
