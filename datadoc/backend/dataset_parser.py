@@ -188,7 +188,11 @@ class DatasetParserSas7Bdat(DatasetParser):
             sas_reader = pd.read_sas(f, format="sas7bdat", iterator=True)
 
             # Get the first row from the iterator
-            row = next(sas_reader)
+            try:
+                row = next(sas_reader)
+            except StopIteration as e:
+                msg = f"Could not read data from {self.dataset}"
+                raise RuntimeError(msg) from e
 
         # Get all the values from the row and loop through them
         for i, v in enumerate(row.to_numpy().tolist()[0]):
