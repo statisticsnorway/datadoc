@@ -22,7 +22,7 @@ datadoc = 'datadoc.app:main'
 python = ">=3.10,<4.0"
 requests = ">=2.27.1"
 pyarrow = ">=8.0.0"
-dash = ">=2.11"
+dash = "<2.11"
 jupyter-dash = ">=0.4.2"
 pydantic = "<2"                       # At least one breaking change in Pydantic v2. Fix in datadoc-model.
 dash-bootstrap-components = ">=1.1.0"
@@ -34,7 +34,7 @@ gunicorn = "^21.2.0"
 flask-healthz = "^0.0.3"
 
 [tool.poetry.group.dev.dependencies]
-jupyterlab = ">=3.4.5"
+jupyterlab = "==3.6.1" # Match the version on Dapla
 ipykernel = ">=6.13.0"
 mypy = ">=0.950"
 black = ">=22.3.0"
