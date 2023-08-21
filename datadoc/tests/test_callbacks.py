@@ -193,11 +193,15 @@ def test_update_variable_table_language():
     output = update_variable_table_language(
         SupportedLanguages.NORSK_BOKMÅL,
     )
-    name = next(
-        d[VariableIdentifiers.NAME.value]
-        for d in output[0]
-        if d[VariableIdentifiers.SHORT_NAME.value] == test_variable
-    )
+    try:
+        name = next(
+            d[VariableIdentifiers.NAME.value]
+            for d in output[0]
+            if d[VariableIdentifiers.SHORT_NAME.value] == test_variable
+        )
+    except StopIteration as e:
+        msg = f"Could not find name for {test_variable = } in {output = }"
+        raise AssertionError(msg) from e
     assert name == BOKMÅL_NAME
 
 
@@ -216,11 +220,15 @@ def test_update_variable_table_dropdown_options_for_language():
     )
     assert all(k in DataDocVariable.__fields__ for k in options)
     assert all(list(v.keys()) == ["options"] for v in options.values())
-    assert all(
-        list(d.keys()) == ["label", "value"]
-        for v in options.values()
-        for d in next(iter(v.values()))
-    )
+    try:
+        assert all(
+            list(d.keys()) == ["label", "value"]
+            for v in options.values()
+            for d in next(iter(v.values()))
+        )
+    except StopIteration as e:
+        msg = f"Could not extract actual value from {options.values() = }"
+        raise AssertionError(msg) from e
     assert [d["label"] for d in options["data_type"]["options"]] == [
         i.get_value_for_language(SupportedLanguages.NORSK_BOKMÅL) for i in Datatype
     ]
