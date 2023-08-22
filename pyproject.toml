@@ -22,7 +22,7 @@ datadoc = 'datadoc.app:main'
 python = ">=3.10,<4.0"
 requests = ">=2.27.1"
 pyarrow = ">=8.0.0"
-dash = "<2.11"
+dash = ">=2.11"
 jupyter-dash = ">=0.4.2"
 pydantic = "<2"                       # At least one breaking change in Pydantic v2. Fix in datadoc-model.
 dash-bootstrap-components = ">=1.1.0"
