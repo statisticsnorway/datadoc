@@ -34,7 +34,7 @@ gunicorn = "^21.2.0"
 flask-healthz = "^0.0.3"
 
 [tool.poetry.group.dev.dependencies]
-jupyterlab = ">=3.4.5"
+jupyterlab = "==3.6.1" # Match the version on Dapla
 ipykernel = ">=6.13.0"
 mypy = ">=0.950"
 black = ">=22.3.0"

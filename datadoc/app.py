@@ -37,9 +37,9 @@ logger = logging.getLogger(__name__)
 NAME = "Datadoc"
 
 
-def build_app() -> Dash:
+def build_app(dash_class: type[Dash]) -> Dash:
     """Instantiate the Dash app object, define the layout, register callbacks."""
-    app = Dash(
+    app = dash_class(
         name=NAME,
         title=NAME,
         assets_folder=f"{Path(__file__).parent}/assets",
@@ -78,13 +78,13 @@ def build_app() -> Dash:
     return app
 
 
-def get_app(dataset_path: str | None = None) -> Dash:
+def get_app(dataset_path: str | None = None, dash_class: type[Dash] = Dash) -> Dash:
     """Centralize all the ugliness around initializing the app."""
     logging.basicConfig(level=logging.INFO, force=True)
     logger.info("Datadoc version v%s", get_app_version())
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     state.metadata = DataDocMetadata(dataset_path)
-    app = build_app()
+    app = build_app(dash_class)
     app.server.register_blueprint(healthz, url_prefix="/healthz")
     app.server.config["HEALTHZ"] = {
         "live": lambda: True,
@@ -100,16 +100,20 @@ def main(dataset_path: str | None = None) -> None:
     """Entrypoint when running as a script."""
     logging.basicConfig(level=logging.DEBUG, force=True)
     logger.info("Starting app with dataset_path = %s", dataset_path)
-    app = get_app(dataset_path)
     if running_in_notebook():
         logger.info("Running in notebook")
+        from jupyter_dash import JupyterDash
+
+        JupyterDash.infer_jupyter_proxy_config()
+        app: JupyterDash = get_app(dataset_path, JupyterDash)
         port = pick_random_port()
-        app.run(jupyter_height=1000, port=port)
+        app.run_server(mode="jupyterlab", port=port)
         logger.info("Server running on port %s", port)
     else:
         # Assume running in server mode is better (largely for development purposes)
         logging.basicConfig(level=logging.DEBUG, force=True)
         logger.debug("Starting in development mode")
+        app = get_app(dataset_path, Dash)
         app.run(debug=True, use_reloader=False)
 
 
