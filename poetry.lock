@@ -1975,30 +1975,6 @@ docs = ["myst-parser", "sphinx-autodoc-typehints", "sphinxcontrib-github-alt", "
 test = ["ipykernel", "pre-commit", "pytest", "pytest-cov", "pytest-timeout"]
 
 [[package]]
-name = "jupyter-dash"
-version = "0.4.2"
-description = "Dash support for the Jupyter notebook interface"
-optional = false
-python-versions = ">=3.5"
-files = [
-    {file = "jupyter-dash-0.4.2.tar.gz", hash = "sha256:d546c7c25a2867c14c95a48af0ad572803b26915a5ce6052158c9dede4dbf48c"},
-    {file = "jupyter_dash-0.4.2-py3-none-any.whl", hash = "sha256:b07d90ccf38d4dfb04efd630a2b2627f367b79fa4296ee3912d0c4e21e73e9b2"},
-]
-
-[package.dependencies]
-ansi2html = "*"
-dash = "*"
-flask = "*"
-ipykernel = "*"
-ipython = "*"
-nest-asyncio = "*"
-requests = "*"
-retrying = "*"
-
-[package.extras]
-dev = ["jupyter-server-proxy", "jupyterlab (>=2.0)", "notebook (>=6.0)"]
-
-[[package]]
 name = "jupyter-events"
 version = "0.7.0"
 description = "Jupyter Event System library"
@@ -2077,6 +2053,26 @@ jupyter-server = ">=1.15,<3"
 [package.extras]
 cli = ["click"]
 test = ["jupyter-server[test] (>=1.15,<3)", "pytest", "pytest-cov"]
+
+[[package]]
+name = "jupyter-server-proxy"
+version = "4.0.0"
+description = "A JupyterLab extension accompanying the PyPI package jupyter-server-proxy adding launcher items for configured server processes."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "jupyter_server_proxy-4.0.0-py3-none-any.whl", hash = "sha256:8075afce3465a5e987e43ec837c307f9b9ac7398ebcff497abf1f51303d23470"},
+    {file = "jupyter_server_proxy-4.0.0.tar.gz", hash = "sha256:f5dc12dd204baca71b013df3522c14403692a2d37cb7adcd77851dbab71533b5"},
+]
+
+[package.dependencies]
+aiohttp = "*"
+jupyter-server = ">=1.0"
+simpervisor = ">=0.4"
+
+[package.extras]
+acceptance = ["jupyter-server-proxy[test]", "notebook (<7)", "robotframework-jupyterlibrary (>=0.4.2)"]
+test = ["pytest", "pytest-cov", "pytest-html"]
 
 [[package]]
 name = "jupyter-server-terminals"
@@ -4043,6 +4039,20 @@ testing = ["build[virtualenv]", "filelock (>=3.4.0)", "flake8-2020", "ini2toml[l
 testing-integration = ["build[virtualenv]", "filelock (>=3.4.0)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "pytest", "pytest-enabler", "pytest-xdist", "tomli", "virtualenv (>=13.0.0)", "wheel"]
 
 [[package]]
+name = "simpervisor"
+version = "1.0.0"
+description = "Simple async process supervisor"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "simpervisor-1.0.0-py3-none-any.whl", hash = "sha256:3e313318264559beea3f475ead202bc1cd58a2f1288363abb5657d306c5b8388"},
+    {file = "simpervisor-1.0.0.tar.gz", hash = "sha256:7eb87ca86d5e276976f5bb0290975a05d452c6a7b7f58062daea7d8369c823c1"},
+]
+
+[package.extras]
+test = ["aiohttp", "psutil", "pytest", "pytest-asyncio", "pytest-cov"]
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -4621,4 +4631,4 @@ test = ["mypy", "pre-commit", "pytest", "pytest-asyncio", "websockets (>=10.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "6c34ebfc7c3fffb091016a9ffba8a056245f9ebacd54aa7f3878914f5f4c5ded"
+content-hash = "2a7b9d98ebdef5633e0c2def344e23115ed3c8127b799afd06d72e50a5727e22"
