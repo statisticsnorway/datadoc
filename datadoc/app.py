@@ -118,7 +118,7 @@ def main(dataset_path: str | None = None) -> None:
     if running_in_notebook():
         logger.info("Running in notebook")
         app.run(
-            jupyter_mode="jupyterlab",
+            jupyter_mode="tab",
             jupyter_server_url=os.getenv("JUPYTERHUB_HTTP_REFERER", None),
             jupyter_height=1000,
             port=port,
