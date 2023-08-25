@@ -31,12 +31,12 @@ from datadoc.frontend.components.control_bars import (
 )
 from datadoc.frontend.components.dataset_tab import build_dataset_tab
 from datadoc.frontend.components.variables_tab import build_variables_tab
-from datadoc.utils import get_app_version, running_in_notebook
+from datadoc.utils import get_app_version, pick_random_port, running_in_notebook
 
 logger = logging.getLogger(__name__)
 
 NAME = "Datadoc"
-PORT = 7002
+DEFAULT_PORT: int = 7002
 JUPYTERHUB_SERVICE_PREFIX_ENV = "JUPYTERHUB_SERVICE_PREFIX"
 
 
@@ -75,7 +75,7 @@ def build_app(app: type[Dash]) -> Dash:
     return app
 
 
-def get_app(dataset_path: str | None = None) -> Dash:
+def get_app(dataset_path: str | None = None) -> tuple[Dash, int]:
     """Centralize all the ugliness around initializing the app."""
     logging.basicConfig(level=logging.INFO, force=True)
     logger.info("Datadoc version v%s", get_app_version())
@@ -84,10 +84,12 @@ def get_app(dataset_path: str | None = None) -> Dash:
 
     # This must be set to run correctly on Dapla Jupyter
     if JUPYTERHUB_SERVICE_PREFIX_ENV in os.environ:
+        port = pick_random_port()
         requests_pathname_prefix = (
-            f"{os.getenv(JUPYTERHUB_SERVICE_PREFIX_ENV, '/')}proxy/{PORT}/"
+            f"{os.getenv(JUPYTERHUB_SERVICE_PREFIX_ENV, '/')}proxy/{port}/"
         )
     else:
+        port = DEFAULT_PORT
         requests_pathname_prefix = "/"
 
     app = Dash(
@@ -105,27 +107,27 @@ def get_app(dataset_path: str | None = None) -> Dash:
     }
     logger.info("Built app with endpoints configured on /healthz")
 
-    return app
+    return app, port
 
 
 def main(dataset_path: str | None = None) -> None:
     """Entrypoint when running as a script."""
     logging.basicConfig(level=logging.DEBUG, force=True)
     logger.info("Starting app with dataset_path = %s", dataset_path)
-    app: Dash = get_app(dataset_path)
+    app, port = get_app(dataset_path)
     if running_in_notebook():
         logger.info("Running in notebook")
         app.run(
             jupyter_mode="jupyterlab",
             jupyter_server_url=os.getenv("JUPYTERHUB_HTTP_REFERER", None),
             jupyter_height=1000,
-            port=PORT,
+            port=port,
         )
     else:
         # Assume running in server mode is better (largely for development purposes)
         logging.basicConfig(level=logging.DEBUG, force=True)
         logger.debug("Starting in development mode")
-        app.run(debug=True, port=7002)
+        app.run(debug=True, port=port)
 
 
 if __name__ == "__main__":
