@@ -92,6 +92,8 @@ poetry version patch
 poetry version minor
 ```
 
+Commit with message like `Bump version x.x.x -> y.y.y`.
+
 Open and merge a PR.
 
 Use Github to tag and release.
