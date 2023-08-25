@@ -80,18 +80,18 @@ docker run -p 8050:8050 \
 datadoc
 ```
 
-### Bump version
+### Release process
+
+Run the relevant version command on a branch e.g.
 
 ```shell
-poetry run poe bump-patch-version
+poetry version patch
 ```
 
-> :warning: Run this on the default branch
+```shell
+poetry version minor
+```
 
-This command will:
+Open and merge a PR.
 
-1. Increment version strings in files
-1. Commit the changes
-1. Tag the commit with the new version
-
-Then just run `git push origin --tags` to push the changes and trigger the release process.
+Use Github to tag and release.
