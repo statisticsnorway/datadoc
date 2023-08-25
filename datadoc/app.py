@@ -5,6 +5,7 @@ Members of this module should not be imported into any sub-modules, this will ca
 from __future__ import annotations
 
 import logging
+import os
 from pathlib import Path
 
 import dash_bootstrap_components as dbc
@@ -30,21 +31,17 @@ from datadoc.frontend.components.control_bars import (
 )
 from datadoc.frontend.components.dataset_tab import build_dataset_tab
 from datadoc.frontend.components.variables_tab import build_variables_tab
-from datadoc.utils import get_app_version, pick_random_port, running_in_notebook
+from datadoc.utils import get_app_version, running_in_notebook
 
 logger = logging.getLogger(__name__)
 
 NAME = "Datadoc"
+PORT = 7002
+JUPYTERHUB_SERVICE_PREFIX_ENV = "JUPYTERHUB_SERVICE_PREFIX"
 
 
-def build_app(dash_class: type[Dash]) -> Dash:
-    """Instantiate the Dash app object, define the layout, register callbacks."""
-    app = dash_class(
-        name=NAME,
-        title=NAME,
-        assets_folder=f"{Path(__file__).parent}/assets",
-    )
-
+def build_app(app: type[Dash]) -> Dash:
+    """Define the layout, register callbacks."""
     app.layout = dbc.Container(
         style={"padding": "4px"},
         children=[
@@ -78,13 +75,28 @@ def build_app(dash_class: type[Dash]) -> Dash:
     return app
 
 
-def get_app(dataset_path: str | None = None, dash_class: type[Dash] = Dash) -> Dash:
+def get_app(dataset_path: str | None = None) -> Dash:
     """Centralize all the ugliness around initializing the app."""
     logging.basicConfig(level=logging.INFO, force=True)
     logger.info("Datadoc version v%s", get_app_version())
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     state.metadata = DataDocMetadata(dataset_path)
-    app = build_app(dash_class)
+
+    # This must be set to run correctly on Dapla Jupyter
+    if JUPYTERHUB_SERVICE_PREFIX_ENV in os.environ:
+        requests_pathname_prefix = (
+            f"{os.getenv(JUPYTERHUB_SERVICE_PREFIX_ENV, '/')}proxy/{PORT}/"
+        )
+    else:
+        requests_pathname_prefix = "/"
+
+    app = Dash(
+        name=NAME,
+        title=NAME,
+        assets_folder=f"{Path(__file__).parent}/assets",
+        requests_pathname_prefix=requests_pathname_prefix,
+    )
+    app = build_app(app)
     app.server.register_blueprint(healthz, url_prefix="/healthz")
     app.server.config["HEALTHZ"] = {
         "live": lambda: True,
@@ -100,21 +112,20 @@ def main(dataset_path: str | None = None) -> None:
     """Entrypoint when running as a script."""
     logging.basicConfig(level=logging.DEBUG, force=True)
     logger.info("Starting app with dataset_path = %s", dataset_path)
+    app: Dash = get_app(dataset_path)
     if running_in_notebook():
         logger.info("Running in notebook")
-        from jupyter_dash import JupyterDash
-
-        JupyterDash.infer_jupyter_proxy_config()
-        app: JupyterDash = get_app(dataset_path, JupyterDash)
-        port = pick_random_port()
-        app.run_server(mode="jupyterlab", port=port)
-        logger.info("Server running on port %s", port)
+        app.run(
+            jupyter_mode="jupyterlab",
+            jupyter_server_url=os.getenv("JUPYTERHUB_HTTP_REFERER", None),
+            jupyter_height=1000,
+            port=PORT,
+        )
     else:
         # Assume running in server mode is better (largely for development purposes)
         logging.basicConfig(level=logging.DEBUG, force=True)
         logger.debug("Starting in development mode")
-        app = get_app(dataset_path, Dash)
-        app.run(debug=True, use_reloader=False)
+        app.run(debug=True, port=7002)
 
 
 if __name__ == "__main__":
