@@ -1,0 +1,53 @@
+name: Update dependencies
+
+on:
+  schedule:
+    # 07:00 on Fridays
+    - cron: "0 7 * * Fri"
+  # Allow manual triggering
+  workflow_dispatch:
+
+jobs:
+  autoupdate_dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate a token
+        id: generate_token
+        uses: tibdex/github-app-token@b62528385c34dbc9f38e5f4225ac829252d1ea92
+        with:
+          app_id: ${{ secrets.DEPENDENCY_UPDATER_PYTHON_ID }}
+          private_key: ${{ secrets.DEPENDENCY_UPDATER_PYTHON_PRIVATE_KEY }}
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.11"
+      - uses: Gr1N/setup-poetry@v8
+      - uses: actions/cache@v2
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+      - name: Print Poetry version
+        shell: bash
+        run: poetry --version
+      - name: Install poetry relax plugin
+        shell: bash
+        run: poetry self add poetry-relax
+      - name: Print files in folder
+        shell: bash
+        run: ls
+      - name: Run autoupdate
+        shell: bash
+        env:
+          update_command: "poetry relax --update"
+          default_branch: ${{ github.event.repository.default_branch }}
+          update_path: "" # Set to run in a specific path with run update_command
+          on_changes_command: "" # Command to run when changes are detected
+        run: |
+          .github/workflows/update-dependencies.sh \
+          ${{ steps.generate_token.outputs.token }} \
+          "${update_command}" \
+          "${default_branch}" \
+          "${update_path}" \
+          "${on_changes_command}"
