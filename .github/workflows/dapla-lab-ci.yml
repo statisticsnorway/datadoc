@@ -17,7 +17,6 @@ on:
       - 'poetry.lock'
       - 'Dockerfile'
       - '.github/workflows/dapla-lab-ci.yml'
-  workflow_dispatch:
 
 env:
   REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-lab-docker/onyxia
