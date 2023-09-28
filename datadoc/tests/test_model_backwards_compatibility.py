@@ -46,7 +46,7 @@ def test_backwards_compatibility(
     metadata: DataDocMetadata,
 ):
     # Parameterise with all known backwards compatible versions
-    with Path.open(existing_metadata_file) as f:
+    with Path.open(Path(existing_metadata_file)) as f:
         file_metadata = json.loads(f.read())
 
     in_file_values = [
