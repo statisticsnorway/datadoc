@@ -92,7 +92,7 @@ class LocalFile:
 
     def open(self: t.Self @ LocalFile, **kwargs: dict[str, t.Any]) -> IOBase:
         """Return a file-like-object."""
-        return pathlib.Path.open(str(self._path_object), **kwargs)
+        return pathlib.Path.open(self._path_object, **kwargs)
 
     def parent(self: t.Self @ LocalFile) -> str:
         """Return the parent of this file."""

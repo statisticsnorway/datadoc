@@ -159,12 +159,12 @@ def test_existing_metadata_none_id(
 ):
     pre_open_id = ""
     post_write_id = ""
-    with Path.open(existing_metadata_file) as f:
+    with Path.open(Path(existing_metadata_file)) as f:
         pre_open_id = json.load(f)["dataset"]["id"]
     assert pre_open_id is None
     assert isinstance(metadata.meta.dataset.id, UUID)
     metadata.write_metadata_document()
-    with Path.open(existing_metadata_file) as f:
+    with Path.open(Path(existing_metadata_file)) as f:
         post_write_id = json.load(f)["dataset"]["id"]
     assert post_write_id == str(metadata.meta.dataset.id)
 
@@ -180,13 +180,13 @@ def test_existing_metadata_valid_id(
 ):
     pre_open_id = ""
     post_write_id = ""
-    with Path.open(existing_metadata_file) as f:
+    with Path.open(Path(existing_metadata_file)) as f:
         pre_open_id = json.load(f)["dataset"]["id"]
     assert pre_open_id is not None
     assert isinstance(metadata.meta.dataset.id, UUID)
     assert str(metadata.meta.dataset.id) == pre_open_id
     metadata.write_metadata_document()
-    with Path.open(existing_metadata_file) as f:
+    with Path.open(Path(existing_metadata_file)) as f:
         post_write_id = json.load(f)["dataset"]["id"]
     assert post_write_id == pre_open_id
 
