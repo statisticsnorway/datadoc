@@ -218,7 +218,7 @@ def test_update_variable_table_dropdown_options_for_language():
     options = update_variable_table_dropdown_options_for_language(
         SupportedLanguages.NORSK_BOKMÅL,
     )
-    assert all(k in DataDocVariable.__fields__ for k in options)
+    assert all(k in DataDocVariable.model_fields for k in options)
     assert all(list(v.keys()) == ["options"] for v in options.values())
     try:
         assert all(

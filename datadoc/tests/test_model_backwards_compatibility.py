@@ -52,7 +52,9 @@ def test_backwards_compatibility(
     in_file_values = [
         v for v in file_metadata["dataset"].values() if v not in ["", None]
     ]
-    read_in_values = json.loads(metadata.meta.dataset.json(exclude_none=True)).values()
+    read_in_values = json.loads(
+        metadata.meta.dataset.model_dump_json(exclude_none=True),
+    ).values()
 
     missing_values = [v for v in in_file_values if v not in read_in_values]
     if missing_values:

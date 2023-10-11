@@ -75,7 +75,7 @@ def test_metadata_document_percent_complete(metadata: DataDocMetadata):
     variable_2 = DataDocVariable(data_type=Enums.Datatype.INTEGER)
     document = MetadataDocument(
         percentage_complete=0,
-        document_version=1,
+        document_version="1.0.0",
         dataset=dataset,
         variables=[variable_1, variable_2],
     )

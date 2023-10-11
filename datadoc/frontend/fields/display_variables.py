@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import typing
 from enum import Enum
 
 from datadoc_model import Model
@@ -155,8 +156,10 @@ DISPLAYED_DROPDOWN_VARIABLES_METADATA = [
 
 DISPLAYED_DROPDOWN_VARIABLES_TYPES = []
 
+types = typing.get_type_hints(Model.DataDocVariable)
+
 for m in DISPLAY_VARIABLES.values():
     if m.presentation == "dropdown":
-        field_type = Model.DataDocVariable.__fields__[m.identifier].type_
+        field_type = typing.get_args(types[m.identifier])[0]
         if issubclass(field_type, LanguageStringsEnum) or field_type is bool:
             DISPLAYED_DROPDOWN_VARIABLES_TYPES.append(field_type)

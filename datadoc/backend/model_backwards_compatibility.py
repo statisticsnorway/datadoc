@@ -72,15 +72,20 @@ def handle_version_0_1_1(supplied_metadata: dict) -> dict:
         supplied_metadata["dataset"][new_key] = supplied_metadata["dataset"].pop(
             old_key,
         )
+
+    # Replace empty strings with None, empty strings are not valid for LanguageStrings values
+    supplied_metadata["dataset"] = {
+        k: None if v == "" else v for k, v in supplied_metadata["dataset"].items()
+    }
     return supplied_metadata
 
 
 # Register all the supported versions and their handlers
 BackwardsCompatibleVersion(version="0.1.1", handler=handle_version_0_1_1)
 BackwardsCompatibleVersion(
-    version="1",
+    version="1",  # Some documents exist with incorrect version specification
     handler=handle_version_0_1_1,
-)  # Some documents exist with incorrect version specification
+)
 
 
 def upgrade_metadata(fresh_metadata: dict, current_model_version: str) -> dict:

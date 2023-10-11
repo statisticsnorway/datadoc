@@ -31,7 +31,7 @@ def get_display_values(
     return_dict = {}
     for field_name, value in variable:
         if isinstance(value, Model.LanguageStrings):
-            return_dict[field_name] = value.dict()[current_language.value]
+            return_dict[field_name] = value.model_dump()[current_language.value]
         else:
             return_dict[field_name] = value
     return return_dict
