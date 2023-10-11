@@ -37,10 +37,18 @@ OBLIGATORY_VARIABLES_METADATA = [
 
 # These don't vary at runtime so we calculate them as constants here
 NUM_OBLIGATORY_DATASET_FIELDS = len(
-    [k for k in Model.DataDocDataSet().dict() if k in OBLIGATORY_DATASET_METADATA],
+    [
+        k
+        for k in Model.DataDocDataSet().model_dump()
+        if k in OBLIGATORY_DATASET_METADATA
+    ],
 )
 NUM_OBLIGATORY_VARIABLES_FIELDS = len(
-    [k for k in Model.DataDocVariable().dict() if k in OBLIGATORY_VARIABLES_METADATA],
+    [
+        k
+        for k in Model.DataDocVariable().model_dump()
+        if k in OBLIGATORY_VARIABLES_METADATA
+    ],
 )
 
 METADATA_DOCUMENT_FILE_SUFFIX = "__DOC.json"
@@ -210,7 +218,7 @@ class DataDocMetadata:
             self.meta.dataset.metadata_created_by = self.current_user
         self.meta.dataset.metadata_last_updated_date = timestamp
         self.meta.dataset.metadata_last_updated_by = self.current_user
-        self.metadata_document.write_text(self.meta.json(indent=4, sort_keys=False))
+        self.metadata_document.write_text(self.meta.model_dump_json(indent=4))
         logger.info("Saved metadata document %s", self.metadata_document.location)
 
     @property
@@ -225,7 +233,7 @@ class DataDocMetadata:
         num_set_fields = len(
             [
                 k
-                for k, v in self.meta.dataset.dict().items()
+                for k, v in self.meta.dataset.model_dump().items()
                 if k in OBLIGATORY_DATASET_METADATA and v is not None
             ],
         )
@@ -235,7 +243,7 @@ class DataDocMetadata:
             num_set_fields += len(
                 [
                     k
-                    for k, v in variable.dict().items()
+                    for k, v in variable.model_dump().items()
                     if k in OBLIGATORY_VARIABLES_METADATA and v is not None
                 ],
             )

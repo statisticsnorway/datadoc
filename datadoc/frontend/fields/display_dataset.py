@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import typing
 from enum import Enum
 
 from dash import dcc
@@ -249,7 +250,8 @@ DISPLAYED_DROPDOWN_DATASET_METADATA = [
     m for m in DISPLAYED_DATASET_METADATA if m.component == dcc.Dropdown
 ]
 
+types = typing.get_type_hints(Model.DataDocDataSet)
+
 DISPLAYED_DROPDOWN_DATASET_ENUMS = [
-    Model.DataDocDataSet.__fields__[m.identifier].type_
-    for m in DISPLAYED_DROPDOWN_DATASET_METADATA
+    typing.get_args(types[m.identifier])[0] for m in DISPLAYED_DROPDOWN_DATASET_METADATA
 ]

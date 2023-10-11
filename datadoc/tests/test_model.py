@@ -11,13 +11,15 @@ from datadoc.frontend.fields.display_variables import (
 
 def test_dataset_metadata_definition_parity():
     """The metadata fields are currently defined in multiple places for technical reasons. We want these to always be exactly identical."""
-    assert [i.value for i in DatasetIdentifiers] == list(DataDocDataSet().dict().keys())
+    assert [i.value for i in DatasetIdentifiers] == list(
+        DataDocDataSet().model_dump().keys(),
+    )
     assert list(DatasetIdentifiers) == list(DISPLAY_DATASET.keys())
 
 
 def test_variables_metadata_definition_parity():
     """The metadata fields are currently defined in multiple places for technical reasons. We want these to always be exactly identical."""
     assert [i.value for i in VariableIdentifiers] == list(
-        DataDocVariable().dict().keys(),
+        DataDocVariable().model_dump().keys(),
     )
     assert list(VariableIdentifiers) == list(DISPLAY_VARIABLES.keys())

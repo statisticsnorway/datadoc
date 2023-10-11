@@ -45,7 +45,10 @@ def kwargs_factory() -> dict[str, t.Any]:
 
 def get_standard_metadata(metadata: BaseModel, identifier: str) -> MetadataInputTypes:
     """Get a metadata value from the model."""
-    return metadata.dict()[identifier]
+    value = metadata.model_dump()[identifier]
+    if value is None:
+        return None
+    return str(value)
 
 
 def get_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str:
