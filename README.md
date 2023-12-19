@@ -22,6 +22,7 @@ Document datasets in Statistics Norway
 
 - Python >=3.10
 - Poetry, install via `curl -sSL https://install.python-poetry.org | python3 -`
+- Install pre-commit hooks `poetry run pre-commit install`
 
 ### Dependency Management
 
