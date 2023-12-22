@@ -4,11 +4,6 @@ on:
   push:
     branches:
       - "**"
-    paths:
-      - 'datadoc/**'
-      - 'poetry.lock'
-      - 'Dockerfile'
-      - '.github/workflows/dapla-lab-ci.yml'
     tags:
       - "*"
   pull_request:
