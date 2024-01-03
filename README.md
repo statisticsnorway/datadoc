@@ -18,19 +18,31 @@ Document datasets in Statistics Norway
 
 ## Contributing
 
-### Prerequisites
+### Local environment
+
+Poetry is used for dependency management. [Poe the Poet](https://github.com/nat-n/poethepoet) is used for running poe tasks within poetry's virtualenv. Upon cloning this project first install necessary dependencies, then run the tests to verify everything is working.
+
+#### 1. Prerequisites
 
 - Python >=3.10
 - Poetry, install via `curl -sSL https://install.python-poetry.org | python3 -`
 
-### Dependency Management
-
-Poetry is used for dependency management. [Poe the Poet](https://github.com/nat-n/poethepoet) is used for running poe tasks within poetry's virtualenv. Upon cloning this project first install necessary dependencies, then run the tests to verify everything is working.
-
-#### Install all dependencies
+#### 2. Install dependencies
 
 ```shell
-poetry install --all-extras
+poetry install
+```
+
+#### 3. Install pre-commit hooks
+
+```shell
+poetry run pre-commit install
+```
+
+#### 4. Run tests
+
+```shell
+poetry run poe test
 ```
 
 ### Add dependencies
@@ -45,12 +57,6 @@ poetry add <python package name>
 
 ```shell
 poetry add --group dev <python package name>
-```
-
-### Run tests
-
-```shell
-poetry run poe test
 ```
 
 ### Run project locally
