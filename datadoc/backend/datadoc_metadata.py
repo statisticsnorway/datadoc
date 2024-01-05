@@ -9,12 +9,12 @@ import typing as t
 import uuid
 from typing import TYPE_CHECKING
 
-from datadoc_model import Model
-from datadoc_model.Enums import DatasetState, SupportedLanguages
+from datadoc_model import model
 
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
 from datadoc.backend.storage_adapter import StorageAdapter
+from datadoc.enums import DatasetState, SupportedLanguages, VariableRole
 from datadoc.frontend.fields import display_dataset, display_variables
 from datadoc.utils import calculate_percentage, get_timestamp_now
 
@@ -37,18 +37,10 @@ OBLIGATORY_VARIABLES_METADATA = [
 
 # These don't vary at runtime so we calculate them as constants here
 NUM_OBLIGATORY_DATASET_FIELDS = len(
-    [
-        k
-        for k in Model.DataDocDataSet().model_dump()
-        if k in OBLIGATORY_DATASET_METADATA
-    ],
+    [k for k in model.Dataset().model_dump() if k in OBLIGATORY_DATASET_METADATA],
 )
 NUM_OBLIGATORY_VARIABLES_FIELDS = len(
-    [
-        k
-        for k in Model.DataDocVariable().model_dump()
-        if k in OBLIGATORY_VARIABLES_METADATA
-    ],
+    [k for k in model.Variable().model_dump() if k in OBLIGATORY_VARIABLES_METADATA],
 )
 
 METADATA_DOCUMENT_FILE_SUFFIX = "__DOC.json"
@@ -85,14 +77,13 @@ class DataDocMetadata:
                 self.current_user,
             )
 
-        self.meta: Model.MetadataDocument = Model.MetadataDocument(
+        self.meta: model.DatadocJsonSchema = model.DatadocJsonSchema(
             percentage_complete=0,
-            document_version=Model.MODEL_VERSION,
-            dataset=Model.DataDocDataSet(),
+            dataset=model.Dataset(),
             variables=[],
         )
 
-        self.variables_lookup: dict[str, Model.DataDocVariable] = {}
+        self.variables_lookup: dict[str, model.Variable] = {}
 
         if self.dataset:
             self.extract_metadata_from_files()
@@ -157,14 +148,15 @@ class DataDocMetadata:
                     self.metadata_document.location,
                 )
 
-                fresh_metadata = upgrade_metadata(fresh_metadata, Model.MODEL_VERSION)
+                fresh_metadata = upgrade_metadata(
+                    fresh_metadata,
+                    model.DatadocJsonSchema().document_version,
+                )
 
                 variables_list = fresh_metadata.pop("variables", None)
 
-                self.meta.variables = [
-                    Model.DataDocVariable(**v) for v in variables_list
-                ]
-                self.meta.dataset = Model.DataDocDataSet(
+                self.meta.variables = [model.Variable(**v) for v in variables_list]
+                self.meta.dataset = model.Dataset(
                     **fresh_metadata.pop("dataset", None),
                 )
             except json.JSONDecodeError:
@@ -182,10 +174,10 @@ class DataDocMetadata:
             self.meta.dataset.id = uuid.uuid4()
 
         # Set default values for variables where appropriate
-        v: Model.DataDocVariable
+        v: model.Variable
         for v in self.meta.variables:
             if v.variable_role is None:
-                v.variable_role = Model.Enums.VariableRole.MEASURE
+                v.variable_role = VariableRole.MEASURE
             if v.direct_person_identifying is None:
                 v.direct_person_identifying = False
 
@@ -199,7 +191,7 @@ class DataDocMetadata:
         """
         self.ds_schema = DatasetParser.for_file(self.dataset)
 
-        self.meta.dataset = Model.DataDocDataSet(
+        self.meta.dataset = model.Dataset(
             short_name=self.short_name,
             dataset_state=self.dataset_state,
             version=self.get_dataset_version(self.short_name),

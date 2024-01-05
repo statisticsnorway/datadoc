@@ -9,9 +9,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from dash import ALL, Dash, Input, Output, State, ctx
-from datadoc_model.Enums import SupportedLanguages
 
 from datadoc import state
+from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.dataset import (
     accept_dataset_metadata_input,
     change_language_dataset_metadata,

@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import logging
 
-from datadoc_model.Enums import SupportedLanguages
 from pydantic import ValidationError
 
 from datadoc import state
+from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.utils import (
     MetadataInputTypes,
     find_existing_language_string,

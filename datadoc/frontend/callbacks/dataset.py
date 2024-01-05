@@ -27,8 +27,9 @@ from datadoc.frontend.fields.display_dataset import (
 if t.TYPE_CHECKING:
     from pathlib import Path
 
-    from datadoc_model import Model
-    from datadoc_model.Enums import SupportedLanguages
+    from datadoc_model import model
+
+    from datadoc.enums import SupportedLanguages
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +96,7 @@ def process_keyword(value: str) -> list[str] | None:
 def process_special_cases(
     value: str,
     metadata_identifier: str,
-) -> list[str] | Model.LanguageStrings | None:
+) -> list[str] | model.LanguageStringType | None:
     """Pre-process metadata where needed.
 
     Some types of metadata need processing before being saved

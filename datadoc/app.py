@@ -10,11 +10,11 @@ from pathlib import Path
 
 import dash_bootstrap_components as dbc
 from dash import Dash
-from datadoc_model.Enums import SupportedLanguages
 from flask_healthz import healthz
 
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
+from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.register_callbacks import register_callbacks
 from datadoc.frontend.components.alerts import (
     dataset_validation_error,

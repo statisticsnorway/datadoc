@@ -8,11 +8,14 @@ from typing import TYPE_CHECKING
 from uuid import UUID
 
 import pytest
-from datadoc_model import Enums
-from datadoc_model.Enums import DatasetState
-from datadoc_model.Model import DataDocDataSet, DataDocVariable, MetadataDocument
+from datadoc_model.model import (
+    DatadocJsonSchema,
+    Dataset,
+    Variable,
+)
 
 from datadoc.backend.datadoc_metadata import PLACEHOLDER_USERNAME, DataDocMetadata
+from datadoc.enums import DatasetState, DataType, VariableRole
 
 from .utils import (
     TEST_EXISTING_METADATA_DIRECTORY,
@@ -33,7 +36,7 @@ def make_paths() -> list[tuple[str, DatasetState]]:
         ("roskildedata/klargjorte-data", DatasetState.PROCESSED_DATA),
         ("klargjorte_data", DatasetState.PROCESSED_DATA),
         ("klargjorte-data", DatasetState.PROCESSED_DATA),
-        ("statistikk", DatasetState.STATISTIC),
+        ("statistikk", DatasetState.STATISTICS),
         ("", None),
     ]
     test_data = []
@@ -70,10 +73,10 @@ def test_existing_metadata_file(
 
 
 def test_metadata_document_percent_complete(metadata: DataDocMetadata):
-    dataset = DataDocDataSet(dataset_state=Enums.DatasetState.OUTPUT_DATA)
-    variable_1 = DataDocVariable(data_type=Enums.Datatype.BOOLEAN)
-    variable_2 = DataDocVariable(data_type=Enums.Datatype.INTEGER)
-    document = MetadataDocument(
+    dataset = Dataset(dataset_state=DatasetState.OUTPUT_DATA)
+    variable_1 = Variable(data_type=DataType.BOOLEAN)
+    variable_2 = Variable(data_type=DataType.INTEGER)
+    document = DatadocJsonSchema(
         percentage_complete=0,
         document_version="1.0.0",
         dataset=dataset,
@@ -110,7 +113,7 @@ def test_write_metadata_document(
 
     assert (
         # Use our pydantic model to read in the datetime string so we get the correct format
-        DataDocDataSet(
+        Dataset(
             metadata_created_date=written_metadata["dataset"]["metadata_created_date"],
         ).metadata_created_date
         == dummy_timestamp
@@ -118,7 +121,7 @@ def test_write_metadata_document(
     assert written_metadata["dataset"]["metadata_created_by"] == PLACEHOLDER_USERNAME
     assert (
         # Use our pydantic model to read in the datetime string so we get the correct format
-        DataDocDataSet(
+        Dataset(
             metadata_last_updated_date=written_metadata["dataset"][
                 "metadata_last_updated_date"
             ],
@@ -193,8 +196,7 @@ def test_existing_metadata_valid_id(
 
 def test_variable_role_default_value(metadata: DataDocMetadata):
     assert all(
-        v.variable_role == Enums.VariableRole.MEASURE.value
-        for v in metadata.meta.variables
+        v.variable_role == VariableRole.MEASURE.value for v in metadata.meta.variables
     )
 
 

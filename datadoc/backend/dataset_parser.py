@@ -12,12 +12,11 @@ from abc import ABC, abstractmethod
 
 import pandas as pd
 import pyarrow.parquet as pq
-from datadoc_model.Enums import Datatype
-from datadoc_model.LanguageStrings import LanguageStrings
-from datadoc_model.Model import DataDocVariable
+from datadoc_model.model import LanguageStringType, Variable
 
 from datadoc import state
 from datadoc.backend.storage_adapter import StorageAdapter
+from datadoc.enums import DataType
 
 TDatasetParser = t.TypeVar("TDatasetParser", bound="DatasetParser")
 
@@ -76,14 +75,14 @@ KNOWN_DATETIME_TYPES = (
 KNOWN_BOOLEAN_TYPES = ("bool", "bool_", "boolean")
 
 
-TYPE_CORRESPONDENCE: list[tuple[list[str], Datatype]] = [
-    (KNOWN_INTEGER_TYPES, Datatype.INTEGER),
-    (KNOWN_FLOAT_TYPES, Datatype.FLOAT),
-    (KNOWN_STRING_TYPES, Datatype.STRING),
-    (KNOWN_DATETIME_TYPES, Datatype.DATETIME),
-    (KNOWN_BOOLEAN_TYPES, Datatype.BOOLEAN),
+TYPE_CORRESPONDENCE: list[tuple[list[str], DataType]] = [
+    (KNOWN_INTEGER_TYPES, DataType.INTEGER),
+    (KNOWN_FLOAT_TYPES, DataType.FLOAT),
+    (KNOWN_STRING_TYPES, DataType.STRING),
+    (KNOWN_DATETIME_TYPES, DataType.DATETIME),
+    (KNOWN_BOOLEAN_TYPES, DataType.BOOLEAN),
 ]
-TYPE_MAP: dict[str:Datatype] = {}
+TYPE_MAP: dict[str:DataType] = {}
 for concrete_type, abstract_type in TYPE_CORRESPONDENCE:
     TYPE_MAP.update({c: abstract_type for c in concrete_type})
 
@@ -135,7 +134,7 @@ class DatasetParser(ABC):
             return reader
 
     @staticmethod
-    def transform_data_type(data_type: str) -> Datatype | None:
+    def transform_data_type(data_type: str) -> DataType | None:
         """Transform a concrete data type to an abstract data type.
 
         In statistical metadata, one is not interested in how the data is
@@ -149,7 +148,7 @@ class DatasetParser(ABC):
         return TYPE_MAP.get(data_type.lower(), None)
 
     @abstractmethod
-    def get_fields(self: t.Self @ DatasetParser) -> list[DataDocVariable]:
+    def get_fields(self: t.Self @ DatasetParser) -> list[Variable]:
         """Abstract method, must be implemented by subclasses."""
 
 
@@ -160,12 +159,12 @@ class DatasetParserParquet(DatasetParser):
         """Use the super init method."""
         super().__init__(dataset)
 
-    def get_fields(self: t.Self @ DatasetParserParquet) -> list[DataDocVariable]:
+    def get_fields(self: t.Self @ DatasetParserParquet) -> list[Variable]:
         """Extract the fields from this dataset."""
         with self.dataset.open(mode="rb") as f:
             data_table = pq.read_table(f)
         return [
-            DataDocVariable(
+            Variable(
                 short_name=data_field.name,
                 data_type=self.transform_data_type(str(data_field.type)),
             )
@@ -180,7 +179,7 @@ class DatasetParserSas7Bdat(DatasetParser):
         """Use the super init method."""
         super().__init__(dataset)
 
-    def get_fields(self: t.Self @ DatasetParserSas7Bdat) -> list[DataDocVariable]:
+    def get_fields(self: t.Self @ DatasetParserSas7Bdat) -> list[Variable]:
         """Extract the fields from this dataset."""
         fields = []
         with self.dataset.open(mode="rb") as f:
@@ -197,11 +196,11 @@ class DatasetParserSas7Bdat(DatasetParser):
         # Get all the values from the row and loop through them
         for i, v in enumerate(row.to_numpy().tolist()[0]):
             fields.append(
-                DataDocVariable(
+                Variable(
                     short_name=sas_reader.columns[i].name,
                     # Assume labels are defined in the default language (NORSK_BOKMÅL)
                     # If this is not correct, the user may fix it via the UI
-                    name=LanguageStrings(
+                    name=LanguageStringType(
                         **{
                             state.current_metadata_language: sas_reader.columns[
                                 i

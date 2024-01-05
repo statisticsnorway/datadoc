@@ -7,12 +7,12 @@ from pathlib import Path
 from unittest import mock
 
 import pytest
-from datadoc_model.Enums import SupportedLanguages
 from pytest_mock import MockerFixture
 
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.storage_adapter import StorageAdapter
+from datadoc.enums import SupportedLanguages
 
 from .utils import (
     TEST_BUCKET_PARQUET_FILEPATH,

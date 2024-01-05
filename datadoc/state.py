@@ -10,7 +10,7 @@ See here: https://dash.plotly.com/sharing-data-between-callbacks
 
 from typing import TYPE_CHECKING
 
-from datadoc_model.Enums import SupportedLanguages
+from datadoc.enums import SupportedLanguages
 
 if TYPE_CHECKING:
     # This is only needed for a type hint so we put the import inside

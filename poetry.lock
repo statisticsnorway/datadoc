@@ -3419,17 +3419,22 @@ sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
 name = "ssb-datadoc-model"
-version = "4.1.0"
+version = "4.1.1"
 description = "Data Model for use in Statistics Norway's Metadata system"
 optional = false
 python-versions = ">=3.10"
-files = [
-    {file = "ssb_datadoc_model-4.1.0-py3-none-any.whl", hash = "sha256:d121016d8416f236fef4f0167e23bfc528bae96faa3c6981197dbf580633af22"},
-    {file = "ssb_datadoc_model-4.1.0.tar.gz", hash = "sha256:0c4d3bc1e7cc362add0f8684f86fa278d80ffb1064d389634a513c34f92fcf7e"},
-]
+files = []
+develop = false
 
 [package.dependencies]
 pydantic = ">=2.4.0"
+
+[package.source]
+type = "git"
+url = "https://github.com/statisticsnorway/ssb-datadoc-model.git"
+reference = "HEAD"
+resolved_reference = "558092c8bb772dbe233dc8ac307b0f28e210f59d"
+subdirectory = "generated/python/datadoc_model"
 
 [[package]]
 name = "stack-data"
@@ -3717,4 +3722,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "4a6aac6956710e428005d0479004d665d70bb2d0087b4d3f7cc834066c290782"
+content-hash = "105ce57a5c35c8311ca43af6433fc351645b93bb9b993bd4a3ac0e407eecc2bf"

@@ -5,13 +5,16 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from datadoc_model import Model
+from datadoc_model import model
 
-from datadoc import state
+from datadoc import enums, state
 
 if TYPE_CHECKING:
-    from datadoc_model.Enums import SupportedLanguages
-    from datadoc_model.LanguageStringsEnum import LanguageStringsEnum
+    from enum import Enum
+
+    import pydantic
+
+    from datadoc.enums import SupportedLanguages
 
 logger = logging.getLogger(__name__)
 
@@ -25,9 +28,17 @@ def update_global_language_state(language: SupportedLanguages) -> None:
     state.current_metadata_language = language
 
 
+def get_language_strings_enum(enum: Enum) -> enums.LanguageStringsEnum:
+    """Get the correct language strings enum for the given enum.
+
+    We need multiple languages to display in the front end, but the model only defines a single language in the enums.
+    """
+    return getattr(enums, enum.__name__)
+
+
 def get_options_for_language(
     language: SupportedLanguages,
-    enum: LanguageStringsEnum,
+    enum: Enum,
 ) -> list[dict[str, str]]:
     """Generate the list of options based on the currently chosen language."""
     return [
@@ -35,22 +46,22 @@ def get_options_for_language(
             "label": i.get_value_for_language(language),
             "value": i.name,
         }
-        for i in enum
+        for i in get_language_strings_enum(enum)
     ]
 
 
 def find_existing_language_string(
-    metadata_model_object: Model.DataDocBaseModel,
+    metadata_model_object: pydantic.BaseModel,
     value: str,
     metadata_identifier: str,
-) -> Model.LanguageStrings | None:
+) -> model.LanguageStringType | None:
     """Get or create a LanguageStrings object and return it."""
     # In this case we need to set the string to the correct language code
     language_strings = getattr(metadata_model_object, metadata_identifier)
     if language_strings is None:
         # This means that no strings have been saved yet so we need to construct
         # a new LanguageStrings object
-        language_strings = Model.LanguageStrings(
+        language_strings = model.LanguageStringType(
             **{state.current_metadata_language.value: value},
         )
     else:

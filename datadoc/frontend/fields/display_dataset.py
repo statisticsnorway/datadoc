@@ -7,7 +7,7 @@ import typing
 from enum import Enum
 
 from dash import dcc
-from datadoc_model import Model
+from datadoc_model import model
 
 from datadoc.frontend.fields.display_base import (
     DROPDOWN_KWARGS,
@@ -29,19 +29,20 @@ class DatasetIdentifiers(str, Enum):
     DATASET_STATUS = "dataset_status"
     DATASET_STATE = "dataset_state"
     NAME = "name"
+    DESCRIPTION = "description"
     DATA_SOURCE = "data_source"
+    REGISTER_URI = "register_uri"
     POPULATION_DESCRIPTION = "population_description"
     VERSION = "version"
     VERSION_DESCRIPTION = "version_description"
     UNIT_TYPE = "unit_type"
     TEMPORALITY_TYPE = "temporality_type"
-    DESCRIPTION = "description"
     SUBJECT_FIELD = "subject_field"
     KEYWORD = "keyword"
     SPATIAL_COVERAGE_DESCRIPTION = "spatial_coverage_description"
     ID = "id"
     OWNER = "owner"
-    DATA_SOURCE_PATH = "data_source_path"
+    FILE_PATH = "file_path"
     METADATA_CREATED_DATE = "metadata_created_date"
     METADATA_CREATED_BY = "metadata_created_by"
     METADATA_LAST_UPDATED_DATE = "metadata_last_updated_date"
@@ -94,6 +95,11 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         description="Datakilde. Settes enten for datasettet eller variabelforekomst.",
         obligatory=True,
         multiple_language_support=True,
+    ),
+    DatasetIdentifiers.REGISTER_URI: DisplayDatasetMetadata(
+        identifier=DatasetIdentifiers.REGISTER_URI.value,
+        display_name="Register URI",
+        description="Lenke (URI) til register i registeroversikt (oversikt over alle registre meldt Datatilsynet (oppdatering foretas av sikkerhetsrådgiver))",
     ),
     DatasetIdentifiers.POPULATION_DESCRIPTION: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.POPULATION_DESCRIPTION.value,
@@ -169,10 +175,10 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         editable=False,
         multiple_language_support=True,
     ),
-    DatasetIdentifiers.DATA_SOURCE_PATH: DisplayDatasetMetadata(
-        identifier=DatasetIdentifiers.DATA_SOURCE_PATH.value,
-        display_name="Datasettsti",
-        description="Fysisk fil-sti (plassering) av datasett",
+    DatasetIdentifiers.FILE_PATH: DisplayDatasetMetadata(
+        identifier=DatasetIdentifiers.FILE_PATH.value,
+        display_name="Filsti",
+        description="Filstien inneholder datasettets navn og stien til hvor det er lagret.",
         obligatory=True,
         editable=False,
     ),
@@ -250,7 +256,7 @@ DISPLAYED_DROPDOWN_DATASET_METADATA = [
     m for m in DISPLAYED_DATASET_METADATA if m.component == dcc.Dropdown
 ]
 
-types = typing.get_type_hints(Model.DataDocDataSet)
+types = typing.get_type_hints(model.Dataset)
 
 DISPLAYED_DROPDOWN_DATASET_ENUMS = [
     typing.get_args(types[m.identifier])[0] for m in DISPLAYED_DROPDOWN_DATASET_METADATA

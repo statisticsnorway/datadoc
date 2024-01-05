@@ -2,8 +2,9 @@
 
 import datetime
 
-from datadoc_model import Model
-from datadoc_model.Enums import SupportedLanguages
+from datadoc_model import model
+
+from datadoc.enums import SupportedLanguages
 
 
 def running_in_notebook() -> bool:
@@ -24,13 +25,13 @@ def calculate_percentage(completed: int, total: int) -> int:
 
 
 def get_display_values(
-    variable: Model.DataDocVariable,
+    variable: model.Variable,
     current_language: SupportedLanguages,
 ) -> dict:
     """Return a dictionary representation of Model.DataDocVariable with strings in the currently selected language."""
     return_dict = {}
     for field_name, value in variable:
-        if isinstance(value, Model.LanguageStrings):
+        if isinstance(value, model.LanguageStringType):
             return_dict[field_name] = value.model_dump()[current_language.value]
         else:
             return_dict[field_name] = value

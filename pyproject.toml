@@ -25,7 +25,7 @@ dash = ">=2.11"
 pydantic = ">2"
 dash-bootstrap-components = ">=1.1.0"
 pandas = ">=1.4.2"
-ssb-datadoc-model = "==4.1.0"
+ssb-datadoc-model = { git = "https://github.com/statisticsnorway/ssb-datadoc-model.git", subdirectory = "generated/python/datadoc_model" }
 dapla-toolbelt = ">=1.3.3"
 gcsfs = ">=2022.7.1"
 gunicorn = ">=21.2.0"
