@@ -165,7 +165,6 @@ types = typing.get_type_hints(model.Variable)
 for m in DISPLAY_VARIABLES.values():
     if m.presentation == "dropdown":
         field_type = typing.get_args(types[m.identifier])[0]
-        # if issubclass(field_type, LanguageStringsEnum) or field_type is bool:
         DISPLAYED_DROPDOWN_VARIABLES_TYPES.append(field_type)
 
 
