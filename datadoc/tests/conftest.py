@@ -20,7 +20,6 @@ from .utils import (
     TEST_EXISTING_METADATA_FILE_NAME,
     TEST_EXISTING_METADATA_WITH_VALID_ID_DIRECTORY,
     TEST_PARQUET_FILEPATH,
-    TEST_RESOURCES_DIRECTORY,
     TEST_RESOURCES_METADATA_DOCUMENT,
 )
 
@@ -45,10 +44,10 @@ def metadata(_mock_timestamp: None) -> DataDocMetadata:
 
 @pytest.fixture()
 def remove_document_file() -> None:
-    yield None  # Dummy value, No need to return anything in particular here
-    full_path = TEST_RESOURCES_DIRECTORY / TEST_EXISTING_METADATA_FILE_NAME
+    # Yield so we only run teardown
+    yield None
     try:
-        full_path.unlink()
+        TEST_RESOURCES_METADATA_DOCUMENT.unlink()
     except FileNotFoundError as e:
         print("File not deleted on teardown, exception caught:")  # noqa: T201
         traceback.print_exception(type(e), e)

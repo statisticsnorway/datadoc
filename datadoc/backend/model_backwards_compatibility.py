@@ -12,7 +12,11 @@ A test must also be implemented for each new version.
 from __future__ import annotations
 
 import typing as t
+from collections import OrderedDict
 from dataclasses import dataclass
+from datetime import datetime, timezone
+
+from datadoc_model.model import LanguageStringType
 
 if t.TYPE_CHECKING:
     from collections.abc import Callable
@@ -37,7 +41,7 @@ class UnknownModelVersionError(Exception):
         return f"Document Version ({self.supplied_version}) of discovered file is not supported"
 
 
-SUPPORTED_VERSIONS: dict[str, BackwardsCompatibleVersion] = {}
+SUPPORTED_VERSIONS: OrderedDict[str, BackwardsCompatibleVersion] = OrderedDict()
 
 
 @dataclass()
@@ -54,6 +58,30 @@ class BackwardsCompatibleVersion:
 
 def handle_current_version(supplied_metadata: dict) -> dict:
     """Nothing to do here."""
+    return supplied_metadata
+
+
+def handle_version_1_0_0(supplied_metadata: dict) -> dict:
+    """Handle breaking changes for v1.0.0."""
+    datetime_fields = [
+        ("metadata_created_date"),
+        ("metadata_last_updated_date"),
+    ]
+    for field in datetime_fields:
+        if supplied_metadata["dataset"][field]:
+            supplied_metadata["dataset"][field] = datetime.isoformat(
+                datetime.fromisoformat(supplied_metadata["dataset"][field]).astimezone(
+                    tz=timezone.utc,
+                ),
+                timespec="seconds",
+            )
+
+    if isinstance(supplied_metadata["dataset"]["data_source"], str):
+        supplied_metadata["dataset"]["data_source"] = LanguageStringType(
+            en=supplied_metadata["dataset"]["data_source"],
+        )
+    supplied_metadata["document_version"] = "2.0.0"
+
     return supplied_metadata
 
 
@@ -80,26 +108,33 @@ def handle_version_0_1_1(supplied_metadata: dict) -> dict:
     return supplied_metadata
 
 
-# Register all the supported versions and their handlers
+# Register all the supported versions and their handlers.
+# MUST be ordered from oldest to newest.
 BackwardsCompatibleVersion(version="0.1.1", handler=handle_version_0_1_1)
 BackwardsCompatibleVersion(
-    version="1",  # Some documents exist with incorrect version specification
-    handler=handle_version_0_1_1,
+    version="1.0.0",
+    handler=handle_version_1_0_0,
+)
+BackwardsCompatibleVersion(
+    version="2.0.0",
+    handler=handle_current_version,
 )
 
 
-def upgrade_metadata(fresh_metadata: dict, current_model_version: str) -> dict:
+def upgrade_metadata(fresh_metadata: dict) -> dict:
     """Run the handler for this version to upgrade the document to the latest version."""
     # Special case for current version, we expose the current_model_version parameter for test purposes
-    SUPPORTED_VERSIONS[current_model_version] = BackwardsCompatibleVersion(
-        current_model_version,
-        handle_current_version,
-    )
     supplied_version = fresh_metadata[VERSION_FIELD_NAME]
-    try:
-        # Retrieve the upgrade function for this version
-        upgrade = SUPPORTED_VERSIONS[supplied_version].handler
-    except KeyError as e:
-        raise UnknownModelVersionError(supplied_version) from e
-    else:
-        return upgrade(fresh_metadata)
+    start_running_handlers = False
+
+    # Run all the handlers in order from the supplied version onwards
+    for k, v in SUPPORTED_VERSIONS.items():
+        if k == supplied_version:
+            start_running_handlers = True
+        if start_running_handlers:
+            fresh_metadata = v.handler(fresh_metadata)
+
+    if not start_running_handlers:
+        raise UnknownModelVersionError(supplied_version)
+
+    return fresh_metadata

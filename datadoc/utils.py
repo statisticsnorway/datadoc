@@ -3,6 +3,7 @@
 import datetime
 
 from datadoc_model import model
+from pydantic import AnyUrl
 
 from datadoc.enums import SupportedLanguages
 
@@ -33,6 +34,8 @@ def get_display_values(
     for field_name, value in variable:
         if isinstance(value, model.LanguageStringType):
             return_dict[field_name] = value.model_dump()[current_language.value]
+        elif isinstance(value, AnyUrl):
+            return_dict[field_name] = str(value)
         else:
             return_dict[field_name] = value
     return return_dict

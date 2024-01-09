@@ -10,7 +10,10 @@ import typing as t
 from pydantic import ValidationError
 
 from datadoc import state
-from datadoc.backend.datadoc_metadata import DataDocMetadata
+from datadoc.backend.datadoc_metadata import (
+    METADATA_DOCUMENT_FILE_SUFFIX,
+    DataDocMetadata,
+)
 from datadoc.frontend.callbacks.utils import (
     MetadataInputTypes,
     find_existing_language_string,
@@ -49,25 +52,29 @@ def get_dataset_path() -> str | Path | None:
     return path_from_env
 
 
-def open_dataset(dataset_path: str | Path | None = None) -> None:
+def open_file(file_path: str | Path | None = None) -> None:
     """Load the given dataset into an DataDocMetadata instance."""
-    dataset = dataset_path or get_dataset_path()
-    state.metadata = DataDocMetadata(dataset)
-    logger.info("Opened dataset %s", dataset)
+    if file_path and file_path.endswith(METADATA_DOCUMENT_FILE_SUFFIX):
+        state.metadata = DataDocMetadata(metadata_document_path=file_path)
+        logger.info("Opened existing metadata document %s", file_path)
+    else:
+        dataset = file_path or get_dataset_path()
+        state.metadata = DataDocMetadata(dataset_path=dataset)
+        logger.info("Opened dataset %s", dataset)
 
 
 def open_dataset_handling(
     n_clicks: int,
-    dataset_path: str,
+    file_path: str,
 ) -> tuple[bool, bool, str, SupportedLanguages]:
     """Handle errors and other logic around opening a dataset file."""
     try:
-        open_dataset(dataset_path)
+        open_file(file_path)
     except FileNotFoundError:
         return (
             False,
             True,
-            f"Datasettet '{dataset_path}' finnes ikke.",
+            f"Filen '{file_path}' finnes ikke.",
             state.current_metadata_language.value,
         )
     except Exception as e:  # noqa: BLE001

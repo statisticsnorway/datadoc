@@ -23,26 +23,6 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-OBLIGATORY_DATASET_METADATA = [
-    m.identifier
-    for m in display_dataset.DISPLAY_DATASET.values()
-    if m.obligatory and m.editable
-]
-
-OBLIGATORY_VARIABLES_METADATA = [
-    m.identifier
-    for m in display_variables.DISPLAY_VARIABLES.values()
-    if m.obligatory and m.editable
-]
-
-# These don't vary at runtime so we calculate them as constants here
-NUM_OBLIGATORY_DATASET_FIELDS = len(
-    [k for k in model.Dataset().model_dump() if k in OBLIGATORY_DATASET_METADATA],
-)
-NUM_OBLIGATORY_VARIABLES_FIELDS = len(
-    [k for k in model.Variable().model_dump() if k in OBLIGATORY_VARIABLES_METADATA],
-)
-
 METADATA_DOCUMENT_FILE_SUFFIX = "__DOC.json"
 
 PLACEHOLDER_USERNAME = "default_user@ssb.no"
@@ -53,30 +33,17 @@ class DataDocMetadata:
 
     def __init__(
         self: t.Self @ DataDocMetadata,
-        dataset: str | None,
+        dataset_path: str | os.PathLike | None = None,
+        metadata_document_path: str | os.PathLike | None = None,
     ) -> None:
         """Read in a dataset if supplied, otherwise naively instantiate the class."""
-        self.dataset: str = dataset
-        if self.dataset:
-            self.short_name: str = pathlib.Path(
-                self.dataset,
-            ).stem  # filename without file ending
-            self.metadata_document: StorageAdapter = StorageAdapter.for_path(
-                StorageAdapter.for_path(self.dataset).parent(),
-            )
-            self.metadata_document.joinpath(
-                self.short_name + METADATA_DOCUMENT_FILE_SUFFIX,
-            )
-            self.dataset_state: DatasetState = self.get_dataset_state(self.dataset)
-        try:
-            self.current_user = os.environ["JUPYTERHUB_USER"]
-        except KeyError:
-            self.current_user = PLACEHOLDER_USERNAME
-            logger.warning(
-                "JUPYTERHUB_USER env variable not set, using %s as placeholder",
-                self.current_user,
-            )
+        self.dataset: str = dataset_path
+        self.metadata_document: StorageAdapter | None = None
+        self.container: model.MetadataContainer | None = None
 
+        self.dataset_state: DatasetState | None = None
+        self.short_name: str | None = None
+        self.current_user: str | None = None
         self.meta: model.DatadocJsonSchema = model.DatadocJsonSchema(
             percentage_complete=0,
             dataset=model.Dataset(),
@@ -85,8 +52,35 @@ class DataDocMetadata:
 
         self.variables_lookup: dict[str, model.Variable] = {}
 
-        if self.dataset:
+        if metadata_document_path:
+            # In this case the user has specified an independent metadata document for editing
+            # without a dataset.
+            self.metadata_document = StorageAdapter.for_path(metadata_document_path)
+            self.extract_metadata_from_existing_document()
+
+        elif self.dataset:
+            # The short_name is set as the dataset filename without file extension
+            self.short_name: str = pathlib.Path(
+                self.dataset,
+            ).stem
+            self.metadata_document: StorageAdapter = StorageAdapter.for_path(
+                StorageAdapter.for_path(self.dataset).parent(),
+            )
+            self.metadata_document.joinpath(
+                self.short_name + METADATA_DOCUMENT_FILE_SUFFIX,
+            )
+            self.dataset_state: DatasetState = self.get_dataset_state(self.dataset)
+
             self.extract_metadata_from_files()
+
+        try:
+            self.current_user = os.environ["JUPYTERHUB_USER"]
+        except KeyError:
+            self.current_user = PLACEHOLDER_USERNAME
+            logger.warning(
+                "JUPYTERHUB_USER env variable not set, using %s as placeholder",
+                self.current_user,
+            )
 
     def get_dataset_state(
         self: t.Self @ DataDocMetadata,
@@ -134,54 +128,76 @@ class DataDocMetadata:
         return None
 
     def extract_metadata_from_files(self: t.Self @ DataDocMetadata) -> None:
-        """Read metadata from a dataset.
+        """Read metadata from an existing metadata document.
 
-        If a metadata document already exists, read in the metadata from that instead.
+        If no metadata document exists, create one from scratch by extracting metadata
+        from the dataset file.
         """
-        fresh_metadata = {}
         if self.metadata_document.exists():
-            try:
-                with self.metadata_document.open(mode="r", encoding="utf-8") as file:
-                    fresh_metadata = json.load(file)
-                logger.info(
-                    "Opened existing metadata file %s",
-                    self.metadata_document.location,
-                )
-
-                fresh_metadata = upgrade_metadata(
-                    fresh_metadata,
-                    model.DatadocJsonSchema().document_version,
-                )
-
-                variables_list = fresh_metadata.pop("variables", None)
-
-                self.meta.variables = [model.Variable(**v) for v in variables_list]
-                self.meta.dataset = model.Dataset(
-                    **fresh_metadata.pop("dataset", None),
-                )
-            except json.JSONDecodeError:
-                logger.warning(
-                    "Could not open existing metadata file %s. \
-                    Falling back to collecting data from the dataset",
-                    self.metadata_document.location,
-                    exc_info=True,
-                )
-                self.extract_metadata_from_dataset()
+            self.extract_metadata_from_existing_document()
         else:
             self.extract_metadata_from_dataset()
 
-        if self.meta.dataset.id is None:
             self.meta.dataset.id = uuid.uuid4()
 
-        # Set default values for variables where appropriate
-        v: model.Variable
-        for v in self.meta.variables:
-            if v.variable_role is None:
-                v.variable_role = VariableRole.MEASURE
-            if v.direct_person_identifying is None:
-                v.direct_person_identifying = False
+            # Set default values for variables where appropriate
+            v: model.Variable
+            for v in self.meta.variables:
+                if v.variable_role is None:
+                    v.variable_role = VariableRole.MEASURE
+                if v.direct_person_identifying is None:
+                    v.direct_person_identifying = False
+
+        if not self.meta.dataset.id:
+            self.meta.dataset.id = uuid.uuid4()
 
         self.variables_lookup = {v.short_name: v for v in self.meta.variables}
+
+    def extract_metadata_from_existing_document(self: t.Self @ DataDocMetadata) -> None:
+        """There's an existing metadata document, so read in the metadata from that."""
+        fresh_metadata = {}
+        try:
+            with self.metadata_document.open(mode="r", encoding="utf-8") as file:
+                fresh_metadata = json.load(file)
+            logger.info(
+                "Opened existing metadata file %s",
+                self.metadata_document.location,
+            )
+
+            if self.is_metadata_in_container_structure(fresh_metadata):
+                self.container = model.MetadataContainer.model_validate_json(
+                    json.dumps(fresh_metadata),
+                )
+                datadoc_metadata = fresh_metadata["datadoc"]
+            else:
+                datadoc_metadata = fresh_metadata
+
+            datadoc_metadata = upgrade_metadata(
+                datadoc_metadata,
+            )
+
+            self.meta = model.DatadocJsonSchema.model_validate_json(
+                json.dumps(datadoc_metadata),
+            )
+
+        except json.JSONDecodeError:
+            logger.warning(
+                "Could not open existing metadata file %s. \
+                    Falling back to collecting data from the dataset",
+                self.metadata_document.location,
+                exc_info=True,
+            )
+
+    def is_metadata_in_container_structure(
+        self: t.Self @ DataDocMetadata,
+        metadata: dict,
+    ) -> bool:
+        """At a certain point a metadata 'container' was introduced.
+
+        The container provides a structure for different 'types' of metadata, such as 'datadoc', 'pseudonymization' etc.
+        This method returns True if the metadata is in the container structure, False otherwise.
+        """
+        return "datadoc" in metadata and "dataset" in metadata["datadoc"]
 
     def extract_metadata_from_dataset(self: t.Self @ DataDocMetadata) -> None:
         """Obtain what metadata we can from the dataset itself.
@@ -210,7 +226,13 @@ class DataDocMetadata:
             self.meta.dataset.metadata_created_by = self.current_user
         self.meta.dataset.metadata_last_updated_date = timestamp
         self.meta.dataset.metadata_last_updated_by = self.current_user
-        self.metadata_document.write_text(self.meta.model_dump_json(indent=4))
+
+        if self.container:
+            self.container.datadoc = self.meta
+        else:
+            self.container = model.MetadataContainer(datadoc=self.meta)
+
+        self.metadata_document.write_text(self.container.model_dump_json(indent=4))
         logger.info("Saved metadata document %s", self.metadata_document.location)
 
     @property
@@ -221,22 +243,23 @@ class DataDocMetadata:
         assigned. Used for a live progress bar in the UI, as well as being
         saved in the datadoc as a simple quality indicator.
         """
-        num_all_fields = NUM_OBLIGATORY_DATASET_FIELDS
+        num_all_fields = len(display_dataset.OBLIGATORY_DATASET_METADATA)
         num_set_fields = len(
             [
                 k
                 for k, v in self.meta.dataset.model_dump().items()
-                if k in OBLIGATORY_DATASET_METADATA and v is not None
+                if k in display_dataset.OBLIGATORY_DATASET_METADATA and v is not None
             ],
         )
 
         for variable in self.meta.variables:
-            num_all_fields += NUM_OBLIGATORY_VARIABLES_FIELDS
+            num_all_fields += len(display_variables.OBLIGATORY_VARIABLES_METADATA)
             num_set_fields += len(
                 [
                     k
                     for k, v in variable.model_dump().items()
-                    if k in OBLIGATORY_VARIABLES_METADATA and v is not None
+                    if k in display_variables.OBLIGATORY_VARIABLES_METADATA
+                    and v is not None
                 ],
             )
 

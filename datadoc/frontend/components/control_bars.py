@@ -84,7 +84,7 @@ def build_controls_bar() -> dbc.CardBody:
                                 ),
                                 dbc.Col(
                                     build_ssb_button(
-                                        text="Åpne datasett",
+                                        text="Åpne fil",
                                         icon_class="bi bi-folder2-open",
                                         button_id="open-button",
                                     ),

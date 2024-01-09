@@ -81,6 +81,7 @@ class DisplayMetadata:
     description: str
     obligatory: bool = False
     editable: bool = True
+    url: bool = False
     multiple_language_support: bool = False
 
 

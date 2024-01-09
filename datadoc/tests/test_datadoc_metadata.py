@@ -78,7 +78,6 @@ def test_metadata_document_percent_complete(metadata: DataDocMetadata):
     variable_2 = Variable(data_type=DataType.INTEGER)
     document = DatadocJsonSchema(
         percentage_complete=0,
-        document_version="1.0.0",
         dataset=dataset,
         variables=[variable_1, variable_2],
     )
@@ -110,27 +109,24 @@ def test_write_metadata_document(
 
     with Path.open(written_document) as f:
         written_metadata = json.loads(f.read())
+        datadoc_metadata = written_metadata["datadoc"]["dataset"]
 
     assert (
         # Use our pydantic model to read in the datetime string so we get the correct format
         Dataset(
-            metadata_created_date=written_metadata["dataset"]["metadata_created_date"],
+            metadata_created_date=datadoc_metadata["metadata_created_date"],
         ).metadata_created_date
         == dummy_timestamp
     )
-    assert written_metadata["dataset"]["metadata_created_by"] == PLACEHOLDER_USERNAME
+    assert datadoc_metadata["metadata_created_by"] == PLACEHOLDER_USERNAME
     assert (
         # Use our pydantic model to read in the datetime string so we get the correct format
         Dataset(
-            metadata_last_updated_date=written_metadata["dataset"][
-                "metadata_last_updated_date"
-            ],
+            metadata_last_updated_date=datadoc_metadata["metadata_last_updated_date"],
         ).metadata_last_updated_date
         == dummy_timestamp
     )
-    assert (
-        written_metadata["dataset"]["metadata_last_updated_by"] == PLACEHOLDER_USERNAME
-    )
+    assert datadoc_metadata["metadata_last_updated_by"] == PLACEHOLDER_USERNAME
 
 
 @pytest.mark.usefixtures("existing_metadata_file", "remove_document_file")
@@ -163,12 +159,12 @@ def test_existing_metadata_none_id(
     pre_open_id = ""
     post_write_id = ""
     with Path.open(Path(existing_metadata_file)) as f:
-        pre_open_id = json.load(f)["dataset"]["id"]
+        pre_open_id = json.load(f)["datadoc"]["dataset"]["id"]
     assert pre_open_id is None
     assert isinstance(metadata.meta.dataset.id, UUID)
     metadata.write_metadata_document()
     with Path.open(Path(existing_metadata_file)) as f:
-        post_write_id = json.load(f)["dataset"]["id"]
+        post_write_id = json.load(f)["datadoc"]["dataset"]["id"]
     assert post_write_id == str(metadata.meta.dataset.id)
 
 
@@ -184,13 +180,13 @@ def test_existing_metadata_valid_id(
     pre_open_id = ""
     post_write_id = ""
     with Path.open(Path(existing_metadata_file)) as f:
-        pre_open_id = json.load(f)["dataset"]["id"]
+        pre_open_id = json.load(f)["datadoc"]["dataset"]["id"]
     assert pre_open_id is not None
     assert isinstance(metadata.meta.dataset.id, UUID)
     assert str(metadata.meta.dataset.id) == pre_open_id
     metadata.write_metadata_document()
     with Path.open(Path(existing_metadata_file)) as f:
-        post_write_id = json.load(f)["dataset"]["id"]
+        post_write_id = json.load(f)["datadoc"]["dataset"]["id"]
     assert post_write_id == pre_open_id
 
 

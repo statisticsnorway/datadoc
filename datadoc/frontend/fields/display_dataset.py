@@ -261,3 +261,7 @@ types = typing.get_type_hints(model.Dataset)
 DISPLAYED_DROPDOWN_DATASET_ENUMS = [
     typing.get_args(types[m.identifier])[0] for m in DISPLAYED_DROPDOWN_DATASET_METADATA
 ]
+
+OBLIGATORY_DATASET_METADATA = [
+    m.identifier for m in DISPLAY_DATASET.values() if m.obligatory and m.editable
+]
