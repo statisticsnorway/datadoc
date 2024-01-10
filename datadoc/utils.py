@@ -1,6 +1,7 @@
 """General utilities."""
 
 import datetime
+import importlib
 
 from datadoc_model import model
 from pydantic import AnyUrl
@@ -61,6 +62,4 @@ def get_timestamp_now() -> datetime:
 
 def get_app_version() -> str:
     """Get the version of the Datadoc package."""
-    import pkg_resources
-
-    return pkg_resources.get_distribution("ssb-datadoc").version
+    return importlib.metadata.distribution("ssb-datadoc").version
