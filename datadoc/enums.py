@@ -4,6 +4,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import TYPE_CHECKING
 
+from datadoc_model import model
 from datadoc_model.model import LanguageStringType
 
 if TYPE_CHECKING:
@@ -61,32 +62,72 @@ class LanguageStringsEnum(Enum):
 class Assessment(LanguageStringsEnum):
     """Sensitivity of data."""
 
-    SENSITIVE = LanguageStringType(en="SENSITIVE", nn="SENSITIV", nb="SENSITIV")
-    PROTECTED = LanguageStringType(en="PROTECTED", nn="BESKYTTET", nb="BESKYTTET")
-    OPEN = LanguageStringType(en="OPEN", nn="ÅPEN", nb="ÅPEN")
+    SENSITIVE = LanguageStringType(
+        en=model.Assessment.SENSITIVE.value,
+        nn="SENSITIV",
+        nb="SENSITIV",
+    )
+    PROTECTED = LanguageStringType(
+        en=model.Assessment.PROTECTED.value,
+        nn="BESKYTTET",
+        nb="BESKYTTET",
+    )
+    OPEN = LanguageStringType(en=model.Assessment.OPEN.value, nn="ÅPEN", nb="ÅPEN")
 
 
 class DatasetStatus(LanguageStringsEnum):
     """Lifecycle status of a dataset."""
 
-    DRAFT = LanguageStringType(en="DRAFT", nn="UTKAST", nb="UTKAST")
-    INTERNAL = LanguageStringType(en="INTERNAL", nn="INTERN", nb="INTERN")
-    EXTERNAL = LanguageStringType(en="EXTERNAL", nn="EKSTERN", nb="EKSTERN")
-    DEPRECATED = LanguageStringType(en="DEPRECATED", nn="UTGÅTT", nb="UTGÅTT")
+    DRAFT = LanguageStringType(
+        en=model.DatasetStatus.DRAFT.value,
+        nn="UTKAST",
+        nb="UTKAST",
+    )
+    INTERNAL = LanguageStringType(
+        en=model.DatasetStatus.INTERNAL.value,
+        nn="INTERN",
+        nb="INTERN",
+    )
+    EXTERNAL = LanguageStringType(
+        en=model.DatasetStatus.EXTERNAL.value,
+        nn="EKSTERN",
+        nb="EKSTERN",
+    )
+    DEPRECATED = LanguageStringType(
+        en=model.DatasetStatus.DEPRECATED.value,
+        nn="UTGÅTT",
+        nb="UTGÅTT",
+    )
 
 
 class DatasetState(LanguageStringsEnum):
     """Processing state of a dataset."""
 
-    SOURCE_DATA = LanguageStringType(en="SOURCE DATA", nn="KILDEDATA", nb="KILDEDATA")
-    INPUT_DATA = LanguageStringType(en="INPUT DATA", nn="INNDATA", nb="INNDATA")
+    SOURCE_DATA = LanguageStringType(
+        en=model.DatasetState.SOURCE_DATA.value,
+        nn="KILDEDATA",
+        nb="KILDEDATA",
+    )
+    INPUT_DATA = LanguageStringType(
+        en=model.DatasetState.INPUT_DATA.value,
+        nn="INNDATA",
+        nb="INNDATA",
+    )
     PROCESSED_DATA = LanguageStringType(
-        en="PROCESSED DATA",
+        en=model.DatasetState.PROCESSED_DATA.value,
         nn="KLARGJORTE DATA",
         nb="KLARGJORTE DATA",
     )
-    STATISTICS = LanguageStringType(en="STATISTICS", nn="STATISTIKK", nb="STATISTIKK")
-    OUTPUT_DATA = LanguageStringType(en="OUTPUT DATA", nn="UTDATA", nb="UTDATA")
+    STATISTICS = LanguageStringType(
+        en=model.DatasetState.STATISTICS.value,
+        nn="STATISTIKK",
+        nb="STATISTIKK",
+    )
+    OUTPUT_DATA = LanguageStringType(
+        en=model.DatasetState.OUTPUT_DATA.value,
+        nn="UTDATA",
+        nb="UTDATA",
+    )
 
 
 class UnitType(LanguageStringsEnum):
@@ -97,41 +138,109 @@ class UnitType(LanguageStringsEnum):
 
     ARBEIDSULYKKE = LanguageStringType(
         en="WORK ACCIDENT",
-        nn="ARBEIDSULYKKE",
-        nb="ARBEIDSULYKKE",
+        nn=model.UnitType.ARBEIDSULYKKE.value,
+        nb=model.UnitType.ARBEIDSULYKKE.value,
     )
-    BOLIG = LanguageStringType(en="HOUSING", nn="BOLIG", nb="BOLIG")
-    BYGNING = LanguageStringType(en="BUILDING", nn="BYGNING", nb="BYGNING")
-    EIENDOM = LanguageStringType(en="PROPERTY", nn="EIENDOM", nb="EIENDOM")
-    FAMILIE = LanguageStringType(en="FAMILY", nn="FAMILIE", nb="FAMILIE")
-    FORETAK = LanguageStringType(en="COMPANY", nn="FORETAK", nb="FORETAK")
-    FYLKE = LanguageStringType(en="REGION", nn="FYLKE", nb="FYLKE")
-    HAVNEANLOEP = LanguageStringType(en="PORT CALL", nn="HAVNEANLOEP", nb="HAVNEANLOEP")
-    HUSHOLDNING = LanguageStringType(en="HOUSEHOLD", nn="HUSHOLDNING", nb="HUSHOLDNING")
-    KJOERETOEY = LanguageStringType(en="VEHICLE", nn="KJOERETOEY", nb="KJOERETOEY")
-    KOMMUNE = LanguageStringType(en="COUNTY", nn="KOMMUNE", nb="KOMMUNE")
-    KURS = LanguageStringType(en="COURSE", nn="KURS", nb="KURS")
-    LOVBRUDD = LanguageStringType(en="CRIME", nn="LOVBRUDD", nb="LOVBRUDD")
-    PERSON = LanguageStringType(en="PERSON", nn="PERSON", nb="PERSON")
-    STAT = LanguageStringType(en="STATE", nn="STAT", nb="STAT")
-    STORFE = LanguageStringType(en="CATTLE", nn="STORFE", nb="STORFE")
+    BOLIG = LanguageStringType(
+        en="HOUSING",
+        nn=model.UnitType.BOLIG.value,
+        nb=model.UnitType.BOLIG.value,
+    )
+    BYGNING = LanguageStringType(
+        en="BUILDING",
+        nn=model.UnitType.BYGNING.value,
+        nb=model.UnitType.BYGNING.value,
+    )
+    EIENDOM = LanguageStringType(
+        en="PROPERTY",
+        nn=model.UnitType.EIENDOM.value,
+        nb=model.UnitType.EIENDOM.value,
+    )
+    FAMILIE = LanguageStringType(
+        en="FAMILY",
+        nn=model.UnitType.FAMILIE.value,
+        nb=model.UnitType.FAMILIE.value,
+    )
+    FORETAK = LanguageStringType(
+        en="COMPANY",
+        nn=model.UnitType.FORETAK.value,
+        nb=model.UnitType.FORETAK.value,
+    )
+    FYLKE = LanguageStringType(
+        en="REGION",
+        nn=model.UnitType.FYLKE.value,
+        nb=model.UnitType.FYLKE.value,
+    )
+    HAVNEANLOEP = LanguageStringType(
+        en="PORT CALL",
+        nn=model.UnitType.HAVNEANLOEP.value,
+        nb=model.UnitType.HAVNEANLOEP.value,
+    )
+    HUSHOLDNING = LanguageStringType(
+        en="HOUSEHOLD",
+        nn=model.UnitType.HUSHOLDNING.value,
+        nb=model.UnitType.HUSHOLDNING.value,
+    )
+    KJOERETOEY = LanguageStringType(
+        en="VEHICLE",
+        nn=model.UnitType.KJOERETOEY.value,
+        nb=model.UnitType.KJOERETOEY.value,
+    )
+    KOMMUNE = LanguageStringType(
+        en="COUNTY",
+        nn=model.UnitType.KOMMUNE.value,
+        nb=model.UnitType.KOMMUNE.value,
+    )
+    KURS = LanguageStringType(
+        en="COURSE",
+        nn=model.UnitType.KURS.value,
+        nb=model.UnitType.KURS.value,
+    )
+    LOVBRUDD = LanguageStringType(
+        en="CRIME",
+        nn=model.UnitType.LOVBRUDD.value,
+        nb=model.UnitType.LOVBRUDD.value,
+    )
+    PERSON = LanguageStringType(
+        en="PERSON",
+        nn=model.UnitType.PERSON.value,
+        nb=model.UnitType.PERSON.value,
+    )
+    STAT = LanguageStringType(
+        en="STATE",
+        nn=model.UnitType.STAT.value,
+        nb=model.UnitType.STAT.value,
+    )
+    STORFE = LanguageStringType(
+        en="CATTLE",
+        nn=model.UnitType.STORFE.value,
+        nb=model.UnitType.STORFE.value,
+    )
     TRAFIKKULYKKE = LanguageStringType(
         en="TRAFFIC ACCIDENT",
-        nn="TRAFIKKULYKKE",
-        nb="TRAFIKKULYKKE",
+        nn=model.UnitType.TRAFIKKULYKKE.value,
+        nb=model.UnitType.TRAFIKKULYKKE.value,
     )
     TRANSAKSJON = LanguageStringType(
         en="TRANSACTION",
-        nn="TRANSAKSJON",
-        nb="TRANSAKSJON",
+        nn=model.UnitType.TRANSAKSJON.value,
+        nb=model.UnitType.TRANSAKSJON.value,
     )
     VARE_TJENESTE = LanguageStringType(
         en="GOOD/SERVICE",
-        nn="VARE/TJENESTE",
-        nb="VARE/TJENESTE",
+        nn=model.UnitType.VARE_TJENESTE.value,
+        nb=model.UnitType.VARE_TJENESTE.value,
     )
-    VERDIPAPIR = LanguageStringType(en="SERVICE", nn="VERDIPAPIR", nb="VERDIPAPIR")
-    VIRKSOMHET = LanguageStringType(en="BUSINESS", nn="VIRKSOMHET", nb="VIRKSOMHET")
+    VERDIPAPIR = LanguageStringType(
+        en="SERVICE",
+        nn=model.UnitType.VERDIPAPIR.value,
+        nb=model.UnitType.VERDIPAPIR.value,
+    )
+    VIRKSOMHET = LanguageStringType(
+        en="BUSINESS",
+        nn=model.UnitType.VIRKSOMHET.value,
+        nb=model.UnitType.VIRKSOMHET.value,
+    )
 
 
 class TemporalityTypeType(LanguageStringsEnum):
@@ -140,31 +249,79 @@ class TemporalityTypeType(LanguageStringsEnum):
     More information about temporality type: https://statistics-norway.atlassian.net/l/c/HV12q90R
     """
 
-    FIXED = LanguageStringType(en="FIXED", nn="FAST", nb="FAST")
-    STATUS = LanguageStringType(en="STATUS", nn="TVERRSNITT", nb="TVERRSNITT")
-    ACCUMULATED = LanguageStringType(en="ACCUMULATED", nn="AKKUMULERT", nb="AKKUMULERT")
-    EVENT = LanguageStringType(en="EVENT", nn="HENDELSE", nb="HENDELSE")
+    FIXED = LanguageStringType(
+        en=model.TemporalityTypeType.FIXED.value,
+        nn="FAST",
+        nb="FAST",
+    )
+    STATUS = LanguageStringType(
+        en=model.TemporalityTypeType.STATUS.value,
+        nn="TVERRSNITT",
+        nb="TVERRSNITT",
+    )
+    ACCUMULATED = LanguageStringType(
+        en=model.TemporalityTypeType.ACCUMULATED.value,
+        nn="AKKUMULERT",
+        nb="AKKUMULERT",
+    )
+    EVENT = LanguageStringType(
+        en=model.TemporalityTypeType.EVENT.value,
+        nn="HENDELSE",
+        nb="HENDELSE",
+    )
 
 
 class DataType(LanguageStringsEnum):
     """Simplified data types for metadata purposes."""
 
-    STRING = LanguageStringType(en="STRING", nn="TEKST", nb="TEKST")
-    INTEGER = LanguageStringType(en="INTEGER", nn="HELTALL", nb="HELTALL")
-    FLOAT = LanguageStringType(en="FLOAT", nn="DESIMALTALL", nb="DESIMALTALL")
-    DATETIME = LanguageStringType(en="DATETIME", nn="DATOTID", nb="DATOTID")
-    BOOLEAN = LanguageStringType(en="BOOLEAN", nn="BOOLSK", nb="BOOLSK")
+    STRING = LanguageStringType(en=model.DataType.STRING.value, nn="TEKST", nb="TEKST")
+    INTEGER = LanguageStringType(
+        en=model.DataType.INTEGER.value,
+        nn="HELTALL",
+        nb="HELTALL",
+    )
+    FLOAT = LanguageStringType(
+        en=model.DataType.FLOAT.value,
+        nn="DESIMALTALL",
+        nb="DESIMALTALL",
+    )
+    DATETIME = LanguageStringType(
+        en=model.DataType.DATETIME.value,
+        nn="DATOTID",
+        nb="DATOTID",
+    )
+    BOOLEAN = LanguageStringType(
+        en=model.DataType.BOOLEAN.value,
+        nn="BOOLSK",
+        nb="BOOLSK",
+    )
 
 
 class VariableRole(LanguageStringsEnum):
     """The role of a variable in a dataset."""
 
     IDENTIFIER = LanguageStringType(
-        en="IDENTIFIER",
+        en=model.VariableRole.IDENTIFIER.value,
         nn="IDENTIFIKATOR",
         nb="IDENTIFIKATOR",
     )
-    MEASURE = LanguageStringType(en="MEASURE", nn="MÅLEVARIABEL", nb="MÅLEVARIABEL")
-    START_TIME = LanguageStringType(en="START_TIME", nn="STARTTID", nb="STARTTID")
-    STOP_TIME = LanguageStringType(en="STOP_TIME", nn="STOPPTID", nb="STOPPTID")
-    ATTRIBUTE = LanguageStringType(en="ATTRIBUTE", nn="ATTRIBUTT", nb="ATTRIBUTT")
+    MEASURE = LanguageStringType(
+        en=model.VariableRole.MEASURE.value,
+        nn="MÅLEVARIABEL",
+        nb="MÅLEVARIABEL",
+    )
+    START_TIME = LanguageStringType(
+        en=model.VariableRole.START_TIME.value,
+        nn="STARTTID",
+        nb="STARTTID",
+    )
+    STOP_TIME = LanguageStringType(
+        en=model.VariableRole.STOP_TIME.value,
+        nn="STOPPTID",
+        nb="STOPPTID",
+    )
+    ATTRIBUTE = LanguageStringType(
+        en=model.VariableRole.ATTRIBUTE.value,
+        nn="ATTRIBUTT",
+        nb="ATTRIBUTT",
+    )
