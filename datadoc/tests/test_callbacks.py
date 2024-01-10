@@ -3,17 +3,19 @@ from __future__ import annotations
 
 import random
 from copy import deepcopy
+from enum import Enum
 
 import pytest
-from datadoc_model.model import (
-    Dataset,
-    LanguageStringType,
-    Variable,
-)
+from datadoc_model import model
 
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
-from datadoc.enums import DatasetState, DataType, SupportedLanguages
+from datadoc.enums import (
+    DatasetState,
+    DataType,
+    LanguageStringsEnum,
+    SupportedLanguages,
+)
 from datadoc.frontend.callbacks.dataset import (
     accept_dataset_metadata_input,
     change_language_dataset_metadata,
@@ -63,7 +65,7 @@ ENGLISH_NAME = "English Name"
 BOKMÅL_NAME = "Bokmål Name"
 NYNORSK_NAME = "Nynorsk Name"
 
-LANGUAGE_OBJECT = LanguageStringType(en=ENGLISH_NAME, nb=BOKMÅL_NAME)
+LANGUAGE_OBJECT = model.LanguageStringType(en=ENGLISH_NAME, nb=BOKMÅL_NAME)
 
 
 @pytest.fixture()
@@ -163,18 +165,18 @@ def test_update_dataset_metadata_language_enums():
 
 
 def test_find_existing_language_string_no_existing_strings():
-    dataset_metadata = Dataset()
+    dataset_metadata = model.Dataset()
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     language_strings = find_existing_language_string(
         dataset_metadata,
         BOKMÅL_NAME,
         "name",
     )
-    assert language_strings == LanguageStringType(nb=BOKMÅL_NAME)
+    assert language_strings == model.LanguageStringType(nb=BOKMÅL_NAME)
 
 
 def test_find_existing_language_string_pre_existing_strings():
-    dataset_metadata = Dataset()
+    dataset_metadata = model.Dataset()
     dataset_metadata.name = LANGUAGE_OBJECT
     state.current_metadata_language = SupportedLanguages.NORSK_NYNORSK
     language_strings = find_existing_language_string(
@@ -182,7 +184,7 @@ def test_find_existing_language_string_pre_existing_strings():
         NYNORSK_NAME,
         "name",
     )
-    assert language_strings == LanguageStringType(
+    assert language_strings == model.LanguageStringType(
         nb=BOKMÅL_NAME,
         en=ENGLISH_NAME,
         nn=NYNORSK_NAME,
@@ -223,7 +225,7 @@ def test_update_variable_table_dropdown_options_for_language():
     options = update_variable_table_dropdown_options_for_language(
         SupportedLanguages.NORSK_BOKMÅL,
     )
-    assert all(k in Variable.model_fields for k in options)
+    assert all(k in model.Variable.model_fields for k in options)
     assert all(list(v.keys()) == ["options"] for v in options.values())
     try:
         assert all(
@@ -273,3 +275,29 @@ def test_change_language_dataset_metadata():
                 for e in test
             }
             assert {d["value"] for d in options} == {e.name for e in test}
+
+
+@pytest.mark.parametrize(
+    "model_enum",
+    [
+        model.Assessment,
+        model.DatasetStatus,
+        model.DatasetState,
+        model.DataType,
+        model.VariableRole,
+        model.UnitType,
+        model.TemporalityTypeType,
+    ],
+)
+def test_get_language_strings_enum(model_enum: Enum):
+    assert issubclass(get_language_strings_enum(model_enum), LanguageStringsEnum)
+
+
+def test_get_language_strings_enum_unknown():
+    class TestEnum(Enum):
+        """Test enum."""
+
+        TEST = "test"
+
+    with pytest.raises(AttributeError):
+        get_language_strings_enum(TestEnum)
