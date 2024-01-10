@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import dash_bootstrap_components as dbc
 from dash import dcc, html
-from datadoc_model.Enums import SupportedLanguages
 
 from datadoc import state
+from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.dataset import get_dataset_path
 from datadoc.frontend.components.builders import build_ssb_button
 from datadoc.utils import get_app_version
@@ -84,7 +84,7 @@ def build_controls_bar() -> dbc.CardBody:
                                 ),
                                 dbc.Col(
                                     build_ssb_button(
-                                        text="Åpne datasett",
+                                        text="Åpne fil",
                                         icon_class="bi bi-folder2-open",
                                         button_id="open-button",
                                     ),

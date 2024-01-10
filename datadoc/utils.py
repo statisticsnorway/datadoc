@@ -1,9 +1,12 @@
 """General utilities."""
 
 import datetime
+import importlib
 
-from datadoc_model import Model
-from datadoc_model.Enums import SupportedLanguages
+from datadoc_model import model
+from pydantic import AnyUrl
+
+from datadoc.enums import SupportedLanguages
 
 
 def running_in_notebook() -> bool:
@@ -24,14 +27,16 @@ def calculate_percentage(completed: int, total: int) -> int:
 
 
 def get_display_values(
-    variable: Model.DataDocVariable,
+    variable: model.Variable,
     current_language: SupportedLanguages,
 ) -> dict:
     """Return a dictionary representation of Model.DataDocVariable with strings in the currently selected language."""
     return_dict = {}
     for field_name, value in variable:
-        if isinstance(value, Model.LanguageStrings):
+        if isinstance(value, model.LanguageStringType):
             return_dict[field_name] = value.model_dump()[current_language.value]
+        elif isinstance(value, AnyUrl):
+            return_dict[field_name] = str(value)
         else:
             return_dict[field_name] = value
     return return_dict
@@ -57,6 +62,4 @@ def get_timestamp_now() -> datetime:
 
 def get_app_version() -> str:
     """Get the version of the Datadoc package."""
-    import pkg_resources
-
-    return pkg_resources.get_distribution("ssb-datadoc").version
+    return importlib.metadata.distribution("ssb-datadoc").version

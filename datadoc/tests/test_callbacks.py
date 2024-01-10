@@ -3,13 +3,19 @@ from __future__ import annotations
 
 import random
 from copy import deepcopy
+from enum import Enum
 
 import pytest
-from datadoc_model.Enums import DatasetState, Datatype, SupportedLanguages
-from datadoc_model.Model import DataDocDataSet, DataDocVariable, LanguageStrings
+from datadoc_model import model
 
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
+from datadoc.enums import (
+    DatasetState,
+    DataType,
+    LanguageStringsEnum,
+    SupportedLanguages,
+)
 from datadoc.frontend.callbacks.dataset import (
     accept_dataset_metadata_input,
     change_language_dataset_metadata,
@@ -19,6 +25,7 @@ from datadoc.frontend.callbacks.dataset import (
 from datadoc.frontend.callbacks.utils import (
     MetadataInputTypes,
     find_existing_language_string,
+    get_language_strings_enum,
 )
 from datadoc.frontend.callbacks.variables import (
     accept_variable_metadata_input,
@@ -58,7 +65,7 @@ ENGLISH_NAME = "English Name"
 BOKMÅL_NAME = "Bokmål Name"
 NYNORSK_NAME = "Nynorsk Name"
 
-LANGUAGE_OBJECT = LanguageStrings(en=ENGLISH_NAME, nb=BOKMÅL_NAME)
+LANGUAGE_OBJECT = model.LanguageStringType(en=ENGLISH_NAME, nb=BOKMÅL_NAME)
 
 
 @pytest.fixture()
@@ -110,7 +117,7 @@ def test_accept_variable_metadata_input_incorrect_data_type(
 
     assert output[0] == DATA_ORIGINAL
     assert output[1] is True
-    assert "validation error for DataDocVariable" in output[2]
+    assert "validation error for Variable" in output[2]
     assert state.metadata.meta.variables == previous_metadata
 
 
@@ -126,7 +133,7 @@ def test_accept_dataset_metadata_input_incorrect_data_type():
     state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     output = accept_dataset_metadata_input(3.1415, "dataset_state")
     assert output[0] is True
-    assert "validation error for DataDocDataSet" in output[1]
+    assert "validation error for Dataset" in output[1]
 
 
 def test_update_dataset_metadata_language_strings():
@@ -147,29 +154,27 @@ def test_update_dataset_metadata_language_enums():
     state.metadata.meta.dataset.dataset_state = DatasetState.PROCESSED_DATA
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     output = update_dataset_metadata_language()
-    assert DatasetState.PROCESSED_DATA.language_strings.en not in output
     assert DatasetState.PROCESSED_DATA.language_strings.nb not in output
     assert DatasetState.PROCESSED_DATA.name in output
     state.current_metadata_language = SupportedLanguages.ENGLISH
     output = update_dataset_metadata_language()
-    assert DatasetState.PROCESSED_DATA.language_strings.en not in output
     assert DatasetState.PROCESSED_DATA.language_strings.nb not in output
     assert DatasetState.PROCESSED_DATA.name in output
 
 
 def test_find_existing_language_string_no_existing_strings():
-    dataset_metadata = DataDocDataSet()
+    dataset_metadata = model.Dataset()
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     language_strings = find_existing_language_string(
         dataset_metadata,
         BOKMÅL_NAME,
         "name",
     )
-    assert language_strings == LanguageStrings(nb=BOKMÅL_NAME)
+    assert language_strings == model.LanguageStringType(nb=BOKMÅL_NAME)
 
 
 def test_find_existing_language_string_pre_existing_strings():
-    dataset_metadata = DataDocDataSet()
+    dataset_metadata = model.Dataset()
     dataset_metadata.name = LANGUAGE_OBJECT
     state.current_metadata_language = SupportedLanguages.NORSK_NYNORSK
     language_strings = find_existing_language_string(
@@ -177,7 +182,7 @@ def test_find_existing_language_string_pre_existing_strings():
         NYNORSK_NAME,
         "name",
     )
-    assert language_strings == LanguageStrings(
+    assert language_strings == model.LanguageStringType(
         nb=BOKMÅL_NAME,
         en=ENGLISH_NAME,
         nn=NYNORSK_NAME,
@@ -218,7 +223,7 @@ def test_update_variable_table_dropdown_options_for_language():
     options = update_variable_table_dropdown_options_for_language(
         SupportedLanguages.NORSK_BOKMÅL,
     )
-    assert all(k in DataDocVariable.model_fields for k in options)
+    assert all(k in model.Variable.model_fields for k in options)
     assert all(list(v.keys()) == ["options"] for v in options.values())
     try:
         assert all(
@@ -230,7 +235,7 @@ def test_update_variable_table_dropdown_options_for_language():
         msg = f"Could not extract actual value from {options.values() = }"
         raise AssertionError(msg) from e
     assert [d["label"] for d in options["data_type"]["options"]] == [
-        i.get_value_for_language(SupportedLanguages.NORSK_BOKMÅL) for i in Datatype
+        i.get_value_for_language(SupportedLanguages.NORSK_BOKMÅL) for i in DataType
     ]
 
 
@@ -247,8 +252,10 @@ def test_update_global_language_state():
 def test_change_language_dataset_metadata():
     state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     value = change_language_dataset_metadata(SupportedLanguages.NORSK_NYNORSK)
-    test = random.choice(  # noqa: S311 not for cryptographic purposes
-        DISPLAYED_DROPDOWN_DATASET_ENUMS,
+    test = get_language_strings_enum(
+        random.choice(  # noqa: S311 not for cryptographic purposes
+            DISPLAYED_DROPDOWN_DATASET_ENUMS,
+        ),
     )
     assert isinstance(value, tuple)
 
@@ -260,6 +267,35 @@ def test_change_language_dataset_metadata():
 
         if member_names.intersection(values):
             assert {d["label"] for d in options} == {
-                e.get_value_for_language(SupportedLanguages.NORSK_NYNORSK) for e in test
+                e.get_value_for_language(
+                    SupportedLanguages.NORSK_NYNORSK,
+                )
+                for e in test
             }
             assert {d["value"] for d in options} == {e.name for e in test}
+
+
+@pytest.mark.parametrize(
+    "model_enum",
+    [
+        model.Assessment,
+        model.DatasetStatus,
+        model.DatasetState,
+        model.DataType,
+        model.VariableRole,
+        model.UnitType,
+        model.TemporalityTypeType,
+    ],
+)
+def test_get_language_strings_enum(model_enum: Enum):
+    assert issubclass(get_language_strings_enum(model_enum), LanguageStringsEnum)
+
+
+def test_get_language_strings_enum_unknown():
+    class TestEnum(Enum):
+        """Test enum."""
+
+        TEST = "test"
+
+    with pytest.raises(AttributeError):
+        get_language_strings_enum(TestEnum)

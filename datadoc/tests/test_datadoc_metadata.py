@@ -8,11 +8,14 @@ from typing import TYPE_CHECKING
 from uuid import UUID
 
 import pytest
-from datadoc_model import Enums
-from datadoc_model.Enums import DatasetState
-from datadoc_model.Model import DataDocDataSet, DataDocVariable, MetadataDocument
+from datadoc_model.model import (
+    DatadocJsonSchema,
+    Dataset,
+    Variable,
+)
 
 from datadoc.backend.datadoc_metadata import PLACEHOLDER_USERNAME, DataDocMetadata
+from datadoc.enums import DatasetState, DataType, VariableRole
 
 from .utils import (
     TEST_EXISTING_METADATA_DIRECTORY,
@@ -33,7 +36,7 @@ def make_paths() -> list[tuple[str, DatasetState]]:
         ("roskildedata/klargjorte-data", DatasetState.PROCESSED_DATA),
         ("klargjorte_data", DatasetState.PROCESSED_DATA),
         ("klargjorte-data", DatasetState.PROCESSED_DATA),
-        ("statistikk", DatasetState.STATISTIC),
+        ("statistikk", DatasetState.STATISTICS),
         ("", None),
     ]
     test_data = []
@@ -70,12 +73,11 @@ def test_existing_metadata_file(
 
 
 def test_metadata_document_percent_complete(metadata: DataDocMetadata):
-    dataset = DataDocDataSet(dataset_state=Enums.DatasetState.OUTPUT_DATA)
-    variable_1 = DataDocVariable(data_type=Enums.Datatype.BOOLEAN)
-    variable_2 = DataDocVariable(data_type=Enums.Datatype.INTEGER)
-    document = MetadataDocument(
+    dataset = Dataset(dataset_state=DatasetState.OUTPUT_DATA)
+    variable_1 = Variable(data_type=DataType.BOOLEAN)
+    variable_2 = Variable(data_type=DataType.INTEGER)
+    document = DatadocJsonSchema(
         percentage_complete=0,
-        document_version="1.0.0",
         dataset=dataset,
         variables=[variable_1, variable_2],
     )
@@ -107,27 +109,24 @@ def test_write_metadata_document(
 
     with Path.open(written_document) as f:
         written_metadata = json.loads(f.read())
+        datadoc_metadata = written_metadata["datadoc"]["dataset"]
 
     assert (
         # Use our pydantic model to read in the datetime string so we get the correct format
-        DataDocDataSet(
-            metadata_created_date=written_metadata["dataset"]["metadata_created_date"],
+        Dataset(
+            metadata_created_date=datadoc_metadata["metadata_created_date"],
         ).metadata_created_date
         == dummy_timestamp
     )
-    assert written_metadata["dataset"]["metadata_created_by"] == PLACEHOLDER_USERNAME
+    assert datadoc_metadata["metadata_created_by"] == PLACEHOLDER_USERNAME
     assert (
         # Use our pydantic model to read in the datetime string so we get the correct format
-        DataDocDataSet(
-            metadata_last_updated_date=written_metadata["dataset"][
-                "metadata_last_updated_date"
-            ],
+        Dataset(
+            metadata_last_updated_date=datadoc_metadata["metadata_last_updated_date"],
         ).metadata_last_updated_date
         == dummy_timestamp
     )
-    assert (
-        written_metadata["dataset"]["metadata_last_updated_by"] == PLACEHOLDER_USERNAME
-    )
+    assert datadoc_metadata["metadata_last_updated_by"] == PLACEHOLDER_USERNAME
 
 
 @pytest.mark.usefixtures("existing_metadata_file", "remove_document_file")
@@ -160,12 +159,12 @@ def test_existing_metadata_none_id(
     pre_open_id = ""
     post_write_id = ""
     with Path.open(Path(existing_metadata_file)) as f:
-        pre_open_id = json.load(f)["dataset"]["id"]
+        pre_open_id = json.load(f)["datadoc"]["dataset"]["id"]
     assert pre_open_id is None
     assert isinstance(metadata.meta.dataset.id, UUID)
     metadata.write_metadata_document()
     with Path.open(Path(existing_metadata_file)) as f:
-        post_write_id = json.load(f)["dataset"]["id"]
+        post_write_id = json.load(f)["datadoc"]["dataset"]["id"]
     assert post_write_id == str(metadata.meta.dataset.id)
 
 
@@ -181,20 +180,19 @@ def test_existing_metadata_valid_id(
     pre_open_id = ""
     post_write_id = ""
     with Path.open(Path(existing_metadata_file)) as f:
-        pre_open_id = json.load(f)["dataset"]["id"]
+        pre_open_id = json.load(f)["datadoc"]["dataset"]["id"]
     assert pre_open_id is not None
     assert isinstance(metadata.meta.dataset.id, UUID)
     assert str(metadata.meta.dataset.id) == pre_open_id
     metadata.write_metadata_document()
     with Path.open(Path(existing_metadata_file)) as f:
-        post_write_id = json.load(f)["dataset"]["id"]
+        post_write_id = json.load(f)["datadoc"]["dataset"]["id"]
     assert post_write_id == pre_open_id
 
 
 def test_variable_role_default_value(metadata: DataDocMetadata):
     assert all(
-        v.variable_role == Enums.VariableRole.MEASURE.value
-        for v in metadata.meta.variables
+        v.variable_role == VariableRole.MEASURE.value for v in metadata.meta.variables
     )
 
 

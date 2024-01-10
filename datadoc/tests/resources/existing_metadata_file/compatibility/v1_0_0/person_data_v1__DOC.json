@@ -1,51 +1,71 @@
 {
-    "percentage_complete": 67,
-    "document_version": "1",
+    "percentage_complete": 100,
+    "document_version": "1.0.0",
     "dataset": {
         "short_name": "person_data_v1",
-        "assessment": null,
+        "assessment": "SENSITIVE",
         "dataset_status": "DRAFT",
         "dataset_state": "PROCESSED_DATA",
         "name": {
-            "en": "Citizens' tax data",
+            "en": "successfully_read_existing_file",
             "nn": "",
             "nb": "Persondata"
         },
-        "data_source": null,
-        "population_description": null,
-        "version": "1",
-        "unit_type": "PERSON",
-        "temporality_type": null,
-        "description": {
-            "en": "Test data about Norwegian citizens. To be used for demonstration and testing only.",
+        "data_source": {
+            "en": "",
             "nn": "",
-            "nb": "Testdata personer for demo og test."
+            "nb": "Skatteetaten"
         },
-        "subject_field": null,
+        "population_description": {
+            "en": "",
+            "nn": "",
+            "nb": "Norsk befolkning"
+        },
+        "version": "1",
+        "version_description": null,
+        "unit_type": "PERSON",
+        "temporality_type": "STATUS",
+        "description": {
+            "en": "",
+            "nn": "",
+            "nb": ""
+        },
+        "subject_field": {
+            "en": "",
+            "nn": "",
+            "nb": "Skatt"
+        },
+        "keyword": [
+            "Skatt",
+            "Person",
+            "Helsepenger"
+        ],
         "spatial_coverage_description": {
-            "en": "Norway",
+            "en": "",
             "nn": "",
             "nb": "Norge"
         },
-        "id": null,
+        "id": "143fca77-ef56-419c-a1e1-d69c4199f020",
         "owner": null,
         "data_source_path": "klargjorte_data/person_data_v1.parquet",
-        "created_date": "2022-08-08 13:44:14.768463",
-        "created_by": "default_user@ssb.no",
-        "last_updated_date": null,
-        "last_updated_by": null
+        "metadata_created_date": "2022-09-05T13:07:14.066023",
+        "metadata_created_by": "default_user@ssb.no",
+        "metadata_last_updated_date": "2022-10-06T15:51:36.106543",
+        "metadata_last_updated_by": "default_user@ssb.no",
+        "contains_data_from": "2010-09-05",
+        "contains_data_until": "2022-09-05"
     },
     "variables": [
         {
             "short_name": "pers_id",
             "name": {
-                "en": "Personal number",
+                "en": "",
                 "nn": "",
-                "nb": "F\u00f8dselsnummer"
+                "nb": "g"
             },
             "data_type": "STRING",
             "variable_role": "IDENTIFIER",
-            "definition_uri": null,
+            "definition_uri": "https://www.ssb.no/a/metadata/conceptvariable/vardok/26/nb",
             "direct_person_identifying": true,
             "data_source": null,
             "population_description": null,
@@ -63,9 +83,9 @@
         {
             "short_name": "tidspunkt",
             "name": {
-                "en": "Timestamp",
+                "en": "",
                 "nn": "",
-                "nb": "Tidspunkt"
+                "nb": "g"
             },
             "data_type": "DATETIME",
             "variable_role": "START_TIME",
@@ -87,13 +107,13 @@
         {
             "short_name": "sivilstand",
             "name": {
-                "en": "Marital status",
+                "en": "",
                 "nn": "",
-                "nb": "Sivilstand"
+                "nb": "g"
             },
             "data_type": "STRING",
             "variable_role": "MEASURE",
-            "definition_uri": null,
+            "definition_uri": "https://www.ssb.no/a/metadata/conceptvariable/vardok/91/nb",
             "direct_person_identifying": false,
             "data_source": null,
             "population_description": null,
@@ -111,13 +131,13 @@
         {
             "short_name": "alm_inntekt",
             "name": {
-                "en": "Gross income",
+                "en": "",
                 "nn": "",
-                "nb": "Almennlig inntekt"
+                "nb": "g"
             },
             "data_type": "INTEGER",
             "variable_role": "MEASURE",
-            "definition_uri": null,
+            "definition_uri": "https://www.ssb.no/a/metadata/conceptvariable/vardok/1438/nb",
             "direct_person_identifying": false,
             "data_source": null,
             "population_description": null,
@@ -135,13 +155,13 @@
         {
             "short_name": "sykepenger",
             "name": {
-                "en": "Sick pay",
+                "en": "",
                 "nn": "",
-                "nb": "Sykepenger"
+                "nb": "g"
             },
             "data_type": "INTEGER",
             "variable_role": "MEASURE",
-            "definition_uri": null,
+            "definition_uri": "https://www.ssb.no/metadata/conceptvariable/vardok/3366/nb",
             "direct_person_identifying": false,
             "data_source": null,
             "population_description": null,
@@ -159,13 +179,13 @@
         {
             "short_name": "ber_bruttoformue",
             "name": {
-                "en": "Gross worth",
+                "en": "",
                 "nn": "",
-                "nb": "Beregnet bruttoformue"
+                "nb": "g"
             },
             "data_type": "INTEGER",
             "variable_role": "MEASURE",
-            "definition_uri": null,
+            "definition_uri": "https://www.ssb.no/metadata/conceptvariable/vardok/3327/nb",
             "direct_person_identifying": false,
             "data_source": null,
             "population_description": null,
@@ -183,13 +203,13 @@
         {
             "short_name": "fullf_utdanning",
             "name": {
-                "en": "Completed education",
+                "en": "",
                 "nn": "",
-                "nb": "Fullf\u00f8rt utdanning"
+                "nb": "g"
             },
             "data_type": "STRING",
             "variable_role": "MEASURE",
-            "definition_uri": null,
+            "definition_uri": "https://www.ssb.no/metadata/conceptvariable/vardok/3242/nb",
             "direct_person_identifying": false,
             "data_source": null,
             "population_description": null,
@@ -207,13 +227,13 @@
         {
             "short_name": "hoveddiagnose",
             "name": {
-                "en": "Primary diagnosis",
+                "en": "",
                 "nn": "",
-                "nb": "Hoveddiagnose"
+                "nb": "g"
             },
             "data_type": "STRING",
             "variable_role": "MEASURE",
-            "definition_uri": null,
+            "definition_uri": "https://www.ssb.no/metadata/conceptvariable/vardok/2578/nb",
             "direct_person_identifying": false,
             "data_source": null,
             "population_description": null,

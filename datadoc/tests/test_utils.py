@@ -1,8 +1,8 @@
 """Tests for the utils module."""
 
-from datadoc_model.Enums import SupportedLanguages
-from datadoc_model.Model import DataDocVariable
+from datadoc_model.model import Variable
 
+from datadoc.enums import SupportedLanguages
 from datadoc.tests.test_callbacks import BOKMÅL_NAME, LANGUAGE_OBJECT
 from datadoc.utils import calculate_percentage, get_display_values, running_in_notebook
 
@@ -16,6 +16,6 @@ def test_calculate_percentage():
 
 
 def test_get_display_values():
-    variable = DataDocVariable(name=LANGUAGE_OBJECT)
+    variable = Variable(name=LANGUAGE_OBJECT)
     values = get_display_values(variable, SupportedLanguages.NORSK_BOKMÅL)
     assert values["name"] == BOKMÅL_NAME

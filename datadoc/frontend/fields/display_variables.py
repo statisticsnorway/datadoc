@@ -5,8 +5,7 @@ from __future__ import annotations
 import typing
 from enum import Enum
 
-from datadoc_model import Model
-from datadoc_model.LanguageStringsEnum import LanguageStringsEnum
+from datadoc_model import model
 
 from datadoc.frontend.fields.display_base import DisplayVariablesMetadata
 
@@ -67,6 +66,7 @@ DISPLAY_VARIABLES = {
         identifier=VariableIdentifiers.DEFINITION_URI.value,
         display_name="Definition URI",
         description="En lenke (URI) til variabelens definisjon i SSB (Vardok/VarDef)",
+        url=True,
         obligatory=True,
     ),
     VariableIdentifiers.DIRECT_PERSON_IDENTIFYING: DisplayVariablesMetadata(
@@ -115,11 +115,13 @@ DISPLAY_VARIABLES = {
         identifier=VariableIdentifiers.CLASSIFICATION_URI.value,
         display_name="Kodeverkets URI",
         description="Lenke (URI) til gyldige kodeverk (klassifikasjon eller kodeliste) i KLASS",
+        url=True,
     ),
     VariableIdentifiers.SENTINEL_VALUE_URI: DisplayVariablesMetadata(
         identifier=VariableIdentifiers.SENTINEL_VALUE_URI.value,
         display_name="Spesialverdienes URI",
         description="En lenke (URI) til en oversikt over 'spesialverdier' som inngår i variabelen.",
+        url=True,
     ),
     VariableIdentifiers.INVALID_VALUE_DESCRIPTION: DisplayVariablesMetadata(
         identifier=VariableIdentifiers.INVALID_VALUE_DESCRIPTION.value,
@@ -150,16 +152,22 @@ MULTIPLE_LANGUAGE_VARIABLES_METADATA = [
     m.identifier for m in DISPLAY_VARIABLES.values() if m.multiple_language_support
 ]
 
+URL_VARIABLES_METADATA = [m.identifier for m in DISPLAY_VARIABLES.values() if m.url]
+
 DISPLAYED_DROPDOWN_VARIABLES_METADATA = [
     m.identifier for m in DISPLAY_VARIABLES.values() if m.presentation == "dropdown"
 ]
 
 DISPLAYED_DROPDOWN_VARIABLES_TYPES = []
 
-types = typing.get_type_hints(Model.DataDocVariable)
+types = typing.get_type_hints(model.Variable)
 
 for m in DISPLAY_VARIABLES.values():
     if m.presentation == "dropdown":
         field_type = typing.get_args(types[m.identifier])[0]
-        if issubclass(field_type, LanguageStringsEnum) or field_type is bool:
-            DISPLAYED_DROPDOWN_VARIABLES_TYPES.append(field_type)
+        DISPLAYED_DROPDOWN_VARIABLES_TYPES.append(field_type)
+
+
+OBLIGATORY_VARIABLES_METADATA = [
+    m.identifier for m in DISPLAY_VARIABLES.values() if m.obligatory and m.editable
+]

@@ -1,6 +1,6 @@
 """Verify that we are in sync with the Model."""
 
-from datadoc_model.Model import DataDocDataSet, DataDocVariable
+from datadoc_model.model import Dataset, Variable
 
 from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET, DatasetIdentifiers
 from datadoc.frontend.fields.display_variables import (
@@ -11,15 +11,15 @@ from datadoc.frontend.fields.display_variables import (
 
 def test_dataset_metadata_definition_parity():
     """The metadata fields are currently defined in multiple places for technical reasons. We want these to always be exactly identical."""
-    assert [i.value for i in DatasetIdentifiers] == list(
-        DataDocDataSet().model_dump().keys(),
+    assert sorted([i.value for i in DatasetIdentifiers]) == sorted(
+        Dataset().model_dump().keys(),
     )
-    assert list(DatasetIdentifiers) == list(DISPLAY_DATASET.keys())
+    assert sorted(DatasetIdentifiers) == sorted(DISPLAY_DATASET.keys())
 
 
 def test_variables_metadata_definition_parity():
     """The metadata fields are currently defined in multiple places for technical reasons. We want these to always be exactly identical."""
-    assert [i.value for i in VariableIdentifiers] == list(
-        DataDocVariable().model_dump().keys(),
+    assert sorted([i.value for i in VariableIdentifiers]) == sorted(
+        Variable().model_dump().keys(),
     )
-    assert list(VariableIdentifiers) == list(DISPLAY_VARIABLES.keys())
+    assert sorted(VariableIdentifiers) == sorted(DISPLAY_VARIABLES.keys())
