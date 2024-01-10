@@ -47,7 +47,7 @@
         },
         "id": "143fca77-ef56-419c-a1e1-d69c4199f020",
         "owner": null,
-        "data_source_path": "/Users/mmwinther/code/datadoc/datadoc/../klargjorte_data/person_data_v1.parquet",
+        "data_source_path": "klargjorte_data/person_data_v1.parquet",
         "metadata_created_date": "2022-09-05T13:07:14.066023",
         "metadata_created_by": "default_user@ssb.no",
         "metadata_last_updated_date": "2022-10-06T15:51:36.106543",
