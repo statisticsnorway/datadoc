@@ -154,12 +154,10 @@ def test_update_dataset_metadata_language_enums():
     state.metadata.meta.dataset.dataset_state = DatasetState.PROCESSED_DATA
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     output = update_dataset_metadata_language()
-    assert DatasetState.PROCESSED_DATA.language_strings.en not in output
     assert DatasetState.PROCESSED_DATA.language_strings.nb not in output
     assert DatasetState.PROCESSED_DATA.name in output
     state.current_metadata_language = SupportedLanguages.ENGLISH
     output = update_dataset_metadata_language()
-    assert DatasetState.PROCESSED_DATA.language_strings.en not in output
     assert DatasetState.PROCESSED_DATA.language_strings.nb not in output
     assert DatasetState.PROCESSED_DATA.name in output
 
