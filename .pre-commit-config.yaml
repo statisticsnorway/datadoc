@@ -1,30 +1,80 @@
+default_language_version:
+  python: python3.11
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+  - repo: local
     hooks:
-      - id: check-ast
+      # General file checkers
       - id: check-added-large-files
+        name: Check added large files
+        entry: check-added-large-files
+        language: system
       - id: check-merge-conflict
+        name: Check for merge conflict strings
+        entry: check-merge-conflict
+        language: system
       - id: check-case-conflict
-      - id: check-docstring-first
-      - id: check-json
-      - id: check-yaml
-      - id: debug-statements
+        name: Check for problematic file names
+        entry: check-case-conflict
+        language: system
+
+      # General text checkers
       - id: end-of-file-fixer
+        name: Fix End of Files
+        entry: end-of-file-fixer
+        language: system
+        types: [text]
+        stages: [commit, push, manual]
       - id: trailing-whitespace
+        name: Trim Trailing Whitespace
+        entry: trailing-whitespace-fixer
+        language: system
+        types: [text]
+        stages: [commit, push, manual]
       - id: mixed-line-ending
-  - repo: https://github.com/psf/black
-    rev: 23.7.0
-    hooks:
-      - id: black
-        # It is recommended to specify the latest version of Python
-        # supported by your project here, or alternatively use
-        # pre-commit's default_language_version, see
-        # https://pre-commit.com/#top_level-default_language_version
-        language_version: python3.11
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    # Ruff version.
-    rev: v0.0.283
-    hooks:
+        name: Mixed Line Ending
+        entry: mixed-line-ending
+        language: system
+        types: [text]
+        stages: [commit, push, manual]
+
+      # Serialization format checkers
+      - id: check-yaml
+        name: Check Yaml
+        entry: check-yaml
+        language: system
+        types: [yaml]
+      - id: check-json
+        name: Check JSON
+        entry: check-json
+        language: system
+        types: [json]
+      - id: check-toml
+        name: Check Toml
+        entry: check-toml
+        language: system
+        types: [toml]
+
+      # Python tools
+      - id: check-ast
+        name: Check Python syntax
+        entry: check-ast
+        language: system
+        types: [python]
+      - id: darglint
+        name: darglint
+        entry: darglint
+        language: system
+        types: [python]
+        stages: [manual]
       - id: ruff
-        args: [ --fix, --exit-non-zero-on-fix ]
+        name: ruff
+        entry: ruff --fix --exit-non-zero-on-fix
+        language: system
+        types_or: [python, jupyter]
+        require_serial: true
+      - id: black
+        name: black
+        entry: black
+        language: system
+        types_or: [python, jupyter]
+        require_serial: true

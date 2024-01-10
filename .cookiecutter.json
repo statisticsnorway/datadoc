@@ -1,0 +1,22 @@
+{
+  "_copy_without_render": [
+    "*.rst_t"
+  ],
+  "_jinja2_env_vars": {
+    "lstrip_blocks": true,
+    "trim_blocks": true
+  },
+  "_template": "https://github.com/statisticsnorway/ssb-pypitemplate.git",
+  "author": "Miles Winther",
+  "code_quality_level": "High",
+  "copyright_owner": "Statistics Norway",
+  "copyright_year": "2022",
+  "development_status": "Development Status :: 4 - Beta",
+  "email": "mmw@ssb.no",
+  "friendly_name": "Datadoc",
+  "github_organization": "statisticsnorway",
+  "license": "MIT",
+  "package_name": "datadoc",
+  "project_name": "datadoc",
+  "version": "0.4.0"
+}
