@@ -1,4 +1,4 @@
-name: Datadoc Dapla Lab CI
+name: Docker build
 
 on:
   push:
@@ -6,15 +6,14 @@ on:
       - "**"
     tags:
       - "*"
-  pull_request:
     paths:
-      - 'datadoc/**'
+      - 'src/datadoc/**'
       - 'poetry.lock'
       - 'Dockerfile'
-      - '.github/workflows/dapla-lab-ci.yml'
+      - '.github/workflows/docker-build.yml'
 
 env:
-  REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-lab-docker/onyxia
+  REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-metadata-docker/datadoc
   IMAGE: datadoc
   TAG: ${{ github.ref_name }}-${{ github.sha }}
 
@@ -31,7 +30,7 @@ jobs:
         uses: "google-github-actions/auth@v1.1.1"
         with:
           workload_identity_provider: "projects/848539402404/locations/global/workloadIdentityPools/gh-actions/providers/gh-actions"
-          service_account: "gh-actions-dapla-lab@artifact-registry-5n.iam.gserviceaccount.com"
+          service_account: "gh-actions-dapla-metadata@artifact-registry-5n.iam.gserviceaccount.com"
           token_format: "access_token"
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2

@@ -29,7 +29,7 @@ ENV PATH="$POETRY_HOME/bin:$PATH"
 # Import our project files
 WORKDIR $APP_PATH
 COPY ./poetry.lock ./pyproject.toml ./README.md ./
-COPY ./$PACKAGE_NAME ./$PACKAGE_NAME
+COPY ./src/$PACKAGE_NAME ./$PACKAGE_NAME
 
 RUN poetry build --format wheel
 RUN poetry export --format constraints.txt --output constraints.txt --without-hashes
