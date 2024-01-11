@@ -1,62 +1,15 @@
 {
-    "document_version": "0.0.1",
-    "datadoc": {
-        "percentage_complete": 98,
-        "document_version": "2.0.0",
-        "dataset": {
-            "short_name": "person_data_v1",
-            "assessment": "SENSITIVE",
-            "dataset_status": "DRAFT",
-            "dataset_state": "PROCESSED_DATA",
-            "name": {
-                "en": "successfully_read_existing_file",
-                "nn": "",
-                "nb": "Persondata"
-            },
-            "description": {
-                "en": "",
-                "nn": "",
-                "nb": ""
-            },
-            "data_source": {
-                "en": "",
-                "nn": "",
-                "nb": "Skatteetaten"
-            },
-            "register_uri": null,
-            "population_description": {
-                "en": "",
-                "nn": "",
-                "nb": "Norsk befolkning"
-            },
-            "version": "1",
-            "version_description": null,
-            "unit_type": "PERSON",
-            "temporality_type": "STATUS",
-            "subject_field": {
-                "en": "",
-                "nn": "",
-                "nb": "Skatt"
-            },
-            "keyword": [
-                "Skatt",
-                "Person",
-                "Helsepenger"
-            ],
-            "spatial_coverage_description": {
-                "en": "",
-                "nn": "",
-                "nb": "Norge"
-            },
-            "id": "143fca77-ef56-419c-a1e1-d69c4199f020",
-            "owner": null,
-            "file_path": null,
-            "metadata_created_date": "2022-09-05T11:07:14Z",
-            "metadata_created_by": "default_user@ssb.no",
-            "metadata_last_updated_date": "2024-01-08T15:41:05.681664Z",
-            "metadata_last_updated_by": "default_user@ssb.no",
-            "contains_data_from": "2010-09-05",
-            "contains_data_until": "2022-09-05"
+    "percentage_complete": 100,
+    "document_version": "1.0.0",
+    "dataset": {
+        "short_name": "person_data_v1",
+        "assessment": "SENSITIVE",
+        "dataset_status": "DRAFT",
+        "dataset_state": "PROCESSED_DATA",
+        "name": {
+            "en": "successfully_read_existing_file",
+            "nn": "",
+            "nb": "Persondata"
         },
         "data_source": {
             "en": "",
@@ -295,6 +248,5 @@
             "contains_data_from": null,
             "contains_data_until": null
         }
-    ],
-    "pseudonymization": null
+    ]
 }
