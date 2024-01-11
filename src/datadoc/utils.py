@@ -2,6 +2,7 @@
 
 import datetime
 import importlib
+from typing import Any
 
 from datadoc_model import model
 from pydantic import AnyUrl
@@ -12,7 +13,7 @@ from datadoc.enums import SupportedLanguages
 def running_in_notebook() -> bool:
     """Return True if running in Jupyter Notebook."""
     try:
-        return bool(get_ipython().__class__.__name__ == "ZMQInteractiveShell")
+        return bool(get_ipython().__class__.__name__ == "ZMQInteractiveShell")  # type: ignore [name-defined]
     except NameError:
         # The get_ipython method is globally available in ipython interpreters
         # as used in Jupyter. However it is not available in other python
@@ -29,7 +30,7 @@ def calculate_percentage(completed: int, total: int) -> int:
 def get_display_values(
     variable: model.Variable,
     current_language: SupportedLanguages,
-) -> dict:
+) -> dict[str, Any]:
     """Return a dictionary representation of Model.DataDocVariable with strings in the currently selected language."""
     return_dict = {}
     for field_name, value in variable:
@@ -55,7 +56,7 @@ def pick_random_port() -> int:
         return int(sock.getsockname()[1])
 
 
-def get_timestamp_now() -> datetime:
+def get_timestamp_now() -> datetime.datetime:
     """Return a timestamp for the current moment."""
     return datetime.datetime.now(tz=datetime.timezone.utc)
 

@@ -24,8 +24,6 @@ from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 if t.TYPE_CHECKING:
     from pathlib import Path
 
-    from datadoc_model import model
-
     from datadoc.enums import SupportedLanguages
 
 logger = logging.getLogger(__name__)
@@ -48,7 +46,7 @@ def get_dataset_path() -> str | Path | None:
 
 def open_file(file_path: str | Path | None = None) -> None:
     """Load the given dataset into an DataDocMetadata instance."""
-    if file_path and file_path.endswith(METADATA_DOCUMENT_FILE_SUFFIX):
+    if file_path and str(file_path).endswith(METADATA_DOCUMENT_FILE_SUFFIX):
         state.metadata = DataDocMetadata(metadata_document_path=file_path)
         logger.info("Opened existing metadata document %s", file_path)
     else:
@@ -60,7 +58,7 @@ def open_file(file_path: str | Path | None = None) -> None:
 def open_dataset_handling(
     n_clicks: int,
     file_path: str,
-) -> tuple[bool, bool, str, SupportedLanguages]:
+) -> tuple[bool, bool, str, str]:
     """Handle errors and other logic around opening a dataset file."""
     try:
         open_file(file_path)
@@ -84,37 +82,44 @@ def open_dataset_handling(
     return False, False, "", state.current_metadata_language.value
 
 
-def process_keyword(value: str) -> list[str] | None:
+def process_keyword(value: str) -> list[str]:
     """Convert a comma separated string to a list of strings.
 
     e.g. 'a,b ,c' -> ['a', 'b', 'c']
     """
-    if value is None:
-        return None
     return [item.strip() for item in value.split(",")]
 
 
 def process_special_cases(
-    value: str,
+    value: MetadataInputTypes,
     metadata_identifier: str,
-) -> list[str] | model.LanguageStringType | None:
+) -> MetadataInputTypes:
     """Pre-process metadata where needed.
 
     Some types of metadata need processing before being saved
     to the model. Handle these cases here, other values are
     returned unchanged.
     """
-    if metadata_identifier == DatasetIdentifiers.KEYWORD.value:
-        value = process_keyword(value)
-    if metadata_identifier in MULTIPLE_LANGUAGE_DATASET_METADATA:
-        value = find_existing_language_string(
+    updated_value: MetadataInputTypes
+    if metadata_identifier == DatasetIdentifiers.KEYWORD.value and isinstance(
+        value,
+        str,
+    ):
+        updated_value = process_keyword(value)
+    elif metadata_identifier in MULTIPLE_LANGUAGE_DATASET_METADATA and isinstance(
+        value,
+        str,
+    ):
+        updated_value = find_existing_language_string(
             state.metadata.meta.dataset,
             value,
             metadata_identifier,
         )
+    else:
+        updated_value = value
 
     # Other values get returned unchanged
-    return value
+    return updated_value
 
 
 def accept_dataset_metadata_input(
@@ -164,7 +169,7 @@ def update_dataset_metadata_language() -> list[MetadataInputTypes]:
 
 def change_language_dataset_metadata(
     language: SupportedLanguages,
-) -> tuple[tuple[list[dict[str, str]], ...], list]:
+) -> tuple[object, ...]:
     """Change the language for the displayed dataset metadata.
 
     This is done in three steps:

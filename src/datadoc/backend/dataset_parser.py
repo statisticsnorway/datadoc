@@ -5,7 +5,6 @@ Handles reading in the data and transforming data types to generic metadata type
 
 from __future__ import annotations
 
-import pathlib
 import re
 import typing as t
 from abc import ABC
@@ -20,7 +19,8 @@ from datadoc import state
 from datadoc.backend.storage_adapter import StorageAdapter
 from datadoc.enums import DataType
 
-TDatasetParser = t.TypeVar("TDatasetParser", bound="DatasetParser")
+if t.TYPE_CHECKING:
+    import pathlib
 
 KNOWN_INTEGER_TYPES = (
     "int",
@@ -77,16 +77,18 @@ KNOWN_DATETIME_TYPES = (
 KNOWN_BOOLEAN_TYPES = ("bool", "bool_", "boolean")
 
 
-TYPE_CORRESPONDENCE: list[tuple[list[str], DataType]] = [
+TYPE_CORRESPONDENCE: list[tuple[tuple[str, ...], DataType]] = [
     (KNOWN_INTEGER_TYPES, DataType.INTEGER),
     (KNOWN_FLOAT_TYPES, DataType.FLOAT),
     (KNOWN_STRING_TYPES, DataType.STRING),
     (KNOWN_DATETIME_TYPES, DataType.DATETIME),
     (KNOWN_BOOLEAN_TYPES, DataType.BOOLEAN),
 ]
-TYPE_MAP: dict[str:DataType] = {}
+TYPE_MAP: dict[str, DataType] = {}
 for concrete_type, abstract_type in TYPE_CORRESPONDENCE:
     TYPE_MAP.update({c: abstract_type for c in concrete_type})
+
+TDatasetParser = t.TypeVar("TDatasetParser", bound="DatasetParser")
 
 
 class DatasetParser(ABC):
@@ -100,24 +102,27 @@ class DatasetParser(ABC):
     - A method to extract variables (columns) from the dataset, so they may be documented.
     """
 
-    def __init__(self: t.Self @ DatasetParser, dataset: str) -> None:
+    def __init__(self, dataset: pathlib.Path) -> None:
         """Initialize for a given dataset."""
         self.dataset: StorageAdapter = StorageAdapter.for_path(dataset)
 
     @staticmethod
-    def for_file(dataset: str) -> TDatasetParser:
+    def for_file(dataset: pathlib.Path) -> DatasetParser:
         """Return the correct subclass based on the given dataset file."""
-        supported_file_types = {
-            "parquet": DatasetParserParquet,
-            "sas7bdat": DatasetParserSas7Bdat,
-            "parquet.gzip": DatasetParserParquet,
+        supported_file_types: dict[
+            str,
+            type[DatasetParser],
+        ] = {
+            ".parquet": DatasetParserParquet,
+            ".sas7bdat": DatasetParserSas7Bdat,
+            ".parquet.gzip": DatasetParserParquet,
         }
         file_type = "Unknown"
         try:
-            file_type = str(pathlib.Path(dataset)).lower().split(".")[-1]
+            file_type = dataset.suffix
             # Gzipped parquet files can be read with DatasetParserParquet
-            match = re.search(r"(.parquet.gzip)", str(pathlib.Path(dataset)).lower())
-            file_type = "parquet.gzip" if match else file_type
+            match = re.search(r"(.parquet.gzip)", str(dataset).lower())
+            file_type = ".parquet.gzip" if match else file_type
             # Extract the appropriate reader class from the SUPPORTED_FILE_TYPES dict and return an instance of it
             reader = supported_file_types[file_type](dataset)
         except IndexError as e:
@@ -150,18 +155,18 @@ class DatasetParser(ABC):
         return TYPE_MAP.get(data_type.lower(), None)
 
     @abstractmethod
-    def get_fields(self: t.Self @ DatasetParser) -> list[Variable]:
+    def get_fields(self) -> list[Variable]:
         """Abstract method, must be implemented by subclasses."""
 
 
 class DatasetParserParquet(DatasetParser):
     """Concrete implementation for parsing parquet files."""
 
-    def __init__(self: t.Self @ DatasetParserParquet, dataset: str) -> None:
+    def __init__(self, dataset: pathlib.Path) -> None:
         """Use the super init method."""
         super().__init__(dataset)
 
-    def get_fields(self: t.Self @ DatasetParserParquet) -> list[Variable]:
+    def get_fields(self) -> list[Variable]:
         """Extract the fields from this dataset."""
         with self.dataset.open(mode="rb") as f:
             data_table = pq.read_table(f)
@@ -177,16 +182,16 @@ class DatasetParserParquet(DatasetParser):
 class DatasetParserSas7Bdat(DatasetParser):
     """Concrete implementation for parsing SAS7BDAT files."""
 
-    def __init__(self: t.Self @ DatasetParserSas7Bdat, dataset: str) -> None:
+    def __init__(self, dataset: pathlib.Path) -> None:
         """Use the super init method."""
         super().__init__(dataset)
 
-    def get_fields(self: t.Self @ DatasetParserSas7Bdat) -> list[Variable]:
+    def get_fields(self) -> list[Variable]:
         """Extract the fields from this dataset."""
         fields = []
         with self.dataset.open(mode="rb") as f:
             # Use an iterator to avoid reading in the entire dataset
-            sas_reader = pd.read_sas(f, format="sas7bdat", iterator=True)
+            sas_reader = pd.read_sas(f, format="sas7bdat", iterator=True)  # type: ignore [call-overload]
 
             # Get the first row from the iterator
             try:

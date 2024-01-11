@@ -1,5 +1,7 @@
 """Tests for the DatasetParser class."""
 
+import pathlib
+
 import pytest
 from datadoc_model.model import LanguageStringType
 from datadoc_model.model import Variable
@@ -74,14 +76,10 @@ def test_get_fields_sas7bdat():
     assert fields == expected_fields
 
 
-def test_get_fields_unknown_file_type():
+@pytest.mark.parametrize("file", ["my_dataset.csv", "my_dataset.xlsx", "my_dataset"])
+def test_dataset_parser_unsupported_files(file: pathlib.Path):
     with pytest.raises(NotImplementedError):
-        DatasetParser.for_file("my_dataset.csv").get_fields()
-
-
-def test_get_fields_no_extension_provided():
-    with pytest.raises(NotImplementedError):
-        DatasetParser.for_file("my_dataset").get_fields()
+        DatasetParser.for_file(pathlib.Path(file))
 
 
 def test_transform_datatype_unknown_type():

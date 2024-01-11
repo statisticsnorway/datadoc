@@ -11,15 +11,16 @@ A test must also be implemented for each new version.
 
 from __future__ import annotations
 
-import typing as t
 from collections import OrderedDict
 from dataclasses import dataclass
 from datetime import datetime
 from datetime import timezone
+from typing import TYPE_CHECKING
+from typing import Any
 
 from datadoc_model.model import LanguageStringType
 
-if t.TYPE_CHECKING:
+if TYPE_CHECKING:
     from collections.abc import Callable
 
 VERSION_FIELD_NAME = "document_version"
@@ -29,15 +30,15 @@ class UnknownModelVersionError(Exception):
     """Throw this error if we haven't seen the version before."""
 
     def __init__(
-        self: t.Self @ UnknownModelVersionError,
+        self,
         supplied_version: str,
-        *args: tuple[t.Any, ...],
+        *args: tuple[Any, ...],
     ) -> None:
         """Initialize class."""
         super().__init__(args)
         self.supplied_version = supplied_version
 
-    def __str__(self: t.Self @ UnknownModelVersionError) -> str:
+    def __str__(self) -> str:
         """Return string representation."""
         return f"Document Version ({self.supplied_version}) of discovered file is not supported"
 
@@ -50,19 +51,19 @@ class BackwardsCompatibleVersion:
     """A version which we support with backwards compatibility."""
 
     version: str
-    handler: Callable
+    handler: Callable[[dict[str, Any]], dict[str, Any]]
 
-    def __post_init__(self: t.Self @ BackwardsCompatibleVersion) -> None:
+    def __post_init__(self) -> None:
         """Register this version in the supported versions map."""
         SUPPORTED_VERSIONS[self.version] = self
 
 
-def handle_current_version(supplied_metadata: dict) -> dict:
+def handle_current_version(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Nothing to do here."""
     return supplied_metadata
 
 
-def handle_version_1_0_0(supplied_metadata: dict) -> dict:
+def handle_version_1_0_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Handle breaking changes for v1.0.0."""
     datetime_fields = [
         ("metadata_created_date"),
@@ -86,7 +87,7 @@ def handle_version_1_0_0(supplied_metadata: dict) -> dict:
     return supplied_metadata
 
 
-def handle_version_0_1_1(supplied_metadata: dict) -> dict:
+def handle_version_0_1_1(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Handle breaking changes for v0.1.1.
 
     PR ref: https://github.com/statisticsnorway/ssb-datadoc-model/pull/4.
@@ -122,7 +123,7 @@ BackwardsCompatibleVersion(
 )
 
 
-def upgrade_metadata(fresh_metadata: dict) -> dict:
+def upgrade_metadata(fresh_metadata: dict[str, Any]) -> dict[str, Any]:
     """Run the handler for this version to upgrade the document to the latest version."""
     # Special case for current version, we expose the current_model_version parameter for test purposes
     supplied_version = fresh_metadata[VERSION_FIELD_NAME]

@@ -7,18 +7,16 @@ If Datadoc is redeployed as a multi-user web app then this storage
 strategy must be modified, since users will modify each others data.
 See here: https://dash.plotly.com/sharing-data-between-callbacks
 """
+from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from datadoc.enums import SupportedLanguages
-
 if TYPE_CHECKING:
-    # This is only needed for a type hint so we put the import inside
-    # this check to avoid circular imports
     from datadoc.backend.datadoc_metadata import DataDocMetadata
+    from datadoc.enums import SupportedLanguages
 
 
 # Global metadata container
-metadata: "DataDocMetadata"
+metadata: DataDocMetadata
 
 current_metadata_language: SupportedLanguages

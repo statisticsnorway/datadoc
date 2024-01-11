@@ -12,29 +12,32 @@ from tests.utils import TEST_PARQUET_FILEPATH
 
 
 @pytest.mark.parametrize(
-    ("file", "expected_class"),
+    ("file_name", "expected_class"),
     [("local_parquet_file", LocalFile), ("bucket_object_parquet_file", GCSObject)],
 )
 def test_factory(
-    file: StorageAdapter,
-    expected_class: StorageAdapter,
+    file_name: str,
+    expected_class: type[StorageAdapter],
     request: pytest.FixtureRequest,
 ):
     # Ugly pytest magic to get the actual fixture out
-    file: StorageAdapter = request.getfixturevalue(file)
+    file: StorageAdapter = request.getfixturevalue(file_name)
     assert isinstance(file, expected_class)
 
 
-@pytest.mark.parametrize("file", ["local_parquet_file", "bucket_object_parquet_file"])
-def test_open(file: str, request: pytest.FixtureRequest):
+@pytest.mark.parametrize(
+    "file_name",
+    ["local_parquet_file", "bucket_object_parquet_file"],
+)
+def test_open(file_name: str, request: pytest.FixtureRequest):
     # Ugly pytest magic to get the actual fixture out
-    file: StorageAdapter = request.getfixturevalue(file)
+    file: StorageAdapter = request.getfixturevalue(file_name)
     with file.open() as file_handle:
         assert file_handle.readable()
 
 
 @pytest.mark.parametrize(
-    ("file", "expected_parent"),
+    ("file_name", "expected_parent"),
     [
         (
             "local_parquet_file",
@@ -46,14 +49,14 @@ def test_open(file: str, request: pytest.FixtureRequest):
         ),
     ],
 )
-def test_parent(file: str, expected_parent: str, request: pytest.FixtureRequest):
+def test_parent(file_name: str, expected_parent: str, request: pytest.FixtureRequest):
     # Ugly pytest magic to get the actual fixture out
-    file: StorageAdapter = request.getfixturevalue(file)
+    file: StorageAdapter = request.getfixturevalue(file_name)
     assert file.parent() == expected_parent
 
 
 @pytest.mark.parametrize(
-    ("known_file", "expected"),
+    ("file_name", "expected"),
     [
         (
             "local_parquet_file",
@@ -66,23 +69,23 @@ def test_parent(file: str, expected_parent: str, request: pytest.FixtureRequest)
     ],
 )
 def test_joinpath(
-    known_file: str,
+    file_name: str,
     expected: str,
     request: pytest.FixtureRequest,
 ):
     # Ugly pytest magic to get the actual fixture out
-    actual_file: StorageAdapter = request.getfixturevalue(known_file)
+    actual_file: StorageAdapter = request.getfixturevalue(file_name)
     actual_file.joinpath("extra")
     assert pathlib.Path(actual_file.location) == pathlib.Path(expected)
 
 
 @pytest.mark.parametrize(
-    "known_file",
+    "file_name",
     ["local_parquet_file", "bucket_object_parquet_file"],
 )
-def test_exists(known_file: str, request: pytest.FixtureRequest):
+def test_exists(file_name: str, request: pytest.FixtureRequest):
     # Ugly pytest magic to get the actual fixture out
-    actual_file: StorageAdapter = request.getfixturevalue(known_file)
+    actual_file: StorageAdapter = request.getfixturevalue(file_name)
     assert actual_file.exists()
 
 
@@ -93,7 +96,3 @@ def test_write_text_local_file(
     local_parquet_file.write_text("12345")
     mock = request.getfixturevalue("mock_pathlib_write_text")
     mock.assert_called_once_with("12345", encoding="utf-8")
-
-
-# Currently no test for writing to GCS
-# Attempts to mock are failing with TypeError: cannot set 'write' attribute of immutable type '_io.BufferedWriter'

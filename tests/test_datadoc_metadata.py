@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import pathlib
 from copy import copy
 from pathlib import Path
 from pathlib import PurePath
@@ -28,7 +29,7 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 
-def make_paths() -> list[tuple[str, DatasetState]]:
+def make_paths() -> list[tuple[str, DatasetState | None]]:
     split_path = list(PurePath(TEST_PARQUET_FILEPATH).parts)
     initial_data = [
         ("kildedata", DatasetState.SOURCE_DATA),
@@ -45,8 +46,8 @@ def make_paths() -> list[tuple[str, DatasetState]]:
     for to_insert, state in initial_data:
         new_path = copy(split_path)
         new_path.insert(-2, to_insert)
-        new_path = PurePath().joinpath(*new_path)
-        test_data.append((str(new_path), state))
+        joined_path = PurePath().joinpath(*new_path)
+        test_data.append((str(joined_path), state))
 
     return test_data
 
@@ -57,12 +58,8 @@ def test_get_dataset_state(
     expected_result: DatasetState,
     metadata: DataDocMetadata,
 ):
-    actual_state = metadata.get_dataset_state(path)
+    actual_state = metadata.get_dataset_state(pathlib.Path(path))
     assert actual_state == expected_result
-
-
-def test_get_dataset_state_none(metadata: DataDocMetadata):
-    assert metadata.get_dataset_state(None) is None
 
 
 @pytest.mark.usefixtures("existing_metadata_file", "remove_document_file")
@@ -86,12 +83,20 @@ def test_metadata_document_percent_complete(metadata: DataDocMetadata):
     assert metadata.percent_complete == 17  # noqa: PLR2004
 
 
-def test_get_dataset_version(metadata: DataDocMetadata):
-    assert metadata.get_dataset_version(metadata.short_name) == "1"
-
-
-def test_get_dataset_version_unknown(metadata: DataDocMetadata):
-    assert metadata.get_dataset_version("person_data.parquet") is None
+@pytest.mark.parametrize(
+    ("short_name", "expected"),
+    [
+        ("person_data_v1", "1"),
+        ("person_data_v2", "2"),
+        ("person_data", None),
+        ("person_testdata_p2021-12-31_p2021-12-31_v20", "20"),
+    ],
+)
+def test_get_dataset_version(
+    short_name: str,
+    expected: str | None,
+):
+    assert DataDocMetadata.get_dataset_version(short_name) == expected
 
 
 @pytest.mark.usefixtures("remove_document_file")
@@ -156,10 +161,8 @@ def test_existing_metadata_none_id(
     existing_metadata_file: str,
     metadata: DataDocMetadata,
 ):
-    pre_open_id = ""
-    post_write_id = ""
     with Path.open(Path(existing_metadata_file)) as f:
-        pre_open_id = json.load(f)["datadoc"]["dataset"]["id"]
+        pre_open_id: None = json.load(f)["datadoc"]["dataset"]["id"]
     assert pre_open_id is None
     assert isinstance(metadata.meta.dataset.id, UUID)
     metadata.write_metadata_document()

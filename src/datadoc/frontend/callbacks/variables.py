@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 
 from pydantic import ValidationError
 
@@ -20,6 +21,9 @@ from datadoc.frontend.fields.display_variables import (
 )
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
 from datadoc.utils import get_display_values
+
+if TYPE_CHECKING:
+    from datadoc_model import model
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +79,7 @@ def handle_multi_language_metadata(
     metadata_field: str,
     new_value: MetadataInputTypes,
     updated_row_id: str,
-) -> str | None:
+) -> MetadataInputTypes | model.LanguageStringType:
     """Handle updates to fields which support multiple languages."""
     if new_value is None:
         # This edge case occurs when the user removes the text in an input field
@@ -143,7 +147,7 @@ def accept_variable_metadata_input(
 
 def update_variable_table_dropdown_options_for_language(
     language: SupportedLanguages,
-) -> dict[str, dict[str, list[dict[str, str]]]]:
+) -> dict[str, dict[str, object]]:
     """Retrieve enum options for dropdowns in the Datatable.
 
     Handles the special case of boolean values which we represent in the Datatable
@@ -161,7 +165,7 @@ def update_variable_table_dropdown_options_for_language(
             ...
         }
     """
-    options = []
+    options: list[dict[str, object]] = []
     for field_type in DISPLAYED_DROPDOWN_VARIABLES_TYPES:
         value = (
             get_boolean_options_for_language(language)

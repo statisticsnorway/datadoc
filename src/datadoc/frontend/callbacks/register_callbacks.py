@@ -83,7 +83,7 @@ def register_callbacks(app: Dash) -> None:
     )
     def callback_change_language_dataset_metadata(
         language: str,
-    ) -> tuple[tuple[list[dict[str, str]], ...], list]:
+    ) -> tuple[object, ...]:
         """Update dataset metadata values upon change of language."""
         return change_language_dataset_metadata(SupportedLanguages(language))
 
@@ -141,7 +141,7 @@ def register_callbacks(app: Dash) -> None:
     )
     def callback_variable_table_dropdown_options(
         language: str,
-    ) -> dict[str, dict[str, list[dict[str, str]]]]:
+    ) -> dict[str, dict[str, object]]:
         """Update the options in variable table dropdowns when the language changes."""
         language = SupportedLanguages(language)
         return update_variable_table_dropdown_options_for_language(language)
@@ -157,7 +157,7 @@ def register_callbacks(app: Dash) -> None:
     def callback_open_dataset(
         n_clicks: int,
         dataset_path: str,
-    ) -> tuple[bool, bool, str, SupportedLanguages]:
+    ) -> tuple[bool, bool, str, str]:
         """Open a dataset.
 
         Shows an alert on success or failure.

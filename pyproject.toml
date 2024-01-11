@@ -58,6 +58,10 @@ sphinx-click = ">=3.0.2"
 typeguard = ">=2.13.3"
 xdoctest = { extras = ["colors"], version = ">=0.15.10" }
 myst-parser = { version = ">=0.16.1" }
+pandas-stubs = "*"
+types-Pygments = "*"
+types-colorama = "*"
+types-setuptools = "*"
 
 
 [tool.pytest.ini_options]
@@ -81,11 +85,39 @@ show_missing = true
 fail_under = 80
 
 [tool.mypy]
-strict = true
+strict = false
 warn_unreachable = true
 pretty = true
 show_column_numbers = true
 show_error_context = true
+
+[[tool.mypy.overrides]]
+# Allow missing type hints in third-party libraries without type information.
+module = [
+    "dash",
+    "dash_bootstrap_components",
+    "flask_healthz",
+    "dapla",
+    "gcsfs",
+    "pyarrow",
+    "pyarrow.parquet",
+    "dash.development.base_component",
+    "datadoc_model",
+    "datadoc_model.model",
+    "pytest_mock",
+]
+ignore_missing_imports = true
+
+# Disable specific error codes in the 'tests' package
+# Also don't require type annotations
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disable_error_code = [
+    "var-annotated",
+    "has-type",
+    "no-any-return",
+    "no-untyped-def",
+]
 
 [tool.ruff]
 force-exclude = true    # Apply excludes to pre-commit
@@ -97,11 +129,12 @@ target-version = "py39" # Minimum Python version supported
 select = ["ALL"]
 ignore = [
     "A003",
-    "ANN101", # Supress missing-type-self.
+    "ANN101", # Suppress missing-type-self.
+    "ANN102", # Suppress missing-type-cls.
     "B008",
-    "D100",   # Supress undocumented-public-module. Only doc of public api required.
-    "E402",   # Supress module-import-not-at-top-of-file, needed in jupyter notebooks.
-    "E501",   # Supress line-too-long warnings: trust black's judgement on this one.
+    "D100",   # Suppress undocumented-public-module. Only doc of public api required.
+    "E501",   # Let black handle line length
+    "TRY003",
 ]
 include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
 extend-exclude = [
@@ -131,14 +164,11 @@ classmethod-decorators = [
 
 [tool.ruff.per-file-ignores]
 "*/__init__.py" = ["F401"]
-"datadoc/frontend/callbacks/register_callbacks.py" = ["C901"]
-"**/tests/*" = [
-    # asserts are encouraged in pytest
-    "S101",
-    # return annotations don't add value for test functions
-    "ANN201",
-    # docstrings are overkill for test functions
-    "D103",
+"src/datadoc/frontend/callbacks/register_callbacks.py" = ["C901"]
+"tests/**" = [
+    "S101",   # asserts are encouraged in pytest
+    "ANN201", # return annotations don't add value for test functions
+    "D103",   # docstrings are overkill for test functions
     "D100",
 ]
 # This filename is a convention for Gunicorn

@@ -250,16 +250,16 @@ DISPLAYED_DATASET_METADATA: list[DisplayDatasetMetadata] = (
     + NON_EDITABLE_DATASET_METADATA
 )
 
-DISPLAYED_DROPDOWN_DATASET_METADATA = [
+DISPLAYED_DROPDOWN_DATASET_METADATA: list[DisplayDatasetMetadata] = [
     m for m in DISPLAYED_DATASET_METADATA if m.component == dcc.Dropdown
 ]
 
 types = typing.get_type_hints(model.Dataset)
 
-DISPLAYED_DROPDOWN_DATASET_ENUMS = [
+DISPLAYED_DROPDOWN_DATASET_ENUMS: list[Enum] = [
     typing.get_args(types[m.identifier])[0] for m in DISPLAYED_DROPDOWN_DATASET_METADATA
 ]
 
-OBLIGATORY_DATASET_METADATA = [
+OBLIGATORY_DATASET_METADATA_IDENTIFIERS: list[str] = [
     m.identifier for m in DISPLAY_DATASET.values() if m.obligatory and m.editable
 ]

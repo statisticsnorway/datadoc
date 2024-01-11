@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING
+from typing import TypeAlias
 
 from datadoc_model import model
 
@@ -20,7 +21,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-MetadataInputTypes: type = str | int | float | bool | None
+MetadataInputTypes: TypeAlias = str | list[str] | int | float | bool | None
 
 
 def update_global_language_state(language: SupportedLanguages) -> None:
@@ -34,7 +35,13 @@ def get_language_strings_enum(enum: Enum) -> enums.LanguageStringsEnum:
 
     We need multiple languages to display in the front end, but the model only defines a single language in the enums.
     """
-    return getattr(enums, enum.__name__)
+    language_strings_enum: enums.LanguageStringsEnum = getattr(enums, enum.__name__)  # type: ignore [attr-defined]
+    if not issubclass(language_strings_enum, enums.LanguageStringsEnum):  # type: ignore [arg-type]
+        message = f"Expected {language_strings_enum} to be a subclass of LanguageStringsEnum, but is {type(language_strings_enum)}"
+        raise TypeError(
+            message,
+        )
+    return language_strings_enum
 
 
 def get_options_for_language(
@@ -47,7 +54,7 @@ def get_options_for_language(
             "label": i.get_value_for_language(language),
             "value": i.name,
         }
-        for i in get_language_strings_enum(enum)
+        for i in get_language_strings_enum(enum)  # type: ignore [attr-defined]
     ]
 
 
@@ -55,7 +62,7 @@ def find_existing_language_string(
     metadata_model_object: pydantic.BaseModel,
     value: str,
     metadata_identifier: str,
-) -> model.LanguageStringType | None:
+) -> model.LanguageStringType:
     """Get or create a LanguageStrings object and return it."""
     # In this case we need to set the string to the correct language code
     language_strings = getattr(metadata_model_object, metadata_identifier)

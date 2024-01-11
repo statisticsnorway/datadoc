@@ -63,15 +63,16 @@ def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> str | N
     value: LanguageStringType = getattr(metadata, identifier)
     if value is None:
         return value
-    return getattr(value, state.current_metadata_language)
+    return str(getattr(value, state.current_metadata_language))
 
 
 def get_comma_separated_string(metadata: BaseModel, identifier: str) -> str:
     """Get a metadata value which is a list of strings from the model and convert it to a comma separated string."""
     value: list[str] = getattr(metadata, identifier)
-    if value is None:
+    try:
+        return ", ".join(value)
+    except TypeError:
         return ""
-    return ", ".join(value)
 
 
 @dataclass

@@ -2,14 +2,9 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import TYPE_CHECKING
 
 from datadoc_model import model
 from datadoc_model.model import LanguageStringType
-
-if TYPE_CHECKING:
-    # Avoid circular imports
-    from typing import Self
 
 
 class SupportedLanguages(str, Enum):
@@ -27,7 +22,7 @@ class LanguageStringsEnum(Enum):
     """Enum class for storing LanguageStringType objects."""
 
     def __init__(
-        self: Self @ LanguageStringsEnum,
+        self,
         language_strings: LanguageStringType,
     ) -> None:
         """Store the LanguageStringType object for displaying enum values in multiple languages.
@@ -40,10 +35,10 @@ class LanguageStringsEnum(Enum):
         self.language_strings = language_strings
 
     @classmethod
-    def _missing_(cls: type[Self @ LanguageStringsEnum], value: str) -> Enum:
+    def _missing_(cls, value: object) -> LanguageStringsEnum:
         """Support constructing an enum member from a supplied name string."""
         try:
-            member = cls._member_map_[value]
+            member: LanguageStringsEnum = cls._member_map_[str(value)]  # type: ignore [assignment]
         except KeyError as e:
             # Raise the expected exception with a useful explanation
             message = f"{value} is not a valid {cls.__qualname__}"
@@ -52,11 +47,11 @@ class LanguageStringsEnum(Enum):
             return member
 
     def get_value_for_language(
-        self: Self @ LanguageStringsEnum,
+        self,
         language: SupportedLanguages,
     ) -> str:
         """Retrieve the string for the relevant language."""
-        return getattr(self.language_strings, language.value)
+        return str(getattr(self.language_strings, language.value))
 
 
 class Assessment(LanguageStringsEnum):

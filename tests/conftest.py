@@ -2,6 +2,7 @@
 
 import shutil
 import traceback
+from collections.abc import Generator
 from datetime import datetime
 from datetime import timezone
 from pathlib import Path
@@ -42,7 +43,7 @@ def metadata(_mock_timestamp: None) -> DataDocMetadata:
 
 
 @pytest.fixture()
-def remove_document_file() -> None:
+def remove_document_file() -> Generator[None, None, None]:
     # Yield so we only run teardown
     yield None
     try:
@@ -79,35 +80,37 @@ def existing_metadata_with_valid_id_file(existing_metadata_file: Path) -> Path:
 @pytest.fixture()
 def _clear_state() -> None:
     """Global fixture, referred to in pytest.ini."""
-    state.metadata = None
+    state.metadata = None  # type: ignore [assignment]
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
 
 
 @pytest.fixture()
-def mock_gcsfs_open(mocker: MockerFixture):
+def mock_gcsfs_open(mocker: MockerFixture) -> mock.Mock:
     return mocker.patch("gcsfs.GCSFileSystem.open")
 
 
 @pytest.fixture()
-def mock_gcsfs_exists(mocker: MockerFixture):
+def mock_gcsfs_exists(mocker: MockerFixture) -> mock.Mock:
     mock = mocker.patch("gcsfs.GCSFileSystem.exists")
     mock.return_value = True
     return mock
 
 
 @pytest.fixture()
-def mock_pathlib_write_text(mocker: MockerFixture):
+def mock_pathlib_write_text(mocker: MockerFixture) -> mock.Mock:
     return mocker.patch("pathlib.Path.write_text")
 
 
 @pytest.fixture()
-def local_parquet_file(mock_pathlib_write_text: mock.patch):  # noqa: ARG001
+def local_parquet_file(
+    mock_pathlib_write_text: mock.Mock,  # noqa: ARG001
+) -> StorageAdapter:
     return StorageAdapter.for_path(str(TEST_PARQUET_FILEPATH))
 
 
 @pytest.fixture()
 def bucket_object_parquet_file(
-    mock_gcsfs_open: mock.patch,  # noqa: ARG001
-    mock_gcsfs_exists: mock.patch,  # noqa: ARG001
-):
+    mock_gcsfs_open: mock.Mock,  # noqa: ARG001
+    mock_gcsfs_exists: mock.Mock,  # noqa: ARG001
+) -> StorageAdapter:
     return StorageAdapter.for_path(TEST_BUCKET_PARQUET_FILEPATH)

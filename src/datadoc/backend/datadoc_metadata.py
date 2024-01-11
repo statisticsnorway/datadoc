@@ -36,12 +36,12 @@ class DataDocMetadata:
     """Handle reading, updating and writing of metadata."""
 
     def __init__(
-        self: t.Self @ DataDocMetadata,
-        dataset_path: str | os.PathLike | None = None,
-        metadata_document_path: str | os.PathLike | None = None,
+        self,
+        dataset_path: str | os.PathLike[str] | None = None,
+        metadata_document_path: str | os.PathLike[str] | None = None,
     ) -> None:
         """Read in a dataset if supplied, otherwise naively instantiate the class."""
-        self.dataset: str = dataset_path
+        self.dataset: pathlib.Path | None = None
         self.metadata_document: StorageAdapter | None = None
         self.container: model.MetadataContainer | None = None
 
@@ -60,20 +60,21 @@ class DataDocMetadata:
             # In this case the user has specified an independent metadata document for editing
             # without a dataset.
             self.metadata_document = StorageAdapter.for_path(metadata_document_path)
-            self.extract_metadata_from_existing_document()
+            self.extract_metadata_from_existing_document(self.metadata_document)
 
-        elif self.dataset:
+        elif dataset_path:
+            self.dataset = pathlib.Path(dataset_path)
             # The short_name is set as the dataset filename without file extension
-            self.short_name: str = pathlib.Path(
+            self.short_name = pathlib.Path(
                 self.dataset,
             ).stem
-            self.metadata_document: StorageAdapter = StorageAdapter.for_path(
+            self.metadata_document = StorageAdapter.for_path(
                 StorageAdapter.for_path(self.dataset).parent(),
             )
             self.metadata_document.joinpath(
                 self.short_name + METADATA_DOCUMENT_FILE_SUFFIX,
             )
-            self.dataset_state: DatasetState = self.get_dataset_state(self.dataset)
+            self.dataset_state = self.get_dataset_state(self.dataset)
 
             self.extract_metadata_from_files()
 
@@ -87,13 +88,11 @@ class DataDocMetadata:
             )
 
     def get_dataset_state(
-        self: t.Self @ DataDocMetadata,
-        dataset: str,
+        self,
+        dataset: pathlib.Path,
     ) -> DatasetState | None:
         """Use the path to attempt to guess the state of the dataset."""
-        if dataset is None:
-            return None
-        dataset_path_parts = set(pathlib.Path(dataset).parts)
+        dataset_path_parts = set(dataset.parts)
         for state in DatasetState:
             # We assume that files are saved in the Norwegian language as specified by SSB.
             norwegian_dataset_state_path_part = state.get_value_for_language(
@@ -110,8 +109,8 @@ class DataDocMetadata:
 
         return None
 
+    @staticmethod
     def get_dataset_version(
-        self: t.Self @ DataDocMetadata,
         dataset_stem: str,
     ) -> str | None:
         """Find version information if exists in filename.
@@ -131,16 +130,16 @@ class DataDocMetadata:
                 return last_filename_element[1:]
         return None
 
-    def extract_metadata_from_files(self: t.Self @ DataDocMetadata) -> None:
+    def extract_metadata_from_files(self) -> None:
         """Read metadata from an existing metadata document.
 
         If no metadata document exists, create one from scratch by extracting metadata
         from the dataset file.
         """
-        if self.metadata_document.exists():
-            self.extract_metadata_from_existing_document()
-        else:
-            self.extract_metadata_from_dataset()
+        if self.metadata_document is not None and self.metadata_document.exists():
+            self.extract_metadata_from_existing_document(self.metadata_document)
+        elif self.dataset is not None:
+            self.extract_metadata_from_dataset(self.dataset, self.short_name or "")
 
             self.meta.dataset.id = uuid.uuid4()
 
@@ -157,15 +156,15 @@ class DataDocMetadata:
 
         self.variables_lookup = {v.short_name: v for v in self.meta.variables}
 
-    def extract_metadata_from_existing_document(self: t.Self @ DataDocMetadata) -> None:
+    def extract_metadata_from_existing_document(self, document: StorageAdapter) -> None:
         """There's an existing metadata document, so read in the metadata from that."""
         fresh_metadata = {}
         try:
-            with self.metadata_document.open(mode="r", encoding="utf-8") as file:
+            with document.open(mode="r", encoding="utf-8") as file:
                 fresh_metadata = json.load(file)
             logger.info(
                 "Opened existing metadata file %s",
-                self.metadata_document.location,
+                document.location,
             )
 
             if self.is_metadata_in_container_structure(fresh_metadata):
@@ -188,12 +187,12 @@ class DataDocMetadata:
             logger.warning(
                 "Could not open existing metadata file %s. \
                     Falling back to collecting data from the dataset",
-                self.metadata_document.location,
+                document.location,
                 exc_info=True,
             )
 
     def is_metadata_in_container_structure(
-        self: t.Self @ DataDocMetadata,
+        self,
         metadata: dict,
     ) -> bool:
         """At a certain point a metadata 'container' was introduced.
@@ -203,25 +202,29 @@ class DataDocMetadata:
         """
         return "datadoc" in metadata and "dataset" in metadata["datadoc"]
 
-    def extract_metadata_from_dataset(self: t.Self @ DataDocMetadata) -> None:
+    def extract_metadata_from_dataset(
+        self,
+        dataset: pathlib.Path,
+        short_name: str,
+    ) -> None:
         """Obtain what metadata we can from the dataset itself.
 
         This makes it easier for the user by 'pre-filling' certain fields.
         Certain elements are dependent on the dataset being saved according to SSB's standard.
         """
-        self.ds_schema = DatasetParser.for_file(self.dataset)
+        self.ds_schema: DatasetParser = DatasetParser.for_file(dataset)
 
         self.meta.dataset = model.Dataset(
             short_name=self.short_name,
             dataset_state=self.dataset_state,
-            version=self.get_dataset_version(self.short_name),
+            version=self.get_dataset_version(short_name),
             data_source_path=self.dataset,
             created_by=self.current_user,
         )
 
         self.meta.variables = self.ds_schema.get_fields()
 
-    def write_metadata_document(self: t.Self @ DataDocMetadata) -> None:
+    def write_metadata_document(self) -> None:
         """Write all currently known metadata to file."""
         timestamp: datetime = get_timestamp_now()
         if self.meta.dataset.metadata_created_date is None:
@@ -236,23 +239,28 @@ class DataDocMetadata:
         else:
             self.container = model.MetadataContainer(datadoc=self.meta)
 
-        self.metadata_document.write_text(self.container.model_dump_json(indent=4))
-        logger.info("Saved metadata document %s", self.metadata_document.location)
+        if self.metadata_document:
+            self.metadata_document.write_text(self.container.model_dump_json(indent=4))
+            logger.info("Saved metadata document %s", self.metadata_document.location)
+        else:
+            msg = "No metadata document to save"
+            raise ValueError(msg)
 
     @property
-    def percent_complete(self: t.Self @ DataDocMetadata) -> int:
+    def percent_complete(self) -> int:
         """The percentage of obligatory metadata completed.
 
         A metadata field is counted as complete when any non-None value is
         assigned. Used for a live progress bar in the UI, as well as being
         saved in the datadoc as a simple quality indicator.
         """
-        num_all_fields = len(display_dataset.OBLIGATORY_DATASET_METADATA)
+        num_all_fields = len(display_dataset.OBLIGATORY_DATASET_METADATA_IDENTIFIERS)
         num_set_fields = len(
             [
                 k
                 for k, v in self.meta.dataset.model_dump().items()
-                if k in display_dataset.OBLIGATORY_DATASET_METADATA and v is not None
+                if k in display_dataset.OBLIGATORY_DATASET_METADATA_IDENTIFIERS
+                and v is not None
             ],
         )
 
