@@ -134,3 +134,5 @@ dmypy.json
 /.python-version
 /.pytype/
 /docs/_build/
+
+**/.DS_Store
