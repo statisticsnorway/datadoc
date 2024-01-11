@@ -15,7 +15,7 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)][poetry]
 
-[pypi status]: https://pypi.org/project/datadoc/
+[pypi status]: https://pypi.org/project/ssb-datadoc/
 [documentation]: https://statisticsnorway.github.io/datadoc
 [tests]: https://github.com/statisticsnorway/datadoc/actions?workflow=Tests
 
@@ -27,18 +27,16 @@
 
 ## Features
 
-- TODO
-
-## Requirements
-
-- TODO
+- Describe a dataset and its variables according to Statistics Norway's metadata model.
+- Supports `parquet` and `sas7bdat` dataset files.
+- Supports local file system and Google Cloud Storage buckets.
 
 ## Installation
 
-You can install _Datadoc_ via [pip] from [PyPI]:
+You can install _Datadoc_ via [pipx] from [PyPI]:
 
 ```console
-pip install datadoc
+pipx install ssb-datadoc
 ```
 
 ## Usage
@@ -68,7 +66,7 @@ This project was generated from [Statistics Norway]'s [SSB PyPI Template].
 [pypi]: https://pypi.org/
 [ssb pypi template]: https://github.com/statisticsnorway/ssb-pypitemplate
 [file an issue]: https://github.com/statisticsnorway/datadoc/issues
-[pip]: https://pip.pypa.io/
+[pipx]: https://pipx.pypa.io/latest/installation/
 
 <!-- github-only -->
 

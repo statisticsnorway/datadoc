@@ -37,7 +37,7 @@ Request features on the [Issue Tracker].
 
 ## How to set up your development environment
 
-You need Python 3.9+ and the following tools:
+You need Python 3.10+ and the following tools:
 
 - [Poetry]
 - [Nox]
@@ -46,15 +46,14 @@ You need Python 3.9+ and the following tools:
 Install the package with development requirements:
 
 ```console
-$ poetry install
+poetry install
 ```
 
 You can now run an interactive Python session,
 or the command-line interface:
 
 ```console
-$ poetry run python
-$ poetry run datadoc
+poetry run datadoc
 ```
 
 [poetry]: https://python-poetry.org/
@@ -66,26 +65,51 @@ $ poetry run datadoc
 Run the full test suite:
 
 ```console
-$ nox
+nox
 ```
 
 List the available Nox sessions:
 
 ```console
-$ nox --list-sessions
+nox --list-sessions
 ```
 
 You can also run a specific Nox session.
 For example, invoke the unit test suite like this:
 
 ```console
-$ nox --session=tests
+nox --session=tests
 ```
 
 Unit tests are located in the _tests_ directory,
 and are written using the [pytest] testing framework.
 
 [pytest]: https://pytest.readthedocs.io/
+
+## Running the Dockerized Application Locally
+
+```bash
+docker run -p 8050:8050 \
+-v $HOME/.config/gcloud/application_default_credentials.json/:/application_default_credentials.json \
+-e GOOGLE_APPLICATION_CREDENTIALS="/application_default_credentials.json" \
+datadoc
+```
+
+### Release process
+
+Run the relevant version command on a branch e.g.
+
+```shell
+poetry version patch
+```
+
+```shell
+poetry version minor
+```
+
+Commit with message like `Bump version x.x.x -> y.y.y`.
+
+Open and merge a PR.
 
 ## How to submit changes
 
@@ -102,7 +126,7 @@ Feel free to submit early, though—we can always iterate on this.
 To run linting and code formatting checks before committing your change, you can install pre-commit as a Git hook by running the following command:
 
 ```console
-$ nox --session=pre-commit -- install
+nox --session=pre-commit -- install
 ```
 
 It is recommended to open an issue before starting work on anything.
