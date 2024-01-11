@@ -65,7 +65,7 @@ class GCSObject:
 
     def parent(self) -> str:
         """Return the logical parent of this object."""
-        parent = pathlib.Path(self._url.path).parent
+        parent = pathlib.PurePosixPath(self._url.path).parent
         return self._rebuild_url(parent)
 
     def joinpath(self, part: str) -> None:
