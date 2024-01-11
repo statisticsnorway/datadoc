@@ -60,7 +60,7 @@ WORKDIR $APP_PATH
 COPY --from=build $APP_PATH/dist/*.whl ./
 COPY --from=build $APP_PATH/constraints.txt ./
 RUN pip install ./$APP_NAME*.whl --constraint constraints.txt
-COPY ./$PACKAGE_NAME/gunicorn.conf.py ./
+COPY ./src/$PACKAGE_NAME/gunicorn.conf.py ./
 
 # export environment variables for the CMD
 ENV PACKAGE_NAME=$PACKAGE_NAME
