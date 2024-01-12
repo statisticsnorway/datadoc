@@ -42,7 +42,7 @@ pre-commit = "*"
 pytest-mock = "*"
 poethepoet = "*"
 ruff = ">=0.0.284"
-deptry = "^0.12.0"
+deptry = ">=0.12.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
