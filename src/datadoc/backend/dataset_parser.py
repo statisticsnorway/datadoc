@@ -5,6 +5,7 @@ Handles reading in the data and transforming data types to generic metadata type
 
 from __future__ import annotations
 
+import pathlib  # noqa: TCH003 import is needed for docs build
 import re
 import typing as t
 from abc import ABC
@@ -18,9 +19,6 @@ from datadoc_model.model import Variable
 from datadoc import state
 from datadoc.backend.storage_adapter import StorageAdapter
 from datadoc.enums import DataType
-
-if t.TYPE_CHECKING:
-    import pathlib
 
 KNOWN_INTEGER_TYPES = (
     "int",

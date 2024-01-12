@@ -151,19 +151,35 @@ def update_variable_table_dropdown_options_for_language(
     """Retrieve enum options for dropdowns in the Datatable.
 
     Handles the special case of boolean values which we represent in the Datatable
-    with a Dropdown but they're not backed by an Enum.
+    with a Dropdown but they're not backed by an Enum. Example return data structure as follows:
 
-    Example return structure:
-        {'data_type': {'options': [{'label': 'TEKST', 'value': 'STRING'},
-                                {'label': 'HELTALL', 'value': 'INTEGER'},
-                                {'label': 'DESIMALTALL', 'value': 'FLOAT'},
-                                {'label': 'DATOTID', 'value': 'DATETIME'},
-                                {'label': 'BOOLSK', 'value': 'BOOLEAN'}]},
-        'direct_person_identifying': {'options': [{'label': 'Ja', 'value': True},
-                                                {'label': 'Nei', 'value': False}]},
-        'temporality_type': {'options': [{'label': 'FAST', 'value': 'FIXED'},
-            ...
+    ..  code-block:: python
+
+        {
+            "data_type": {
+                "options": [
+                    {"label": "TEKST", "value": "STRING"},
+                    {"label": "HELTALL", "value": "INTEGER"},
+                    {"label": "DESIMALTALL", "value": "FLOAT"},
+                    {"label": "DATOTID", "value": "DATETIME"},
+                    {"label": "BOOLSK", "value": "BOOLEAN"},
+                ],
+            },
+            "direct_person_identifying": {
+                "options": [
+                    {"label": "Ja", "value": True},
+                    {"label": "Nei", "value": False},
+                ],
+            },
+            "temporality_type": {"options": [{"label": "FAST", "value": "FIXED"}]},
         }
+
+    Args:
+        language (SupportedLanguages): The language for metadata entry selected by the user.
+
+    Returns:
+        Data structure with options for all dropdowns.
+
     """
     options: list[dict[str, object]] = []
     for field_type in DISPLAYED_DROPDOWN_VARIABLES_TYPES:
