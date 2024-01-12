@@ -1,0 +1,4 @@
+# Ignore this files since they are reindented with json.dump() and that does not
+# match the prettier format.
+.cookiecutter.json
+.cruft.json

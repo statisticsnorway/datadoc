@@ -29,7 +29,7 @@ ENV PATH="$POETRY_HOME/bin:$PATH"
 # Import our project files
 WORKDIR $APP_PATH
 COPY ./poetry.lock ./pyproject.toml ./README.md ./
-COPY ./$PACKAGE_NAME ./$PACKAGE_NAME
+COPY ./src/$PACKAGE_NAME ./src/$PACKAGE_NAME
 
 RUN poetry build --format wheel
 RUN poetry export --format constraints.txt --output constraints.txt --without-hashes
@@ -60,7 +60,7 @@ WORKDIR $APP_PATH
 COPY --from=build $APP_PATH/dist/*.whl ./
 COPY --from=build $APP_PATH/constraints.txt ./
 RUN pip install ./$APP_NAME*.whl --constraint constraints.txt
-COPY ./$PACKAGE_NAME/gunicorn.conf.py ./
+COPY ./gunicorn.conf.py ./
 
 # export environment variables for the CMD
 ENV PACKAGE_NAME=$PACKAGE_NAME
