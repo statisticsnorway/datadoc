@@ -1,9 +1,9 @@
 # Datadoc
 
-[![PyPI](https://img.shields.io/pypi/v/datadoc.svg)][pypi status]
-[![Status](https://img.shields.io/pypi/status/datadoc.svg)][pypi status]
-[![Python Version](https://img.shields.io/pypi/pyversions/datadoc)][pypi status]
-[![License](https://img.shields.io/pypi/l/datadoc)][license]
+[![PyPI](https://img.shields.io/pypi/v/ssb-datadoc.svg)][pypi status]
+[![Status](https://img.shields.io/pypi/status/ssb-datadoc.svg)][pypi status]
+[![Python Version](https://img.shields.io/pypi/pyversions/ssb-datadoc)][pypi status]
+[![License](https://img.shields.io/pypi/l/ssb-datadoc)][license]
 
 [![Documentation](https://github.com/statisticsnorway/datadoc/actions/workflows/docs.yml/badge.svg)][documentation]
 [![Tests](https://github.com/statisticsnorway/datadoc/actions/workflows/tests.yml/badge.svg)][tests]
