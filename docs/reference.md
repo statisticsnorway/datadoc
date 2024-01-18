@@ -15,16 +15,6 @@ delete the .rst file afterwards.
 datadoc package
 ===============
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   datadoc.backend
-   datadoc.frontend
-
-
 datadoc.app module
 ------------------
 
@@ -104,15 +94,6 @@ datadoc.backend.storage\_adapter module
 datadoc.frontend package
 ========================
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   datadoc.frontend.callbacks
-   datadoc.frontend.components
-   datadoc.frontend.fields
 
 datadoc.frontend.callbacks package
 ==================================
