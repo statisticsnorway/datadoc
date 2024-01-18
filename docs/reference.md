@@ -50,11 +50,6 @@ datadoc.utils module
 datadoc.wsgi module
 -------------------
 
-.. automodule:: datadoc.wsgi
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 datadoc.backend package
 =======================
 
