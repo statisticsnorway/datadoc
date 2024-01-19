@@ -8,7 +8,7 @@ from dash import html
 
 from datadoc import state
 from datadoc.enums import SupportedLanguages
-from datadoc.frontend.callbacks.dataset import get_dataset_path
+from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.frontend.components.builders import build_ssb_button
 from datadoc.utils import get_app_version
 
