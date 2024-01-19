@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from typing import TYPE_CHECKING
 from typing import TypeAlias
 
@@ -10,9 +11,12 @@ from datadoc_model import model
 
 from datadoc import enums
 from datadoc import state
+from datadoc.backend.datadoc_metadata import METADATA_DOCUMENT_FILE_SUFFIX
+from datadoc.backend.datadoc_metadata import DataDocMetadata
 
 if TYPE_CHECKING:
     from enum import Enum
+    from pathlib import Path
 
     import pydantic
 
@@ -20,6 +24,8 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
+DATADOC_DATASET_PATH_ENV_VAR = "DATADOC_DATASET_PATH"
 
 MetadataInputTypes: TypeAlias = str | list[str] | int | float | bool | None
 
@@ -77,3 +83,27 @@ def find_existing_language_string(
         # to the current language
         setattr(language_strings, state.current_metadata_language.value, value)
     return language_strings
+
+
+def get_dataset_path() -> str | Path | None:
+    """Extract the path to the dataset from the potential sources."""
+    if state.metadata.dataset is not None:
+        return state.metadata.dataset
+    path_from_env = os.getenv(DATADOC_DATASET_PATH_ENV_VAR)
+    logger.info(
+        "Dataset path from %s: '%s'",
+        DATADOC_DATASET_PATH_ENV_VAR,
+        path_from_env,
+    )
+    return path_from_env
+
+
+def open_file(file_path: str | Path | None = None) -> DataDocMetadata:
+    """Load the given dataset into a DataDocMetadata instance."""
+    if file_path and str(file_path).endswith(METADATA_DOCUMENT_FILE_SUFFIX):
+        logger.info("Opening existing metadata document %s", file_path)
+        return DataDocMetadata(metadata_document_path=file_path)
+
+    dataset = file_path or get_dataset_path()
+    logger.info("Opening dataset %s", dataset)
+    return DataDocMetadata(dataset_path=dataset)

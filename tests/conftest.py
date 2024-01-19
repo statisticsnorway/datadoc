@@ -9,6 +9,7 @@ from pathlib import Path
 from unittest import mock
 
 import pytest
+from datadoc_model import model
 from pytest_mock import MockerFixture
 
 from datadoc import state
@@ -114,3 +115,28 @@ def bucket_object_parquet_file(
     mock_gcsfs_exists: mock.Mock,  # noqa: ARG001
 ) -> StorageAdapter:
     return StorageAdapter.for_path(TEST_BUCKET_PARQUET_FILEPATH)
+
+
+ENGLISH_NAME = "English Name"
+BOKMÅL_NAME = "Bokmål Name"
+NYNORSK_NAME = "Nynorsk Name"
+
+
+@pytest.fixture()
+def english_name() -> str:
+    return "English Name"
+
+
+@pytest.fixture()
+def bokmål_name() -> str:
+    return "Bokmål navn"
+
+
+@pytest.fixture()
+def nynorsk_name() -> str:
+    return "Nynorsk namn"
+
+
+@pytest.fixture()
+def language_object(english_name: str, bokmål_name: str) -> model.LanguageStringType:
+    return model.LanguageStringType(en=english_name, nb=bokmål_name)

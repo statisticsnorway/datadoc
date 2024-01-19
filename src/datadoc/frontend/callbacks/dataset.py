@@ -3,21 +3,18 @@
 from __future__ import annotations
 
 import logging
-import os
 import traceback
-from pathlib import Path  # noqa: TCH003 import is needed for docs build
 
 from pydantic import ValidationError
 
 from datadoc import state
-from datadoc.backend.datadoc_metadata import METADATA_DOCUMENT_FILE_SUFFIX
-from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.enums import (
     SupportedLanguages,  # noqa: TCH001 import is needed for docs build
 )
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_options_for_language
+from datadoc.frontend.callbacks.utils import open_file
 from datadoc.frontend.callbacks.utils import update_global_language_state
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_ENUMS
@@ -26,32 +23,6 @@ from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 
 logger = logging.getLogger(__name__)
 
-DATADOC_DATASET_PATH_ENV_VAR = "DATADOC_DATASET_PATH"
-
-
-def get_dataset_path() -> str | Path | None:
-    """Extract the path to the dataset from the potential sources."""
-    if state.metadata.dataset is not None:
-        return state.metadata.dataset
-    path_from_env = os.getenv(DATADOC_DATASET_PATH_ENV_VAR)
-    logger.info(
-        "Dataset path from %s: '%s'",
-        DATADOC_DATASET_PATH_ENV_VAR,
-        path_from_env,
-    )
-    return path_from_env
-
-
-def open_file(file_path: str | Path | None = None) -> None:
-    """Load the given dataset into an DataDocMetadata instance."""
-    if file_path and str(file_path).endswith(METADATA_DOCUMENT_FILE_SUFFIX):
-        state.metadata = DataDocMetadata(metadata_document_path=file_path)
-        logger.info("Opened existing metadata document %s", file_path)
-    else:
-        dataset = file_path or get_dataset_path()
-        state.metadata = DataDocMetadata(dataset_path=dataset)
-        logger.info("Opened dataset %s", dataset)
-
 
 def open_dataset_handling(
     n_clicks: int,
@@ -59,7 +30,7 @@ def open_dataset_handling(
 ) -> tuple[bool, bool, str, str]:
     """Handle errors and other logic around opening a dataset file."""
     try:
-        open_file(file_path)
+        state.metadata = open_file(file_path)
     except FileNotFoundError:
         return (
             False,
