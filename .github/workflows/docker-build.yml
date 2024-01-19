@@ -1,11 +1,11 @@
 name: Docker build
 
 on:
+  release:
+    types: [published]
   push:
     branches:
       - "**"
-    tags:
-      - "*"
     paths:
       - 'src/datadoc/**'
       - 'poetry.lock'
