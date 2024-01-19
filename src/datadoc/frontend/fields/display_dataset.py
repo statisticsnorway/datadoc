@@ -98,6 +98,7 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         identifier=DatasetIdentifiers.REGISTER_URI.value,
         display_name="Register URI",
         description="Lenke (URI) til register i registeroversikt (oversikt over alle registre meldt Datatilsynet (oppdatering foretas av sikkerhetsrådgiver))",
+        multiple_language_support=True,
     ),
     DatasetIdentifiers.POPULATION_DESCRIPTION: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.POPULATION_DESCRIPTION.value,
@@ -117,6 +118,7 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         identifier=DatasetIdentifiers.VERSION_DESCRIPTION.value,
         display_name="Versjonsbeskrivelse",
         description="Årsak/grunnlag for denne versjonen av datasettet i form av beskrivende tekst.",
+        multiple_language_support=True,
     ),
     DatasetIdentifiers.UNIT_TYPE: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.UNIT_TYPE.value,
