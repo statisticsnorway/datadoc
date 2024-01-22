@@ -19,7 +19,7 @@ from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.enums import DatasetState
 from datadoc.enums import DataType
 from datadoc.enums import VariableRole
-from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
+from tests.utils import TEST_EXISTING_METADATA_DIRECTORY, TEST_RESOURCES_METADATA_DOCUMENT
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
 from tests.utils import TEST_PARQUET_FILEPATH
 from tests.utils import TEST_RESOURCES_DIRECTORY
@@ -202,6 +202,7 @@ def test_direct_person_identifying_default_value(metadata: DataDocMetadata):
     assert all(not v.direct_person_identifying for v in metadata.meta.variables)
 
 
+# Test with existing dataset and metadata document
 def test_save_file_path_metadata_field(
     existing_metadata_file: str,
     metadata: DataDocMetadata,
@@ -210,3 +211,17 @@ def test_save_file_path_metadata_field(
     with Path.open(Path(existing_metadata_file)) as f:
         saved_file_path = json.load(f)["datadoc"]["dataset"]["file_path"]
     assert saved_file_path == str(metadata.dataset)
+
+
+# Test with dataset and no metadata document
+def test_save_file_path_dataset_and_no_metadata(
+    metadata: DataDocMetadata,
+):
+    metadata.write_metadata_document()
+    with Path.open(Path(TEST_RESOURCES_METADATA_DOCUMENT)) as f:
+        saved_file_path = json.load(f)["datadoc"]["dataset"]["file_path"]
+    assert saved_file_path == str(metadata.dataset)
+
+
+# Test with metadata document and no dataset
+

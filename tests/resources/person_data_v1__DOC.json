@@ -50,7 +50,7 @@
             },
             "id": "143fca77-ef56-419c-a1e1-d69c4199f020",
             "owner": null,
-            "file_path": null,
+            "file_path": "tests/resources/person_data_v1.parquet",
             "metadata_created_date": "2022-09-05T11:07:14Z",
             "metadata_created_by": "default_user@ssb.no",
             "metadata_last_updated_date": "2022-01-01T00:00:00Z",
