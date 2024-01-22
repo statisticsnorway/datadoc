@@ -8,8 +8,7 @@ import pytest
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.model_backwards_compatibility import UnknownModelVersionError
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
-
-from .utils import TEST_COMPATIBILITY_DIRECTORY
+from datadoc.utils import TEST_COMPATIBILITY_DIRECTORY
 
 BACKWARDS_COMPATIBLE_VERSION_DIRECTORIES = [
     d for d in TEST_COMPATIBILITY_DIRECTORY.iterdir() if d.is_dir()

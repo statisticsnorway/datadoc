@@ -19,11 +19,10 @@ from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.enums import DatasetState
 from datadoc.enums import DataType
 from datadoc.enums import VariableRole
-
-from .utils import TEST_EXISTING_METADATA_DIRECTORY
-from .utils import TEST_EXISTING_METADATA_FILE_NAME
-from .utils import TEST_PARQUET_FILEPATH
-from .utils import TEST_RESOURCES_DIRECTORY
+from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
+from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
+from tests.utils import TEST_PARQUET_FILEPATH
+from tests.utils import TEST_RESOURCES_DIRECTORY
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -201,3 +200,13 @@ def test_variable_role_default_value(metadata: DataDocMetadata):
 
 def test_direct_person_identifying_default_value(metadata: DataDocMetadata):
     assert all(not v.direct_person_identifying for v in metadata.meta.variables)
+
+
+def test_save_file_path_metadata_field(
+    existing_metadata_file: str,
+    metadata: DataDocMetadata,
+):
+    metadata.write_metadata_document()
+    with Path.open(Path(existing_metadata_file)) as f:
+        saved_file_path = json.load(f)["datadoc"]["dataset"]["file_path"]
+    assert saved_file_path == str(metadata.dataset)
