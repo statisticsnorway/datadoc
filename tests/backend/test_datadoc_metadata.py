@@ -19,10 +19,11 @@ from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.enums import DatasetState
 from datadoc.enums import DataType
 from datadoc.enums import VariableRole
-from tests.utils import TEST_EXISTING_METADATA_DIRECTORY, TEST_RESOURCES_METADATA_DOCUMENT
+from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
 from tests.utils import TEST_PARQUET_FILEPATH
 from tests.utils import TEST_RESOURCES_DIRECTORY
+from tests.utils import TEST_RESOURCES_METADATA_DOCUMENT
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -224,4 +225,3 @@ def test_save_file_path_dataset_and_no_metadata(
 
 
 # Test with metadata document and no dataset
-
