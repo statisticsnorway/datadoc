@@ -233,7 +233,7 @@ class DataDocMetadata:
             self.meta.dataset.metadata_created_by = self.current_user
         self.meta.dataset.metadata_last_updated_date = timestamp
         self.meta.dataset.metadata_last_updated_by = self.current_user
-        self.meta.dataset.file_path= str(self.dataset)
+        self.meta.dataset.file_path = str(self.dataset)
         if self.container:
             self.container.datadoc = self.meta
         else:
