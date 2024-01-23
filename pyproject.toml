@@ -88,6 +88,7 @@ warn_unreachable = true
 pretty = true
 show_column_numbers = true
 show_error_context = true
+exclude = ["docs/conf.py", "noxfile.py", "gunicorn.conf.py"]
 
 [[tool.mypy.overrides]]
 # Allow missing type hints in third-party libraries without type information.
