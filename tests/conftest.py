@@ -43,12 +43,13 @@ def metadata(_mock_timestamp: None) -> DataDocMetadata:
     return DataDocMetadata(str(TEST_PARQUET_FILEPATH))
 
 
-@pytest.fixture()
+@pytest.fixture(autouse=True)
 def remove_document_file() -> Generator[None, None, None]:
     # Yield so we only run teardown
     yield None
     try:
-        TEST_RESOURCES_METADATA_DOCUMENT.unlink()
+        if TEST_RESOURCES_METADATA_DOCUMENT.exists():
+            TEST_RESOURCES_METADATA_DOCUMENT.unlink()
     except FileNotFoundError as e:
         print("File not deleted on teardown, exception caught:")  # noqa: T201
         traceback.print_exception(type(e), e)
