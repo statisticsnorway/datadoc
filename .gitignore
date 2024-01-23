@@ -1,3 +1,6 @@
+# Project spesific ignores
+tests/resources/*.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -50,6 +53,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+
 
 # Translations
 *.mo
