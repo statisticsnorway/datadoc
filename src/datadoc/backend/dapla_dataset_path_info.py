@@ -16,18 +16,22 @@ if TYPE_CHECKING:
 
 class SupportedDateFormats(Enum):
     """The Date formats supported by the naming convention."""
-    ISO_YEAR = auto() # String format YYYY
-    ISO_YEAR_MONTH = auto() # String format YYYY-MM
-    ISO_YEAR_MONTH_DAY = auto() # String format YYYY-MM-DD
-    SSB_YEAR_SEMESTER = auto()    SSB_YEAR_TRIMESTER = auto() # String format YYYY-Tn
-    SSB_YEAR_QUARTER = auto() # String format YYYY-Qn
-    SSB_YEAR_BIMESTER = auto() # String format YYYY-Bn
-    SSB_YEAR_WEEK = auto() # String format YYYY-Wnn
+
+    ISO_YEAR = auto()  # String format YYYY
+    ISO_YEAR_MONTH = auto()  # String format YYYY-MM
+    ISO_YEAR_MONTH_DAY = auto()  # String format YYYY-MM-DD
+    SSB_YEAR_SEMESTER = auto()  # String format YYYY-Hn
+    SSB_YEAR_TRIMESTER = auto()  # String format YYYY-Tn
+    SSB_YEAR_QUARTER = auto()  # String format YYYY-Qn
+    SSB_YEAR_BIMESTER = auto()  # String format YYYY-Bn
+    SSB_YEAR_WEEK = auto()  # String format YYYY-Wnn
 
 
 class RegexEqual(str):
     """Helper class for structual pattern matching using regex."""
-    def __eq__(self, pattern:str)->bool:
+
+    def __eq__(self, pattern: str) -> bool:
+        """Returns true on match."""
         return bool(re.search(pattern, self))
 
 
@@ -47,13 +51,11 @@ class DaplaDatasetPathInfo:
         with contextlib.suppress(IndexError):
             self.second_period_string = _period_strings[1]
 
-
-    def _categorize_period_string(self,period: str) -> SupportedDateFormats:
+    def _categorize_period_string(self, period: str) -> SupportedDateFormats:
         """A naive string validator."""
         match RegexEqual(period):
             case r"\d+":
                 return SupportedDateFormats.ISO_YEAR
-
 
     def _extract_period_strings(self, dataset_name_sections: list[str]) -> list[str]:
         """Extract period strings from dataset name sections.
