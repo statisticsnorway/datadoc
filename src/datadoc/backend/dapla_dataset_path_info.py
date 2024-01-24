@@ -1,9 +1,11 @@
-"""Extract info from an path following SSB`s naming convention."""
+"""Extract info from a path following SSB's dataset naming convention."""
 from __future__ import annotations
 
 import contextlib
 import pathlib
 import re
+from enum import Enum
+from enum import auto
 from typing import TYPE_CHECKING
 
 import arrow
@@ -12,10 +14,27 @@ if TYPE_CHECKING:
     import datetime
 
 
-class DaplaDatasetPathInfo:
-    """Extract info from an path following SSB`s naming convention."""
+class SupportedDateFormats(Enum):
+    ISO_YEAR = auto() # String format YYYY
+    ISO_YEAR_MONTH = auto() # String format YYYY-MM
+    ISO_YEAR_MONTH_DAY = auto() # String format YYYY-MM-DD
+    SSB_YEAR_SEME TER= auto()
+ # String format YYYY-Hn
+    SSB_YEAR_TRIMESTER = auto() # String format YYYY-Tn
+    SSB_YEAR_QUARTER = auto() # String format YYYY-Qn
+    SSB_YEAR_BIMESTER = auto() # String format YYYY-Bn
+    SSB_YEAR_WEEK = auto() # String format YYYY-Wnn
 
-    year_regex = re.compile(r"p(19|20|21)\d{2}")
+class RegexEqual(str):
+    """Helper class for structual pattern matching using regex""""
+    def __eq__(self, pattern:str)->bool:
+        return bool(re.search(pattern, self))
+
+
+class DaplaDatasetPathInfo:
+    """Extract info from a path following SSB's dataset naming convention."""
+
+    date_format_regex = re.compile(r"^p\d{4}(?:-\d{2}|-\d{2}-\d{2}|[QTHWB]\d{1,2})?$")
 
     def __init__(self, dataset_path: str) -> None:
         """Read info from an path following SSB`s naming convention."""
@@ -28,6 +47,14 @@ class DaplaDatasetPathInfo:
         with contextlib.suppress(IndexError):
             self.second_period_string = _period_strings[1]
 
+
+    def _categorize_period_string(period: str) -> SupportedDateFormats:
+        """A naive string validator."""
+        match RegexEqual(period):
+            case "\d+":
+                return SupportedDateFormats.ISO_YEAR
+
+
     def _extract_period_strings(self, dataset_name_sections: list[str]) -> list[str]:
         """Extract period strings from dataset name sections.
 
@@ -38,10 +65,16 @@ class DaplaDatasetPathInfo:
         return [
             x[1:]
             for x in dataset_name_sections
-            if re.match(self.year_regex, x) is not None
+            if re.match(self.date_format_regex, x) is not None
         ]
 
     @property
     def contains_data_from(self) -> datetime.date:
         """The earliest date from which data in the dataset is relevant for."""
-        return arrow.get(self.first_period_string).date()
+        return arrow.get(self.first_period_string, "YYYY").floor("year").date()
+
+    @property
+    def contains_data_until(self) -> datetime.date:
+        """The latest date until which data in the dataset is relevant for."""
+        year = self.second_period_string or self.first_period_string
+        return arrow.get(year, "YYYY").ceil("year").date()
