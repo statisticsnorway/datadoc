@@ -1,13 +1,14 @@
 """Extract info from a path following SSB's dataset naming convention."""
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from enum import Enum
-
-import arrow
 import contextlib
 import pathlib
 import re
+from datetime import datetime
+from datetime import timezone
+from enum import Enum
+
+import arrow
 
 
 class SupportedDateFormats(Enum):
@@ -24,7 +25,7 @@ class SupportedDateFormats(Enum):
     UNKNOWN = "UNKNOWN"
 
 
-def categorize_period_string(period: str) -> SupportedDateFormats:
+def categorize_period_string(period: str) -> SupportedDateFormats:  # noqa: PLR0911
     """A naive string validator."""
     match RegexEqualCompiler(period):
         case r"\d{4}\-H\d":
@@ -50,12 +51,15 @@ def categorize_period_string(period: str) -> SupportedDateFormats:
 class RegexEqualCompiler(str):
     """Handler class for checking regex patterns."""
 
-    def __init__(self, pattern) -> None:
-        self.pattern = re.compile(pattern)
+    __slots__ = ["subject_string"]
+
+    def __init__(self, subject_string: str) -> None:
+        """Store the string to search against."""
+        self.subject_string = subject_string
 
     def __eq__(self, pattern: object) -> bool:
         """Returns true on match with tested pattern."""
-        return bool(re.search(str(pattern), self))
+        return bool(re.search(str(pattern), self.subject_string))
 
 
 class DaplaDatasetPathInfo:
@@ -81,7 +85,7 @@ class DaplaDatasetPathInfo:
         the year periods from the dataset name.
         """
         date_format_regex = re.compile(
-            r"^p\d{4}(?:-\d{2}-\d{2}|-\d{2}|[QTHWB]\d{1,2})?$"
+            r"^p\d{4}(?:-\d{2}-\d{2}|-\d{2}|-[QTHWB]\d{1,2})?$",
         )
 
         return [
