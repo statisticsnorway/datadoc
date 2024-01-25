@@ -1,5 +1,6 @@
-# Project spesific ignores
+# Project specific ignores
 tests/resources/*.json
+src/datadoc/.env.dev
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
