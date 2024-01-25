@@ -5,13 +5,13 @@ Members of this module should not be imported into any sub-modules, this will ca
 from __future__ import annotations
 
 import logging
-import os
 from pathlib import Path
 
 import dash_bootstrap_components as dbc
 from dash import Dash
 from flask_healthz import healthz
 
+from datadoc import config
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.enums import SupportedLanguages
@@ -31,11 +31,8 @@ from datadoc.utils import get_app_version
 from datadoc.utils import pick_random_port
 from datadoc.utils import running_in_notebook
 
+logging.basicConfig(level=config.get_log_level(), force=True)
 logger = logging.getLogger(__name__)
-
-NAME = "Datadoc"
-DEFAULT_PORT: int = 7002
-JUPYTERHUB_SERVICE_PREFIX_ENV = "JUPYTERHUB_SERVICE_PREFIX"
 
 
 def build_app(app: type[Dash]) -> Dash:
@@ -75,24 +72,23 @@ def build_app(app: type[Dash]) -> Dash:
 
 def get_app(dataset_path: str | None = None) -> tuple[Dash, int]:
     """Centralize all the ugliness around initializing the app."""
-    logging.basicConfig(level=logging.INFO, force=True)
     logger.info("Datadoc version v%s", get_app_version())
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     state.metadata = DataDocMetadata(dataset_path)
 
-    # This must be set to run correctly on Dapla Jupyter
-    if JUPYTERHUB_SERVICE_PREFIX_ENV in os.environ:
+    # The service prefix must be set to run correctly on Dapla Jupyter
+    if prefix := config.get_jupyterhub_service_prefix():
         port = pick_random_port()
-        requests_pathname_prefix = (
-            f"{os.getenv(JUPYTERHUB_SERVICE_PREFIX_ENV, '/')}proxy/{port}/"
-        )
+        requests_pathname_prefix = f"{prefix}proxy/{port}/"
     else:
-        port = DEFAULT_PORT
+        port = config.get_port()
         requests_pathname_prefix = "/"
 
+    name = config.get_app_name()
+
     app = Dash(
-        name=NAME,
-        title=NAME,
+        name=name,
+        title=name,
         assets_folder=f"{Path(__file__).parent}/assets",
         requests_pathname_prefix=requests_pathname_prefix,
     )
@@ -110,22 +106,19 @@ def get_app(dataset_path: str | None = None) -> tuple[Dash, int]:
 
 def main(dataset_path: str | None = None) -> None:
     """Entrypoint when running as a script."""
-    logging.basicConfig(level=logging.DEBUG, force=True)
-    logger.info("Starting app with dataset_path = %s", dataset_path)
+    if dataset_path:
+        logger.info("Starting app with dataset_path = %s", dataset_path)
     app, port = get_app(dataset_path)
     if running_in_notebook():
         logger.info("Running in notebook")
         app.run(
             jupyter_mode="tab",
-            jupyter_server_url=os.getenv("JUPYTERHUB_HTTP_REFERER", None),
+            jupyter_server_url=config.get_jupyterhub_http_referrer(),
             jupyter_height=1000,
             port=port,
         )
     else:
-        # Assume running in server mode is better (largely for development purposes)
-        logging.basicConfig(level=logging.DEBUG, force=True)
-        logger.debug("Starting in development mode")
-        app.run(debug=True, port=port)
+        app.run(debug=config.get_dash_development_mode(), port=port)
 
 
 if __name__ == "__main__":

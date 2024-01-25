@@ -1,17 +1,78 @@
 """Centralised configuration management for Datadoc."""
 from __future__ import annotations
 
+import logging
 import os
+from pprint import pformat
 
 from dotenv import dotenv_values
+from dotenv import load_dotenv
 
-_config: dict[str, str | None] = {
-    **dotenv_values(".env.default"),  # load default config
-    **dotenv_values(".env.dev"),  # load local dev config
-    **os.environ,  # override loaded values with environment variables
-}
+logging.basicConfig(level=logging.DEBUG, force=True)
+
+logger = logging.getLogger(__name__)
+
+load_dotenv()
+
+logger.info("Loaded .env file config: \n%s", pformat(dict(dotenv_values().items())))
+
+
+def _get_config_item(item: str) -> str | None:
+    """Get a config item. Makes sure all access is logged."""
+    value = os.getenv(item)
+    logger.debug("Accessed config. Name: %s, Value: %s", item, value)
+    return value
 
 
 def get_jupyterhub_user() -> str | None:
     """Get the JupyterHub user name."""
-    return _config.get("JUPYTERHUB_USER")
+    return _get_config_item("JUPYTERHUB_USER")
+
+
+def get_datadoc_dataset_path() -> str | None:
+    """Get the path to the dataset."""
+    return _get_config_item("DATADOC_DATASET_PATH")
+
+
+def get_log_level() -> int:
+    """Get the log level."""
+    # Magic numbers as defined in Python's stdlib logging
+    log_levels: dict[str, int] = {
+        "CRITICAL": 50,
+        "ERROR": 40,
+        "WARNING": 30,
+        "INFO": 20,
+        "DEBUG": 10,
+    }
+    if level_string := _get_config_item("DATADOC_LOG_LEVEL"):
+        try:
+            return log_levels[level_string.upper()]
+        except KeyError:
+            return log_levels["INFO"]
+    else:
+        return log_levels["INFO"]
+
+
+def get_dash_development_mode() -> bool | None:
+    """Get the development mode for Dash."""
+    return _get_config_item("DATADOC_DASH_DEVELOPMENT_MODE") == "True"
+
+
+def get_jupyterhub_service_prefix() -> str | None:
+    """Get the JupyterHub service prefix."""
+    return _get_config_item("JUPYTERHUB_SERVICE_PREFIX")
+
+
+def get_app_name() -> str:
+    """Get the name of the app. Defaults to 'Datadoc'."""
+    return _get_config_item("DATADOC_APP_NAME") or "Datadoc"
+
+
+def get_jupyterhub_http_referrer() -> str | None:
+    """Get the JupyterHub http referrer."""
+    return _get_config_item("JUPYTERHUB_HTTP_REFERER")
+
+
+def get_port() -> int:
+    """Get the port to run the app on."""
+    return int(_get_config_item("DATADOC_PORT") or 7002)
