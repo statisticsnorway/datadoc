@@ -4,62 +4,66 @@ from __future__ import annotations
 import contextlib
 import pathlib
 import re
-from datetime import datetime
-from datetime import timezone
-from enum import Enum
+from dataclasses import dataclass
+from typing import TYPE_CHECKING
+from typing import Literal
 
 import arrow
 
-
-class SupportedDateFormats(Enum):
-    """The Date formats supported by the naming convention."""
-
-    ISO_YEAR = "YYYY"  # String format YYYY
-    ISO_YEAR_MONTH = "YYYY-MM"  # String format YYYY-MM
-    ISO_YEAR_MONTH_DAY = "YYYY-MM-DD"  # String format YYYY-MM-DD
-    SSB_YEAR_SEMESTER = "YYYY-Hn"  # String format YYYY-Hn
-    SSB_YEAR_TRIMESTER = "YYYY-Tn"  # String format YYYY-Tn
-    SSB_YEAR_QUARTER = "YYYY-Qn"  # String format YYYY-Qn
-    SSB_YEAR_BIMESTER = "YYYY-Bn"  # String format YYYY-Bn
-    SSB_YEAR_WEEK = "YYYY-Wnn"  # String format YYYY-Wnn
-    UNKNOWN = "UNKNOWN"
+if TYPE_CHECKING:
+    import datetime
 
 
-def categorize_period_string(period: str) -> SupportedDateFormats:  # noqa: PLR0911
+@dataclass
+class IsoDateFormat:
+    """An ISO date format with relevant patterns."""
+
+    name: str
+    regex_pattern: str
+    arrow_pattern: str
+    timeframe: Literal["year", "month", "day", "week"]
+
+
+ISO_YEAR = IsoDateFormat(
+    name="ISO_YEAR",
+    regex_pattern=r"^\d{4}$",
+    arrow_pattern="YYYY",
+    timeframe="year",
+)
+ISO_YEAR_MONTH = IsoDateFormat(
+    name="ISO_YEAR_MONTH",
+    regex_pattern=r"^\d{4}\-\d{2}$",
+    arrow_pattern="YYYY-MM",
+    timeframe="month",
+)
+ISO_YEAR_MONTH_DAY = IsoDateFormat(
+    name="ISO_YEAR_MONTH_DAY",
+    regex_pattern=r"^\d{4}\-\d{2}\-\d{2}$",
+    arrow_pattern="YYYY-MM-DD",
+    timeframe="day",
+)
+ISO_YEAR_WEEK = IsoDateFormat(
+    name="ISO_YEAR_WEEK",
+    regex_pattern=r"^\d{4}\-W\d{2}$",
+    arrow_pattern="YYYY-Wnn",
+    timeframe="week",
+)
+
+SUPPORTED_DATE_FORMATS = [
+    ISO_YEAR,
+    ISO_YEAR_MONTH,
+    ISO_YEAR_MONTH_DAY,
+    ISO_YEAR_WEEK,
+]
+
+
+def categorize_period_string(period: str) -> IsoDateFormat | None:
     """A naive string validator."""
-    match RegexEqualCompiler(period):
-        case r"\d{4}\-H\d":
-            return SupportedDateFormats.SSB_YEAR_SEMESTER
-        case r"\d{4}\-T\d":
-            return SupportedDateFormats.SSB_YEAR_TRIMESTER
-        case r"\d{4}\-Q\d":
-            return SupportedDateFormats.SSB_YEAR_QUARTER
-        case r"\d{4}\-B\d":
-            return SupportedDateFormats.SSB_YEAR_BIMESTER
-        case r"\d{4}\-W\d\d":
-            return SupportedDateFormats.SSB_YEAR_WEEK
-        case r"\d{4}\-\d{2}\-\d{2}":
-            return SupportedDateFormats.ISO_YEAR_MONTH_DAY
-        case r"\d{4}\-\d{2}":
-            return SupportedDateFormats.ISO_YEAR_MONTH
-        case r"\d{4}":
-            return SupportedDateFormats.ISO_YEAR
-        case _:
-            return SupportedDateFormats.UNKNOWN
+    for date_format in reversed(SUPPORTED_DATE_FORMATS):
+        if re.match(date_format.regex_pattern, period):
+            return date_format
 
-
-class RegexEqualCompiler(str):
-    """Handler class for checking regex patterns."""
-
-    __slots__ = ["subject_string"]
-
-    def __init__(self, subject_string: str) -> None:
-        """Store the string to search against."""
-        self.subject_string = subject_string
-
-    def __eq__(self, pattern: object) -> bool:
-        """Returns true on match with tested pattern."""
-        return bool(re.search(str(pattern), self.subject_string))
+    return None
 
 
 class DaplaDatasetPathInfo:
@@ -71,8 +75,7 @@ class DaplaDatasetPathInfo:
         self.dataset_name_sections = self.dataset_path.stem.split("_")
         _period_strings = self._extract_period_strings(self.dataset_name_sections)
         self.first_period_string = _period_strings[0]
-        self.second_period_string = _period_strings[0]
-        self.date_format = categorize_period_string(self.first_period_string)
+        self.second_period_string: str | None = None
 
         with contextlib.suppress(IndexError):
             self.second_period_string = _period_strings[1]
@@ -97,18 +100,30 @@ class DaplaDatasetPathInfo:
     @property
     def contains_data_from(self) -> datetime.date:
         """The earliest date from which data in the dataset is relevant for."""
-        match (self.date_format):
-            case SupportedDateFormats.ISO_YEAR:
-                return (
-                    arrow.get(self.first_period_string, self.date_format.value)
-                    .floor("year")
-                    .date()
-                )
-            case _:
-                return datetime.now(timezone.utc).astimezone()
+        if date_format := categorize_period_string(self.first_period_string):
+            return (
+                arrow.get(self.first_period_string, date_format.arrow_pattern)
+                .floor(date_format.timeframe)
+                .date()
+            )
+
+        msg = f"Period format {self.first_period_string} is not supported"
+        raise NotImplementedError(
+            msg,
+        )
 
     @property
     def contains_data_until(self) -> datetime.date:
         """The latest date until which data in the dataset is relevant for."""
-        year = self.second_period_string
-        return arrow.get(year, "YYYY").ceil("year").date()
+        period_string = self.second_period_string or self.first_period_string
+        if date_format := categorize_period_string(self.first_period_string):
+            return (
+                arrow.get(period_string, date_format.arrow_pattern)
+                .ceil(date_format.timeframe)
+                .date()
+            )
+
+        msg = f"Period format {period_string} is not supported"
+        raise NotImplementedError(
+            msg,
+        )
