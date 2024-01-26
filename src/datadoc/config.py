@@ -20,7 +20,7 @@ logger.info("Loaded .env file config: \n%s", pformat(dict(dotenv_values().items(
 def _get_config_item(item: str) -> str | None:
     """Get a config item. Makes sure all access is logged."""
     value = os.getenv(item)
-    logger.debug("Accessed config. Name: %s, Value: %s", item, value)
+    logger.debug("Config accessed. %s", item)
     return value
 
 
