@@ -41,6 +41,16 @@ TEST_CASES = [
         expected_contains_data_from=datetime.date(2019, 1, 1),
         expected_contains_data_until=datetime.date(2020, 12, 31),
     ),
+    DatasetPathTestCase(
+        path="omsetning_p2020W15_v1.parquet",
+        expected_contains_data_from=datetime.date(2020, 4, 6),
+        expected_contains_data_until=datetime.date(2020, 4, 12),
+    ),
+    DatasetPathTestCase(
+        path="omsetning_p1981-W52_v1.parquet",
+        expected_contains_data_from=datetime.date(1981, 12, 21),
+        expected_contains_data_until=datetime.date(1981, 12, 27),
+    ),
 ]
 
 

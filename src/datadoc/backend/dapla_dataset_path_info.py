@@ -44,8 +44,8 @@ ISO_YEAR_MONTH_DAY = IsoDateFormat(
 )
 ISO_YEAR_WEEK = IsoDateFormat(
     name="ISO_YEAR_WEEK",
-    regex_pattern=r"^\d{4}\-W\d{2}$",
-    arrow_pattern="YYYY-Wnn",
+    regex_pattern=r"^\d{4}\-{0,1}W\d{2}$",
+    arrow_pattern="W",
     timeframe="week",
 )
 
@@ -119,7 +119,7 @@ class DaplaDatasetPathInfo:
         ['1990-Q1']
         """
         date_format_regex = re.compile(
-            r"^p\d{4}(?:-\d{2}-\d{2}|-\d{2}|-[QTHWB]\d{1,2})?$",
+            r"^p\d{4}(?:-\d{2}-\d{2}|-\d{2}|-{0,1}[QTHWB]\d{1,2})?$",
         )
 
         return [
