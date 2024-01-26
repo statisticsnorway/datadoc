@@ -58,7 +58,24 @@ SUPPORTED_DATE_FORMATS = [
 
 
 def categorize_period_string(period: str) -> IsoDateFormat:
-    """A naive string validator."""
+    """Categorize a period string into one of the supported date formats.
+
+    If the period string is not recognized, a NotImplementedError is raised.
+
+    Examples:
+    >>> date_format = categorize_period_string('2022')
+    >>> date_format.name
+    ISO_YEAR
+
+    >>> date_format = categorize_period_string('2022-W01')
+    >>> date_format.name
+    ISO_YEAR_WEEK
+
+    >>> categorize_period_string('unknown format')
+    Traceback (most recent call last):
+     ...
+    NotImplementedError: Period format unknown format is not supported
+    """
     for date_format in SUPPORTED_DATE_FORMATS:
         if re.match(date_format.regex_pattern, period):
             return date_format
@@ -73,7 +90,7 @@ class DaplaDatasetPathInfo:
     """Extract info from a path following SSB's dataset naming convention."""
 
     def __init__(self, dataset_path: str) -> None:
-        """Read info from an path following SSB`s naming convention."""
+        """Digest the path so that it's ready for further parsing."""
         self.dataset_path = pathlib.Path(dataset_path)
         self.dataset_name_sections = self.dataset_path.stem.split("_")
         _period_strings = self._extract_period_strings(self.dataset_name_sections)
@@ -83,12 +100,23 @@ class DaplaDatasetPathInfo:
         with contextlib.suppress(IndexError):
             self.second_period_string = _period_strings[1]
 
-    def _extract_period_strings(self, dataset_name_sections: list[str]) -> list[str]:
+    @staticmethod
+    def _extract_period_strings(dataset_name_sections: list[str]) -> list[str]:
         """Extract period strings from dataset name sections.
 
         Iterates over the dataset name sections and returns a list of strings
         that match the year regex, stripping the first character. This extracts
         the year periods from the dataset name.
+
+        Examples:
+        >>> DaplaDatasetPathInfo._extract_period_strings(['p2022', 'kommune', 'v1'])
+        ['2022']
+
+        >>> DaplaDatasetPathInfo._extract_period_strings(['p2022-01', 'p2023-06', 'kommune', 'v1'])
+        ['2022-01', '2023-06']
+
+        >>> DaplaDatasetPathInfo._extract_period_strings(['p1990-Q1', 'kommune', 'v1'])
+        ['1990-Q1']
         """
         date_format_regex = re.compile(
             r"^p\d{4}(?:-\d{2}-\d{2}|-\d{2}|-[QTHWB]\d{1,2})?$",
