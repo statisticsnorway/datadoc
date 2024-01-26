@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 import os
+from pathlib import Path
 from pprint import pformat
 
 from dotenv import dotenv_values
@@ -12,9 +13,14 @@ logging.basicConfig(level=logging.DEBUG, force=True)
 
 logger = logging.getLogger(__name__)
 
-load_dotenv()
+DOT_ENV_FILE_PATH = Path(__file__).parent.joinpath(".env")
 
-logger.info("Loaded .env file config: \n%s", pformat(dict(dotenv_values().items())))
+load_dotenv(DOT_ENV_FILE_PATH)
+
+logger.info(
+    "Loaded .env file with config keys: \n%s",
+    pformat(list(dotenv_values(DOT_ENV_FILE_PATH).keys())),
+)
 
 
 def _get_config_item(item: str) -> str | None:
