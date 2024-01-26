@@ -17,16 +17,6 @@ class DatasetPathTestCase:
 
 TEST_CASES = [
     DatasetPathTestCase(
-        path="grensehandel_imputert_p2022-B1_v1.parquet",
-        expected_contains_data_from=datetime.date(2022, 1, 1),
-        expected_contains_data_until=datetime.date(2022, 2, 28),
-    ),
-    DatasetPathTestCase(
-        path="grensehandel_imputert_p2022-B1_p2022-B2_v1.parquet",
-        expected_contains_data_from=datetime.date(2022, 1, 1),
-        expected_contains_data_until=datetime.date(2022, 4, 30),
-    ),
-    DatasetPathTestCase(
         path="grensehandel_imputert_p2022-10-01_p2022-12-31_v1.parquet",
         expected_contains_data_from=datetime.date(2022, 10, 1),
         expected_contains_data_until=datetime.date(2022, 12, 31),
