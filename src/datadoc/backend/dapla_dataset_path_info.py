@@ -57,13 +57,16 @@ SUPPORTED_DATE_FORMATS = [
 ]
 
 
-def categorize_period_string(period: str) -> IsoDateFormat | None:
+def categorize_period_string(period: str) -> IsoDateFormat:
     """A naive string validator."""
-    for date_format in reversed(SUPPORTED_DATE_FORMATS):
+    for date_format in SUPPORTED_DATE_FORMATS:
         if re.match(date_format.regex_pattern, period):
             return date_format
 
-    return None
+    msg = f"Period format {period} is not supported"
+    raise NotImplementedError(
+        msg,
+    )
 
 
 class DaplaDatasetPathInfo:
@@ -100,30 +103,20 @@ class DaplaDatasetPathInfo:
     @property
     def contains_data_from(self) -> datetime.date:
         """The earliest date from which data in the dataset is relevant for."""
-        if date_format := categorize_period_string(self.first_period_string):
-            return (
-                arrow.get(self.first_period_string, date_format.arrow_pattern)
-                .floor(date_format.timeframe)
-                .date()
-            )
-
-        msg = f"Period format {self.first_period_string} is not supported"
-        raise NotImplementedError(
-            msg,
+        date_format = categorize_period_string(self.first_period_string)
+        return (
+            arrow.get(self.first_period_string, date_format.arrow_pattern)
+            .floor(date_format.timeframe)
+            .date()
         )
 
     @property
     def contains_data_until(self) -> datetime.date:
         """The latest date until which data in the dataset is relevant for."""
         period_string = self.second_period_string or self.first_period_string
-        if date_format := categorize_period_string(self.first_period_string):
-            return (
-                arrow.get(period_string, date_format.arrow_pattern)
-                .ceil(date_format.timeframe)
-                .date()
-            )
-
-        msg = f"Period format {period_string} is not supported"
-        raise NotImplementedError(
-            msg,
+        date_format = categorize_period_string(period_string)
+        return (
+            arrow.get(period_string, date_format.arrow_pattern)
+            .ceil(date_format.timeframe)
+            .date()
         )
