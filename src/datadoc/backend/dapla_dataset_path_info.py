@@ -49,15 +49,121 @@ ISO_YEAR_WEEK = IsoDateFormat(
     timeframe="week",
 )
 
+
+@dataclass
+class SsbDateFormat:
+    """An SSB date format with relevant patterns."""
+
+    name: str
+    regex_pattern: str
+    arrow_pattern: str
+    time_frame: dict
+
+
+SSB_BIMESTER = SsbDateFormat(
+    name="SSB_BIMESTER",
+    regex_pattern=r"\d{4}[B]\d{1}$",
+    arrow_pattern="YYYYMM",
+    time_frame={
+        "B1": {
+            "start": "01",
+            "end": "02",
+        },
+        "B2": {
+            "start": "03",
+            "end": "04",
+        },
+        "B3": {
+            "start": "05",
+            "end": "06",
+        },
+        "B4": {
+            "start": "07",
+            "end": "08",
+        },
+        "B5": {
+            "start": "09",
+            "end": "10",
+        },
+        "B6": {
+            "start": "11",
+            "end": "12",
+        },
+    },
+)
+
+SSB_QUARTERLY = SsbDateFormat(
+    name="SSB_QUARTERLY",
+    regex_pattern=r"\d{4}[Q]\d{1}$",
+    arrow_pattern="YYYYMM",
+    time_frame={
+        "Q1": {
+            "start": "01",
+            "end": "03",
+        },
+        "Q2": {
+            "start": "04",
+            "end": "06",
+        },
+        "Q3": {
+            "start": "07",
+            "end": "09",
+        },
+        "Q4": {
+            "start": "10",
+            "end": "12",
+        },
+    },
+)
+SSB_TRIANNUAL = SsbDateFormat(
+    name="SSB_TRIANNUAL",
+    regex_pattern=r"\d{4}[T]\d{1}$",
+    arrow_pattern="YYYYMM",
+    time_frame={
+        "T1": {
+            "start": "01",
+            "end": "04",
+        },
+        "T2": {
+            "start": "05",
+            "end": "08",
+        },
+        "T3": {
+            "start": "09",
+            "end": "12",
+        },
+    },
+)
+SSB_HALF_YEAR = SsbDateFormat(
+    name="SSB_HALF_YEAR",
+    regex_pattern=r"\d{4}[H]\d{1}$",
+    arrow_pattern="YYYYMM",
+    time_frame={
+        "H1": {
+            "start": "01",
+            "end": "07",
+        },
+        "H2": {
+            "start": "08",
+            "end": "12",
+        },
+    },
+)
+
+
 SUPPORTED_DATE_FORMATS = [
     ISO_YEAR,
     ISO_YEAR_MONTH,
     ISO_YEAR_MONTH_DAY,
     ISO_YEAR_WEEK,
+    SSB_BIMESTER,
+    SSB_QUARTERLY,
+    SSB_TRIANNUAL,
+    SSB_HALF_YEAR,
 ]
 
 
-def categorize_period_string(period: str) -> IsoDateFormat:
+def categorize_period_string(period: str) -> IsoDateFormat | SsbDateFormat:
     """Categorize a period string into one of the supported date formats.
 
     If the period string is not recognized, a NotImplementedError is raised.
@@ -84,6 +190,15 @@ def categorize_period_string(period: str) -> IsoDateFormat:
     raise NotImplementedError(
         msg,
     )
+
+
+def get_ssb_period(
+    period_string: str,
+    period_type: str,
+    date_format: SsbDateFormat,
+) -> str:
+    """Convert ssb-format for bimester, quarterly, triannual and half year to start and end months."""
+    return period_string[:4] + date_format.time_frame[period_string[-2:]][period_type]
 
 
 class DaplaDatasetPathInfo:
@@ -132,6 +247,14 @@ class DaplaDatasetPathInfo:
     def contains_data_from(self) -> datetime.date:
         """The earliest date from which data in the dataset is relevant for."""
         date_format = categorize_period_string(self.first_period_string)
+        if isinstance(date_format, SsbDateFormat):
+            period = get_ssb_period(
+                self.first_period_string,
+                "start",
+                date_format,
+            )
+            return arrow.get(period, date_format.arrow_pattern).floor("month").date()
+
         return (
             arrow.get(self.first_period_string, date_format.arrow_pattern)
             .floor(date_format.timeframe)
@@ -143,6 +266,10 @@ class DaplaDatasetPathInfo:
         """The latest date until which data in the dataset is relevant for."""
         period_string = self.second_period_string or self.first_period_string
         date_format = categorize_period_string(period_string)
+        if isinstance(date_format, SsbDateFormat):
+            period = get_ssb_period(period_string, "end", date_format)
+            return arrow.get(period, date_format.arrow_pattern).ceil("month").date()
+
         return (
             arrow.get(period_string, date_format.arrow_pattern)
             .ceil(date_format.timeframe)
