@@ -52,7 +52,7 @@ ISO_YEAR_WEEK = IsoDateFormat(
 
 @dataclass
 class SsbDateFormat:
-    """An SSB date format with relevant patterns."""
+    """An date format with relevant patterns for SSB special date formats."""
 
     name: str
     regex_pattern: str
@@ -192,12 +192,47 @@ def categorize_period_string(period: str) -> IsoDateFormat | SsbDateFormat:
     )
 
 
-def get_ssb_period(
+def convert_ssb_period(
     period_string: str,
     period_type: str,
     date_format: SsbDateFormat,
 ) -> str:
-    """Convert ssb-format for bimester, quarterly, triannual and half year to start and end months."""
+    """Convert ssb-format for bimester, quarterly, triannual and half year to start and end months.
+
+    Usage-examples:
+    >>> ssb_bimester_period_start = convert_ssb_period("2022B1","start",SSB_BIMESTER)
+    >>> ssb_bimester_period_start
+    202201
+
+    >>> ssb_bimester_period_end = convert_ssb_period("2022B1","end",SSB_BIMESTER)
+    >>> ssb_bimester_period_end
+    202202
+
+    >>> ssb_quarterly_period_start = convert_ssb_period("2015Q3","start",SSB_QUARTERLY)
+    >>> ssb_quarterly_period_start
+    201507
+
+    >>> ssb_quarterly_period_end = convert_ssb_period("2015Q3","end",SSB_QUARTERLY)
+    >>> ssb_quarterly_period_end
+    201509
+
+    >>> ssb_triannual_period_start = convert_ssb_period("1998T2","start",SSB_TRIANNUAL)
+    >>> ssb_triannual_period_start
+    199805
+
+    >>> ssb_quarterly_period_end = convert_ssb_period("1998T2","end",SSB_TRIANNUAL)
+    >>> ssb_quarterly_period_end
+    199808
+
+    >>> ssb_half_year_period_start = convert_ssb_period("1898H2","start",SSB_HALF_YEAR)
+    >>> ssb_half_year_period_start
+    189808
+
+    >>> ssb_half_year_period_end = convert_ssb_period("1898H2","end",SSB_HALF_YEAR)
+    >>> ssb_half_year_period_end
+    189812
+
+    """
     return period_string[:4] + date_format.time_frame[period_string[-2:]][period_type]
 
 
@@ -248,7 +283,7 @@ class DaplaDatasetPathInfo:
         """The earliest date from which data in the dataset is relevant for."""
         date_format = categorize_period_string(self.first_period_string)
         if isinstance(date_format, SsbDateFormat):
-            period = get_ssb_period(
+            period = convert_ssb_period(
                 self.first_period_string,
                 "start",
                 date_format,
@@ -267,7 +302,7 @@ class DaplaDatasetPathInfo:
         period_string = self.second_period_string or self.first_period_string
         date_format = categorize_period_string(period_string)
         if isinstance(date_format, SsbDateFormat):
-            period = get_ssb_period(period_string, "end", date_format)
+            period = convert_ssb_period(period_string, "end", date_format)
             return arrow.get(period, date_format.arrow_pattern).ceil("month").date()
 
         return (
