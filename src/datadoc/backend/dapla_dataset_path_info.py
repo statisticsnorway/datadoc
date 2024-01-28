@@ -177,6 +177,22 @@ def categorize_period_string(period: str) -> IsoDateFormat | SsbDateFormat:
     >>> date_format.name
     ISO_YEAR_WEEK
 
+    >>> date_format = categorize_period_string('2022B1')
+    >>> date_format.name
+    SSB_BIMESTER
+
+    >>> date_format = categorize_period_string('1980Q3')
+    >>> date_format.name
+    SSB_QUARTERLY
+
+    >>> date_format = categorize_period_string('1954T2')
+    >>> date_format.name
+    SSB_TRIANNUAL
+
+    >>> date_format = categorize_period_string('1876H1')
+    >>> date_format.name
+    SSB_HALF_YEAR
+
     >>> categorize_period_string('unknown format')
     Traceback (most recent call last):
      ...
