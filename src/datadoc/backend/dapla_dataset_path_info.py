@@ -299,6 +299,7 @@ class DaplaDatasetPathInfo:
         """The earliest date from which data in the dataset is relevant for."""
         date_format = categorize_period_string(self.first_period_string)
         if isinstance(date_format, SsbDateFormat):
+            """If dateformat is SSB date format return start month of ssb period."""
             period = convert_ssb_period(
                 self.first_period_string,
                 "start",
@@ -318,6 +319,7 @@ class DaplaDatasetPathInfo:
         period_string = self.second_period_string or self.first_period_string
         date_format = categorize_period_string(period_string)
         if isinstance(date_format, SsbDateFormat):
+            """If dateformat is SSB date format return end month of ssb period."""
             period = convert_ssb_period(period_string, "end", date_format)
             return arrow.get(period, date_format.arrow_pattern).ceil("month").date()
 
