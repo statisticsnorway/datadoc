@@ -141,17 +141,16 @@ SSB_HALF_YEAR = SsbDateFormat(
     time_frame={
         "H1": {
             "start": "01",
-            "end": "07",
+            "end": "06",
         },
         "H2": {
-            "start": "08",
+            "start": "07",
             "end": "12",
         },
     },
 )
 
-
-SUPPORTED_DATE_FORMATS = [
+SUPPORTED_DATE_FORMATS: list[IsoDateFormat | SsbDateFormat] = [
     ISO_YEAR,
     ISO_YEAR_MONTH,
     ISO_YEAR_MONTH_DAY,
@@ -242,7 +241,7 @@ def convert_ssb_period(
 
     >>> ssb_half_year_period_start = convert_ssb_period("1898H2","start",SSB_HALF_YEAR)
     >>> ssb_half_year_period_start
-    189808
+    189807
 
     >>> ssb_half_year_period_end = convert_ssb_period("1898H2","end",SSB_HALF_YEAR)
     >>> ssb_half_year_period_end

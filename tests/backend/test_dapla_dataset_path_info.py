@@ -54,7 +54,7 @@ TEST_CASES = [
     DatasetPathTestCase(
         path="personinntekt_p2022H1_v1.parquet",
         expected_contains_data_from=datetime.date(2022, 1, 1),
-        expected_contains_data_until=datetime.date(2022, 7, 31),
+        expected_contains_data_until=datetime.date(2022, 6, 30),
     ),
     DatasetPathTestCase(
         path="nybilreg_p2022T1_v1.parquet",
