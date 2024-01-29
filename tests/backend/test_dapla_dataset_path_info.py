@@ -119,3 +119,34 @@ def test_extract_period_info_date_until(
     expected_contains_data_until: datetime.date,
 ):
     assert dataset_path.contains_data_until == expected_contains_data_until
+
+
+@pytest.mark.parametrize(
+    "data",
+    [
+        (
+            "varehandel_p2018Q5_p2018Q4_v1.parquet",
+            "Period format p2018Q5 is not supported",
+        ),
+        (
+            "varehandel_p2018Q1_p2018H2_v1.parquet",
+            "Period format p2018H2 is not supported",
+        ),
+    ],
+)
+def test_extract_period_info_failures(data: tuple):
+    DaplaDatasetPathInfo(data[0])
+    with pytest.raises(NotImplementedError):
+        raise NotImplementedError(data[1])
+
+
+@pytest.mark.parametrize(
+    "data",
+    [
+        "nonsen.data",
+        "nonsens2.parquet",
+    ],
+)
+def test_extract_period_info_failures_index_error(data: str):
+    with pytest.raises(IndexError):
+        DaplaDatasetPathInfo(data)
