@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 import pathlib
 import typing as t
 import uuid
@@ -11,6 +10,7 @@ from typing import TYPE_CHECKING
 
 from datadoc_model import model
 
+from datadoc import config
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
 from datadoc.backend.storage_adapter import StorageAdapter
@@ -23,6 +23,7 @@ from datadoc.utils import calculate_percentage
 from datadoc.utils import get_timestamp_now
 
 if TYPE_CHECKING:
+    import os
     from datetime import datetime
 
 logger = logging.getLogger(__name__)
@@ -78,9 +79,8 @@ class DataDocMetadata:
 
             self.extract_metadata_from_files()
 
-        try:
-            self.current_user = os.environ["JUPYTERHUB_USER"]
-        except KeyError:
+        self.current_user = config.get_jupyterhub_user()
+        if not self.current_user:
             self.current_user = PLACEHOLDER_USERNAME
             logger.warning(
                 "JUPYTERHUB_USER env variable not set, using %s as placeholder",

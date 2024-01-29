@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import logging
-import os
 from typing import TYPE_CHECKING
 from typing import TypeAlias
 
 from datadoc_model import model
 
+from datadoc import config
 from datadoc import enums
 from datadoc import state
 from datadoc.backend.datadoc_metadata import METADATA_DOCUMENT_FILE_SUFFIX
@@ -24,8 +24,6 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
-DATADOC_DATASET_PATH_ENV_VAR = "DATADOC_DATASET_PATH"
 
 MetadataInputTypes: TypeAlias = str | list[str] | int | float | bool | None
 
@@ -89,10 +87,9 @@ def get_dataset_path() -> str | Path | None:
     """Extract the path to the dataset from the potential sources."""
     if state.metadata.dataset is not None:
         return state.metadata.dataset
-    path_from_env = os.getenv(DATADOC_DATASET_PATH_ENV_VAR)
+    path_from_env = config.get_datadoc_dataset_path()
     logger.info(
-        "Dataset path from %s: '%s'",
-        DATADOC_DATASET_PATH_ENV_VAR,
+        "Dataset path from env var: '%s'",
         path_from_env,
     )
     return path_from_env
