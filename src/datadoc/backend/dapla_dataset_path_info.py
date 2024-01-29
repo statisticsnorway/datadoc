@@ -280,8 +280,8 @@ class DaplaDatasetPathInfo:
         >>> DaplaDatasetPathInfo._extract_period_strings(['p2022-01', 'p2023-06', 'kommune', 'v1'])
         ['2022-01', '2023-06']
 
-        >>> DaplaDatasetPathInfo._extract_period_strings(['p1990-Q1', 'kommune', 'v1'])
-        ['1990-Q1']
+        >>> DaplaDatasetPathInfo._extract_period_strings(['p1990Q1', 'kommune', 'v1'])
+        ['1990Q1']
         """
         date_format_regex = re.compile(
             r"^p\d{4}(?:-\d{2}-\d{2}|-\d{2}|-{0,1}[QTHWB]\d{1,2})?$",
