@@ -11,11 +11,6 @@ Here is a list of important resources for contributors:
 - [Issue Tracker]
 - [Code of Conduct]
 
-[mit license]: https://opensource.org/licenses/MIT
-[source code]: https://github.com/statisticsnorway/datadoc
-[documentation]: https://statisticsnorway.github.io/datadoc
-[issue tracker]: https://github.com/statisticsnorway/datadoc/issues
-
 ## How to report a bug
 
 Report bugs on the [Issue Tracker].
@@ -43,22 +38,44 @@ You need Python 3.10+ and the following tools:
 - [Nox]
 - [nox-poetry]
 
+Install [pipx]:
+
+```console
+python -m pip install --user pipx
+python -m pipx ensurepath
+```
+
+Install [Poetry]:
+
+```console
+pipx install poetry
+```
+
+Install [Nox] and [nox-poetry]:
+
+```console
+pipx install nox
+pipx inject nox nox-poetry
+```
+
+Install the pre-commit hooks
+
+```console
+nox --session=pre-commit -- install
+```
+
 Install the package with development requirements:
 
 ```console
 poetry install
 ```
 
-You can now run an interactive Python session,
-or the command-line interface:
+You can now run an interactive Python session, or your app:
 
 ```console
+poetry run python
 poetry run datadoc
 ```
-
-[poetry]: https://python-poetry.org/
-[nox]: https://nox.thea.codes/
-[nox-poetry]: https://nox-poetry.readthedocs.io/
 
 ## How to test the project
 
@@ -83,8 +100,6 @@ nox --session=tests
 
 Unit tests are located in the _tests_ directory,
 and are written using the [pytest] testing framework.
-
-[pytest]: https://pytest.readthedocs.io/
 
 ## Running the Dockerized Application Locally
 
@@ -132,6 +147,15 @@ nox --session=pre-commit -- install
 It is recommended to open an issue before starting work on anything.
 This will allow a chance to talk it over with the owners and validate your approach.
 
+[mit license]: <https://opensource.org/licenses/MIT>
+[source code]: <https://github.com/statisticsnorway/datadoc>
+[documentation]: <https://statisticsnorway.github.io/datadoc>
+[issue tracker]: <https://github.com/statisticsnorway/datadoc/issues>
+[pipx]: <https://pipx.pypa.io/>
+[poetry]: <https://python-poetry.org/>
+[nox]: <https://nox.thea.codes/>
+[nox-poetry]: <https://nox-poetry.readthedocs.io/>
+[pytest]: <https://pytest.readthedocs.io/>
 [pull request]: https://github.com/statisticsnorway/datadoc/pulls
 
 <!-- github-only -->
