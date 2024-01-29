@@ -254,6 +254,7 @@ def convert_ssb_period(
 class DaplaDatasetPathInfo:
     """Extract info from a path following SSB's dataset naming convention."""
 
+    # def __init__(self, dataset_path: str | os.PathLike[str]) -> None:
     def __init__(self, dataset_path: str) -> None:
         """Digest the path so that it's ready for further parsing."""
         self.dataset_path = pathlib.Path(dataset_path)
