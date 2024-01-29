@@ -51,6 +51,36 @@ TEST_CASES = [
         expected_contains_data_from=datetime.date(1981, 12, 21),
         expected_contains_data_until=datetime.date(1981, 12, 27),
     ),
+    DatasetPathTestCase(
+        path="personinntekt_p2022H1_v1.parquet",
+        expected_contains_data_from=datetime.date(2022, 1, 1),
+        expected_contains_data_until=datetime.date(2022, 6, 30),
+    ),
+    DatasetPathTestCase(
+        path="nybilreg_p2022T1_v1.parquet",
+        expected_contains_data_from=datetime.date(2022, 1, 1),
+        expected_contains_data_until=datetime.date(2022, 4, 30),
+    ),
+    DatasetPathTestCase(
+        path="varehandel_p2018Q1_p2018Q4_v1.parquet",
+        expected_contains_data_from=datetime.date(2018, 1, 1),
+        expected_contains_data_until=datetime.date(2018, 12, 31),
+    ),
+    DatasetPathTestCase(
+        path="pensjon_p2018Q1_v1.parquet",
+        expected_contains_data_from=datetime.date(2018, 1, 1),
+        expected_contains_data_until=datetime.date(2018, 3, 31),
+    ),
+    DatasetPathTestCase(
+        path="skipsanloep_p2021B2_v1.parquet",
+        expected_contains_data_from=datetime.date(2021, 3, 1),
+        expected_contains_data_until=datetime.date(2021, 4, 30),
+    ),
+    DatasetPathTestCase(
+        path="skipsanloep_p2022B1_v1.parquet",
+        expected_contains_data_from=datetime.date(2022, 1, 1),
+        expected_contains_data_until=datetime.date(2022, 2, 28),
+    ),
 ]
 
 
