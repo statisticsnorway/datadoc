@@ -118,7 +118,9 @@ def main(dataset_path: str | None = None) -> None:
             port=port,
         )
     else:
-        app.run(debug=config.get_dash_development_mode(), port=port)
+        if dev_mode := config.get_dash_development_mode():
+            logger.warning("Starting in Development Mode. NOT SUITABLE FOR PRODUCTION.")
+        app.run(debug=dev_mode, port=port)
 
 
 if __name__ == "__main__":
