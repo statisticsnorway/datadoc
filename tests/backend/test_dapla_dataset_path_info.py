@@ -150,3 +150,29 @@ def test_extract_period_info_failures(data: tuple):
 def test_extract_period_info_failures_index_error(data: str):
     with pytest.raises(IndexError):
         DaplaDatasetPathInfo(data)
+
+
+@pytest.mark.parametrize(
+    "data",
+    [
+        (
+            "varehandel_p2018H2_p2018H1_v1.parquet",
+            "Periods are not in sequence",
+        ),
+        (
+            "varehandel_p2018T3_p2018T1_v1.parquet",
+            "Periods are not in sequence",
+        ),
+        (
+            "varehandel_p2018Q4_p2018Q1_v1.parquet",
+            "Periods are not in sequence",
+        ),
+        (
+            "varehandel_p2018B6_p2018B1_v1.parquet",
+            "Periods are not in sequence",
+        ),
+    ],
+)
+def test_extract_period_info_in_sequence(data: tuple):
+    with pytest.raises(IndexError):
+        DaplaDatasetPathInfo(data[0])
