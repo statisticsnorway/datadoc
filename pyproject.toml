@@ -78,6 +78,7 @@ omit = [
     "datadoc/__init__.py",
     "datadoc/frontend/callbacks/register.py",
 ]
+relative_files = true
 
 [tool.coverage.report]
 show_missing = true
@@ -125,6 +126,16 @@ show-fixes = true
 src = ["src", "tests"]
 target-version = "py39" # Minimum Python version supported
 
+include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
+extend-exclude = [
+    "__pycache__",
+    "old",
+    ".ipynb_checkpoints",
+    "noxfile.py",
+    "docs/conf.py",
+]
+
+[tool.ruff.lint]
 # Ruff rules may be customized as desired: https://docs.astral.sh/ruff/rules/
 select = ["ALL"]
 ignore = [
@@ -136,25 +147,17 @@ ignore = [
     "E501",   # Let black handle line length
     "TRY003",
 ]
-include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
-extend-exclude = [
-    "__pycache__",
-    "old",
-    ".ipynb_checkpoints",
-    "noxfile.py",
-    "docs/conf.py",
-]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 force-single-line = true
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 15
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google" # You can also use "numpy".
 
-[tool.ruff.pep8-naming]
+[tool.ruff.lint.pep8-naming]
 classmethod-decorators = [
     "classmethod",
     "validator",
@@ -162,15 +165,21 @@ classmethod-decorators = [
     "pydantic.validator",
 ]
 
-[tool.ruff.per-file-ignores]
-"*/__init__.py" = ["F401"]
-"src/datadoc/frontend/callbacks/register_callbacks.py" = ["C901"]
+[tool.ruff.lint.per-file-ignores]
 "tests/**" = [
     "S101",   # asserts are encouraged in pytest
-    "ANN201", # return annotations don't add value for test functions
+    "ANN001", # type annotations don't add value for test functions
+    "ANN002", # type annotations don't add value for test functions
+    "ANN003", # type annotations don't add value for test functions
+    "ANN201", # type annotations don't add value for test functions
+    "ANN204", # type annotations don't add value for test functions
+    "ANN205", # type annotations don't add value for test functions
+    "ANN206", # type annotations don't add value for test functions
     "D103",   # docstrings are overkill for test functions
     "D100",
 ]
+"*/__init__.py" = ["F401"]
+"src/datadoc/frontend/callbacks/register_callbacks.py" = ["C901"]
 # This filename is a convention for Gunicorn
 "src/datadoc/gunicorn.conf.py" = ["N999"]
 

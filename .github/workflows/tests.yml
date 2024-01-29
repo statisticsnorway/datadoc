@@ -84,7 +84,7 @@ jobs:
           subprocess.run(cmd, shell=True)
 
       - name: Restore pre-commit cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         if: matrix.session == 'pre-commit'
         with:
           path: ~/.cache/pre-commit
@@ -157,7 +157,9 @@ jobs:
       # Need to fix coverage source paths for SonarCloud scanning in GitHub actions.
       # Replace root path with /github/workspace (mounted in docker container).
       - name: Override coverage source paths for SonarCloud
-        run: sed -i "s/<source>\/home\/runner\/work\/datadoc\/datadoc/<source>\/github\/workspace/g" coverage.xml
+        run: |
+          sed -i "s/<source><\/source>/<source>\/github\/workspace<\/source>/g" coverage.xml
+          sed -i "s/<source>tests/<source>\/github\/workspace\/tests/g" coverage.xml
 
       - name: SonarCloud Scan
         env:
