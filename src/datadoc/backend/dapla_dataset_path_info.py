@@ -259,11 +259,6 @@ class DaplaDatasetPathInfo:
         self.dataset_path = pathlib.Path(dataset_path)
         self.dataset_name_sections = self.dataset_path.stem.split("_")
         self._period_strings = self._extract_period_strings(self.dataset_name_sections)
-        # self.first_period_string = _period_strings[0]
-        # self.second_period_string: str | None = None
-
-        # with contextlib.suppress(IndexError):
-        #     self.second_period_string = _period_strings[1]
 
     @staticmethod
     def _extract_period_strings(dataset_name_sections: list[str]) -> list[str]:
@@ -335,7 +330,6 @@ class DaplaDatasetPathInfo:
                 """If dateformat is SSB date format return end month of ssb period."""
                 period = convert_ssb_period(period_string, "end", date_format)
                 return arrow.get(period, date_format.arrow_pattern).ceil("month").date()
-
             return (
                 arrow.get(period_string, date_format.arrow_pattern)
                 .ceil(date_format.timeframe)
