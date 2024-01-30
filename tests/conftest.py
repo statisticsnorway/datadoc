@@ -19,7 +19,6 @@ from datadoc.enums import SupportedLanguages
 from .utils import TEST_BUCKET_PARQUET_FILEPATH
 from .utils import TEST_EXISTING_METADATA_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_FILE_NAME
-from .utils import TEST_EXISTING_METADATA_WITH_VALID_ID_DIRECTORY
 from .utils import TEST_PARQUET_FILEPATH
 from .utils import TEST_RESOURCES_METADATA_DOCUMENT
 
@@ -66,10 +65,6 @@ def existing_metadata_file(existing_metadata_path: Path) -> str:
 
 
 @pytest.fixture()
-@pytest.mark.parametrize(
-    "existing_metadata_file",
-    [TEST_EXISTING_METADATA_WITH_VALID_ID_DIRECTORY],
-)
 def existing_metadata_with_valid_id_file(existing_metadata_file: Path) -> Path:
     return existing_metadata_file
 

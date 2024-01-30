@@ -2,10 +2,7 @@
 from __future__ import annotations
 
 import json
-import pathlib
-from copy import copy
 from pathlib import Path
-from pathlib import PurePath
 from typing import TYPE_CHECKING
 from uuid import UUID
 
@@ -21,45 +18,11 @@ from datadoc.enums import DataType
 from datadoc.enums import VariableRole
 from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
-from tests.utils import TEST_PARQUET_FILEPATH
 from tests.utils import TEST_RESOURCES_DIRECTORY
 from tests.utils import TEST_RESOURCES_METADATA_DOCUMENT
 
 if TYPE_CHECKING:
     from datetime import datetime
-
-
-def make_paths() -> list[tuple[str, DatasetState | None]]:
-    split_path = list(PurePath(TEST_PARQUET_FILEPATH).parts)
-    initial_data = [
-        ("kildedata", DatasetState.SOURCE_DATA),
-        ("inndata", DatasetState.INPUT_DATA),
-        ("roskildedata/klargjorte-data", DatasetState.PROCESSED_DATA),
-        ("klargjorte_data", DatasetState.PROCESSED_DATA),
-        ("klargjorte-data", DatasetState.PROCESSED_DATA),
-        ("statistikk", DatasetState.STATISTICS),
-        ("", None),
-    ]
-    test_data = []
-
-    # Construct paths with each of the potential options in them
-    for to_insert, state in initial_data:
-        new_path = copy(split_path)
-        new_path.insert(-2, to_insert)
-        joined_path = PurePath().joinpath(*new_path)
-        test_data.append((str(joined_path), state))
-
-    return test_data
-
-
-@pytest.mark.parametrize(("path", "expected_result"), make_paths())
-def test_get_dataset_state(
-    path: str,
-    expected_result: DatasetState,
-    metadata: DataDocMetadata,
-):
-    actual_state = metadata.get_dataset_state(pathlib.Path(path))
-    assert actual_state == expected_result
 
 
 @pytest.mark.usefixtures("existing_metadata_file")
@@ -81,22 +44,6 @@ def test_metadata_document_percent_complete(metadata: DataDocMetadata):
     metadata.meta = document
 
     assert metadata.percent_complete == 17  # noqa: PLR2004
-
-
-@pytest.mark.parametrize(
-    ("short_name", "expected"),
-    [
-        ("person_data_v1", "1"),
-        ("person_data_v2", "2"),
-        ("person_data", None),
-        ("person_testdata_p2021-12-31_p2021-12-31_v20", "20"),
-    ],
-)
-def test_get_dataset_version(
-    short_name: str,
-    expected: str | None,
-):
-    assert DataDocMetadata.get_dataset_version(short_name) == expected
 
 
 def test_write_metadata_document(
