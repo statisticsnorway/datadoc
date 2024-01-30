@@ -318,7 +318,6 @@ class DaplaDatasetPathInfo:
             )
         return None
 
-
     @property
     def contains_data_until(self) -> datetime.date | None:
         """The latest date until which data in the dataset is relevant for."""
@@ -337,4 +336,3 @@ class DaplaDatasetPathInfo:
                 .date()
             )
         return None
-

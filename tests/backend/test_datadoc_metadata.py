@@ -234,4 +234,3 @@ def test_period_metadata_fields_saved(
     metadata = DataDocMetadata(generate_periodic_file)
     assert metadata.meta.dataset.contains_data_from == expected_from
     assert metadata.meta.dataset.contains_data_until == expected_until
-
