@@ -140,25 +140,6 @@ def test_extract_period_info_date_until(
 @pytest.mark.parametrize(
     "data",
     [
-        (
-            "varehandel_p2018Q5_p2018Q4_v1.parquet",
-            "Period format p2018Q5 is not supported",
-        ),
-        (
-            "varehandel_p2018Q1_p2018H2_v1.parquet",
-            "Period format p2018H2 is not supported",
-        ),
-    ],
-)
-def test_extract_period_info_failures(data: tuple):
-    DaplaDatasetPathInfo(data[0])
-    with pytest.raises(NotImplementedError):
-        raise NotImplementedError(data[1])
-
-
-@pytest.mark.parametrize(
-    "data",
-    [
         "nonsen.data",
         "nonsens2.parquet",
         TEST_PARQUET_FILEPATH.name,
@@ -166,3 +147,13 @@ def test_extract_period_info_failures(data: tuple):
 )
 def test_extract_period_info_no_period_info_in_path(data: str):
     assert DaplaDatasetPathInfo(data).contains_data_from is None
+
+
+def test_extract_period_info_date_from_wrong_sequence() -> None:
+    dataset = DaplaDatasetPathInfo("ufo_observasjoner_p2019_p1920_v1.parquet")
+    assert dataset.contains_data_from is None
+
+
+def test_extract_period_info_date_until_wrong_sequence() -> None:
+    dataset = DaplaDatasetPathInfo("ufo_observasjoner_p2019_p1920_v1.parquet")
+    assert dataset.contains_data_until is None
