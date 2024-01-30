@@ -12,6 +12,9 @@ from typing import Protocol
 from urllib.parse import urlsplit
 from urllib.parse import urlunsplit
 
+from dapla import FileClient
+from google.auth.exceptions import DefaultCredentialsError
+
 if TYPE_CHECKING:
     import os
     from io import IOBase
@@ -28,26 +31,19 @@ class GCSObject:
     def __init__(self, path: str | os.PathLike) -> None:
         """Initialize the class."""
         self._url = urlsplit(str(path))
+
         try:
-            from dapla import AuthClient
-            from dapla import FileClient
+            # Running on Dapla, rely on dapla-toolbelt for auth
+            self.fs = FileClient.get_gcs_file_system()
+        except DefaultCredentialsError:
+            # All other environments, rely on Standard Google credential system
+            # If this doesn't work for you, try running the following commands:
+            #
+            # gcloud auth application-default revoke
+            # gcloud auth application-default login
+            from gcsfs import GCSFileSystem
 
-            if AuthClient.is_ready():
-                # Running on Dapla, rely on dapla-toolbelt for auth
-                self.fs = FileClient.get_gcs_file_system()
-            else:
-                # All other environments, rely on Standard Google credential system
-                # If this doesn't work for you, try running the following commands:
-                #
-                # gcloud auth application-default revoke
-                # gcloud auth application-default login
-                from gcsfs import GCSFileSystem
-
-                self.fs = GCSFileSystem()
-
-        except ImportError as e:
-            msg = "Missing support for GCS. Install datadoc with 'pip install ssb-datadoc[gcs]'"
-            raise ImportError(msg) from e
+            self.fs = GCSFileSystem()
 
     @staticmethod
     def for_path(path: str | os.PathLike) -> StorageAdapter:
