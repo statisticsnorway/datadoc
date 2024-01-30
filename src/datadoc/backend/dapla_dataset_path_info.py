@@ -1,7 +1,6 @@
 """Extract info from a path following SSB's dataset naming convention."""
 from __future__ import annotations
 
-import contextlib
 import pathlib
 import re
 from dataclasses import dataclass
@@ -12,6 +11,7 @@ import arrow
 
 if TYPE_CHECKING:
     import datetime
+    import os
 
 
 @dataclass
@@ -254,16 +254,11 @@ def convert_ssb_period(
 class DaplaDatasetPathInfo:
     """Extract info from a path following SSB's dataset naming convention."""
 
-    def __init__(self, dataset_path: str) -> None:
+    def __init__(self, dataset_path: str | os.PathLike[str]) -> None:
         """Digest the path so that it's ready for further parsing."""
         self.dataset_path = pathlib.Path(dataset_path)
         self.dataset_name_sections = self.dataset_path.stem.split("_")
-        _period_strings = self._extract_period_strings(self.dataset_name_sections)
-        self.first_period_string = _period_strings[0]
-        self.second_period_string: str | None = None
-
-        with contextlib.suppress(IndexError):
-            self.second_period_string = _period_strings[1]
+        self._period_strings = self._extract_period_strings(self.dataset_name_sections)
 
     @staticmethod
     def _extract_period_strings(dataset_name_sections: list[str]) -> list[str]:
@@ -294,28 +289,40 @@ class DaplaDatasetPathInfo:
         ]
 
     @property
-    def contains_data_from(self) -> datetime.date:
+    def contains_data_from(self) -> datetime.date | None:
         """The earliest date from which data in the dataset is relevant for."""
-        date_format = categorize_period_string(self.first_period_string)
+        try:
+            period_string = self._period_strings[0]
+            date_format = categorize_period_string(period_string)
+        except IndexError:
+            return None
+
         if isinstance(date_format, SsbDateFormat):
             """If dateformat is SSB date format return start month of ssb period."""
             period = convert_ssb_period(
-                self.first_period_string,
+                period_string,
                 "start",
                 date_format,
             )
             return arrow.get(period, date_format.arrow_pattern).floor("month").date()
 
         return (
-            arrow.get(self.first_period_string, date_format.arrow_pattern)
+            arrow.get(period_string, date_format.arrow_pattern)
             .floor(date_format.timeframe)
             .date()
         )
 
     @property
-    def contains_data_until(self) -> datetime.date:
+    def contains_data_until(self) -> datetime.date | None:
         """The latest date until which data in the dataset is relevant for."""
-        period_string = self.second_period_string or self.first_period_string
+        try:
+            period_string = self._period_strings[1]
+        except IndexError:
+            try:
+                period_string = self._period_strings[0]
+            except IndexError:
+                return None
+
         date_format = categorize_period_string(period_string)
         if isinstance(date_format, SsbDateFormat):
             """If dateformat is SSB date format return end month of ssb period."""

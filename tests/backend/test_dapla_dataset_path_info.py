@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import pytest
 
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
+from tests.utils import TEST_PARQUET_FILEPATH
 
 
 @dataclass
@@ -145,8 +146,8 @@ def test_extract_period_info_failures(data: tuple):
     [
         "nonsen.data",
         "nonsens2.parquet",
+        TEST_PARQUET_FILEPATH.name,
     ],
 )
-def test_extract_period_info_failures_index_error(data: str):
-    with pytest.raises(IndexError):
-        DaplaDatasetPathInfo(data)
+def test_extract_period_info_no_period_info_in_path(data: str):
+    assert DaplaDatasetPathInfo(data).contains_data_from is None
