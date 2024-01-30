@@ -3,7 +3,12 @@ from dataclasses import dataclass
 
 import pytest
 
+from datadoc.backend.dapla_dataset_path_info import SSB_BIMESTER
+from datadoc.backend.dapla_dataset_path_info import SSB_HALF_YEAR
+from datadoc.backend.dapla_dataset_path_info import SSB_QUARTERLY
+from datadoc.backend.dapla_dataset_path_info import SSB_TRIANNUAL
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
+from datadoc.backend.dapla_dataset_path_info import convert_ssb_period
 from tests.utils import TEST_PARQUET_FILEPATH
 
 
@@ -160,3 +165,17 @@ def test_extract_period_info_date_until_invalid_pathname(
 ) -> None:
     dataset = DaplaDatasetPathInfo(dataset_path_name)
     assert dataset.contains_data_until is None
+
+
+@pytest.mark.parametrize(
+    "period",
+    [
+        ("1973B8", SSB_BIMESTER),
+        ("1888H3", SSB_HALF_YEAR),
+        ("2103T11", SSB_TRIANNUAL),
+        ("2002Q5", SSB_QUARTERLY),
+    ],
+)
+def test_extract_period_info_date_invalid_ssb_key(period: tuple):
+    with pytest.raises(KeyError):
+        convert_ssb_period(period[0], "start", period[1])
