@@ -103,14 +103,6 @@ def expected_contains_data_from(test_data: DatasetPathTestCase) -> datetime.date
     return test_data.expected_contains_data_from
 
 
-# kræsjer flygende_objekter_p2019_v1.parquet, omsetning_p2020W15_v1.parquet, omsetning_p1981-W52_v1.parquet, personinntekt_p2022H1_v1.parquet, ] failed: dataset_path = <datadoc.backend.dapla_dataset_path_info.DaplaDatasetPathInfo object at 0x12cf33200>
-# e
-# nybilreg_p2022T1_v1.parquet
-# pensjon_p2018Q1_v1.parquet
-# skipsanloep_p2021B2_v1.parquet
-# skipsanloep_p2022B1_v1.parquet
-
-
 @pytest.fixture()
 def expected_contains_data_until(test_data: DatasetPathTestCase) -> datetime.date:
     return test_data.expected_contains_data_until
