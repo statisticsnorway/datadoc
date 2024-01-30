@@ -305,6 +305,11 @@ class DaplaDatasetPathInfo:
         """The earliest date from which data in the dataset is relevant for."""
         try:
             period_string = self._period_strings[0]
+            if (
+                len(self._period_strings) > 1
+                and period_string > self._period_strings[1]
+            ):
+                return None
             date_format = categorize_period_string(period_string)
         except IndexError:
             return None
@@ -329,6 +334,8 @@ class DaplaDatasetPathInfo:
         """The latest date until which data in the dataset is relevant for."""
         try:
             period_string = self._period_strings[1]
+            if period_string < self._period_strings[0]:
+                return None
         except IndexError:
             try:
                 period_string = self._period_strings[0]

@@ -82,21 +82,6 @@ TEST_CASES = [
         expected_contains_data_from=datetime.date(2022, 1, 1),
         expected_contains_data_until=datetime.date(2022, 2, 28),
     ),
-    DatasetPathTestCase(
-        path="ufo_observasjoner_p2019_p1920_v1.parquet",  # Will pass, but wrong sequence dates
-        expected_contains_data_from=datetime.date(2019, 1, 1),
-        expected_contains_data_until=datetime.date(1920, 12, 31),
-    ),
-    DatasetPathTestCase(
-        path="varehandel_p2018H2_p2018H1_v1.parquet",  # Will pass, but wrong sequence dates
-        expected_contains_data_from=datetime.date(2018, 7, 1),
-        expected_contains_data_until=datetime.date(2018, 6, 30),
-    ),
-    DatasetPathTestCase(
-        path="varehandel_p2018Q1_p2018H2_v1.parquet",  # Will pass, but combination of two different SSB dates
-        expected_contains_data_from=datetime.date(2018, 1, 1),
-        expected_contains_data_until=datetime.date(2018, 12, 31),
-    ),
 ]
 
 
@@ -116,6 +101,14 @@ def dataset_path(test_data: DatasetPathTestCase) -> DaplaDatasetPathInfo:
 @pytest.fixture()
 def expected_contains_data_from(test_data: DatasetPathTestCase) -> datetime.date:
     return test_data.expected_contains_data_from
+
+
+# kræsjer flygende_objekter_p2019_v1.parquet, omsetning_p2020W15_v1.parquet, omsetning_p1981-W52_v1.parquet, personinntekt_p2022H1_v1.parquet, ] failed: dataset_path = <datadoc.backend.dapla_dataset_path_info.DaplaDatasetPathInfo object at 0x12cf33200>
+# e
+# nybilreg_p2022T1_v1.parquet
+# pensjon_p2018Q1_v1.parquet
+# skipsanloep_p2021B2_v1.parquet
+# skipsanloep_p2022B1_v1.parquet
 
 
 @pytest.fixture()
@@ -149,11 +142,29 @@ def test_extract_period_info_no_period_info_in_path(data: str):
     assert DaplaDatasetPathInfo(data).contains_data_from is None
 
 
-def test_extract_period_info_date_from_wrong_sequence() -> None:
-    dataset = DaplaDatasetPathInfo("ufo_observasjoner_p2019_p1920_v1.parquet")
+@pytest.mark.parametrize(
+    "dataset_path_name",
+    [
+        "ufo_observasjoner_p2019_p1920_v1.parquet",
+        "varehandel_p2018H2_p2018H1_v1.parquet",
+        "varehandel_p2018Q1_p2018H2_v1.parquet",
+    ],
+)
+def test_extract_period_info_date_from_invalid_pathname(dataset_path_name: str) -> None:
+    dataset = DaplaDatasetPathInfo(dataset_path_name)
     assert dataset.contains_data_from is None
 
 
-def test_extract_period_info_date_until_wrong_sequence() -> None:
-    dataset = DaplaDatasetPathInfo("ufo_observasjoner_p2019_p1920_v1.parquet")
+@pytest.mark.parametrize(
+    "dataset_path_name",
+    [
+        "ufo_observasjoner_p2019_p1920_v1.parquet",
+        "varehandel_p2018H2_p2018H1_v1.parquet",
+        "varehandel_p2018Q1_p2018H2_v1.parquet",
+    ],
+)
+def test_extract_period_info_date_until_invalid_pathname(
+    dataset_path_name: str,
+) -> None:
+    dataset = DaplaDatasetPathInfo(dataset_path_name)
     assert dataset.contains_data_until is None
