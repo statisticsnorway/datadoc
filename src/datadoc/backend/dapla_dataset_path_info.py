@@ -192,6 +192,10 @@ def categorize_period_string(period: str) -> IsoDateFormat | SsbDateFormat:
     >>> date_format.name
     SSB_HALF_YEAR
 
+    >>> date_format = categorize_period_string('1876H5') # Not valid SSB date format, number is out of range
+    >>> date_format.name
+    SSB_HALF_YEAR
+
     >>> categorize_period_string('unknown format')
     Traceback (most recent call last):
      ...
@@ -247,6 +251,10 @@ def convert_ssb_period(
     >>> ssb_half_year_period_end
     189812
 
+    >>> convert_ssb_period("2018Q5","start",SSB_QUARTERLY)
+    Traceback (most recent call last):
+    KeyError: 'Q5'
+
     """
     return period_string[:4] + date_format.time_frame[period_string[-2:]][period_type]
 
@@ -265,9 +273,6 @@ class DaplaDatasetPathInfo:
         with contextlib.suppress(IndexError):
             self.second_period_string = _period_strings[1]
 
-        if self.contains_data_until < self.contains_data_from:
-            raise IndexError
-
     @staticmethod
     def _extract_period_strings(dataset_name_sections: list[str]) -> list[str]:
         """Extract period strings from dataset name sections.
@@ -285,6 +290,10 @@ class DaplaDatasetPathInfo:
 
         >>> DaplaDatasetPathInfo._extract_period_strings(['p1990Q1', 'kommune', 'v1'])
         ['1990Q1']
+
+        >>> DaplaDatasetPathInfo._extract_period_strings(['varehandel','v1']) # No date will return empty string
+        []
+
         """
         date_format_regex = re.compile(
             r"^p\d{4}(?:-\d{2}-\d{2}|-\d{2}|-{0,1}[QTHWB]\d{1,2})?$",

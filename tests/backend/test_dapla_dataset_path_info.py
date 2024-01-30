@@ -81,6 +81,21 @@ TEST_CASES = [
         expected_contains_data_from=datetime.date(2022, 1, 1),
         expected_contains_data_until=datetime.date(2022, 2, 28),
     ),
+    DatasetPathTestCase(
+        path="ufo_observasjoner_p2019_p1920_v1.parquet",  # Will pass, but wrong sequence dates
+        expected_contains_data_from=datetime.date(2019, 1, 1),
+        expected_contains_data_until=datetime.date(1920, 12, 31),
+    ),
+    DatasetPathTestCase(
+        path="varehandel_p2018H2_p2018H1_v1.parquet",  # Will pass, but wrong sequence dates
+        expected_contains_data_from=datetime.date(2018, 7, 1),
+        expected_contains_data_until=datetime.date(2018, 6, 30),
+    ),
+    DatasetPathTestCase(
+        path="varehandel_p2018Q1_p2018H2_v1.parquet",  # Will pass, but combination of two different SSB dates
+        expected_contains_data_from=datetime.date(2018, 1, 1),
+        expected_contains_data_until=datetime.date(2018, 12, 31),
+    ),
 ]
 
 
@@ -121,58 +136,16 @@ def test_extract_period_info_date_until(
     assert dataset_path.contains_data_until == expected_contains_data_until
 
 
-@pytest.mark.parametrize(
-    "data",
-    [
-        (
-            "varehandel_p2018Q5_p2018Q4_v1.parquet",
-            "Period format p2018Q5 is not supported",
-        ),
-        (
-            "varehandel_p2018Q1_p2018H2_v1.parquet",
-            "Period format p2018H2 is not supported",
-        ),
-    ],
-)
-def test_extract_period_info_failures(data: tuple):
-    DaplaDatasetPathInfo(data[0])
-    with pytest.raises(NotImplementedError):
-        raise NotImplementedError(data[1])
-
-
+# Nonsens names, no dates path names will trigger IndexError
 @pytest.mark.parametrize(
     "data",
     [
         "nonsen.data",
         "nonsens2.parquet",
+        "nonsens_v1.parquet",
+        "varehandel_v1.parquet",
     ],
 )
 def test_extract_period_info_failures_index_error(data: str):
     with pytest.raises(IndexError):
         DaplaDatasetPathInfo(data)
-
-
-@pytest.mark.parametrize(
-    "data",
-    [
-        (
-            "varehandel_p2018H2_p2018H1_v1.parquet",
-            "Periods are not in sequence",
-        ),
-        (
-            "varehandel_p2018T3_p2018T1_v1.parquet",
-            "Periods are not in sequence",
-        ),
-        (
-            "varehandel_p2018Q4_p2018Q1_v1.parquet",
-            "Periods are not in sequence",
-        ),
-        (
-            "varehandel_p2018B6_p2018B1_v1.parquet",
-            "Periods are not in sequence",
-        ),
-    ],
-)
-def test_extract_period_info_in_sequence(data: tuple):
-    with pytest.raises(IndexError):
-        DaplaDatasetPathInfo(data[0])
