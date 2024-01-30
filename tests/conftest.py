@@ -145,7 +145,10 @@ def existing_data_path() -> Path:
 
 
 @pytest.fixture()
-def generate_periodic_file(existing_data_path: Path, insert_string: str) -> Path:
+def generate_periodic_file(
+    existing_data_path: Path,
+    insert_string: str,
+) -> Generator[Path, None, None]:
     file_name = existing_data_path.name
     insert_pos = file_name.find("_v1")
     new_file_name = file_name[:insert_pos] + insert_string + file_name[insert_pos:]
