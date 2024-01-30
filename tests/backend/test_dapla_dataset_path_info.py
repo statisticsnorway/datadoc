@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import pytest
 
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
+from tests.utils import TEST_PARQUET_FILEPATH
 
 
 @dataclass
@@ -136,16 +137,32 @@ def test_extract_period_info_date_until(
     assert dataset_path.contains_data_until == expected_contains_data_until
 
 
-# Nonsens names, no dates path names will trigger IndexError
+@pytest.mark.parametrize(
+    "data",
+    [
+        (
+            "varehandel_p2018Q5_p2018Q4_v1.parquet",
+            "Period format p2018Q5 is not supported",
+        ),
+        (
+            "varehandel_p2018Q1_p2018H2_v1.parquet",
+            "Period format p2018H2 is not supported",
+        ),
+    ],
+)
+def test_extract_period_info_failures(data: tuple):
+    DaplaDatasetPathInfo(data[0])
+    with pytest.raises(NotImplementedError):
+        raise NotImplementedError(data[1])
+
+
 @pytest.mark.parametrize(
     "data",
     [
         "nonsen.data",
         "nonsens2.parquet",
-        "nonsens_v1.parquet",
-        "varehandel_v1.parquet",
+        TEST_PARQUET_FILEPATH.name,
     ],
 )
-def test_extract_period_info_failures_index_error(data: str):
-    with pytest.raises(IndexError):
-        DaplaDatasetPathInfo(data)
+def test_extract_period_info_no_period_info_in_path(data: str):
+    assert DaplaDatasetPathInfo(data).contains_data_from is None

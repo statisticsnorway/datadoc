@@ -200,7 +200,6 @@ def test_direct_person_identifying_default_value(metadata: DataDocMetadata):
     assert all(not v.direct_person_identifying for v in metadata.meta.variables)
 
 
-# Test with existing dataset and metadata document
 def test_save_file_path_metadata_field(
     existing_metadata_file: str,
     metadata: DataDocMetadata,
@@ -211,7 +210,6 @@ def test_save_file_path_metadata_field(
     assert saved_file_path == str(metadata.dataset)
 
 
-# Test with dataset and no metadata document
 def test_save_file_path_dataset_and_no_metadata(
     metadata: DataDocMetadata,
 ):
@@ -219,6 +217,3 @@ def test_save_file_path_dataset_and_no_metadata(
     with Path.open(Path(TEST_RESOURCES_METADATA_DOCUMENT)) as f:
         saved_file_path = json.load(f)["datadoc"]["dataset"]["file_path"]
     assert saved_file_path == str(metadata.dataset)
-
-
-# Test with metadata document and no dataset
