@@ -265,9 +265,6 @@ class DaplaDatasetPathInfo:
         with contextlib.suppress(IndexError):
             self.second_period_string = _period_strings[1]
 
-        if self.contains_data_until < self.contains_data_from:
-            raise IndexError
-
     @staticmethod
     def _extract_period_strings(dataset_name_sections: list[str]) -> list[str]:
         """Extract period strings from dataset name sections.
