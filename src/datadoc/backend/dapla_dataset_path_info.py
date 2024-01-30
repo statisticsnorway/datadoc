@@ -1,7 +1,6 @@
 """Extract info from a path following SSB's dataset naming convention."""
 from __future__ import annotations
 
-import contextlib
 import pathlib
 import re
 from dataclasses import dataclass
@@ -259,12 +258,12 @@ class DaplaDatasetPathInfo:
         """Digest the path so that it's ready for further parsing."""
         self.dataset_path = pathlib.Path(dataset_path)
         self.dataset_name_sections = self.dataset_path.stem.split("_")
-        _period_strings = self._extract_period_strings(self.dataset_name_sections)
-        self.first_period_string = _period_strings[0]
-        self.second_period_string: str | None = None
+        self._period_strings = self._extract_period_strings(self.dataset_name_sections)
+        # self.first_period_string = _period_strings[0]
+        # self.second_period_string: str | None = None
 
-        with contextlib.suppress(IndexError):
-            self.second_period_string = _period_strings[1]
+        # with contextlib.suppress(IndexError):
+        #     self.second_period_string = _period_strings[1]
 
     @staticmethod
     def _extract_period_strings(dataset_name_sections: list[str]) -> list[str]:
@@ -294,37 +293,52 @@ class DaplaDatasetPathInfo:
             if re.match(date_format_regex, x) is not None
         ]
 
+    def _extract_period_string_from_index(self, index: int) -> str | None:
+        try:
+            return self._period_strings[index]
+        except IndexError:
+            return None
+
     @property
-    def contains_data_from(self) -> datetime.date:
+    def contains_data_from(self) -> datetime.date | None:
         """The earliest date from which data in the dataset is relevant for."""
-        date_format = categorize_period_string(self.first_period_string)
-        if isinstance(date_format, SsbDateFormat):
-            """If dateformat is SSB date format return start month of ssb period."""
-            period = convert_ssb_period(
-                self.first_period_string,
-                "start",
-                date_format,
-            )
-            return arrow.get(period, date_format.arrow_pattern).floor("month").date()
+        first_period_string = self._extract_period_string_from_index(0)
+        if first_period_string is not None:
+            date_format = categorize_period_string(first_period_string)
+            if isinstance(date_format, SsbDateFormat):
+                """If dateformat is SSB date format return start month of ssb period."""
+                period = convert_ssb_period(
+                    first_period_string,
+                    "start",
+                    date_format,
+                )
+                return (
+                    arrow.get(period, date_format.arrow_pattern).floor("month").date()
+                )
 
-        return (
-            arrow.get(self.first_period_string, date_format.arrow_pattern)
-            .floor(date_format.timeframe)
-            .date()
-        )
+            return (
+                arrow.get(first_period_string, date_format.arrow_pattern)
+                .floor(date_format.timeframe)
+                .date()
+            )
+        return None
 
     @property
-    def contains_data_until(self) -> datetime.date:
+    def contains_data_until(self) -> datetime.date | None:
         """The latest date until which data in the dataset is relevant for."""
-        period_string = self.second_period_string or self.first_period_string
-        date_format = categorize_period_string(period_string)
-        if isinstance(date_format, SsbDateFormat):
-            """If dateformat is SSB date format return end month of ssb period."""
-            period = convert_ssb_period(period_string, "end", date_format)
-            return arrow.get(period, date_format.arrow_pattern).ceil("month").date()
+        first_period_string = self._extract_period_string_from_index(0)
+        second_period_string = self._extract_period_string_from_index(1)
+        period_string = second_period_string or first_period_string
+        if period_string is not None:
+            date_format = categorize_period_string(period_string)
+            if isinstance(date_format, SsbDateFormat):
+                """If dateformat is SSB date format return end month of ssb period."""
+                period = convert_ssb_period(period_string, "end", date_format)
+                return arrow.get(period, date_format.arrow_pattern).ceil("month").date()
 
-        return (
-            arrow.get(period_string, date_format.arrow_pattern)
-            .ceil(date_format.timeframe)
-            .date()
-        )
+            return (
+                arrow.get(period_string, date_format.arrow_pattern)
+                .ceil(date_format.timeframe)
+                .date()
+            )
+        return None
