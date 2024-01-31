@@ -164,3 +164,20 @@ def test_save_file_path_dataset_and_no_metadata(
     with Path.open(Path(TEST_RESOURCES_METADATA_DOCUMENT)) as f:
         saved_file_path = json.load(f)["datadoc"]["dataset"]["file_path"]
     assert saved_file_path == str(metadata.dataset)
+
+
+@pytest.mark.parametrize(
+    ("insert_string", "expected_from", "expected_until"),
+    [
+        ("_p2021", "2021-01-01", "2021-12-31"),
+        ("_p2022_p2023", "2022-01-01", "2023-12-31"),
+    ],
+)
+def test_period_metadata_fields_saved(
+    generate_periodic_file,
+    expected_from,
+    expected_until,
+):
+    metadata = DataDocMetadata(generate_periodic_file)
+    assert metadata.meta.dataset.contains_data_from == expected_from
+    assert metadata.meta.dataset.contains_data_until == expected_until

@@ -20,6 +20,7 @@ from .utils import TEST_BUCKET_PARQUET_FILEPATH
 from .utils import TEST_EXISTING_METADATA_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_FILE_NAME
 from .utils import TEST_PARQUET_FILEPATH
+from .utils import TEST_RESOURCES_DIRECTORY
 from .utils import TEST_RESOURCES_METADATA_DOCUMENT
 
 
@@ -131,3 +132,23 @@ def nynorsk_name() -> str:
 @pytest.fixture()
 def language_object(english_name: str, bokmål_name: str) -> model.LanguageStringType:
     return model.LanguageStringType(en=english_name, nb=bokmål_name)
+
+
+@pytest.fixture()
+def existing_data_path() -> Path:
+    return TEST_PARQUET_FILEPATH
+
+
+@pytest.fixture()
+def generate_periodic_file(
+    existing_data_path: Path,
+    insert_string: str,
+) -> Generator[Path, None, None]:
+    file_name = existing_data_path.name
+    insert_pos = file_name.find("_v1")
+    new_file_name = file_name[:insert_pos] + insert_string + file_name[insert_pos:]
+    new_path = TEST_RESOURCES_DIRECTORY / new_file_name
+    shutil.copy(existing_data_path, new_path)
+    yield new_path
+    if new_path.exists():
+        new_path.unlink()
