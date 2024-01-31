@@ -107,7 +107,6 @@ class DataDocMetadata:
                 dataset_path_parts,
             ):
                 return state
-
         return None
 
     @staticmethod

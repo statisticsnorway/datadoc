@@ -307,19 +307,23 @@ class DaplaDatasetPathInfo:
             if re.match(date_format_regex, x) is not None
         ]
 
+    def _extract_period_string_from_index(self, index: int) -> str | None:
+        try:
+            return self._period_strings[index]
+        except IndexError:
+            return None
+
     @property
     def contains_data_from(self) -> datetime.date | None:
         """The earliest date from which data in the dataset is relevant for."""
-        try:
-            period_string = self._period_strings[0]
-            if (
-                len(self._period_strings) > 1
-                and period_string > self._period_strings[1]
-            ):
-                return None
-            date_format = categorize_period_string(period_string)
-        except IndexError:
+        period_string = self._extract_period_string_from_index(0)
+        if (
+            not period_string
+            or len(self._period_strings) > 1
+            and period_string > self._period_strings[1]
+        ):
             return None
+        date_format = categorize_period_string(period_string)
 
         if isinstance(date_format, SsbDateFormat):
             """If dateformat is SSB date format return start month of ssb period."""
@@ -343,16 +347,15 @@ class DaplaDatasetPathInfo:
     @property
     def contains_data_until(self) -> datetime.date | None:
         """The latest date until which data in the dataset is relevant for."""
-        try:
-            period_string = self._period_strings[1]
-            if period_string < self._period_strings[0]:
-                return None
-        except IndexError:
-            try:
-                period_string = self._period_strings[0]
-            except IndexError:
-                return None
-
+        first_period_string = self._extract_period_string_from_index(0)
+        second_period_string = self._extract_period_string_from_index(1)
+        period_string = second_period_string or first_period_string
+        if not period_string or (
+            second_period_string
+            and first_period_string is not None
+            and second_period_string < first_period_string
+        ):
+            return None
         date_format = categorize_period_string(period_string)
         if isinstance(date_format, SsbDateFormat):
             """If dateformat is SSB date format return end month of ssb period."""
