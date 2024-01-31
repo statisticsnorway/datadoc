@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import pytest
 
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
+from datadoc.backend.dapla_dataset_path_info import DateFormat
 from tests.utils import TEST_PARQUET_FILEPATH
 
 
@@ -163,3 +164,14 @@ def test_extract_period_info_date_until_invalid_pathname(
 ) -> None:
     dataset = DaplaDatasetPathInfo(dataset_path_name)
     assert dataset.contains_data_until is None
+
+
+# Should return a datetime.date - test getFloor() and getCeil() methods
+def test_date_format():
+    test_date_format = DateFormat(
+        name="DATE_YEAR_MONTH",
+        regex_pattern=r"^\d{4}\-\d{2}$",
+        arrow_pattern="YYYY-MM",
+        timeframe="month",
+    )
+    assert isinstance(test_date_format.get_floor("2022-10"), datetime.date)

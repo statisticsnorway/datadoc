@@ -15,6 +15,34 @@ if TYPE_CHECKING:
 
 
 @dataclass
+class DateFormat:
+    """A super class for different date formats."""
+
+    name: str
+    regex_pattern: str
+    arrow_pattern: str
+    timeframe: Literal["year", "month", "day", "week"]
+
+    def get_floor(self, period_string: str) -> datetime.date | None:
+        """Return first date of timeframe period.
+
+        >>> date = test_date_format.get_floor("1980-08")
+        >>> date
+        datetime.date(1980, 8, 1)
+
+        """
+        return arrow.get(period_string, self.arrow_pattern).floor(self.timeframe).date()
+
+
+test_date_format = DateFormat(
+    name="DATE_YEAR_MONTH",
+    regex_pattern=r"^\d{4}\-\d{2}$",
+    arrow_pattern="YYYY-MM",
+    timeframe="month",
+)
+
+
+@dataclass
 class IsoDateFormat:
     """An ISO date format with relevant patterns."""
 
