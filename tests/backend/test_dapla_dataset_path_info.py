@@ -125,25 +125,6 @@ def test_extract_period_info_date_until(
 @pytest.mark.parametrize(
     "data",
     [
-        (
-            "varehandel_p2018Q5_p2018Q4_v1.parquet",
-            "Period format p2018Q5 is not supported",
-        ),
-        (
-            "varehandel_p2018Q1_p2018H2_v1.parquet",
-            "Period format p2018H2 is not supported",
-        ),
-    ],
-)
-def test_extract_period_info_failures(data: tuple):
-    DaplaDatasetPathInfo(data[0])
-    with pytest.raises(NotImplementedError):
-        raise NotImplementedError(data[1])
-
-
-@pytest.mark.parametrize(
-    "data",
-    [
         "nonsen.data",
         "nonsens2.parquet",
         TEST_PARQUET_FILEPATH.name,
@@ -151,3 +132,34 @@ def test_extract_period_info_failures(data: tuple):
 )
 def test_extract_period_info_no_period_info_in_path(data: str):
     assert DaplaDatasetPathInfo(data).contains_data_from is None
+
+
+# These tests covers both date until after date from, mix of SSB keys and invalid SSB keys
+@pytest.mark.parametrize(
+    "dataset_path_name",
+    [
+        "ufo_observasjoner_p2019_p1920_v1.parquet",
+        "varehandel_p2018H2_p2018H1_v1.parquet",
+        "varehandel_p2018Q1_p2018H2_v1.parquet",
+        "sykkeltransport_p1973B8_v1.parquet",
+    ],
+)
+def test_extract_period_info_date_from_invalid_pathname(dataset_path_name: str) -> None:
+    dataset = DaplaDatasetPathInfo(dataset_path_name)
+    assert dataset.contains_data_from is None
+
+
+@pytest.mark.parametrize(
+    "dataset_path_name",
+    [
+        "ufo_observasjoner_p2019_p1920_v1.parquet",
+        "varehandel_p2018H2_p2018H1_v1.parquet",
+        "varehandel_p2018Q1_p2018H2_v1.parquet",
+        "sykkeltransport_p1973B2_p2020T8_v1.parquet",
+    ],
+)
+def test_extract_period_info_date_until_invalid_pathname(
+    dataset_path_name: str,
+) -> None:
+    dataset = DaplaDatasetPathInfo(dataset_path_name)
+    assert dataset.contains_data_until is None
