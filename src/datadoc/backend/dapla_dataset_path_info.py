@@ -215,8 +215,10 @@ def convert_ssb_period(
     period_string: str,
     period_type: str,
     date_format: SsbDateFormat,
-) -> str:
+) -> str | None:
     """Convert ssb-format for bimester, quarterly, triannual and half year to start and end months.
+
+       If invalid SSB key, the method returns None.
 
     Usage-examples:
     >>> ssb_bimester_period_start = convert_ssb_period("2022B1","start",SSB_BIMESTER)
@@ -251,12 +253,17 @@ def convert_ssb_period(
     >>> ssb_half_year_period_end
     189812
 
-    >>> convert_ssb_period("2018Q5","start",SSB_QUARTERLY)
-    Traceback (most recent call last):
-    KeyError: 'Q5'
+    >>> ssb_invalid_key = convert_ssb_period("2018Q5","start",SSB_QUARTERLY)
+    >>> ssb_invalid_key
+    None
 
     """
-    return period_string[:4] + date_format.time_frame[period_string[-2:]][period_type]
+    try:
+        return (
+            period_string[:4] + date_format.time_frame[period_string[-2:]][period_type]
+        )
+    except KeyError:
+        return None
 
 
 class DaplaDatasetPathInfo:
@@ -321,7 +328,11 @@ class DaplaDatasetPathInfo:
                 "start",
                 date_format,
             )
-            return arrow.get(period, date_format.arrow_pattern).floor("month").date()
+            if period is not None:
+                return (
+                    arrow.get(period, date_format.arrow_pattern).floor("month").date()
+                )
+            return None
 
         return (
             arrow.get(period_string, date_format.arrow_pattern)
@@ -346,8 +357,9 @@ class DaplaDatasetPathInfo:
         if isinstance(date_format, SsbDateFormat):
             """If dateformat is SSB date format return end month of ssb period."""
             period = convert_ssb_period(period_string, "end", date_format)
-            return arrow.get(period, date_format.arrow_pattern).ceil("month").date()
-
+            if period is not None:
+                return arrow.get(period, date_format.arrow_pattern).ceil("month").date()
+            return None
         return (
             arrow.get(period_string, date_format.arrow_pattern)
             .ceil(date_format.timeframe)
