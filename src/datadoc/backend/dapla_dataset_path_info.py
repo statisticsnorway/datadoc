@@ -12,6 +12,7 @@ import arrow
 if TYPE_CHECKING:
     import datetime
     import os
+    from datetime import date
 
 
 @dataclass
@@ -23,7 +24,7 @@ class DateFormat:
     arrow_pattern: str
     timeframe: Literal["year", "month", "day", "week"]
 
-    def get_floor(self, period_string: str) -> datetime.date | None:
+    def get_floor(self, period_string: str) -> date:
         """Return first date of timeframe period.
 
         >>> date = test_date_format.get_floor("1980-08")
@@ -33,24 +34,49 @@ class DateFormat:
         """
         return arrow.get(period_string, self.arrow_pattern).floor(self.timeframe).date()
 
-
-test_date_format = DateFormat(
-    name="DATE_YEAR_MONTH",
-    regex_pattern=r"^\d{4}\-\d{2}$",
-    arrow_pattern="YYYY-MM",
-    timeframe="month",
-)
+    def get_ceil(self, period_string: str) -> date:
+        """Return date until."""
+        return arrow.get(period_string, self.arrow_pattern).ceil(self.timeframe).date()
 
 
 @dataclass
-class IsoDateFormat:
-    """An ISO date format with relevant patterns."""
+class IsoDateFormat(DateFormat):
+    """Subclass inherits from superclass."""
 
-    name: str
-    regex_pattern: str
-    arrow_pattern: str
-    timeframe: Literal["year", "month", "day", "week"]
 
+@dataclass
+class SsbDateFormat2(DateFormat):
+    """Subclass inherits from superclass."""
+
+    ssb_dates: dict
+
+    def get_floor(self, period_string: str) -> date:
+        """Ssb."""
+        period_string = period_string[:4] + self.ssb_dates[period_string[-2:]]["start"]
+        return super().get_floor(period_string)
+
+    def get_ceil(self, period_string: str) -> date:
+        """S."""
+        period_string = period_string[:4] + self.ssb_dates[period_string[-2:]]["end"]
+        return super().get_ceil(period_string)
+
+
+test_ssb_format = SsbDateFormat2(
+    name="SSB_BIMESTER",
+    regex_pattern=r"\d{4}[B]\d{1}$",
+    arrow_pattern="YYYYMM",
+    timeframe="month",
+    ssb_dates={
+        "B1": {
+            "start": "01",
+            "end": "02",
+        },
+        "B2": {
+            "start": "03",
+            "end": "04",
+        },
+    },
+)
 
 ISO_YEAR = IsoDateFormat(
     name="ISO_YEAR",
@@ -366,11 +392,7 @@ class DaplaDatasetPathInfo:
                 )
             return None
 
-        return (
-            arrow.get(period_string, date_format.arrow_pattern)
-            .floor(date_format.timeframe)
-            .date()
-        )
+        return date_format.get_floor(period_string)
 
     @property
     def contains_data_until(self) -> datetime.date | None:
@@ -391,8 +413,4 @@ class DaplaDatasetPathInfo:
             if period is not None:
                 return arrow.get(period, date_format.arrow_pattern).ceil("month").date()
             return None
-        return (
-            arrow.get(period_string, date_format.arrow_pattern)
-            .ceil(date_format.timeframe)
-            .date()
-        )
+        return date_format.get_ceil(period_string)

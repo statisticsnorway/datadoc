@@ -4,7 +4,8 @@ from dataclasses import dataclass
 import pytest
 
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
-from datadoc.backend.dapla_dataset_path_info import DateFormat
+from datadoc.backend.dapla_dataset_path_info import IsoDateFormat
+from datadoc.backend.dapla_dataset_path_info import SsbDateFormat2
 from tests.utils import TEST_PARQUET_FILEPATH
 
 
@@ -167,11 +168,44 @@ def test_extract_period_info_date_until_invalid_pathname(
 
 
 # Should return a datetime.date - test getFloor() and getCeil() methods
-def test_date_format():
-    test_date_format = DateFormat(
+# teste get_floor og get_ceil ?
+def test_iso_date_format():
+    test_date_format = IsoDateFormat(
         name="DATE_YEAR_MONTH",
         regex_pattern=r"^\d{4}\-\d{2}$",
         arrow_pattern="YYYY-MM",
         timeframe="month",
     )
     assert isinstance(test_date_format.get_floor("2022-10"), datetime.date)
+
+
+def test_ssb_date_format():
+    test_ssb_format = SsbDateFormat2(
+        name="SSB_BIMESTER",
+        regex_pattern=r"\d{4}[B]\d{1}$",
+        arrow_pattern="YYYYMM",
+        timeframe="month",
+        ssb_dates={
+            "B1": {
+                "start": "01",
+                "end": "02",
+            },
+        },
+    )
+    assert test_ssb_format.get_floor("2022B1") == datetime.date(2022, 1, 1)
+
+
+def test_ssb_date_format_end():
+    test_ssb_format = SsbDateFormat2(
+        name="SSB_BIMESTER",
+        regex_pattern=r"\d{4}[B]\d{1}$",
+        arrow_pattern="YYYYMM",
+        timeframe="month",
+        ssb_dates={
+            "B1": {
+                "start": "01",
+                "end": "02",
+            },
+        },
+    )
+    assert test_ssb_format.get_ceil("2022B1") == datetime.date(2022, 2, 28)
