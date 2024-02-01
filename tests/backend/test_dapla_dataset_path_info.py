@@ -3,9 +3,11 @@ from dataclasses import dataclass
 
 import pytest
 
+from datadoc.backend.dapla_dataset_path_info import ISO_YEAR
+from datadoc.backend.dapla_dataset_path_info import ISO_YEAR_MONTH
+from datadoc.backend.dapla_dataset_path_info import ISO_YEAR_MONTH_DAY
+from datadoc.backend.dapla_dataset_path_info import SSB_BIMESTER
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
-from datadoc.backend.dapla_dataset_path_info import IsoDateFormat
-from datadoc.backend.dapla_dataset_path_info import SsbDateFormat2
 from tests.utils import TEST_PARQUET_FILEPATH
 
 
@@ -167,45 +169,42 @@ def test_extract_period_info_date_until_invalid_pathname(
     assert dataset.contains_data_until is None
 
 
-# Should return a datetime.date - test getFloor() and getCeil() methods
-# teste get_floor og get_ceil ?
-def test_iso_date_format():
-    test_date_format = IsoDateFormat(
-        name="DATE_YEAR_MONTH",
-        regex_pattern=r"^\d{4}\-\d{2}$",
-        arrow_pattern="YYYY-MM",
-        timeframe="month",
-    )
-    assert isinstance(test_date_format.get_floor("2022-10"), datetime.date)
+@pytest.mark.parametrize(
+    ("date_format", "period"),
+    [
+        (ISO_YEAR, "1980"),
+        (ISO_YEAR_MONTH, "1888-11"),
+        (ISO_YEAR_MONTH_DAY, "2203-01-24"),
+        (SSB_BIMESTER, "1963B3"),
+    ],
+)
+def test_date_format_return_date_object_period_start(date_format, period):
+    assert isinstance(date_format.get_floor(period), datetime.date)
 
 
-def test_ssb_date_format():
-    test_ssb_format = SsbDateFormat2(
-        name="SSB_BIMESTER",
-        regex_pattern=r"\d{4}[B]\d{1}$",
-        arrow_pattern="YYYYMM",
-        timeframe="month",
-        ssb_dates={
-            "B1": {
-                "start": "01",
-                "end": "02",
-            },
-        },
-    )
-    assert test_ssb_format.get_floor("2022B1") == datetime.date(2022, 1, 1)
+@pytest.mark.parametrize(
+    ("date_format", "period"),
+    [
+        (ISO_YEAR, "1980"),
+        (ISO_YEAR_MONTH, "1888-11"),
+        (ISO_YEAR_MONTH_DAY, "2203-01-24"),
+        (SSB_BIMESTER, "1963B3"),
+    ],
+)
+def test_date_format_return_date_object_period_end(date_format, period):
+    assert isinstance(date_format.get_ceil(period), datetime.date)
 
 
-def test_ssb_date_format_end():
-    test_ssb_format = SsbDateFormat2(
-        name="SSB_BIMESTER",
-        regex_pattern=r"\d{4}[B]\d{1}$",
-        arrow_pattern="YYYYMM",
-        timeframe="month",
-        ssb_dates={
-            "B1": {
-                "start": "01",
-                "end": "02",
-            },
-        },
-    )
-    assert test_ssb_format.get_ceil("2022B1") == datetime.date(2022, 2, 28)
+# @pytest.mark.parametrize ?
+def test_date_format_correct_from_date():
+    ssb_bimester = (SSB_BIMESTER, "2022B1")
+    iso_year = (ISO_YEAR, "1980")
+    assert ssb_bimester[0].get_floor(ssb_bimester[1]) == datetime.date(2022, 1, 1)
+    assert iso_year[0].get_floor(iso_year[1]) == datetime.date(1980, 1, 1)
+
+
+def test_ssb_date_format_correct_end_date():
+    ssb_bimester = (SSB_BIMESTER, "2022B1")
+    iso_year = (ISO_YEAR, "1980")
+    assert ssb_bimester[0].get_ceil(ssb_bimester[1]) == datetime.date(2022, 2, 28)
+    assert iso_year[0].get_ceil(iso_year[1]) == datetime.date(1980, 12, 31)

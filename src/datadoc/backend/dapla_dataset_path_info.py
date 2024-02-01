@@ -44,40 +44,6 @@ class IsoDateFormat(DateFormat):
     """Subclass inherits from superclass."""
 
 
-@dataclass
-class SsbDateFormat2(DateFormat):
-    """Subclass inherits from superclass."""
-
-    ssb_dates: dict
-
-    def get_floor(self, period_string: str) -> date:
-        """Ssb."""
-        period_string = period_string[:4] + self.ssb_dates[period_string[-2:]]["start"]
-        return super().get_floor(period_string)
-
-    def get_ceil(self, period_string: str) -> date:
-        """S."""
-        period_string = period_string[:4] + self.ssb_dates[period_string[-2:]]["end"]
-        return super().get_ceil(period_string)
-
-
-test_ssb_format = SsbDateFormat2(
-    name="SSB_BIMESTER",
-    regex_pattern=r"\d{4}[B]\d{1}$",
-    arrow_pattern="YYYYMM",
-    timeframe="month",
-    ssb_dates={
-        "B1": {
-            "start": "01",
-            "end": "02",
-        },
-        "B2": {
-            "start": "03",
-            "end": "04",
-        },
-    },
-)
-
 ISO_YEAR = IsoDateFormat(
     name="ISO_YEAR",
     regex_pattern=r"^\d{4}$",
@@ -105,20 +71,33 @@ ISO_YEAR_WEEK = IsoDateFormat(
 
 
 @dataclass
-class SsbDateFormat:
-    """An date format with relevant patterns for SSB special date formats."""
+class SsbDateFormat(DateFormat):
+    """Subclass inherits from superclass."""
 
-    name: str
-    regex_pattern: str
-    arrow_pattern: str
-    time_frame: dict
+    ssb_dates: dict
+
+    def get_floor(self, period_string: str) -> date:
+        """Ssb."""
+        year = period_string[:4]
+        month = self.ssb_dates[period_string[-2:]]["start"]
+        period = year + month
+        return super().get_floor(period)
+
+    def get_ceil(self, period_string: str) -> date:
+        """S."""
+        year = period_string[:4]
+        month = self.ssb_dates[period_string[-2:]]["end"]
+        period = year + month
+        period = year + month
+        return super().get_ceil(period)
 
 
 SSB_BIMESTER = SsbDateFormat(
     name="SSB_BIMESTER",
     regex_pattern=r"\d{4}[B]\d{1}$",
     arrow_pattern="YYYYMM",
-    time_frame={
+    timeframe="month",
+    ssb_dates={
         "B1": {
             "start": "01",
             "end": "02",
@@ -150,7 +129,8 @@ SSB_QUARTERLY = SsbDateFormat(
     name="SSB_QUARTERLY",
     regex_pattern=r"\d{4}[Q]\d{1}$",
     arrow_pattern="YYYYMM",
-    time_frame={
+    timeframe="month",
+    ssb_dates={
         "Q1": {
             "start": "01",
             "end": "03",
@@ -169,11 +149,13 @@ SSB_QUARTERLY = SsbDateFormat(
         },
     },
 )
+
 SSB_TRIANNUAL = SsbDateFormat(
     name="SSB_TRIANNUAL",
     regex_pattern=r"\d{4}[T]\d{1}$",
     arrow_pattern="YYYYMM",
-    time_frame={
+    timeframe="month",
+    ssb_dates={
         "T1": {
             "start": "01",
             "end": "04",
@@ -192,7 +174,8 @@ SSB_HALF_YEAR = SsbDateFormat(
     name="SSB_HALF_YEAR",
     regex_pattern=r"\d{4}[H]\d{1}$",
     arrow_pattern="YYYYMM",
-    time_frame={
+    timeframe="month",
+    ssb_dates={
         "H1": {
             "start": "01",
             "end": "06",
@@ -314,7 +297,7 @@ def convert_ssb_period(
     """
     try:
         return (
-            period_string[:4] + date_format.time_frame[period_string[-2:]][period_type]
+            period_string[:4] + date_format.timeframe[period_string[-2:]][period_type]
         )
     except KeyError:
         return None
@@ -378,7 +361,7 @@ class DaplaDatasetPathInfo:
         ):
             return None
         date_format = categorize_period_string(period_string)
-
+        # remove this
         if isinstance(date_format, SsbDateFormat):
             """If dateformat is SSB date format return start month of ssb period."""
             period = convert_ssb_period(
