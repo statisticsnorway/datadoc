@@ -24,7 +24,7 @@ class DateFormat:
     arrow_pattern: str
     timeframe: Literal["year", "month", "day", "week"]
 
-    def get_floor(self, period_string: str) -> date:
+    def get_floor(self, period_string: str) -> date | None:
         """Return first date of timeframe period.
 
         >>> date = test_date_format.get_floor("1980-08")
@@ -34,7 +34,7 @@ class DateFormat:
         """
         return arrow.get(period_string, self.arrow_pattern).floor(self.timeframe).date()
 
-    def get_ceil(self, period_string: str) -> date:
+    def get_ceil(self, period_string: str) -> date | None:
         """Return date until."""
         return arrow.get(period_string, self.arrow_pattern).ceil(self.timeframe).date()
 
@@ -76,20 +76,25 @@ class SsbDateFormat(DateFormat):
 
     ssb_dates: dict
 
-    def get_floor(self, period_string: str) -> date:
+    def get_floor(self, period_string: str) -> date | None:
         """Ssb."""
-        year = period_string[:4]
-        month = self.ssb_dates[period_string[-2:]]["start"]
-        period = year + month
-        return super().get_floor(period)
+        try:
+            year = period_string[:4]
+            month = self.ssb_dates[period_string[-2:]]["start"]
+            period = year + month
+            return super().get_floor(period)
+        except KeyError:
+            return None
 
-    def get_ceil(self, period_string: str) -> date:
+    def get_ceil(self, period_string: str) -> date | None:
         """S."""
-        year = period_string[:4]
-        month = self.ssb_dates[period_string[-2:]]["end"]
-        period = year + month
-        period = year + month
-        return super().get_ceil(period)
+        try:
+            year = period_string[:4]
+            month = self.ssb_dates[period_string[-2:]]["end"]
+            period = year + month
+            return super().get_ceil(period)
+        except KeyError:
+            return None
 
 
 SSB_BIMESTER = SsbDateFormat(
@@ -248,61 +253,6 @@ def categorize_period_string(period: str) -> IsoDateFormat | SsbDateFormat:
     )
 
 
-def convert_ssb_period(
-    period_string: str,
-    period_type: str,
-    date_format: SsbDateFormat,
-) -> str | None:
-    """Convert ssb-format for bimester, quarterly, triannual and half year to start and end months.
-
-       If invalid SSB key, the method returns None.
-
-    Usage-examples:
-    >>> ssb_bimester_period_start = convert_ssb_period("2022B1","start",SSB_BIMESTER)
-    >>> ssb_bimester_period_start
-    202201
-
-    >>> ssb_bimester_period_end = convert_ssb_period("2022B1","end",SSB_BIMESTER)
-    >>> ssb_bimester_period_end
-    202202
-
-    >>> ssb_quarterly_period_start = convert_ssb_period("2015Q3","start",SSB_QUARTERLY)
-    >>> ssb_quarterly_period_start
-    201507
-
-    >>> ssb_quarterly_period_end = convert_ssb_period("2015Q3","end",SSB_QUARTERLY)
-    >>> ssb_quarterly_period_end
-    201509
-
-    >>> ssb_triannual_period_start = convert_ssb_period("1998T2","start",SSB_TRIANNUAL)
-    >>> ssb_triannual_period_start
-    199805
-
-    >>> ssb_quarterly_period_end = convert_ssb_period("1998T2","end",SSB_TRIANNUAL)
-    >>> ssb_quarterly_period_end
-    199808
-
-    >>> ssb_half_year_period_start = convert_ssb_period("1898H2","start",SSB_HALF_YEAR)
-    >>> ssb_half_year_period_start
-    189807
-
-    >>> ssb_half_year_period_end = convert_ssb_period("1898H2","end",SSB_HALF_YEAR)
-    >>> ssb_half_year_period_end
-    189812
-
-    >>> ssb_invalid_key = convert_ssb_period("2018Q5","start",SSB_QUARTERLY)
-    >>> ssb_invalid_key
-    None
-
-    """
-    try:
-        return (
-            period_string[:4] + date_format.timeframe[period_string[-2:]][period_type]
-        )
-    except KeyError:
-        return None
-
-
 class DaplaDatasetPathInfo:
     """Extract info from a path following SSB's dataset naming convention."""
 
@@ -361,20 +311,6 @@ class DaplaDatasetPathInfo:
         ):
             return None
         date_format = categorize_period_string(period_string)
-        # remove this
-        if isinstance(date_format, SsbDateFormat):
-            """If dateformat is SSB date format return start month of ssb period."""
-            period = convert_ssb_period(
-                period_string,
-                "start",
-                date_format,
-            )
-            if period is not None:
-                return (
-                    arrow.get(period, date_format.arrow_pattern).floor("month").date()
-                )
-            return None
-
         return date_format.get_floor(period_string)
 
     @property
@@ -390,10 +326,4 @@ class DaplaDatasetPathInfo:
         ):
             return None
         date_format = categorize_period_string(period_string)
-        if isinstance(date_format, SsbDateFormat):
-            """If dateformat is SSB date format return end month of ssb period."""
-            period = convert_ssb_period(period_string, "end", date_format)
-            if period is not None:
-                return arrow.get(period, date_format.arrow_pattern).ceil("month").date()
-            return None
         return date_format.get_ceil(period_string)
