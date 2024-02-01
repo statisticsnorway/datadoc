@@ -195,7 +195,6 @@ def test_date_format_return_date_object_period_end(date_format, period):
     assert isinstance(date_format.get_ceil(period), datetime.date)
 
 
-# @pytest.mark.parametrize ?
 def test_date_format_correct_from_date():
     ssb_bimester = (SSB_BIMESTER, "2022B1")
     iso_year = (ISO_YEAR, "1980")
