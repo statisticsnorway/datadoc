@@ -240,33 +240,13 @@ def categorize_period_string(period: str) -> IsoDateFormat | SsbDateFormat:
     If the period string is not recognized, a NotImplementedError is raised.
 
     Examples:
-    >>> date_format = categorize_period_string('2022')
-    >>> date_format.name
-    ISO_YEAR
-
     >>> date_format = categorize_period_string('2022-W01')
     >>> date_format.name
     ISO_YEAR_WEEK
 
-    >>> date_format = categorize_period_string('2022B1')
-    >>> date_format.name
-    SSB_BIMESTER
-
-    >>> date_format = categorize_period_string('1980Q3')
-    >>> date_format.name
-    SSB_QUARTERLY
-
     >>> date_format = categorize_period_string('1954T2')
     >>> date_format.name
     SSB_TRIANNUAL
-
-    >>> date_format = categorize_period_string('1876H1')
-    >>> date_format.name
-    SSB_HALF_YEAR
-
-    >>> date_format = categorize_period_string('1876H5') # Not valid SSB date format, number is out of range
-    >>> date_format.name
-    SSB_HALF_YEAR
 
     >>> categorize_period_string('unknown format')
     Traceback (most recent call last):
