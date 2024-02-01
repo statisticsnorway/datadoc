@@ -202,7 +202,7 @@ def test_date_format_correct_from_date():
     assert iso_year[0].get_floor(iso_year[1]) == datetime.date(1980, 1, 1)
 
 
-def test_ssb_date_format_correct_end_date():
+def test_date_format_correct_end_date():
     ssb_bimester = (SSB_BIMESTER, "2022B1")
     iso_year = (ISO_YEAR, "1980")
     assert ssb_bimester[0].get_ceil(ssb_bimester[1]) == datetime.date(2022, 2, 28)

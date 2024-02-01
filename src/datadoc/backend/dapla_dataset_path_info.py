@@ -314,10 +314,8 @@ class DaplaDatasetPathInfo:
     def contains_data_from(self) -> datetime.date | None:
         """The earliest date from which data in the dataset is relevant for."""
         period_string = self._extract_period_string_from_index(0)
-        if (
-            not period_string
-            or len(self._period_strings) > 1
-            and period_string > self._period_strings[1]
+        if not period_string or (
+            len(self._period_strings) > 1 and period_string > self._period_strings[1]
         ):
             return None
         date_format = categorize_period_string(period_string)
