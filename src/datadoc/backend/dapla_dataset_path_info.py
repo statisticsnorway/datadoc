@@ -5,9 +5,13 @@ import pathlib
 import re
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
+from typing import Final
 from typing import Literal
 
 import arrow
+
+from datadoc.enums import DatasetState
+from datadoc.enums import SupportedLanguages
 
 if TYPE_CHECKING:
     import datetime
@@ -368,3 +372,60 @@ class DaplaDatasetPathInfo:
             .ceil(date_format.timeframe)
             .date()
         )
+
+    @property
+    def dataset_state(
+        self,
+    ) -> DatasetState | None:
+        """Extract the dataset state from the path.
+
+        Examples:
+        >>> DaplaDatasetPathInfo('klargjorte_data/person_data_v1.parquet').dataset_state
+        <DatasetState.PROCESSED_DATA: 'PROCESSED_DATA'>
+        >>> DaplaDatasetPathInfo('utdata/min_statistikk/person_data_v1.parquet').dataset_state
+        <DatasetState.OUTPUT_DATA: 'OUTPUT_DATA'>
+        >>> DaplaDatasetPathInfo('my_special_data/person_data_v1.parquet').dataset_state
+        None
+        """
+        dataset_path_parts = set(self.dataset_path.parts)
+        for s in DatasetState:
+            # We assume that files are saved in the Norwegian language as specified by SSB.
+            norwegian_dataset_state_path_part = s.get_value_for_language(
+                SupportedLanguages.NORSK_BOKMÅL,
+            ).lower()
+            norwegian_dataset_state_path_part_variations = {
+                norwegian_dataset_state_path_part.replace(" ", x) for x in ["-", "_"]
+            }
+            # Match on any of the variations anywhere in the path.
+            if norwegian_dataset_state_path_part_variations.intersection(
+                dataset_path_parts,
+            ):
+                return s
+
+        return None
+
+    @property
+    def dataset_version(
+        self,
+    ) -> str | None:
+        """Extract version information if exists in filename.
+
+        Examples:
+        >>> DaplaDatasetPathInfo('person_data_v1.parquet').dataset_version
+        '1'
+        >>> DaplaDatasetPathInfo('person_data_v20.parquet').dataset_version
+        '20'
+        >>> DaplaDatasetPathInfo('person_data.parquet').dataset_version
+        None
+        """
+        minimum_elements_in_file_name: Final[int] = 2
+        minimum_characters_in_version_string: Final[int] = 2
+        if len(self.dataset_name_sections) >= minimum_elements_in_file_name:
+            last_filename_element = str(self.dataset_name_sections[-1])
+            if (
+                len(last_filename_element) >= minimum_characters_in_version_string
+                and last_filename_element[0:1] == "v"
+                and last_filename_element[1:].isdigit()
+            ):
+                return last_filename_element[1:]
+        return None
