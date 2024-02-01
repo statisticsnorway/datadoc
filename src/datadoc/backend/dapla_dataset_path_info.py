@@ -3,25 +3,75 @@ from __future__ import annotations
 
 import pathlib
 import re
+from abc import ABC
+from abc import abstractmethod
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
+from typing import Final
 from typing import Literal
 
 import arrow
 
+from datadoc.enums import DatasetState
+from datadoc.enums import SupportedLanguages
+
 if TYPE_CHECKING:
     import datetime
     import os
+    from datetime import date
 
 
 @dataclass
-class IsoDateFormat:
-    """An ISO date format with relevant patterns."""
+class DateFormat(ABC):
+    """A super class for date formats."""
 
     name: str
     regex_pattern: str
     arrow_pattern: str
     timeframe: Literal["year", "month", "day", "week"]
+
+    @abstractmethod
+    def get_floor(self, period_string: str) -> date | None:
+        """Return first date of timeframe period."""
+
+    @abstractmethod
+    def get_ceil(self, period_string: str) -> date | None:
+        """Return last date of timeframe period."""
+
+
+@dataclass
+class IsoDateFormat(DateFormat):
+    """A subclass of Dateformat with relevant patterns for ISO dates."""
+
+    def get_floor(self, period_string: str) -> date | None:
+        """Method.
+
+        >>> ISO_YEAR_MONTH.get_floor("1980-08")
+        datetime.date(1980, 8, 1)
+
+        >>> ISO_YEAR.get_floor("2021")
+        datetime.date(2021, 1, 1)
+
+        >>> SSB_BIMESTER.get_floor("2003B4")
+        datetime.date(2003, 7, 1)
+
+        """
+        return arrow.get(period_string, self.arrow_pattern).floor(self.timeframe).date()
+
+    def get_ceil(self, period_string: str) -> date | None:
+        """Method.
+
+        >>> ISO_YEAR.get_ceil("1921")
+        datetime.date(1921, 12, 31)
+
+        >>> ISO_YEAR_MONTH.get_ceil("2021-05")
+        datetime.date(2021, 5, 31)
+
+        >>> SSB_HALF_YEAR.get_ceil("2024H1")
+        datetime.date(2024, 6, 30)
+
+        """
+        return arrow.get(period_string, self.arrow_pattern).ceil(self.timeframe).date()
 
 
 ISO_YEAR = IsoDateFormat(
@@ -51,20 +101,52 @@ ISO_YEAR_WEEK = IsoDateFormat(
 
 
 @dataclass
-class SsbDateFormat:
-    """An date format with relevant patterns for SSB special date formats."""
+class SsbDateFormat(DateFormat):
+    """A subclass of Dateformat with relevant patterns for SSB unique dates."""
 
-    name: str
-    regex_pattern: str
-    arrow_pattern: str
-    time_frame: dict
+    ssb_dates: dict
+
+    def get_floor(self, period_string: str) -> date | None:
+        """Convert SSB format to date-string and return first date.
+
+        If not excisting SSB format, return None
+
+        >>> SSB_BIMESTER.get_floor("2003B8")
+        None
+
+        """
+        try:
+            year = period_string[:4]
+            month = self.ssb_dates[period_string[-2:]]["start"]
+            period = year + month
+            return arrow.get(period, self.arrow_pattern).floor(self.timeframe).date()
+        except KeyError:
+            return None
+
+    def get_ceil(self, period_string: str) -> date | None:
+        """Convert SSB format to date-string and return last date.
+
+        If not excisting SSB format, return None
+
+        >>> SSB_TRIANNUAL.get_ceil("1999T11")
+        None
+
+        """
+        try:
+            year = period_string[:4]
+            month = self.ssb_dates[period_string[-2:]]["end"]
+            period = year + month
+            return arrow.get(period, self.arrow_pattern).ceil(self.timeframe).date()
+        except KeyError:
+            return None
 
 
 SSB_BIMESTER = SsbDateFormat(
     name="SSB_BIMESTER",
     regex_pattern=r"\d{4}[B]\d{1}$",
     arrow_pattern="YYYYMM",
-    time_frame={
+    timeframe="month",
+    ssb_dates={
         "B1": {
             "start": "01",
             "end": "02",
@@ -96,7 +178,8 @@ SSB_QUARTERLY = SsbDateFormat(
     name="SSB_QUARTERLY",
     regex_pattern=r"\d{4}[Q]\d{1}$",
     arrow_pattern="YYYYMM",
-    time_frame={
+    timeframe="month",
+    ssb_dates={
         "Q1": {
             "start": "01",
             "end": "03",
@@ -115,11 +198,13 @@ SSB_QUARTERLY = SsbDateFormat(
         },
     },
 )
+
 SSB_TRIANNUAL = SsbDateFormat(
     name="SSB_TRIANNUAL",
     regex_pattern=r"\d{4}[T]\d{1}$",
     arrow_pattern="YYYYMM",
-    time_frame={
+    timeframe="month",
+    ssb_dates={
         "T1": {
             "start": "01",
             "end": "04",
@@ -138,7 +223,8 @@ SSB_HALF_YEAR = SsbDateFormat(
     name="SSB_HALF_YEAR",
     regex_pattern=r"\d{4}[H]\d{1}$",
     arrow_pattern="YYYYMM",
-    time_frame={
+    timeframe="month",
+    ssb_dates={
         "H1": {
             "start": "01",
             "end": "06",
@@ -168,33 +254,13 @@ def categorize_period_string(period: str) -> IsoDateFormat | SsbDateFormat:
     If the period string is not recognized, a NotImplementedError is raised.
 
     Examples:
-    >>> date_format = categorize_period_string('2022')
-    >>> date_format.name
-    ISO_YEAR
-
     >>> date_format = categorize_period_string('2022-W01')
     >>> date_format.name
     ISO_YEAR_WEEK
 
-    >>> date_format = categorize_period_string('2022B1')
-    >>> date_format.name
-    SSB_BIMESTER
-
-    >>> date_format = categorize_period_string('1980Q3')
-    >>> date_format.name
-    SSB_QUARTERLY
-
     >>> date_format = categorize_period_string('1954T2')
     >>> date_format.name
     SSB_TRIANNUAL
-
-    >>> date_format = categorize_period_string('1876H1')
-    >>> date_format.name
-    SSB_HALF_YEAR
-
-    >>> date_format = categorize_period_string('1876H5') # Not valid SSB date format, number is out of range
-    >>> date_format.name
-    SSB_HALF_YEAR
 
     >>> categorize_period_string('unknown format')
     Traceback (most recent call last):
@@ -209,61 +275,6 @@ def categorize_period_string(period: str) -> IsoDateFormat | SsbDateFormat:
     raise NotImplementedError(
         msg,
     )
-
-
-def convert_ssb_period(
-    period_string: str,
-    period_type: str,
-    date_format: SsbDateFormat,
-) -> str | None:
-    """Convert ssb-format for bimester, quarterly, triannual and half year to start and end months.
-
-       If invalid SSB key, the method returns None.
-
-    Usage-examples:
-    >>> ssb_bimester_period_start = convert_ssb_period("2022B1","start",SSB_BIMESTER)
-    >>> ssb_bimester_period_start
-    202201
-
-    >>> ssb_bimester_period_end = convert_ssb_period("2022B1","end",SSB_BIMESTER)
-    >>> ssb_bimester_period_end
-    202202
-
-    >>> ssb_quarterly_period_start = convert_ssb_period("2015Q3","start",SSB_QUARTERLY)
-    >>> ssb_quarterly_period_start
-    201507
-
-    >>> ssb_quarterly_period_end = convert_ssb_period("2015Q3","end",SSB_QUARTERLY)
-    >>> ssb_quarterly_period_end
-    201509
-
-    >>> ssb_triannual_period_start = convert_ssb_period("1998T2","start",SSB_TRIANNUAL)
-    >>> ssb_triannual_period_start
-    199805
-
-    >>> ssb_quarterly_period_end = convert_ssb_period("1998T2","end",SSB_TRIANNUAL)
-    >>> ssb_quarterly_period_end
-    199808
-
-    >>> ssb_half_year_period_start = convert_ssb_period("1898H2","start",SSB_HALF_YEAR)
-    >>> ssb_half_year_period_start
-    189807
-
-    >>> ssb_half_year_period_end = convert_ssb_period("1898H2","end",SSB_HALF_YEAR)
-    >>> ssb_half_year_period_end
-    189812
-
-    >>> ssb_invalid_key = convert_ssb_period("2018Q5","start",SSB_QUARTERLY)
-    >>> ssb_invalid_key
-    None
-
-    """
-    try:
-        return (
-            period_string[:4] + date_format.time_frame[period_string[-2:]][period_type]
-        )
-    except KeyError:
-        return None
 
 
 class DaplaDatasetPathInfo:
@@ -317,32 +328,12 @@ class DaplaDatasetPathInfo:
     def contains_data_from(self) -> datetime.date | None:
         """The earliest date from which data in the dataset is relevant for."""
         period_string = self._extract_period_string_from_index(0)
-        if (
-            not period_string
-            or len(self._period_strings) > 1
-            and period_string > self._period_strings[1]
+        if not period_string or (
+            len(self._period_strings) > 1 and period_string > self._period_strings[1]
         ):
             return None
         date_format = categorize_period_string(period_string)
-
-        if isinstance(date_format, SsbDateFormat):
-            """If dateformat is SSB date format return start month of ssb period."""
-            period = convert_ssb_period(
-                period_string,
-                "start",
-                date_format,
-            )
-            if period is not None:
-                return (
-                    arrow.get(period, date_format.arrow_pattern).floor("month").date()
-                )
-            return None
-
-        return (
-            arrow.get(period_string, date_format.arrow_pattern)
-            .floor(date_format.timeframe)
-            .date()
-        )
+        return date_format.get_floor(period_string)
 
     @property
     def contains_data_until(self) -> datetime.date | None:
@@ -357,14 +348,61 @@ class DaplaDatasetPathInfo:
         ):
             return None
         date_format = categorize_period_string(period_string)
-        if isinstance(date_format, SsbDateFormat):
-            """If dateformat is SSB date format return end month of ssb period."""
-            period = convert_ssb_period(period_string, "end", date_format)
-            if period is not None:
-                return arrow.get(period, date_format.arrow_pattern).ceil("month").date()
-            return None
-        return (
-            arrow.get(period_string, date_format.arrow_pattern)
-            .ceil(date_format.timeframe)
-            .date()
-        )
+        return date_format.get_ceil(period_string)
+
+    @property
+    def dataset_state(
+        self,
+    ) -> DatasetState | None:
+        """Extract the dataset state from the path.
+
+        Examples:
+        >>> DaplaDatasetPathInfo('klargjorte_data/person_data_v1.parquet').dataset_state
+        <DatasetState.PROCESSED_DATA: 'PROCESSED_DATA'>
+        >>> DaplaDatasetPathInfo('utdata/min_statistikk/person_data_v1.parquet').dataset_state
+        <DatasetState.OUTPUT_DATA: 'OUTPUT_DATA'>
+        >>> DaplaDatasetPathInfo('my_special_data/person_data_v1.parquet').dataset_state
+        None
+        """
+        dataset_path_parts = set(self.dataset_path.parts)
+        for s in DatasetState:
+            # We assume that files are saved in the Norwegian language as specified by SSB.
+            norwegian_dataset_state_path_part = s.get_value_for_language(
+                SupportedLanguages.NORSK_BOKMÅL,
+            ).lower()
+            norwegian_dataset_state_path_part_variations = {
+                norwegian_dataset_state_path_part.replace(" ", x) for x in ["-", "_"]
+            }
+            # Match on any of the variations anywhere in the path.
+            if norwegian_dataset_state_path_part_variations.intersection(
+                dataset_path_parts,
+            ):
+                return s
+
+        return None
+
+    @property
+    def dataset_version(
+        self,
+    ) -> str | None:
+        """Extract version information if exists in filename.
+
+        Examples:
+        >>> DaplaDatasetPathInfo('person_data_v1.parquet').dataset_version
+        '1'
+        >>> DaplaDatasetPathInfo('person_data_v20.parquet').dataset_version
+        '20'
+        >>> DaplaDatasetPathInfo('person_data.parquet').dataset_version
+        None
+        """
+        minimum_elements_in_file_name: Final[int] = 2
+        minimum_characters_in_version_string: Final[int] = 2
+        if len(self.dataset_name_sections) >= minimum_elements_in_file_name:
+            last_filename_element = str(self.dataset_name_sections[-1])
+            if (
+                len(last_filename_element) >= minimum_characters_in_version_string
+                and last_filename_element[0:1] == "v"
+                and last_filename_element[1:].isdigit()
+            ):
+                return last_filename_element[1:]
+        return None
