@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import pathlib
 import re
+from abc import ABC
+from abc import abstractmethod
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 from typing import Literal
@@ -16,7 +18,7 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class DateFormat:
+class DateFormat(ABC):
     """A super class for date formats."""
 
     name: str
@@ -24,8 +26,21 @@ class DateFormat:
     arrow_pattern: str
     timeframe: Literal["year", "month", "day", "week"]
 
+    @abstractmethod
     def get_floor(self, period_string: str) -> date | None:
-        """Return first date of timeframe period.
+        """Return first date of timeframe period."""
+
+    @abstractmethod
+    def get_ceil(self, period_string: str) -> date | None:
+        """Return last date of timeframe period."""
+
+
+@dataclass
+class IsoDateFormat(DateFormat):
+    """A subclass of Dateformat with relevant patterns for ISO dates."""
+
+    def get_floor(self, period_string: str) -> date | None:
+        """Method.
 
         >>> ISO_YEAR_MONTH.get_floor("1980-08")
         datetime.date(1980, 8, 1)
@@ -40,9 +55,9 @@ class DateFormat:
         return arrow.get(period_string, self.arrow_pattern).floor(self.timeframe).date()
 
     def get_ceil(self, period_string: str) -> date | None:
-        """Return last date of timeframe period.
+        """Method.
 
-         >>> ISO_YEAR.get_ceil("1921")
+        >>> ISO_YEAR.get_ceil("1921")
         datetime.date(1921, 12, 31)
 
         >>> ISO_YEAR_MONTH.get_ceil("2021-05")
@@ -53,11 +68,6 @@ class DateFormat:
 
         """
         return arrow.get(period_string, self.arrow_pattern).ceil(self.timeframe).date()
-
-
-@dataclass
-class IsoDateFormat(DateFormat):
-    """A subclass of Dateformat with relevant patterns for ISO dates."""
 
 
 ISO_YEAR = IsoDateFormat(
@@ -105,7 +115,7 @@ class SsbDateFormat(DateFormat):
             year = period_string[:4]
             month = self.ssb_dates[period_string[-2:]]["start"]
             period = year + month
-            return super().get_floor(period)
+            return arrow.get(period, self.arrow_pattern).floor(self.timeframe).date()
         except KeyError:
             return None
 
@@ -122,7 +132,7 @@ class SsbDateFormat(DateFormat):
             year = period_string[:4]
             month = self.ssb_dates[period_string[-2:]]["end"]
             period = year + month
-            return super().get_ceil(period)
+            return arrow.get(period, self.arrow_pattern).ceil(self.timeframe).date()
         except KeyError:
             return None
 
