@@ -195,15 +195,27 @@ def test_date_format_return_date_object_period_end(date_format, period):
     assert isinstance(date_format.get_ceil(period), datetime.date)
 
 
-def test_date_format_correct_from_date():
-    ssb_bimester = (SSB_BIMESTER, "2022B1")
-    iso_year = (ISO_YEAR, "1980")
-    assert ssb_bimester[0].get_floor(ssb_bimester[1]) == datetime.date(2022, 1, 1)
-    assert iso_year[0].get_floor(iso_year[1]) == datetime.date(1980, 1, 1)
+@pytest.mark.parametrize(
+    ("date_format", "period", "expected"),
+    [
+        (ISO_YEAR, "1980", datetime.date(1980, 1, 1)),
+        (ISO_YEAR_MONTH, "1888-11", datetime.date(1888, 11, 1)),
+        (ISO_YEAR_MONTH_DAY, "2203-01-24", datetime.date(2203, 1, 24)),
+        (SSB_BIMESTER, "1963B3", datetime.date(1963, 5, 1)),
+    ],
+)
+def test_date_format_correct_from_date(date_format, period, expected: datetime.date):
+    assert date_format.get_floor(period) == expected
 
 
-def test_date_format_correct_end_date():
-    ssb_bimester = (SSB_BIMESTER, "2022B1")
-    iso_year = (ISO_YEAR, "1980")
-    assert ssb_bimester[0].get_ceil(ssb_bimester[1]) == datetime.date(2022, 2, 28)
-    assert iso_year[0].get_ceil(iso_year[1]) == datetime.date(1980, 12, 31)
+@pytest.mark.parametrize(
+    ("date_format", "period", "expected"),
+    [
+        (ISO_YEAR, "1980", datetime.date(1980, 12, 31)),
+        (ISO_YEAR_MONTH, "1888-11", datetime.date(1888, 11, 30)),
+        (ISO_YEAR_MONTH_DAY, "2203-01-24", datetime.date(2203, 1, 24)),
+        (SSB_BIMESTER, "1963B3", datetime.date(1963, 6, 30)),
+    ],
+)
+def test_date_format_correct_end_date(date_format, period, expected):
+    assert date_format.get_ceil(period) == expected
