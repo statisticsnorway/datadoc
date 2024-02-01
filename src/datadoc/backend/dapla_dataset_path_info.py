@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class DateFormat:
-    """A super class for different date formats."""
+    """A super class for date formats."""
 
     name: str
     regex_pattern: str
@@ -27,21 +27,37 @@ class DateFormat:
     def get_floor(self, period_string: str) -> date | None:
         """Return first date of timeframe period.
 
-        >>> date = test_date_format.get_floor("1980-08")
-        >>> date
+        >>> ISO_YEAR_MONTH.get_floor("1980-08")
         datetime.date(1980, 8, 1)
+
+        >>> ISO_YEAR.get_floor("2021")
+        datetime.date(2021, 1, 1)
+
+        >>> SSB_BIMESTER.get_floor("2003B4")
+        datetime.date(2003, 7, 1)
 
         """
         return arrow.get(period_string, self.arrow_pattern).floor(self.timeframe).date()
 
     def get_ceil(self, period_string: str) -> date | None:
-        """Return date until."""
+        """Return last date of timeframe period.
+
+         >>> ISO_YEAR.get_ceil("1921")
+        datetime.date(1921, 12, 31)
+
+        >>> ISO_YEAR_MONTH.get_ceil("2021-05")
+        datetime.date(2021, 5, 31)
+
+        >>> SSB_HALF_YEAR.get_ceil("2024H1")
+        datetime.date(2024, 6, 30)
+
+        """
         return arrow.get(period_string, self.arrow_pattern).ceil(self.timeframe).date()
 
 
 @dataclass
 class IsoDateFormat(DateFormat):
-    """Subclass inherits from superclass."""
+    """A subclass of Dateformat with relevant patterns for ISO dates."""
 
 
 ISO_YEAR = IsoDateFormat(
@@ -72,12 +88,19 @@ ISO_YEAR_WEEK = IsoDateFormat(
 
 @dataclass
 class SsbDateFormat(DateFormat):
-    """Subclass inherits from superclass."""
+    """A subclass of Dateformat with relevant patterns for SSB unique dates."""
 
     ssb_dates: dict
 
     def get_floor(self, period_string: str) -> date | None:
-        """Ssb."""
+        """Convert SSB format to date-string and return first date.
+
+        If not excisting SSB format, return None
+
+        >>> SSB_BIMESTER.get_floor("2003B8")
+        None
+
+        """
         try:
             year = period_string[:4]
             month = self.ssb_dates[period_string[-2:]]["start"]
@@ -87,7 +110,14 @@ class SsbDateFormat(DateFormat):
             return None
 
     def get_ceil(self, period_string: str) -> date | None:
-        """S."""
+        """Convert SSB format to date-string and return last date.
+
+        If not excisting SSB format, return None
+
+        >>> SSB_TRIANNUAL.get_ceil("1999T11")
+        None
+
+        """
         try:
             year = period_string[:4]
             month = self.ssb_dates[period_string[-2:]]["end"]
