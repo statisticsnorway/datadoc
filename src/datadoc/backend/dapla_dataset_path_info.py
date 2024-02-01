@@ -350,7 +350,6 @@ class DaplaDatasetPathInfo:
         date_format = categorize_period_string(period_string)
         return date_format.get_ceil(period_string)
 
-
     @property
     def dataset_state(
         self,
