@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 import logging
 import pathlib
-import typing as t
 import uuid
 from typing import TYPE_CHECKING
 from typing import Union
@@ -21,7 +20,6 @@ from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
 from datadoc.backend.storage_adapter import StorageAdapter
 from datadoc.enums import DatasetState
-from datadoc.enums import SupportedLanguages
 from datadoc.enums import VariableRole
 from datadoc.frontend.fields import display_dataset
 from datadoc.frontend.fields import display_variables
@@ -208,8 +206,8 @@ class DataDocMetadata:
         dapla_dataset_path_info = DaplaDatasetPathInfo(dataset)
         self.meta.dataset = model.Dataset(
             short_name=self.short_name,
-            dataset_state=self.dataset_state,
-            version=self.get_dataset_version(short_name),
+            dataset_state=dapla_dataset_path_info.dataset_state,
+            version=dapla_dataset_path_info.dataset_version,
             contains_data_from=str(dapla_dataset_path_info.contains_data_from),
             contains_data_until=str(dapla_dataset_path_info.contains_data_until),
             data_source_path=self.dataset,

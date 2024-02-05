@@ -12,8 +12,8 @@ from typing import Protocol
 from urllib.parse import urlsplit
 from urllib.parse import urlunsplit
 
+from dapla import AuthClient
 from dapla import FileClient
-from google.auth.exceptions import DefaultCredentialsError
 
 if TYPE_CHECKING:
     import os
@@ -32,10 +32,10 @@ class GCSObject:
         """Initialize the class."""
         self._url = urlsplit(str(path))
 
-        try:
+        if AuthClient.is_ready():
             # Running on Dapla, rely on dapla-toolbelt for auth
             self.fs = FileClient.get_gcs_file_system()
-        except DefaultCredentialsError:
+        else:
             # All other environments, rely on Standard Google credential system
             # If this doesn't work for you, try running the following commands:
             #
