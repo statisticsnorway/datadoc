@@ -417,7 +417,7 @@ class DaplaDatasetPathInfo:
     def dataset_shortname(
         self,
     ) -> str | None:
-        """Extract version information if exists in filename.
+        """Extract the shortname from the filepath right before the dataset_state, based on the Dapla filepath naming convention.
 
         Examples:
         >>> DaplaDatasetPathInfo(prosjekt/befolkning/klargjordte_data/person_data_v1.parquet').dataset_shortname
