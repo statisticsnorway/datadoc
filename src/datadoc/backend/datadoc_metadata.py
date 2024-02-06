@@ -84,7 +84,10 @@ class DataDocMetadata:
 
     @staticmethod
     def _open_path(path: str | os.PathLike[str]) -> pathlib.Path | CloudPath:
-        """Open a given path regardless of whether it is local or cloud."""
+        """Open a given path regardless of whether it is local or cloud.
+
+        The returned path may be treated just as if it's a pathlib.Path.
+        """
         try:
             client = GSClient(credentials=AuthClient.fetch_google_credentials())
             return GSPath(path, client=client)
