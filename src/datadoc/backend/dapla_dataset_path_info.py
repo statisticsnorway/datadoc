@@ -325,7 +325,10 @@ class DaplaDatasetPathInfo:
         except IndexError:
             return None
 
-    def _extract_norwegian_dataset_state_path_part(self, dataset_state: str) -> str:
+    def _extract_norwegian_dataset_state_path_part(
+        self,
+        dataset_state: DatasetState,
+    ) -> str:
         norwegian_dataset_state_path_part = dataset_state.get_value_for_language(
             SupportedLanguages.NORSK_BOKMÅL,
         ).lower()
