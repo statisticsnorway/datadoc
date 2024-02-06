@@ -88,11 +88,7 @@ class DataDocMetadata:
 
         The returned path may be treated just as if it's a pathlib.Path.
         """
-<<<<<<< HEAD
         if path.startswith(GSPath.cloud_prefix):
-=======
-        try:
->>>>>>> aff8924 (Add a bit more detail to the docstring)
             client = GSClient(credentials=AuthClient.fetch_google_credentials())
             return GSPath(path, client=client)
 
