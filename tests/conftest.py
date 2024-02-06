@@ -13,10 +13,8 @@ from pytest_mock import MockerFixture
 
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
-from datadoc.backend.storage_adapter import StorageAdapter
 from datadoc.enums import SupportedLanguages
 
-from .utils import TEST_BUCKET_PARQUET_FILEPATH
 from .utils import TEST_EXISTING_METADATA_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_FILE_NAME
 from .utils import TEST_PARQUET_FILEPATH
@@ -92,21 +90,6 @@ def mock_gcsfs_exists(mocker: MockerFixture) -> mock.Mock:
 @pytest.fixture()
 def mock_pathlib_write_text(mocker: MockerFixture) -> mock.Mock:
     return mocker.patch("pathlib.Path.write_text")
-
-
-@pytest.fixture()
-def local_parquet_file(
-    mock_pathlib_write_text: mock.Mock,  # noqa: ARG001
-) -> StorageAdapter:
-    return StorageAdapter.for_path(str(TEST_PARQUET_FILEPATH))
-
-
-@pytest.fixture()
-def bucket_object_parquet_file(
-    mock_gcsfs_open: mock.Mock,  # noqa: ARG001
-    mock_gcsfs_exists: mock.Mock,  # noqa: ARG001
-) -> StorageAdapter:
-    return StorageAdapter.for_path(TEST_BUCKET_PARQUET_FILEPATH)
 
 
 ENGLISH_NAME = "English Name"

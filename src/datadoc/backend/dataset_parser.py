@@ -17,7 +17,6 @@ from datadoc_model.model import LanguageStringType
 from datadoc_model.model import Variable
 
 from datadoc import state
-from datadoc.backend.storage_adapter import StorageAdapter
 from datadoc.enums import DataType
 
 if t.TYPE_CHECKING:
@@ -105,7 +104,7 @@ class DatasetParser(ABC):
 
     def __init__(self, dataset: pathlib.Path | CloudPath) -> None:
         """Initialize for a given dataset."""
-        self.dataset: StorageAdapter = StorageAdapter.for_path(dataset)
+        self.dataset = dataset
 
     @staticmethod
     def for_file(dataset: pathlib.Path | CloudPath) -> DatasetParser:
