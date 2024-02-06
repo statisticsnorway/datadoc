@@ -16,10 +16,8 @@ from datadoc.backend.datadoc_metadata import DataDocMetadata
 
 if TYPE_CHECKING:
     from enum import Enum
-    from pathlib import Path
 
     import pydantic
-    from cloudpathlib import CloudPath
 
     from datadoc.enums import SupportedLanguages
 
@@ -84,10 +82,10 @@ def find_existing_language_string(
     return language_strings
 
 
-def get_dataset_path() -> str | Path | CloudPath | None:
+def get_dataset_path() -> str | None:
     """Extract the path to the dataset from the potential sources."""
     if state.metadata.dataset is not None:
-        return state.metadata.dataset
+        return state.metadata.dataset_path
     path_from_env = config.get_datadoc_dataset_path()
     logger.info(
         "Dataset path from env var: '%s'",
@@ -96,9 +94,9 @@ def get_dataset_path() -> str | Path | CloudPath | None:
     return path_from_env
 
 
-def open_file(file_path: str | Path | None = None) -> DataDocMetadata:
+def open_file(file_path: str | None = None) -> DataDocMetadata:
     """Load the given dataset into a DataDocMetadata instance."""
-    if file_path and str(file_path).endswith(METADATA_DOCUMENT_FILE_SUFFIX):
+    if file_path and file_path.endswith(METADATA_DOCUMENT_FILE_SUFFIX):
         logger.info("Opening existing metadata document %s", file_path)
         return DataDocMetadata(metadata_document_path=file_path)
 

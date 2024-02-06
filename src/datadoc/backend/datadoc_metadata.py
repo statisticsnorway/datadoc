@@ -8,7 +8,6 @@ import pathlib
 import uuid
 from typing import TYPE_CHECKING
 
-import cloudpathlib
 from cloudpathlib import CloudPath
 from cloudpathlib import GSClient
 from cloudpathlib import GSPath
@@ -27,7 +26,6 @@ from datadoc.utils import calculate_percentage
 from datadoc.utils import get_timestamp_now
 
 if TYPE_CHECKING:
-    import os
     from datetime import datetime
 
 logger = logging.getLogger(__name__)
@@ -42,10 +40,12 @@ class DataDocMetadata:
 
     def __init__(
         self,
-        dataset_path: str | os.PathLike[str] | None = None,
-        metadata_document_path: str | os.PathLike[str] | None = None,
+        dataset_path: str | None = None,
+        metadata_document_path: str | None = None,
     ) -> None:
         """Read in a dataset if supplied, otherwise naively instantiate the class."""
+        self.dataset_path = dataset_path
+
         self.metadata_document: pathlib.Path | CloudPath | None = None
         self.container: model.MetadataContainer | None = None
         self.dataset: pathlib.Path | CloudPath | None = None
@@ -83,16 +83,16 @@ class DataDocMetadata:
             )
 
     @staticmethod
-    def _open_path(path: str | os.PathLike[str]) -> pathlib.Path | CloudPath:
+    def _open_path(path: str) -> pathlib.Path | CloudPath:
         """Open a given path regardless of whether it is local or cloud.
 
         The returned path may be treated just as if it's a pathlib.Path.
         """
-        try:
+        if path.startswith(GSPath.cloud_prefix):
             client = GSClient(credentials=AuthClient.fetch_google_credentials())
-            return GSPath(path, client=client)  # type: ignore [arg-type]
-        except cloudpathlib.exceptions.InvalidPrefixError:
-            return pathlib.Path(path)
+            return GSPath(path, client=client)
+
+        return pathlib.Path(path)
 
     def extract_metadata_from_files(self) -> None:
         """Read metadata from an existing metadata document.
