@@ -90,7 +90,7 @@ class DataDocMetadata:
         """
         try:
             client = GSClient(credentials=AuthClient.fetch_google_credentials())
-            return GSPath(path, client=client)
+            return GSPath(path, client=client)  # type: ignore [arg-type]
         except cloudpathlib.exceptions.InvalidPrefixError:
             return pathlib.Path(path)
 
