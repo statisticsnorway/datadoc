@@ -75,7 +75,6 @@ class DataDocMetadata:
             self.metadata_document.joinpath(
                 self.short_name + METADATA_DOCUMENT_FILE_SUFFIX,
             )
-            self.dataset_state = self.get_dataset_state(self.dataset)
             self.extract_metadata_from_files()
         self.current_user = config.get_jupyterhub_user()
         if not self.current_user:
@@ -84,48 +83,6 @@ class DataDocMetadata:
                 "JUPYTERHUB_USER env variable not set, using %s as placeholder",
                 self.current_user,
             )
-
-    def get_dataset_state(
-        self,
-        dataset: pathlib.Path | CloudPath,
-    ) -> DatasetState | None:
-        """Use the path to attempt to guess the state of the dataset."""
-        dataset_path_parts = set(dataset.parts)
-        for state in DatasetState:
-            # We assume that files are saved in the Norwegian language as specified by SSB.
-            norwegian_dataset_state_path_part = state.get_value_for_language(
-                SupportedLanguages.NORSK_BOKMÅL,
-            ).lower()
-            norwegian_dataset_state_path_part_variations = {
-                norwegian_dataset_state_path_part.replace(" ", x) for x in ["-", "_"]
-            }
-            # Match on any of the variations anywhere in the path.
-            if norwegian_dataset_state_path_part_variations.intersection(
-                dataset_path_parts,
-            ):
-                return state
-        return None
-
-    @staticmethod
-    def get_dataset_version(
-        dataset_stem: str,
-    ) -> str | None:
-        """Find version information if exists in filename.
-
-        eg. 'v1' in filename 'person_data_v1.parquet'
-        """
-        minimum_elements_in_file_name: t.Final[int] = 2
-        minimum_characters_in_version_string: t.Final[int] = 2
-        split_file_name = str(dataset_stem).split("_")
-        if len(split_file_name) >= minimum_elements_in_file_name:
-            last_filename_element = str(split_file_name[-1])
-            if (
-                len(last_filename_element) >= minimum_characters_in_version_string
-                and last_filename_element[0:1] == "v"
-                and last_filename_element[1:].isdigit()
-            ):
-                return last_filename_element[1:]
-        return None
 
     def extract_metadata_from_files(self) -> None:
         """Read metadata from an existing metadata document.
@@ -136,7 +93,7 @@ class DataDocMetadata:
         if self.metadata_document is not None and self.metadata_document.exists():
             self.extract_metadata_from_existing_document(self.metadata_document)
         elif self.dataset is not None:
-            self.extract_metadata_from_dataset(self.dataset, self.short_name or "")
+            self.extract_metadata_from_dataset(self.dataset)
             self.meta.dataset.id = uuid.uuid4()
             # Set default values for variables where appropriate
             v: model.Variable
@@ -195,7 +152,6 @@ class DataDocMetadata:
     def extract_metadata_from_dataset(
         self,
         dataset: pathlib.Path | CloudPath,
-        short_name: str,
     ) -> None:
         """Obtain what metadata we can from the dataset itself.
 
