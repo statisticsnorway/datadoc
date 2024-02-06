@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import requests
+from bs4 import BeautifulSoup
+from bs4 import ResultSet
+
 
 class StatisticSubjectMapping:
     """Allow mapping between statistic short name and primary and secondary subject."""
@@ -42,8 +46,14 @@ class StatisticSubjectMapping:
         )
 
     @staticmethod
-    def _fetch_statistical_structure_document(source_url: str) -> dict:
-        pass
+    def _fetch_statistical_structure_document(source_url: str) -> ResultSet:
+        """Fetch statistical structure document from source_url.
+
+        Returns a BeautifulSoup ResultSet.
+        """
+        response = requests.get(source_url, timeout=30)
+        soup = BeautifulSoup(response.text, "html.parser")
+        return soup.find_all("hovedemne")
 
     @staticmethod
     def _build_secondary_subject_primary_subject_mapping() -> dict[str, str]:
