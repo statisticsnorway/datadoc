@@ -328,7 +328,7 @@ class DaplaDatasetPathInfo:
     def _extract_norwegian_dataset_state_path_part(
         self,
         dataset_state: DatasetState,
-    ) -> {str}:
+    ) -> set:
         norwegian_dataset_state_path_part = dataset_state.get_value_for_language(
             SupportedLanguages.NORSK_BOKMÅL,
         ).lower()
@@ -420,7 +420,7 @@ class DaplaDatasetPathInfo:
         """Extract version information if exists in filename.
 
         Examples:
-        >>> DaplaDatasetPathInfo('befolkning/klargjordte_data/person_data_v1.parquet').dataset_shortname
+        >>> DaplaDatasetPathInfo(prosjekt/befolkning/klargjordte_data/person_data_v1.parquet').dataset_shortname
         befolkning
         >>> DaplaDatasetPathInfo('befolkning/inndata/person_data_v1.parquet').dataset_shortname
         befolkning
@@ -429,11 +429,11 @@ class DaplaDatasetPathInfo:
         """
         dataset_state = self.dataset_state
         if dataset_state is not None:
-            dataset_state = self._extract_norwegian_dataset_state_path_part(
+            dataset_state_names = self._extract_norwegian_dataset_state_path_part(
                 dataset_state,
             )
             dataset_path_parts = list(self.dataset_path.parts)
-            for i in dataset_state:
+            for i in dataset_state_names:
                 if i in dataset_path_parts and dataset_path_parts.index(i) != 0:
                     return dataset_path_parts[dataset_path_parts.index(i) - 1]
         return None
