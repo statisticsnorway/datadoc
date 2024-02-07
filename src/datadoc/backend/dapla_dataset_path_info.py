@@ -311,7 +311,7 @@ class DaplaDatasetPathInfo:
         """
 
         def insert_p(regex: str) -> str:
-            r"""Insert a p as the second character of the regex if it doesn't start with one.
+            r"""Insert a p as the second character.
 
             Examples:
             >>> insert_p(r"^\d{4}[H]\d{1}$")
