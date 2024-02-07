@@ -17,8 +17,10 @@ from datadoc_model.model import LanguageStringType
 from datadoc_model.model import Variable
 
 from datadoc import state
-from datadoc.backend.storage_adapter import StorageAdapter
 from datadoc.enums import DataType
+
+if t.TYPE_CHECKING:
+    from cloudpathlib import CloudPath
 
 KNOWN_INTEGER_TYPES = (
     "int",
@@ -100,12 +102,12 @@ class DatasetParser(ABC):
     - A method to extract variables (columns) from the dataset, so they may be documented.
     """
 
-    def __init__(self, dataset: pathlib.Path) -> None:
+    def __init__(self, dataset: pathlib.Path | CloudPath) -> None:
         """Initialize for a given dataset."""
-        self.dataset: StorageAdapter = StorageAdapter.for_path(dataset)
+        self.dataset = dataset
 
     @staticmethod
-    def for_file(dataset: pathlib.Path) -> DatasetParser:
+    def for_file(dataset: pathlib.Path | CloudPath) -> DatasetParser:
         """Return the correct subclass based on the given dataset file."""
         supported_file_types: dict[
             str,
@@ -160,14 +162,14 @@ class DatasetParser(ABC):
 class DatasetParserParquet(DatasetParser):
     """Concrete implementation for parsing parquet files."""
 
-    def __init__(self, dataset: pathlib.Path) -> None:
+    def __init__(self, dataset: pathlib.Path | CloudPath) -> None:
         """Use the super init method."""
         super().__init__(dataset)
 
     def get_fields(self) -> list[Variable]:
         """Extract the fields from this dataset."""
         with self.dataset.open(mode="rb") as f:
-            data_table = pq.read_table(f)
+            data_table = pq.read_table(f)  # type: ignore [arg-type]
         return [
             Variable(
                 short_name=data_field.name,
@@ -180,7 +182,7 @@ class DatasetParserParquet(DatasetParser):
 class DatasetParserSas7Bdat(DatasetParser):
     """Concrete implementation for parsing SAS7BDAT files."""
 
-    def __init__(self, dataset: pathlib.Path) -> None:
+    def __init__(self, dataset: pathlib.Path | CloudPath) -> None:
         """Use the super init method."""
         super().__init__(dataset)
 
@@ -189,7 +191,7 @@ class DatasetParserSas7Bdat(DatasetParser):
         fields = []
         with self.dataset.open(mode="rb") as f:
             # Use an iterator to avoid reading in the entire dataset
-            sas_reader = pd.read_sas(f, format="sas7bdat", iterator=True)  # type: ignore [call-overload]
+            sas_reader = pd.read_sas(f, format="sas7bdat", iterator=True)
 
             # Get the first row from the iterator
             try:
@@ -202,12 +204,12 @@ class DatasetParserSas7Bdat(DatasetParser):
         for i, v in enumerate(row.to_numpy().tolist()[0]):
             fields.append(
                 Variable(
-                    short_name=sas_reader.columns[i].name,
+                    short_name=sas_reader.columns[i].name,  # type: ignore [attr-defined]
                     # Assume labels are defined in the default language (NORSK_BOKMÅL)
                     # If this is not correct, the user may fix it via the UI
                     name=LanguageStringType(
                         **{
-                            state.current_metadata_language: sas_reader.columns[
+                            state.current_metadata_language: sas_reader.columns[  # type: ignore [attr-defined]
                                 i
                             ].label,
                         },
