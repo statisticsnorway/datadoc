@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+import bs4
 import requests
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
@@ -75,7 +76,7 @@ class StatisticSubjectMapping:
         return None
 
     @staticmethod
-    def _extract_titles(titles_xml: BeautifulSoup) -> dict[str, str]:
+    def _extract_titles(titles_xml: bs4.element.Tag) -> dict[str, str]:
         titles = {}
         for title in titles_xml.find_all("tittel"):
             titles[title["sprak"]] = title.text
@@ -107,6 +108,10 @@ class StatisticSubjectMapping:
             ]
 
             primary_subjects.append(
-                PrimarySubject(p.titler, p["emnekode"], secondary_subjects),
+                PrimarySubject(
+                    self._extract_titles(p.titler),
+                    p["emnekode"],
+                    secondary_subjects,
+                ),
             )
         return primary_subjects
