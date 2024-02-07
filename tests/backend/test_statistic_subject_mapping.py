@@ -1,9 +1,28 @@
+import functools
+import pathlib
+
 import pytest
 from bs4 import BeautifulSoup
+from bs4 import ResultSet
 
+from datadoc.backend.statistic_subject_mapping import PrimarySubject
+from datadoc.backend.statistic_subject_mapping import SecondarySubject
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
+from tests.utils import TEST_RESOURCES_DIRECTORY
 
 SOURCE_URL = "https://www.ssb.no/xp/_/service/mimir/subjectStructurStatistics"
+
+
+@pytest.fixture()
+def _mock_fetch_statistical_structure(mocker, file_path: pathlib.Path) -> None:
+    def fake_statistical_structure(file_path, _) -> ResultSet:
+        with file_path.open() as f:
+            return BeautifulSoup(f.read(), features="xml").find_all("hovedemne")
+
+    mocker.patch(
+        "datadoc.backend.statistic_subject_mapping.StatisticSubjectMapping._fetch_statistical_structure",
+        functools.partial(fake_statistical_structure, file_path),
+    )
 
 
 @pytest.fixture()
@@ -48,3 +67,39 @@ def test_extract_titles():
         "no": "Partifinansiering",
         "en": "Funding of political parties",
     }
+
+
+STATISTICAL_SUBJECT_STRUCTURE_DIR = "statistical_subject_structure"
+
+
+@pytest.mark.parametrize(
+    ("file_path", "expected"),
+    [
+        (
+            TEST_RESOURCES_DIRECTORY / STATISTICAL_SUBJECT_STRUCTURE_DIR / "simple.xml",
+            [
+                PrimarySubject(
+                    titles={"en": "aa english", "no": "aa norwegian"},
+                    subject_code="aa",
+                    secondary_subjects=[
+                        SecondarySubject(
+                            titles={"en": "aa00 english", "no": "aa00 norwegian"},
+                            subject_code="aa00",
+                            statistic_short_names=["aa_kortnvan"],
+                        ),
+                    ],
+                ),
+            ],
+        ),
+        (
+            TEST_RESOURCES_DIRECTORY / STATISTICAL_SUBJECT_STRUCTURE_DIR / "empty.xml",
+            [],
+        ),
+    ],
+)
+@pytest.mark.usefixtures("_mock_fetch_statistical_structure")
+def test_read_in_statistical_structure(
+    subject_mapping: StatisticSubjectMapping,
+    expected: list[PrimarySubject],
+) -> None:
+    assert subject_mapping.primary_subjects == expected

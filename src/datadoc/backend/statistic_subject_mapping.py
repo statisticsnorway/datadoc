@@ -106,6 +106,10 @@ class StatisticSubjectMapping:
             ]
 
             primary_subjects.append(
-                PrimarySubject(p.titler, p["emnekode"], secondary_subjects),
+                PrimarySubject(
+                    self._extract_titles(p.titler),
+                    p["emnekode"],
+                    secondary_subjects,
+                ),
             )
         return primary_subjects
