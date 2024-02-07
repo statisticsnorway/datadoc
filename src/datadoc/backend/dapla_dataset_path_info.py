@@ -13,6 +13,7 @@ from typing import Literal
 import arrow
 
 from datadoc.enums import DatasetState
+from datadoc.enums import DatasetStatus
 from datadoc.enums import SupportedLanguages
 
 if TYPE_CHECKING:
@@ -378,6 +379,24 @@ class DaplaDatasetPathInfo:
                 dataset_path_parts,
             ):
                 return s
+
+        return None
+
+    @property
+    def dataset_status(
+        self,
+    ) -> DatasetStatus | None:
+        """Extract the dataset status from the path.
+
+        Examples:
+        >>> DaplaDatasetPathInfo('klargjorte_data/person_data_v1.parquet').dataset_status
+        <DatasetStatus.DRAFT: 'DRAFT'>
+        >>> DaplaDatasetPathInfo('').dataset_status
+        None
+        """
+        dataset_path_parts = set(self.dataset_path.parts)
+        if dataset_path_parts:
+            return DatasetStatus.DRAFT
 
         return None
 
