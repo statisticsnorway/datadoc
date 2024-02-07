@@ -41,10 +41,10 @@ class StatisticSubjectMapping:
         self._statistic_subject_structure_xml = self._fetch_statistical_structure(
             self.source_url,
         )
-        self.primary_subjects: list[
-            PrimarySubject
-        ] = self._parse_statistic_subject_structure_xml(
-            self._statistic_subject_structure_xml,
+        self.primary_subjects: list[PrimarySubject] = (
+            self._parse_statistic_subject_structure_xml(
+                self._statistic_subject_structure_xml,
+            )
         )
 
     def get_primary_subject(self, statistic_short_name: str) -> str | None:
@@ -68,10 +68,11 @@ class StatisticSubjectMapping:
 
         Returns the secondary subject string if found, else None.
         """
-        return self.statistic_short_name_secondary_subject_mapping.get(
-            statistic_short_name,
-            None,
-        )
+        for p in self.primary_subjects:
+            for s in p.secondary_subjects:
+                if statistic_short_name in s.statistic_short_names:
+                    return s.subject_code
+        return None
 
     @staticmethod
     def _extract_titles(titles_xml: BeautifulSoup) -> dict[str, str]:
