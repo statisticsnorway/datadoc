@@ -4,6 +4,8 @@ from pathlib import Path
 
 TEST_BUCKET_PARQUET_FILEPATH = "gs://ssb-staging-dapla-felles-data-delt/datadoc/klargjorte_data/person_data_v1.parquet"
 
+TEST_BUCKET_PARQUET_FILEPATH_WITH_SHORTNAME = "gs://ssb-staging-dapla-felles-data-delt/befolkning/klargjorte_data/person_data_v1.parquet"
+
 TEST_RESOURCES_DIRECTORY = Path("tests/resources/")
 
 TEST_PARQUET_FILEPATH = TEST_RESOURCES_DIRECTORY / "person_data_v1.parquet"

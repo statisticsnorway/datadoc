@@ -20,6 +20,9 @@ from datadoc import state
 from datadoc.backend.storage_adapter import StorageAdapter
 from datadoc.enums import DataType
 
+if t.TYPE_CHECKING:
+    from cloudpathlib import CloudPath
+
 KNOWN_INTEGER_TYPES = (
     "int",
     "int_",
@@ -100,12 +103,12 @@ class DatasetParser(ABC):
     - A method to extract variables (columns) from the dataset, so they may be documented.
     """
 
-    def __init__(self, dataset: pathlib.Path) -> None:
+    def __init__(self, dataset: pathlib.Path | CloudPath) -> None:
         """Initialize for a given dataset."""
         self.dataset: StorageAdapter = StorageAdapter.for_path(dataset)
 
     @staticmethod
-    def for_file(dataset: pathlib.Path) -> DatasetParser:
+    def for_file(dataset: pathlib.Path | CloudPath) -> DatasetParser:
         """Return the correct subclass based on the given dataset file."""
         supported_file_types: dict[
             str,
@@ -160,7 +163,7 @@ class DatasetParser(ABC):
 class DatasetParserParquet(DatasetParser):
     """Concrete implementation for parsing parquet files."""
 
-    def __init__(self, dataset: pathlib.Path) -> None:
+    def __init__(self, dataset: pathlib.Path | CloudPath) -> None:
         """Use the super init method."""
         super().__init__(dataset)
 
@@ -180,7 +183,7 @@ class DatasetParserParquet(DatasetParser):
 class DatasetParserSas7Bdat(DatasetParser):
     """Concrete implementation for parsing SAS7BDAT files."""
 
-    def __init__(self, dataset: pathlib.Path) -> None:
+    def __init__(self, dataset: pathlib.Path | CloudPath) -> None:
         """Use the super init method."""
         super().__init__(dataset)
 
