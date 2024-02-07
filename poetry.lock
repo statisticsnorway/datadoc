@@ -3972,6 +3972,20 @@ doc = ["Sphinx (>=7)", "packaging", "sphinx-autodoc-typehints (>=1.2.0)"]
 test = ["coverage[toml] (>=7)", "mypy (>=1.2.0)", "pytest (>=7)"]
 
 [[package]]
+name = "types-beautifulsoup4"
+version = "4.12.0.20240106"
+description = "Typing stubs for beautifulsoup4"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "types-beautifulsoup4-4.12.0.20240106.tar.gz", hash = "sha256:98d628985b71b140bd3bc22a8cb0ab603c2f2d08f20d37925965eb4a21739be8"},
+    {file = "types_beautifulsoup4-4.12.0.20240106-py3-none-any.whl", hash = "sha256:cbdd60ab8aeac737ac014431b6e921b43e84279c0405fdd25a6900bb0e71da5b"},
+]
+
+[package.dependencies]
+types-html5lib = "*"
+
+[[package]]
 name = "types-colorama"
 version = "0.4.15.20240106"
 description = "Typing stubs for colorama"
@@ -4002,6 +4016,17 @@ python-versions = ">=3.8"
 files = [
     {file = "types-google-cloud-ndb-2.2.0.20240129.tar.gz", hash = "sha256:4da51fbc817d579804dd0201198baed72503e5bb9a8daa34dff79cb79f231a9d"},
     {file = "types_google_cloud_ndb-2.2.0.20240129-py3-none-any.whl", hash = "sha256:993731eacbfd6bb914083c1996ca5b7d47535f89880afe415c52a66d9bd11325"},
+]
+
+[[package]]
+name = "types-html5lib"
+version = "1.1.11.20240106"
+description = "Typing stubs for html5lib"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "types-html5lib-1.1.11.20240106.tar.gz", hash = "sha256:fc3a1b18eb601b3eeaf92c900bd67675c0a4fa1dd1d2a2893ebdb46923547ee9"},
+    {file = "types_html5lib-1.1.11.20240106-py3-none-any.whl", hash = "sha256:61993cb89220107481e0f1da65c388ff8cf3d8c5f6e8483c97559639a596b697"},
 ]
 
 [[package]]
@@ -4301,4 +4326,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "27cdb8efcecb0a221daba6f1861de967820de350c3a147fd3d0500557612cd7b"
+content-hash = "eec6a7545b90a5cb964af1e778855efddf81a2de63155f30071c2def69ac29cd"

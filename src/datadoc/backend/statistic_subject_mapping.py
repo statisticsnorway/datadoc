@@ -1,14 +1,34 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 import requests
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
 
 
+@dataclass
+class SecondarySubject:
+    """Data structure for secondary subjects or 'delemne'."""
+
+    titles: dict[str, str]
+    subject_code: str
+    statistic_short_names: list[str]
+
+
+@dataclass
+class PrimarySubject:
+    """Data structure for primary subjects or 'hovedemne'."""
+
+    titles: dict[str, str]
+    subject_code: str
+    secondary_subjects: list[SecondarySubject]
+
+
 class StatisticSubjectMapping:
     """Allow mapping between statistic short name and primary and secondary subject."""
 
-    def __init__(self, source_url: str | None = None) -> None:
+    def __init__(self, source_url: str) -> None:
         """Retrieves the statistical structure document from the given URL.
 
         Initializes the mapping dicts. Based on the values in the statistical structure document.
@@ -18,6 +38,14 @@ class StatisticSubjectMapping:
         self.statistic_short_name_secondary_subject_mapping: dict[str, str] = {
             "nav_statres": "al03",
         }
+        self._statistic_subject_structure_xml = self._fetch_statistical_structure(
+            self.source_url,
+        )
+        self.primary_subjects: list[
+            PrimarySubject
+        ] = self._parse_statistic_subject_structure_xml(
+            self._statistic_subject_structure_xml,
+        )
 
     def get_primary_subject(self, statistic_short_name: str) -> str | None:
         """Returns the primary subject for the given statistic short name by mapping it through the secondary subject.
@@ -46,19 +74,38 @@ class StatisticSubjectMapping:
         )
 
     @staticmethod
-    def _fetch_statistical_structure_document(source_url: str) -> ResultSet:
+    def _extract_titles(titles_xml: BeautifulSoup) -> dict[str, str]:
+        titles = {}
+        for title in titles_xml.find_all("tittel"):
+            titles[title["sprak"]] = title.text
+        return titles
+
+    @staticmethod
+    def _fetch_statistical_structure(source_url: str) -> ResultSet:
         """Fetch statistical structure document from source_url.
 
         Returns a BeautifulSoup ResultSet.
         """
         response = requests.get(source_url, timeout=30)
-        soup = BeautifulSoup(response.text, "html.parser")
+        soup = BeautifulSoup(response.text, features="xml")
         return soup.find_all("hovedemne")
 
-    @staticmethod
-    def _build_secondary_subject_primary_subject_mapping() -> dict[str, str]:
-        pass
+    def _parse_statistic_subject_structure_xml(
+        self,
+        statistical_structure_xml: ResultSet,
+    ) -> list[PrimarySubject]:
+        primary_subjects: list[PrimarySubject] = []
+        for p in statistical_structure_xml:
+            secondary_subjects: list[SecondarySubject] = [
+                SecondarySubject(
+                    self._extract_titles(s.titler),
+                    s["emnekode"],
+                    [statistikk["kortnavn"] for statistikk in s.find_all("Statistikk")],
+                )
+                for s in p.find_all("delemne")
+            ]
 
-    @staticmethod
-    def _build_statistic_short_name_secondary_subject_mapping() -> dict[str, str]:
-        pass
+            primary_subjects.append(
+                PrimarySubject(p.titler, p["emnekode"], secondary_subjects),
+            )
+        return primary_subjects
