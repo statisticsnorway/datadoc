@@ -15,6 +15,7 @@ from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
 from datadoc.backend.storage_adapter import StorageAdapter
 from datadoc.enums import DatasetState
+from datadoc.enums import DatasetStatus
 from datadoc.enums import VariableRole
 from datadoc.frontend.fields import display_dataset
 from datadoc.frontend.fields import display_variables
@@ -46,6 +47,7 @@ class DataDocMetadata:
         self.container: model.MetadataContainer | None = None
 
         self.dataset_state: DatasetState | None = None
+        self.dataset_status: DatasetStatus | None = None
         self.short_name: str | None = None
         self.current_user: str | None = None
         self.meta: model.DatadocJsonSchema = model.DatadocJsonSchema(
