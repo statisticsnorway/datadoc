@@ -8,20 +8,32 @@ import traceback
 from pydantic import ValidationError
 
 from datadoc import state
+from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.enums import (
     SupportedLanguages,  # noqa: TCH001 import is needed for docs build
 )
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
-from datadoc.frontend.callbacks.utils import get_options_for_language
-from datadoc.frontend.callbacks.utils import open_file
+from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.frontend.callbacks.utils import update_global_language_state
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DATASET_METADATA
-from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_ENUMS
+from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import MULTIPLE_LANGUAGE_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
+from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
 
 logger = logging.getLogger(__name__)
+
+
+def open_file(file_path: str | None = None) -> DataDocMetadata:
+    """Load the given dataset into a DataDocMetadata instance."""
+    if file_path and file_path.endswith(METADATA_DOCUMENT_FILE_SUFFIX):
+        logger.info("Opening existing metadata document %s", file_path)
+        return DataDocMetadata(metadata_document_path=file_path)
+
+    dataset = file_path or get_dataset_path()
+    logger.info("Opening dataset %s", dataset)
+    return DataDocMetadata(dataset_path=dataset)
 
 
 def open_dataset_handling(
@@ -148,9 +160,6 @@ def change_language_dataset_metadata(
     """
     update_global_language_state(language)
     return (
-        *(
-            get_options_for_language(language, e)
-            for e in DISPLAYED_DROPDOWN_DATASET_ENUMS
-        ),
+        *(e.options_getter(language) for e in DISPLAYED_DROPDOWN_DATASET_METADATA),
         update_dataset_metadata_language(),
     )

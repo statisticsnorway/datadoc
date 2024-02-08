@@ -5,6 +5,7 @@ from unittest.mock import patch
 import pytest
 from datadoc_model import model
 
+from datadoc import enums
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.enums import DatasetState
@@ -15,7 +16,6 @@ from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.dataset import process_special_cases
 from datadoc.frontend.callbacks.dataset import update_dataset_metadata_language
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
-from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_ENUMS
 from datadoc.frontend.fields.display_dataset import MULTIPLE_LANGUAGE_DATASET_METADATA
 from tests.utils import TEST_PARQUET_FILEPATH
 
@@ -82,7 +82,12 @@ def test_change_language_dataset_metadata():
     value = change_language_dataset_metadata(SupportedLanguages.NORSK_NYNORSK)
     test = get_language_strings_enum(
         random.choice(  # noqa: S311 not for cryptographic purposes
-            DISPLAYED_DROPDOWN_DATASET_ENUMS,
+            [
+                enums.Assessment,
+                enums.DatasetState,
+                enums.DatasetStatus,
+                enums.TemporalityTypeType,
+            ],
         ),
     )
     assert isinstance(value, tuple)

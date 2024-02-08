@@ -20,6 +20,7 @@ if TYPE_CHECKING:
     from datadoc_model.model import LanguageStringType
     from pydantic import BaseModel
 
+    from datadoc.enums import SupportedLanguages
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 logger = logging.getLogger(__name__)
@@ -36,13 +37,22 @@ DROPDOWN_KWARGS = {
 }
 
 
-def kwargs_factory() -> dict[str, t.Any]:
+def input_kwargs_factory() -> dict[str, t.Any]:
     """Initialize the field extra_kwargs.
 
     We aren't allowed to directly assign a mutable type like a dict to
     a dataclass field.
     """
     return INPUT_KWARGS
+
+
+def dropdown_kwargs_factory() -> dict[str, t.Any]:
+    """Initialize the field extra_kwargs.
+
+    We aren't allowed to directly assign a mutable type like a dict to
+    a dataclass field.
+    """
+    return DROPDOWN_KWARGS
 
 
 def get_standard_metadata(metadata: BaseModel, identifier: str) -> MetadataInputTypes:
@@ -106,6 +116,17 @@ class DisplayDatasetMetadata(DisplayMetadata):
     Specific to dataset fields.
     """
 
-    extra_kwargs: dict[str, Any] = field(default_factory=kwargs_factory)
+    extra_kwargs: dict[str, Any] = field(default_factory=input_kwargs_factory)
     component: type[Component] = dcc.Input
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
+
+
+@dataclass
+class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
+    """Include the possible options which a user may choose from."""
+
+    # fmt: off
+    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
+    # fmt: on
+    extra_kwargs: dict[str, Any] = field(default_factory=dropdown_kwargs_factory)
+    component: type[Component] = dcc.Dropdown
