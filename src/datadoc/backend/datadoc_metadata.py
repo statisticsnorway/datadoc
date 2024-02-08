@@ -51,7 +51,7 @@ class DataDocMetadata:
         self.container: model.MetadataContainer | None = None
         self.dataset: pathlib.Path | CloudPath | None = None
         self.dataset_state: DatasetState | None = None
-        self.dataset_status: DatasetStatus | None = None
+        self.dataset_status: DatasetStatus | None = DatasetStatus.DRAFT
         self.short_name: str | None = None
         self.current_user: str | None = None
         self.meta: model.DatadocJsonSchema = model.DatadocJsonSchema(
