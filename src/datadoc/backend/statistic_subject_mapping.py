@@ -42,10 +42,10 @@ class StatisticSubjectMapping:
         self._statistic_subject_structure_xml = self._fetch_statistical_structure(
             self.source_url,
         )
-        self.primary_subjects: list[PrimarySubject] = (
-            self._parse_statistic_subject_structure_xml(
-                self._statistic_subject_structure_xml,
-            )
+        self.primary_subjects: list[
+            PrimarySubject
+        ] = self._parse_statistic_subject_structure_xml(
+            self._statistic_subject_structure_xml,
         )
 
     def get_primary_subject(self, statistic_short_name: str) -> str | None:
