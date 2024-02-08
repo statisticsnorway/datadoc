@@ -30,6 +30,13 @@ def subject_mapping() -> StatisticSubjectMapping:
     return StatisticSubjectMapping(SOURCE_URL)
 
 
+@pytest.fixture()
+def file_path() -> pathlib.Path:
+    return pathlib.Path(
+        "tests/resources/statistical_subject_structure/extract_secondary_subject.xml",
+    )
+
+
 @pytest.mark.parametrize(
     ("statistic_short_name", "expected_primary_subject"),
     [("nav_statres", "al"), ("unknown_name", None)],
@@ -42,21 +49,6 @@ def test_get_primary_subject(
     assert (
         subject_mapping.get_primary_subject(statistic_short_name)
         == expected_primary_subject
-    )
-
-
-@pytest.mark.parametrize(
-    ("statistic_short_name", "expected_secondary_subject"),
-    [("nav_statres", "al03"), ("unknown_name", None)],
-)
-def test_get_secondary_subject(
-    subject_mapping: StatisticSubjectMapping,
-    statistic_short_name: str,
-    expected_secondary_subject: str,
-) -> None:
-    assert (
-        subject_mapping.get_secondary_subject(statistic_short_name)
-        == expected_secondary_subject
     )
 
 
@@ -103,3 +95,25 @@ def test_read_in_statistical_structure(
     expected: list[PrimarySubject],
 ) -> None:
     assert subject_mapping.primary_subjects == expected
+
+
+@pytest.mark.parametrize(
+    ("statistic_short_name", "expected_secondary_subject"),
+    [
+        ("ab_kortnvan", "ab00"),
+        ("aa_kortnvan", "aa00"),
+        ("ab_kortnvan_01", "ab01"),
+        ("aa_kortnvan_01", "aa01"),
+        ("unknown_name", None),
+    ],
+)
+@pytest.mark.usefixtures("_mock_fetch_statistical_structure")
+def test_get_secondary_subject(
+    subject_mapping: StatisticSubjectMapping,
+    statistic_short_name: str,
+    expected_secondary_subject: str,
+) -> None:
+    assert (
+        subject_mapping.get_secondary_subject(statistic_short_name)
+        == expected_secondary_subject
+    )

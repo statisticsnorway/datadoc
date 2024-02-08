@@ -69,10 +69,11 @@ class StatisticSubjectMapping:
 
         Returns the secondary subject string if found, else None.
         """
-        return self.statistic_short_name_secondary_subject_mapping.get(
-            statistic_short_name,
-            None,
-        )
+        for p in self.primary_subjects:
+            for s in p.secondary_subjects:
+                if statistic_short_name in s.statistic_short_names:
+                    return s.subject_code
+        return None
 
     @staticmethod
     def _extract_titles(titles_xml: bs4.element.Tag) -> dict[str, str]:
