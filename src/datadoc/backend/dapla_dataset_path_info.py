@@ -387,7 +387,6 @@ class DaplaDatasetPathInfo:
                 return s
         return None
 
-
     @property
     def dataset_version(
         self,
