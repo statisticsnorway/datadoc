@@ -14,6 +14,7 @@ from datadoc.backend.dapla_dataset_path_info import ISO_YEAR_MONTH_DAY
 from datadoc.backend.dapla_dataset_path_info import SSB_BIMESTER
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.enums import DatasetState
+from tests.utils import TEST_BUCKET_PARQUET_FILEPATH_WITH_SHORTNAME
 from tests.utils import TEST_PARQUET_FILEPATH
 
 
@@ -278,3 +279,18 @@ def test_date_format_correct_from_date(date_format, period, expected: datetime.d
 )
 def test_date_format_correct_end_date(date_format, period, expected):
     assert date_format.get_ceil(period) == expected
+
+
+@pytest.mark.parametrize(
+    ("data", "expected"),
+    [
+        (TEST_BUCKET_PARQUET_FILEPATH_WITH_SHORTNAME, "befolkning"),
+        (
+            "gs://ssb-staging-dapla-felles-data-delt/datadoc/person_data_v1.parquet",
+            None,
+        ),
+        ("inndata/person_data_v1.parquet", None),
+    ],
+)
+def test_extract_shortname_in_path(data: str, expected: str):
+    assert DaplaDatasetPathInfo(data).dataset_shortname == expected

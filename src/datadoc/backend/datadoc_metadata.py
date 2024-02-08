@@ -1,4 +1,5 @@
 """Handle reading, updating and writing of metadata."""
+
 from __future__ import annotations
 
 import json
@@ -7,13 +8,16 @@ import pathlib
 import uuid
 from typing import TYPE_CHECKING
 
+from cloudpathlib import CloudPath
+from cloudpathlib import GSClient
+from cloudpathlib import GSPath
+from dapla import AuthClient
 from datadoc_model import model
 
 from datadoc import config
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
-from datadoc.backend.storage_adapter import StorageAdapter
 from datadoc.enums import DatasetState
 from datadoc.enums import DatasetStatus
 from datadoc.enums import VariableRole
@@ -23,7 +27,6 @@ from datadoc.utils import calculate_percentage
 from datadoc.utils import get_timestamp_now
 
 if TYPE_CHECKING:
-    import os
     from datetime import datetime
 
 logger = logging.getLogger(__name__)
@@ -38,14 +41,15 @@ class DataDocMetadata:
 
     def __init__(
         self,
-        dataset_path: str | os.PathLike[str] | None = None,
-        metadata_document_path: str | os.PathLike[str] | None = None,
+        dataset_path: str | None = None,
+        metadata_document_path: str | None = None,
     ) -> None:
         """Read in a dataset if supplied, otherwise naively instantiate the class."""
-        self.dataset: pathlib.Path | None = None
-        self.metadata_document: StorageAdapter | None = None
-        self.container: model.MetadataContainer | None = None
+        self.dataset_path = dataset_path
 
+        self.metadata_document: pathlib.Path | CloudPath | None = None
+        self.container: model.MetadataContainer | None = None
+        self.dataset: pathlib.Path | CloudPath | None = None
         self.dataset_state: DatasetState | None = None
         self.dataset_status: DatasetStatus | None = None
         self.short_name: str | None = None
@@ -55,31 +59,23 @@ class DataDocMetadata:
             dataset=model.Dataset(),
             variables=[],
         )
-
         self.variables_lookup: dict[str, model.Variable] = {}
-
         if metadata_document_path:
             # In this case the user has specified an independent metadata document for editing
             # without a dataset.
-            self.metadata_document = StorageAdapter.for_path(metadata_document_path)
+            self.metadata_document = self._open_path(metadata_document_path)
             self.extract_metadata_from_existing_document(self.metadata_document)
-
         elif dataset_path:
-            # This is the most common use case.
-            self.dataset = pathlib.Path(dataset_path)
+            self.dataset = self._open_path(dataset_path)
             # The short_name is set as the dataset filename without file extension
-            self.short_name = pathlib.Path(
-                self.dataset,
-            ).stem
-            self.metadata_document = StorageAdapter.for_path(
-                StorageAdapter.for_path(self.dataset).parent(),
-            )
-            self.metadata_document.joinpath(
-                self.short_name + METADATA_DOCUMENT_FILE_SUFFIX,
-            )
+            self.short_name = self.dataset.stem
 
+            # Build the metadata document path based on the dataset path
+            # Example: /path/to/dataset.parquet -> /path/to/dataset__DOC.json
+            self.metadata_document = self.dataset.parent / (
+                self.dataset.stem + METADATA_DOCUMENT_FILE_SUFFIX
+            )
             self.extract_metadata_from_files()
-
         self.current_user = config.get_jupyterhub_user()
         if not self.current_user:
             self.current_user = PLACEHOLDER_USERNAME
@@ -87,6 +83,18 @@ class DataDocMetadata:
                 "JUPYTERHUB_USER env variable not set, using %s as placeholder",
                 self.current_user,
             )
+
+    @staticmethod
+    def _open_path(path: str) -> pathlib.Path | CloudPath:
+        """Open a given path regardless of whether it is local or cloud.
+
+        The returned path may be treated just as if it's a pathlib.Path.
+        """
+        if path.startswith(GSPath.cloud_prefix):
+            client = GSClient(credentials=AuthClient.fetch_google_credentials())
+            return GSPath(path, client=client)
+
+        return pathlib.Path(path)
 
     def extract_metadata_from_files(self) -> None:
         """Read metadata from an existing metadata document.
@@ -98,9 +106,7 @@ class DataDocMetadata:
             self.extract_metadata_from_existing_document(self.metadata_document)
         elif self.dataset is not None:
             self.extract_metadata_from_dataset(self.dataset)
-
             self.meta.dataset.id = uuid.uuid4()
-
             # Set default values for variables where appropriate
             v: model.Variable
             for v in self.meta.variables:
@@ -108,13 +114,14 @@ class DataDocMetadata:
                     v.variable_role = VariableRole.MEASURE
                 if v.direct_person_identifying is None:
                     v.direct_person_identifying = False
-
         if not self.meta.dataset.id:
             self.meta.dataset.id = uuid.uuid4()
-
         self.variables_lookup = {v.short_name: v for v in self.meta.variables}
 
-    def extract_metadata_from_existing_document(self, document: StorageAdapter) -> None:
+    def extract_metadata_from_existing_document(
+        self,
+        document: pathlib.Path | CloudPath,
+    ) -> None:
         """There's an existing metadata document, so read in the metadata from that."""
         fresh_metadata = {}
         try:
@@ -122,9 +129,8 @@ class DataDocMetadata:
                 fresh_metadata = json.load(file)
             logger.info(
                 "Opened existing metadata file %s",
-                document.location,
+                document,
             )
-
             if self.is_metadata_in_container_structure(fresh_metadata):
                 self.container = model.MetadataContainer.model_validate_json(
                     json.dumps(fresh_metadata),
@@ -136,16 +142,14 @@ class DataDocMetadata:
             datadoc_metadata = upgrade_metadata(
                 datadoc_metadata,
             )
-
             self.meta = model.DatadocJsonSchema.model_validate_json(
                 json.dumps(datadoc_metadata),
             )
-
         except json.JSONDecodeError:
             logger.warning(
                 "Could not open existing metadata file %s. \
                     Falling back to collecting data from the dataset",
-                document.location,
+                document,
                 exc_info=True,
             )
 
@@ -162,7 +166,7 @@ class DataDocMetadata:
 
     def extract_metadata_from_dataset(
         self,
-        dataset: pathlib.Path,
+        dataset: pathlib.Path | CloudPath,
     ) -> None:
         """Obtain what metadata we can from the dataset itself.
 
@@ -170,9 +174,7 @@ class DataDocMetadata:
         Certain elements are dependent on the dataset being saved according to SSB's standard.
         """
         self.ds_schema: DatasetParser = DatasetParser.for_file(dataset)
-
         dapla_dataset_path_info = DaplaDatasetPathInfo(dataset)
-
         self.meta.dataset = model.Dataset(
             short_name=self.short_name,
             dataset_state=dapla_dataset_path_info.dataset_state,
@@ -182,7 +184,6 @@ class DataDocMetadata:
             data_source_path=self.dataset,
             created_by=self.current_user,
         )
-
         self.meta.variables = self.ds_schema.get_fields()
 
     def write_metadata_document(self) -> None:
@@ -199,10 +200,9 @@ class DataDocMetadata:
             self.container.datadoc = self.meta
         else:
             self.container = model.MetadataContainer(datadoc=self.meta)
-
         if self.metadata_document:
             self.metadata_document.write_text(self.container.model_dump_json(indent=4))
-            logger.info("Saved metadata document %s", self.metadata_document.location)
+            logger.info("Saved metadata document %s", self.metadata_document)
         else:
             msg = "No metadata document to save"
             raise ValueError(msg)
@@ -224,7 +224,6 @@ class DataDocMetadata:
                 and v is not None
             ],
         )
-
         for variable in self.meta.variables:
             num_all_fields += len(display_variables.OBLIGATORY_VARIABLES_METADATA)
             num_set_fields += len(
@@ -235,5 +234,4 @@ class DataDocMetadata:
                     and v is not None
                 ],
             )
-
         return calculate_percentage(num_set_fields, num_all_fields)

@@ -1,4 +1,5 @@
 """Extract info from a path following SSB's dataset naming convention."""
+
 from __future__ import annotations
 
 import pathlib
@@ -324,6 +325,15 @@ class DaplaDatasetPathInfo:
         except IndexError:
             return None
 
+    def _extract_norwegian_dataset_state_path_part(
+        self,
+        dataset_state: DatasetState,
+    ) -> set:
+        norwegian_dataset_state_path_part = dataset_state.get_value_for_language(
+            SupportedLanguages.NORSK_BOKMÅL,
+        ).lower()
+        return {norwegian_dataset_state_path_part.replace(" ", x) for x in ["-", "_"]}
+
     @property
     def contains_data_from(self) -> datetime.date | None:
         """The earliest date from which data in the dataset is relevant for."""
@@ -367,18 +377,14 @@ class DaplaDatasetPathInfo:
         dataset_path_parts = set(self.dataset_path.parts)
         for s in DatasetState:
             # We assume that files are saved in the Norwegian language as specified by SSB.
-            norwegian_dataset_state_path_part = s.get_value_for_language(
-                SupportedLanguages.NORSK_BOKMÅL,
-            ).lower()
-            norwegian_dataset_state_path_part_variations = {
-                norwegian_dataset_state_path_part.replace(" ", x) for x in ["-", "_"]
-            }
+            norwegian_dataset_state_path_part_variations = (
+                self._extract_norwegian_dataset_state_path_part(s)
+            )
             # Match on any of the variations anywhere in the path.
             if norwegian_dataset_state_path_part_variations.intersection(
                 dataset_path_parts,
             ):
                 return s
-
         return None
 
 
@@ -406,4 +412,29 @@ class DaplaDatasetPathInfo:
                 and last_filename_element[1:].isdigit()
             ):
                 return last_filename_element[1:]
+        return None
+
+    @property
+    def dataset_shortname(
+        self,
+    ) -> str | None:
+        """Extract the shortname from the filepath right before the dataset_state, based on the Dapla filepath naming convention.
+
+        Examples:
+        >>> DaplaDatasetPathInfo(prosjekt/befolkning/klargjordte_data/person_data_v1.parquet').dataset_shortname
+        befolkning
+        >>> DaplaDatasetPathInfo('befolkning/inndata/person_data_v1.parquet').dataset_shortname
+        befolkning
+        >>> DaplaDatasetPathInfo('befolkning/person_data.parquet').dataset_shortname
+        None
+        """
+        dataset_state = self.dataset_state
+        if dataset_state is not None:
+            dataset_state_names = self._extract_norwegian_dataset_state_path_part(
+                dataset_state,
+            )
+            dataset_path_parts = list(self.dataset_path.parts)
+            for i in dataset_state_names:
+                if i in dataset_path_parts and dataset_path_parts.index(i) != 0:
+                    return dataset_path_parts[dataset_path_parts.index(i) - 1]
         return None
