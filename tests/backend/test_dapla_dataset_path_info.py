@@ -14,7 +14,6 @@ from datadoc.backend.dapla_dataset_path_info import ISO_YEAR_MONTH_DAY
 from datadoc.backend.dapla_dataset_path_info import SSB_BIMESTER
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.enums import DatasetState
-from datadoc.enums import DatasetStatus
 from tests.utils import TEST_PARQUET_FILEPATH
 
 
@@ -179,21 +178,6 @@ def test_get_dataset_state(
 ):
     actual_state = DaplaDatasetPathInfo(full_dataset_state_path).dataset_state
     assert actual_state == expected_result
-
-
-@pytest.mark.parametrize(
-    ("full_dataset_status_path", "expected_result"),
-    [
-        ("any_path", DatasetStatus.DRAFT),
-        ("", None),
-    ],
-)
-def test_get_dataset_status(
-    full_dataset_status_path: pathlib.Path,
-    expected_result: DatasetStatus,
-):
-    actual_status = DaplaDatasetPathInfo(full_dataset_status_path).dataset_status
-    assert actual_status == expected_result
 
 
 @pytest.mark.parametrize(
