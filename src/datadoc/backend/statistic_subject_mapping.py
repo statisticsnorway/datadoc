@@ -89,6 +89,8 @@ class StatisticSubjectMapping:
         Returns a BeautifulSoup ResultSet.
         """
         response = requests.get(source_url, timeout=30)
+        # Override the default encoding in requests
+        response.encoding = "utf-8"
         soup = BeautifulSoup(response.text, features="xml")
         return soup.find_all("hovedemne")
 

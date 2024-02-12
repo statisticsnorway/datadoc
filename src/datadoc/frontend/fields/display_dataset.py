@@ -9,7 +9,9 @@ from typing import TYPE_CHECKING
 
 from dash import dcc
 
+from datadoc import config
 from datadoc import enums
+from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
 from datadoc.frontend.fields.display_base import NUMBER_KWARGS
@@ -40,14 +42,26 @@ def get_enum_options_for_language(
 
 
 def get_statistical_subject_options(
+    url: str | None,
     language: SupportedLanguages,
 ) -> list[dict[str, str]]:
     """Collect the statistical subject options for the given language."""
-    primary_subjects: list[PrimarySubject] = []
+    if not url:
+        logger.error(
+            "No statistical subject source url configured, not populating dropdown.",
+        )
+        # We can't get options if we don't know where to get them from,
+        # in this case the dropdown will be empty.
+        return []
+
+    primary_subjects: list[PrimarySubject] = StatisticSubjectMapping(
+        url,
+    ).primary_subjects
     return [
         {
             "label": subject.titles[
                 (
+                    # Adjust to language codes in the StatisticSubjectMapping structure.
                     "no"
                     if language
                     in [
@@ -199,8 +213,13 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         display_name="Statistikkområde",
         description="Primær statistikkområdet som datasettet inngår i",
         obligatory=True,
+        # TODO @mmwinther: Remove multiple_language_support once the model is updated.
+        # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
         multiple_language_support=True,
-        options_getter=get_statistical_subject_options,
+        options_getter=functools.partial(
+            get_statistical_subject_options,
+            config.get_statistical_subject_source_url(),
+        ),
     ),
     DatasetIdentifiers.KEYWORD: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.KEYWORD.value,
