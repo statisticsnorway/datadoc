@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import dash_bootstrap_components as dbc
+import ssb_dash_components as ssb
 from dash import html
 
 from datadoc.frontend.components.builders import build_ssb_styled_tab
@@ -55,8 +56,8 @@ def build_dataset_tab() -> dbc.Tab:
         dbc.Container(
             [
                 dbc.Row(html.H2("Datasett detaljer", className="ssb-title")),
-                dbc.Accordion(
-                    always_open=True,
+                ssb.Accordion(
+                    header="Datasett detaljer",
                     children=[
                         build_dataset_metadata_accordion_item(
                             "Obligatorisk",
