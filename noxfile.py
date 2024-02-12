@@ -150,6 +150,7 @@ def mypy(session: Session) -> None:
         "pandas-stubs",
         "types-Pygments",
         "types-colorama",
+        "types-beautifulsoup4",
     )
     session.run("mypy", *args)
     if not session.posargs:

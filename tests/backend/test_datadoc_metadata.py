@@ -1,12 +1,16 @@
 """Tests for the DataDocMetadata class."""
+
 from __future__ import annotations
 
 import json
+import pathlib
 from pathlib import Path
 from typing import TYPE_CHECKING
 from uuid import UUID
 
 import pytest
+from cloudpathlib.local import LocalGSClient
+from cloudpathlib.local import LocalGSPath
 from datadoc_model.model import DatadocJsonSchema
 from datadoc_model.model import Dataset
 from datadoc_model.model import Variable
@@ -16,13 +20,18 @@ from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.enums import DatasetState
 from datadoc.enums import DataType
 from datadoc.enums import VariableRole
+from tests.utils import TEST_BUCKET_PARQUET_FILEPATH
 from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
+from tests.utils import TEST_PARQUET_FILEPATH
 from tests.utils import TEST_RESOURCES_DIRECTORY
 from tests.utils import TEST_RESOURCES_METADATA_DOCUMENT
 
 if TYPE_CHECKING:
+    import os
     from datetime import datetime
+
+DATADOC_METADATA_MODULE = "datadoc.backend.datadoc_metadata"
 
 
 @pytest.mark.usefixtures("existing_metadata_file")
@@ -178,6 +187,30 @@ def test_period_metadata_fields_saved(
     expected_from,
     expected_until,
 ):
-    metadata = DataDocMetadata(generate_periodic_file)
+    metadata = DataDocMetadata(str(generate_periodic_file))
     assert metadata.meta.dataset.contains_data_from == expected_from
     assert metadata.meta.dataset.contains_data_until == expected_until
+
+
+@pytest.mark.parametrize(
+    ("dataset_path", "expected_type"),
+    [
+        (TEST_BUCKET_PARQUET_FILEPATH, LocalGSPath),
+        (str(TEST_PARQUET_FILEPATH), pathlib.Path),
+    ],
+)
+def test_open_file(
+    dataset_path: str,
+    expected_type: type[os.PathLike],
+    mocker,
+):
+    mocker.patch(f"{DATADOC_METADATA_MODULE}.AuthClient", autospec=True)
+    mocker.patch(f"{DATADOC_METADATA_MODULE}.GSClient", LocalGSClient)
+    mocker.patch(
+        f"{DATADOC_METADATA_MODULE}.GSPath",
+        LocalGSPath,
+    )
+    file = DataDocMetadata._open_path(  # noqa: SLF001 for testing purposes
+        dataset_path,
+    )
+    assert isinstance(file, expected_type)

@@ -1,4 +1,5 @@
 """Centralised configuration management for Datadoc."""
+
 from __future__ import annotations
 
 import logging
@@ -82,3 +83,8 @@ def get_jupyterhub_http_referrer() -> str | None:
 def get_port() -> int:
     """Get the port to run the app on."""
     return int(_get_config_item("DATADOC_PORT") or 7002)
+
+
+def get_statistical_subject_source_url() -> str | None:
+    """Get the URL to the statistical subject source."""
+    return _get_config_item("DATADOC_STATISTICAL_SUBJECT_SOURCE_URL")
