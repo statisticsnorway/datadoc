@@ -3906,13 +3906,13 @@ files = []
 develop = false
 
 [package.dependencies]
-dash = "^2.14.2"
+dash = ">=2.15.0"
 
 [package.source]
 type = "git"
 url = "git@github.com:statisticsnorway/ssb-dash-components.git"
 reference = "HEAD"
-resolved_reference = "a517917e8f0971a15301dcf082667944bbfaa70c"
+resolved_reference = "654780281dfe5916fece8b41cd44232f78518f3a"
 
 [[package]]
 name = "ssb-datadoc-model"
@@ -4380,4 +4380,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "40f5d55ff782ac8ffeaed297bda34bb953d6d417bbfb79b807dbfa3fe9e683e3"
+content-hash = "502c58c402e2f0d822add35b228c69a33fc526f7ab92552597a34e7f045a3e2b"
