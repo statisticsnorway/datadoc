@@ -70,7 +70,7 @@ class StatisticSubjectMapping:
             self.source_url,
         )
 
-        self._primary_subjects: list[PrimarySubject] | None
+        self._primary_subjects: list[PrimarySubject]
 
     def get_primary_subject(self, statistic_short_name: str) -> str | None:
         """Returns the primary subject for the given statistic short name by mapping it through the secondary subject.
@@ -94,11 +94,10 @@ class StatisticSubjectMapping:
 
         Returns the secondary subject string if found, else None.
         """
-        if self.primary_subjects is not None:
-            for p in self.primary_subjects:
-                for s in p.secondary_subjects:
-                    if statistic_short_name in s.statistic_short_names:
-                        return s.subject_code
+        for p in self.primary_subjects:
+            for s in p.secondary_subjects:
+                if statistic_short_name in s.statistic_short_names:
+                    return s.subject_code
         return None
 
     @staticmethod
@@ -109,7 +108,7 @@ class StatisticSubjectMapping:
         return titles
 
     @staticmethod
-    def _fetch_statistical_structure(source_url: str) -> ResultSet:
+    def _fetch_statistical_structure(source_url: str) -> ResultSet | None:
         """Fetch statistical structure document from source_url.
 
         Returns a BeautifulSoup ResultSet.
@@ -124,39 +123,34 @@ class StatisticSubjectMapping:
 
     def _parse_statistic_subject_structure_xml(
         self,
-        statistical_structure_xml: ResultSet | None,
-    ) -> list[PrimarySubject] | None:
+        statistical_structure_xml: ResultSet,
+    ) -> list[PrimarySubject]:
         primary_subjects: list[PrimarySubject] = []
-        if statistical_structure_xml is not None:
-            for p in statistical_structure_xml:
-                secondary_subjects: list[SecondarySubject] = [
-                    SecondarySubject(
-                        self._extract_titles(s.titler),
-                        s["emnekode"],
-                        [
-                            statistikk["kortnavn"]
-                            for statistikk in s.find_all("Statistikk")
-                        ],
-                    )
-                    for s in p.find_all("delemne")
-                ]
-
-                primary_subjects.append(
-                    PrimarySubject(
-                        self._extract_titles(p.titler),
-                        p["emnekode"],
-                        secondary_subjects,
-                    ),
+        for p in statistical_structure_xml:
+            secondary_subjects: list[SecondarySubject] = [
+                SecondarySubject(
+                    self._extract_titles(s.titler),
+                    s["emnekode"],
+                    [statistikk["kortnavn"] for statistikk in s.find_all("Statistikk")],
                 )
-            return primary_subjects
-        return None
+                for s in p.find_all("delemne")
+            ]
+
+            primary_subjects.append(
+                PrimarySubject(
+                    self._extract_titles(p.titler),
+                    p["emnekode"],
+                    secondary_subjects,
+                ),
+            )
+        return primary_subjects
 
     def wait_for_primary_subject(self) -> None:
         """Waits for the thread responsible for loading the xml to finish."""
         self.future.result()
 
     @property
-    def primary_subjects(self) -> list[PrimarySubject] | None:
+    def primary_subjects(self) -> list[PrimarySubject]:
         """Getter for primary subjects."""
         self._parse_xml_if_loaded()
         return self._primary_subjects
@@ -169,9 +163,9 @@ class StatisticSubjectMapping:
         if self.future.done():
             self._statistic_subject_structure_xml = self.future.result()
 
-            self._primary_subjects = self._parse_statistic_subject_structure_xml(
-                self._statistic_subject_structure_xml,
-            )
-
-            return True
+            if self._statistic_subject_structure_xml is not None:
+                self._primary_subjects = self._parse_statistic_subject_structure_xml(
+                    self._statistic_subject_structure_xml,
+                )
+                return True
         return False
