@@ -55,7 +55,11 @@ def build_dataset_tab() -> dbc.Tab:
         "Datasett",
         dbc.Container(
             [
-                dbc.Row(html.H2("Datasett detaljer", className="ssb-title")),
+                dbc.Row(ssb.Title("Datasett detaljer", size=2)),
+                ssb.Paragraph(
+                    children=["Paragraph with info about the dataset"],
+                    id="dataset-info",
+                ),
                 html.Div(
                     children=[
                         build_dataset_metadata_accordion_item(
