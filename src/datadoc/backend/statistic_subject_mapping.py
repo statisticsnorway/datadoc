@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import concurrent.futures
-import logging
 from dataclasses import dataclass
 
 import bs4
@@ -10,8 +9,6 @@ from bs4 import BeautifulSoup
 from bs4 import ResultSet
 
 from datadoc.enums import SupportedLanguages
-
-logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -54,18 +51,15 @@ class PrimarySubject(Subject):
 class StatisticSubjectMapping:
     """Allow mapping between statistic short name and primary and secondary subject."""
 
-    def __init__(self, source_url: str) -> None:
+    def __init__(self, source_url: str | None) -> None:
         """Retrieves the statistical structure document from the given URL.
 
         Initializes the mapping dicts. Based on the values in the statistical structure document.
         """
         self.source_url = source_url
-        self.secondary_subject_primary_subject_mapping: dict[str, str] = {"al03": "al"}
-        self.statistic_short_name_secondary_subject_mapping: dict[str, str] = {
-            "nav_statres": "al03",
-        }
 
         self._statistic_subject_structure_xml: ResultSet | None = None
+        self.secondary_subject_primary_subject_mapping: dict[str, str] = {}
 
         executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
         self.future = executor.submit(
@@ -111,14 +105,13 @@ class StatisticSubjectMapping:
         return titles
 
     @staticmethod
-    def _fetch_statistical_structure(source_url: str) -> ResultSet:
+    def _fetch_statistical_structure(source_url: str | None) -> ResultSet:
         """Fetch statistical structure document from source_url.
 
         Returns a BeautifulSoup ResultSet.
         """
-        response = requests.get(source_url, timeout=30)
-        # Override the default encoding in requests
-        response.encoding = "utf-8"
+        if source_url is not None:
+            response = requests.get(source_url, timeout=30)
         soup = BeautifulSoup(response.text, features="xml")
         return soup.find_all("hovedemne")
 
