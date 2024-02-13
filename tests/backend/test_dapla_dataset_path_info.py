@@ -162,7 +162,7 @@ def full_dataset_state_path(
 
 
 @pytest.mark.parametrize(
-    ("full_dataset_state_path", "expected_result"),
+    ("dataset_state_path", "expected_result"),
     [
         ("kildedata", DatasetState.SOURCE_DATA),
         ("inndata", DatasetState.INPUT_DATA),
