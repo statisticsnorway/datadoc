@@ -51,7 +51,7 @@ class PrimarySubject(Subject):
 class StatisticSubjectMapping:
     """Allow mapping between statistic short name and primary and secondary subject."""
 
-    def __init__(self, source_url: str | None) -> None:
+    def __init__(self, source_url: str) -> None:
         """Retrieves the statistical structure document from the given URL.
 
         Initializes the mapping dicts. Based on the values in the statistical structure document.
@@ -105,13 +105,13 @@ class StatisticSubjectMapping:
         return titles
 
     @staticmethod
-    def _fetch_statistical_structure(source_url: str | None) -> ResultSet:
+    def _fetch_statistical_structure(source_url: str) -> ResultSet:
         """Fetch statistical structure document from source_url.
 
         Returns a BeautifulSoup ResultSet.
         """
-        if source_url is not None:
-            response = requests.get(source_url, timeout=30)
+        response = requests.get(source_url, timeout=30)
+        response.encoding = "utf-8"
         soup = BeautifulSoup(response.text, features="xml")
         return soup.find_all("hovedemne")
 
