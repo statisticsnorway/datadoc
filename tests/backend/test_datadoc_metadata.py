@@ -18,12 +18,14 @@ from datadoc_model.model import Variable
 from datadoc.backend.datadoc_metadata import PLACEHOLDER_USERNAME
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.enums import DatasetState
+from datadoc.enums import DatasetStatus
 from datadoc.enums import DataType
 from datadoc.enums import VariableRole
 from tests.utils import TEST_BUCKET_PARQUET_FILEPATH
 from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
 from tests.utils import TEST_PARQUET_FILEPATH
+from tests.utils import TEST_PREPARED_DATA_POPULATION_DIRECTORY
 from tests.utils import TEST_RESOURCES_DIRECTORY
 from tests.utils import TEST_RESOURCES_METADATA_DOCUMENT
 
@@ -214,3 +216,44 @@ def test_open_file(
         dataset_path,
     )
     assert isinstance(file, expected_type)
+
+
+@pytest.mark.parametrize(
+    ("dataset_path", "metadata_document_path", "expected_type"),
+    [
+        (
+            str(
+                TEST_PREPARED_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+            ),
+            str(
+                TEST_PREPARED_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
+            ),
+            DatasetStatus.DRAFT.value,
+        ),
+        (
+            str(
+                TEST_RESOURCES_DIRECTORY / "person_data_v1.parquet",
+            ),
+            None,
+            DatasetStatus.DRAFT.value,
+        ),
+        (
+            "",
+            None,
+            None,
+        ),
+    ],
+)
+def test_dataset_status_default_value(
+    dataset_path: str,
+    metadata_document_path: str | None,
+    expected_type: DatasetStatus | None,
+):
+    datadoc_metadata = DataDocMetadata(
+        dataset_path,
+        metadata_document_path,
+    )
+
+    assert expected_type == datadoc_metadata.meta.dataset.dataset_status

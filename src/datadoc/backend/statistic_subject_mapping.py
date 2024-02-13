@@ -9,31 +9,52 @@ import requests
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
 
+from datadoc.enums import SupportedLanguages
+
 logger = logging.getLogger(__name__)
 
 
 @dataclass
-class SecondarySubject:
-    """Data structure for secondary subjects or 'delemne'."""
+class Subject:
+    """Base class for Primary and Secondary subjects."""
 
     titles: dict[str, str]
     subject_code: str
+
+    def get_title(self, language: SupportedLanguages) -> str:
+        """Get the title in the given language."""
+        return self.titles[
+            (
+                # Adjust to language codes in the StatisticSubjectMapping structure.
+                "no"
+                if language
+                in [
+                    SupportedLanguages.NORSK_BOKMÅL,
+                    SupportedLanguages.NORSK_NYNORSK,
+                ]
+                else "en"
+            )
+        ]
+
+
+@dataclass
+class SecondarySubject(Subject):
+    """Data structure for secondary subjects or 'delemne'."""
+
     statistic_short_names: list[str]
 
 
 @dataclass
-class PrimarySubject:
+class PrimarySubject(Subject):
     """Data structure for primary subjects or 'hovedemne'."""
 
-    titles: dict[str, str]
-    subject_code: str
     secondary_subjects: list[SecondarySubject]
 
 
 class StatisticSubjectMapping:
     """Allow mapping between statistic short name and primary and secondary subject."""
 
-    def __init__(self, source_url: str | None) -> None:
+    def __init__(self, source_url: str) -> None:
         """Retrieves the statistical structure document from the given URL.
 
         Initializes the mapping dicts. Based on the values in the statistical structure document.
@@ -88,20 +109,18 @@ class StatisticSubjectMapping:
         return titles
 
     @staticmethod
-    def _fetch_statistical_structure(source_url: str | None) -> ResultSet | None:
+    def _fetch_statistical_structure(source_url: str) -> ResultSet:
         """Fetch statistical structure document from source_url.
 
         Returns a BeautifulSoup ResultSet.
         """
-        if source_url is not None:
-            try:
-                response = requests.get(source_url, timeout=30)
-                soup = BeautifulSoup(response.text, features="xml")
-                return soup.find_all("hovedemne")
-            except requests.exceptions.RequestException:
-                logger.debug("statistical structure file not avalable")
-                return None
-        return None
+        try:
+            response = requests.get(source_url, timeout=30)
+            soup = BeautifulSoup(response.text, features="xml")
+            return soup.find_all("hovedemne")
+        except requests.exceptions.RequestException:
+            logger.debug("statistical structure file not avalable")
+            return None
 
     def _parse_statistic_subject_structure_xml(
         self,
