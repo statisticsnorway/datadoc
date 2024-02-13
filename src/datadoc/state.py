@@ -10,6 +10,7 @@ See here: https://dash.plotly.com/sharing-data-between-callbacks
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
 
 from datadoc import config
@@ -20,12 +21,20 @@ if TYPE_CHECKING:
     from datadoc.enums import SupportedLanguages
 
 
+logger = logging.getLogger(__name__)
+
 # Global metadata container
 metadata: DataDocMetadata
 
 current_metadata_language: SupportedLanguages
 
+statistic_subject_mapping: StatisticSubjectMapping
 
-statistic_subject_mapping = StatisticSubjectMapping(
-    config.get_datadoc_dataset_path(),
-)
+if source_url := config.get_statistical_subject_source_url():
+    statistic_subject_mapping = StatisticSubjectMapping(
+        source_url,
+    )
+else:
+    logger.warning(
+        "No URL to fetch statistical subject structure supplied. Skipping fetching it. This may make it difficult to provide a value for the 'subject_field' metadata field.",
+    )
