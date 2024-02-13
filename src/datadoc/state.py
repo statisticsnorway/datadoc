@@ -12,6 +12,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from datadoc import config
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 
 if TYPE_CHECKING:
@@ -24,6 +25,7 @@ metadata: DataDocMetadata
 
 current_metadata_language: SupportedLanguages
 
-SOURCE_URL = "https://www.ssb.no/xp/_/service/mimir/subjectStructurStatistics"
 
-statistic_subjec_mapping = StatisticSubjectMapping(SOURCE_URL)
+statistic_subject_mapping = StatisticSubjectMapping(
+    config.get_datadoc_dataset_path(),
+)
