@@ -31,10 +31,6 @@ INPUT_KWARGS = {
     "className": "ssb-input",
 }
 NUMBER_KWARGS = dict(type="number", **INPUT_KWARGS)
-DROPDOWN_KWARGS = {
-    "style": {"width": "100%"},
-    "className": "ssb-dropdown",
-}
 
 
 def input_kwargs_factory() -> dict[str, t.Any]:
@@ -52,7 +48,7 @@ def dropdown_kwargs_factory() -> dict[str, t.Any]:
     We aren't allowed to directly assign a mutable type like a dict to
     a dataclass field.
     """
-    return DROPDOWN_KWARGS
+    return {}
 
 
 def get_standard_metadata(metadata: BaseModel, identifier: str) -> MetadataInputTypes:

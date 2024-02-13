@@ -9,10 +9,8 @@ from typing import TYPE_CHECKING
 
 from dash import dcc
 
-from datadoc import config
 from datadoc import enums
-from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-from datadoc.enums import SupportedLanguages
+from datadoc import state
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
 from datadoc.frontend.fields.display_base import NUMBER_KWARGS
 from datadoc.frontend.fields.display_base import DisplayDatasetMetadata
@@ -22,7 +20,7 @@ from datadoc.frontend.fields.display_base import get_metadata_and_stringify
 from datadoc.frontend.fields.display_base import get_multi_language_metadata
 
 if TYPE_CHECKING:
-    from datadoc.backend.statistic_subject_mapping import PrimarySubject
+    from datadoc.enums import SupportedLanguages
 
 logger = logging.getLogger(__name__)
 
@@ -42,38 +40,16 @@ def get_enum_options_for_language(
 
 
 def get_statistical_subject_options(
-    url: str | None,
     language: SupportedLanguages,
 ) -> list[dict[str, str]]:
     """Collect the statistical subject options for the given language."""
-    if not url:
-        logger.error(
-            "No statistical subject source url configured, not populating dropdown.",
-        )
-        # We can't get options if we don't know where to get them from,
-        # in this case the dropdown will be empty.
-        return []
-
-    primary_subjects: list[PrimarySubject] = StatisticSubjectMapping(
-        url,
-    ).primary_subjects
     return [
         {
-            "label": subject.titles[
-                (
-                    # Adjust to language codes in the StatisticSubjectMapping structure.
-                    "no"
-                    if language
-                    in [
-                        SupportedLanguages.NORSK_BOKMÅL,
-                        SupportedLanguages.NORSK_NYNORSK,
-                    ]
-                    else "en"
-                )
-            ],
-            "value": subject.subject_code,
+            "label": f"{primary.get_title(language)} - {secondary.get_title(language)}",
+            "value": secondary.subject_code,
         }
-        for subject in primary_subjects
+        for primary in state.statistic_subjec_mapping.primary_subjects
+        for secondary in primary.secondary_subjects
     ]
 
 
@@ -216,10 +192,7 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         # TODO @mmwinther: Remove multiple_language_support once the model is updated.
         # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
         multiple_language_support=True,
-        options_getter=functools.partial(
-            get_statistical_subject_options,
-            config.get_statistical_subject_source_url(),
-        ),
+        options_getter=get_statistical_subject_options,
     ),
     DatasetIdentifiers.KEYWORD: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.KEYWORD.value,
