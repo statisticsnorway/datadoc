@@ -28,6 +28,14 @@ def build_dataset_metadata_accordion_item(
         children=[
             dbc.Row(
                 [
+                    dbc.Col(
+                        ssb.Input(
+                            label=i.display_name,
+                            id=i.identifier,
+                            type="text",
+                            disabled=not i.editable,
+                        ),
+                    ),
                     dbc.Col(html.Label(i.display_name)),
                     dbc.Col(
                         i.component(

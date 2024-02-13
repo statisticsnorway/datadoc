@@ -9,6 +9,7 @@ from dataclasses import field
 from typing import TYPE_CHECKING
 from typing import Any
 
+import ssb_dash_components as ssb
 from dash import dcc
 
 from datadoc import state
@@ -108,4 +109,5 @@ class DisplayDatasetMetadata(DisplayMetadata):
 
     extra_kwargs: dict[str, Any] = field(default_factory=kwargs_factory)
     component: type[Component] = dcc.Input
+    ssb_component: type[Component] = ssb.Input
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
