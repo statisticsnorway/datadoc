@@ -7,11 +7,6 @@ from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from tests.utils import TEST_RESOURCES_DIRECTORY
 
 
-@pytest.fixture()
-def subject_mapping() -> StatisticSubjectMapping:
-    return StatisticSubjectMapping("placeholder")
-
-
 def test_extract_titles():
     xml_string = '<titler><tittel sprak="no">Partifinansiering</tittel><tittel sprak="en">Funding of political parties</tittel></titler>'
     soup = BeautifulSoup(xml_string, features="xml")

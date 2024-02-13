@@ -18,6 +18,7 @@ from datadoc_model import model
 
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
+from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.enums import SupportedLanguages
 from tests.backend.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
@@ -181,8 +182,7 @@ def copy_dataset_to_path(
     full_dataset_state_path.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(TEST_PARQUET_FILEPATH, full_dataset_state_path)
     yield full_dataset_state_path
-    if full_dataset_state_path.exists():
-        full_dataset_state_path.unlink()
+    full_dataset_state_path.unlink()
 
 
 @pytest.fixture()
@@ -192,6 +192,11 @@ def subject_xml_file_path() -> pathlib.Path:
         / STATISTICAL_SUBJECT_STRUCTURE_DIR
         / "extract_secondary_subject.xml"
     )
+
+
+@pytest.fixture()
+def subject_mapping(_mock_fetch_statistical_structure) -> StatisticSubjectMapping:
+    return StatisticSubjectMapping("placeholder")
 
 
 @pytest.fixture()

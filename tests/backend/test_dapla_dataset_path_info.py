@@ -278,4 +278,4 @@ def test_date_format_correct_end_date(date_format, period, expected):
     ],
 )
 def test_extract_shortname_in_path(data: str, expected: str):
-    assert DaplaDatasetPathInfo(data).dataset_shortname == expected
+    assert DaplaDatasetPathInfo(data).statistic_short_name == expected
