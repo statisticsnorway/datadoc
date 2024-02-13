@@ -37,21 +37,6 @@ def file_path() -> pathlib.Path:
     )
 
 
-@pytest.mark.parametrize(
-    ("statistic_short_name", "expected_primary_subject"),
-    [("nav_statres", "al"), ("unknown_name", None)],
-)
-def test_get_primary_subject(
-    subject_mapping: StatisticSubjectMapping,
-    statistic_short_name: str,
-    expected_primary_subject: str,
-) -> None:
-    assert (
-        subject_mapping.get_primary_subject(statistic_short_name)
-        == expected_primary_subject
-    )
-
-
 def test_extract_titles():
     xml_string = '<titler><tittel sprak="no">Partifinansiering</tittel><tittel sprak="en">Funding of political parties</tittel></titler>'
     soup = BeautifulSoup(xml_string, features="xml")
@@ -94,6 +79,7 @@ def test_read_in_statistical_structure(
     subject_mapping: StatisticSubjectMapping,
     expected: list[PrimarySubject],
 ) -> None:
+    subject_mapping.wait_for_primary_subject()
     assert subject_mapping.primary_subjects == expected
 
 
@@ -113,6 +99,7 @@ def test_get_secondary_subject(
     statistic_short_name: str,
     expected_secondary_subject: str,
 ) -> None:
+    subject_mapping.wait_for_primary_subject()
     assert (
         subject_mapping.get_secondary_subject(statistic_short_name)
         == expected_secondary_subject
