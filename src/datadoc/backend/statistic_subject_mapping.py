@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import concurrent.futures
 from dataclasses import dataclass
 
 import bs4
@@ -39,14 +40,16 @@ class StatisticSubjectMapping:
         self.statistic_short_name_secondary_subject_mapping: dict[str, str] = {
             "nav_statres": "al03",
         }
-        self._statistic_subject_structure_xml = self._fetch_statistical_structure(
+
+        self._statistic_subject_structure_xml: ResultSet | None = None
+
+        executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+        self.future = executor.submit(
+            self._fetch_statistical_structure,
             self.source_url,
         )
-        self.primary_subjects: list[
-            PrimarySubject
-        ] = self._parse_statistic_subject_structure_xml(
-            self._statistic_subject_structure_xml,
-        )
+
+        self._primary_subjects: list[PrimarySubject]
 
     def get_primary_subject(self, statistic_short_name: str) -> str | None:
         """Returns the primary subject for the given statistic short name by mapping it through the secondary subject.
@@ -56,9 +59,10 @@ class StatisticSubjectMapping:
 
         Returns the primary subject string if found, else None.
         """
-        if seconday_subject := self.get_secondary_subject(statistic_short_name):
+        self._parse_xml_if_loaded()
+        if secondary_subject := self.get_secondary_subject(statistic_short_name):
             return self.secondary_subject_primary_subject_mapping.get(
-                seconday_subject,
+                secondary_subject,
                 None,
             )
 
@@ -115,3 +119,28 @@ class StatisticSubjectMapping:
                 ),
             )
         return primary_subjects
+
+    def wait_for_primary_subject(self) -> None:
+        """Waits for the thread responsible for loading the xml to finish."""
+        self.future.result()
+
+    @property
+    def primary_subjects(self) -> list[PrimarySubject]:
+        """Getter for primary subjects."""
+        self._parse_xml_if_loaded()
+        return self._primary_subjects
+
+    def _parse_xml_if_loaded(self) -> bool:
+        """Checks if the xml is loaded, then parses the xml if it is loaded.
+
+        Returns true if it is loaded and parsed.
+        """
+        if self.future.done():
+            self._statistic_subject_structure_xml = self.future.result()
+
+            self._primary_subjects = self._parse_statistic_subject_structure_xml(
+                self._statistic_subject_structure_xml,
+            )
+
+            return True
+        return False
