@@ -103,7 +103,6 @@ class DataDocMetadata:
         elif self.dataset is not None:
             self.extract_metadata_from_dataset(self.dataset)
             self.meta.dataset.id = uuid.uuid4()
-            self.meta.dataset.dataset_status = DatasetStatus.DRAFT
             # Set default values for variables where appropriate
             v: model.Variable
             for v in self.meta.variables:
