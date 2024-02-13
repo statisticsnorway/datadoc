@@ -3898,21 +3898,17 @@ sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
 name = "ssb-dash-components"
-version = "0.1.0"
+version = "0.2.0"
 description = "Dash Component library for SSB"
 optional = false
-python-versions = "^3.9"
-files = []
-develop = false
+python-versions = ">=3.9,<4.0"
+files = [
+    {file = "ssb_dash_components-0.2.0-py3-none-any.whl", hash = "sha256:6454e97a86a048c6c9b0411ba8af813a81b8165a5d2b43a3c0efc6941a008a81"},
+    {file = "ssb_dash_components-0.2.0.tar.gz", hash = "sha256:0d8faa233ba2681b3296b43de4f49b69f2dd85e6197ed9c9df969a57ebb8cc91"},
+]
 
 [package.dependencies]
 dash = ">=2.15.0"
-
-[package.source]
-type = "git"
-url = "git@github.com:statisticsnorway/ssb-dash-components.git"
-reference = "HEAD"
-resolved_reference = "654780281dfe5916fece8b41cd44232f78518f3a"
 
 [[package]]
 name = "ssb-datadoc-model"
@@ -4380,4 +4376,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "502c58c402e2f0d822add35b228c69a33fc526f7ab92552597a34e7f045a3e2b"
+content-hash = "7081eb106b99f89042a776ac56aba45f7455d646b66a88fc5f7f89a3e6da565f"
