@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import concurrent.futures
+import logging
 from dataclasses import dataclass
 
 import bs4
 import requests
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -46,7 +49,7 @@ class StatisticSubjectMapping:
             self.source_url,
         )
 
-        self._primary_subjects: list[PrimarySubject]
+        self._primary_subjects: list[PrimarySubject] | None
 
     def get_primary_subject(self, statistic_short_name: str) -> str | None:
         """Returns the primary subject for the given statistic short name by mapping it through the secondary subject.
@@ -70,10 +73,11 @@ class StatisticSubjectMapping:
 
         Returns the secondary subject string if found, else None.
         """
-        for p in self.primary_subjects:
-            for s in p.secondary_subjects:
-                if statistic_short_name in s.statistic_short_names:
-                    return s.subject_code
+        if self.primary_subjects is not None:
+            for p in self.primary_subjects:
+                for s in p.secondary_subjects:
+                    if statistic_short_name in s.statistic_short_names:
+                        return s.subject_code
         return None
 
     @staticmethod
@@ -84,46 +88,56 @@ class StatisticSubjectMapping:
         return titles
 
     @staticmethod
-    def _fetch_statistical_structure(source_url: str | None) -> ResultSet:
+    def _fetch_statistical_structure(source_url: str | None) -> ResultSet | None:
         """Fetch statistical structure document from source_url.
 
         Returns a BeautifulSoup ResultSet.
         """
         if source_url is not None:
-            response = requests.get(source_url, timeout=30)
-        soup = BeautifulSoup(response.text, features="xml")
-        return soup.find_all("hovedemne")
+            try:
+                response = requests.get(source_url, timeout=30)
+                soup = BeautifulSoup(response.text, features="xml")
+                return soup.find_all("hovedemne")
+            except requests.exceptions.RequestException:
+                logger.debug("statistical structure file not avalable")
+                return None
+        return None
 
     def _parse_statistic_subject_structure_xml(
         self,
-        statistical_structure_xml: ResultSet,
-    ) -> list[PrimarySubject]:
+        statistical_structure_xml: ResultSet | None,
+    ) -> list[PrimarySubject] | None:
         primary_subjects: list[PrimarySubject] = []
-        for p in statistical_structure_xml:
-            secondary_subjects: list[SecondarySubject] = [
-                SecondarySubject(
-                    self._extract_titles(s.titler),
-                    s["emnekode"],
-                    [statistikk["kortnavn"] for statistikk in s.find_all("Statistikk")],
-                )
-                for s in p.find_all("delemne")
-            ]
+        if statistical_structure_xml is not None:
+            for p in statistical_structure_xml:
+                secondary_subjects: list[SecondarySubject] = [
+                    SecondarySubject(
+                        self._extract_titles(s.titler),
+                        s["emnekode"],
+                        [
+                            statistikk["kortnavn"]
+                            for statistikk in s.find_all("Statistikk")
+                        ],
+                    )
+                    for s in p.find_all("delemne")
+                ]
 
-            primary_subjects.append(
-                PrimarySubject(
-                    self._extract_titles(p.titler),
-                    p["emnekode"],
-                    secondary_subjects,
-                ),
-            )
-        return primary_subjects
+                primary_subjects.append(
+                    PrimarySubject(
+                        self._extract_titles(p.titler),
+                        p["emnekode"],
+                        secondary_subjects,
+                    ),
+                )
+            return primary_subjects
+        return None
 
     def wait_for_primary_subject(self) -> None:
         """Waits for the thread responsible for loading the xml to finish."""
         self.future.result()
 
     @property
-    def primary_subjects(self) -> list[PrimarySubject]:
+    def primary_subjects(self) -> list[PrimarySubject] | None:
         """Getter for primary subjects."""
         self._parse_xml_if_loaded()
         return self._primary_subjects
