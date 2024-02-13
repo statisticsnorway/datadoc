@@ -18,13 +18,13 @@ DATASET_METADATA_INPUT = "dataset-metadata-input"
 def build_dataset_metadata_accordion_item(
     title: str,
     metadata_inputs: list[DisplayDatasetMetadata],
-) -> dbc.AccordionItem:
+) -> ssb.Accordion:
     """Build a Dash AccordionItem for the given Metadata inputs.
 
     Typically used to categorize metadata fields.
     """
-    return dbc.AccordionItem(
-        title=title,
+    return ssb.Accordion(
+        header=title,
         children=[
             dbc.Row(
                 [
@@ -56,8 +56,7 @@ def build_dataset_tab() -> dbc.Tab:
         dbc.Container(
             [
                 dbc.Row(html.H2("Datasett detaljer", className="ssb-title")),
-                ssb.Accordion(
-                    header="Datasett detaljer",
+                html.Div(
                     children=[
                         build_dataset_metadata_accordion_item(
                             "Obligatorisk",
