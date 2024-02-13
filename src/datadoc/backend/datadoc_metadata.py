@@ -18,7 +18,7 @@ from datadoc import config
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
-from datadoc.enums import DatasetState
+from datadoc.enums import DatasetStatus
 from datadoc.enums import VariableRole
 from datadoc.frontend.fields.display_dataset import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
@@ -49,7 +49,6 @@ class DataDocMetadata:
         self.metadata_document: pathlib.Path | CloudPath | None = None
         self.container: model.MetadataContainer | None = None
         self.dataset: pathlib.Path | CloudPath | None = None
-        self.dataset_state: DatasetState | None = None
         self.short_name: str | None = None
         self.current_user: str | None = None
         self.meta: model.DatadocJsonSchema = model.DatadocJsonSchema(
@@ -67,7 +66,6 @@ class DataDocMetadata:
             self.dataset = self._open_path(dataset_path)
             # The short_name is set as the dataset filename without file extension
             self.short_name = self.dataset.stem
-
             # Build the metadata document path based on the dataset path
             # Example: /path/to/dataset.parquet -> /path/to/dataset__DOC.json
             self.metadata_document = self.dataset.parent / (
@@ -176,6 +174,7 @@ class DataDocMetadata:
         self.meta.dataset = model.Dataset(
             short_name=self.short_name,
             dataset_state=dapla_dataset_path_info.dataset_state,
+            dataset_status=DatasetStatus.DRAFT,
             version=dapla_dataset_path_info.dataset_version,
             contains_data_from=str(dapla_dataset_path_info.contains_data_from),
             contains_data_until=str(dapla_dataset_path_info.contains_data_until),
