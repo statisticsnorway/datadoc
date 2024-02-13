@@ -46,6 +46,7 @@ def test_get_primary_subject(
     statistic_short_name: str,
     expected_primary_subject: str,
 ) -> None:
+    subject_mapping.wait_for_primary_subject()
     assert (
         subject_mapping.get_primary_subject(statistic_short_name)
         == expected_primary_subject
@@ -94,6 +95,7 @@ def test_read_in_statistical_structure(
     subject_mapping: StatisticSubjectMapping,
     expected: list[PrimarySubject],
 ) -> None:
+    subject_mapping.wait_for_primary_subject()
     assert subject_mapping.primary_subjects == expected
 
 
@@ -113,6 +115,7 @@ def test_get_secondary_subject(
     statistic_short_name: str,
     expected_secondary_subject: str,
 ) -> None:
+    subject_mapping.wait_for_primary_subject()
     assert (
         subject_mapping.get_secondary_subject(statistic_short_name)
         == expected_secondary_subject
