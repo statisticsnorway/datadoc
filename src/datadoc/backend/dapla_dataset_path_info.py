@@ -420,7 +420,7 @@ class DaplaDatasetPathInfo:
         """Extract the shortname from the filepath right before the dataset_state, based on the Dapla filepath naming convention.
 
         Examples:
-        >>> DaplaDatasetPathInfo(prosjekt/befolkning/klargjordte_data/person_data_v1.parquet').dataset_shortname
+        >>> DaplaDatasetPathInfo('prosjekt/befolkning/klargjorte_data/person_data_v1.parquet').dataset_shortname
         befolkning
         >>> DaplaDatasetPathInfo('befolkning/inndata/person_data_v1.parquet').dataset_shortname
         befolkning

@@ -1,25 +1,39 @@
 """Shared fixtures and configuration."""
 
+from __future__ import annotations
+
+import copy
+import functools
+import pathlib
 import shutil
-from collections.abc import Generator
 from datetime import datetime
 from datetime import timezone
 from pathlib import Path
-from unittest import mock
+from typing import TYPE_CHECKING
 
 import pytest
+from bs4 import BeautifulSoup
+from bs4 import ResultSet
 from datadoc_model import model
-from pytest_mock import MockerFixture
 
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.enums import SupportedLanguages
+from tests.backend.test_statistic_subject_mapping import (
+    STATISTICAL_SUBJECT_STRUCTURE_DIR,
+)
 
 from .utils import TEST_EXISTING_METADATA_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_FILE_NAME
 from .utils import TEST_PARQUET_FILEPATH
 from .utils import TEST_RESOURCES_DIRECTORY
 from .utils import TEST_RESOURCES_METADATA_DOCUMENT
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+    from unittest import mock
+
+    from pytest_mock import MockerFixture
 
 
 @pytest.fixture()
@@ -135,3 +149,61 @@ def generate_periodic_file(
     yield new_path
     if new_path.exists():
         new_path.unlink()
+
+
+@pytest.fixture()
+def full_dataset_state_path(
+    path_parts_to_insert: str | list[str],
+) -> pathlib.Path:
+    """Create a longer path structure from just one section.
+
+    Examples:
+    >>> full_dataset_state_path('inndata')
+    'tests/inndata/resources/person_data_v1.parquet'
+    >>> full_dataset_state_path(['klargjorte_data', 'arbmark'])
+    'tests/klargjorte_data/arbmark/resources/person_data_v1.parquet'
+    """
+    split_path = list(pathlib.Path(TEST_PARQUET_FILEPATH).parts)
+    new_path = copy.copy(split_path)
+    if isinstance(path_parts_to_insert, str):
+        parts = [path_parts_to_insert]
+    else:
+        parts = path_parts_to_insert
+    for p in parts:
+        new_path.insert(-2, p)
+    return pathlib.Path().joinpath(*new_path)
+
+
+@pytest.fixture()
+def copy_dataset_to_path(
+    full_dataset_state_path: pathlib.Path,
+) -> Generator[Path, None, None]:
+    full_dataset_state_path.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy(TEST_PARQUET_FILEPATH, full_dataset_state_path)
+    yield full_dataset_state_path
+    if full_dataset_state_path.exists():
+        full_dataset_state_path.unlink()
+
+
+@pytest.fixture()
+def subject_xml_file_path() -> pathlib.Path:
+    return (
+        TEST_RESOURCES_DIRECTORY
+        / STATISTICAL_SUBJECT_STRUCTURE_DIR
+        / "extract_secondary_subject.xml"
+    )
+
+
+@pytest.fixture()
+def _mock_fetch_statistical_structure(
+    mocker,
+    subject_xml_file_path: pathlib.Path,
+) -> None:
+    def fake_statistical_structure(subject_xml_file_path, _) -> ResultSet:
+        with subject_xml_file_path.open() as f:
+            return BeautifulSoup(f.read(), features="xml").find_all("hovedemne")
+
+    mocker.patch(
+        "datadoc.backend.statistic_subject_mapping.StatisticSubjectMapping._fetch_statistical_structure",
+        functools.partial(fake_statistical_structure, subject_xml_file_path),
+    )

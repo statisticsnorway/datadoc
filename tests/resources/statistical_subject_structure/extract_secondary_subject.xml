@@ -29,6 +29,7 @@
                         <tittel sprak="en">aa_kortnvan english</tittel>
                     </titler>
                 </Statistikk>
+            </delemne>
         </hovedemne>
         <hovedemne emnekode="ab">
             <titler>
@@ -58,6 +59,7 @@
                         <tittel sprak="en">ab_kortnvan english</tittel>
                     </titler>
                 </Statistikk>
+            </delemne>
         </hovedemne>
     </emnestruktur>
 </result>

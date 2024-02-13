@@ -257,3 +257,21 @@ def test_dataset_status_default_value(
     )
 
     assert expected_type == datadoc_metadata.meta.dataset.dataset_status
+
+
+@pytest.mark.parametrize(
+    ("path_parts_to_insert", "expected_subject_code"),
+    [
+        (["aa_kortnvan_01", "klargorte_data"], "aa01"),
+        (["ab_kortnvan", "utdata"], "ab00"),
+        (["aa_kortnvan_01", "no_dataset_state"], None),
+        (["unknown_short_name", "klargorte_data"], None),
+    ],
+)
+@pytest.mark.usefixtures("_mock_fetch_statistical_structure")
+def test_extract_subject_field_value_from_statistic_(
+    copy_dataset_to_path: Path,
+    expected_subject_code: str,
+):
+    metadata = DataDocMetadata(str(copy_dataset_to_path))
+    assert metadata.meta.dataset.subject_field == expected_subject_code

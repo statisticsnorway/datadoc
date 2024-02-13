@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-import copy
 import datetime
-import pathlib
 from dataclasses import dataclass
-from pathlib import PurePath
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -16,6 +14,9 @@ from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.enums import DatasetState
 from tests.utils import TEST_BUCKET_PARQUET_FILEPATH_WITH_SHORTNAME
 from tests.utils import TEST_PARQUET_FILEPATH
+
+if TYPE_CHECKING:
+    import pathlib
 
 
 @dataclass
@@ -145,24 +146,8 @@ def test_extract_period_info_no_period_info_in_path(data: str):
     assert DaplaDatasetPathInfo(data).contains_data_from is None
 
 
-@pytest.fixture()
-def full_dataset_state_path(
-    dataset_state_path: str,
-) -> pathlib.PurePath:
-    """Create a longer path structure from just one section.
-
-    Examples:
-    >>> full_dataset_state_path('inndata')
-    'tests/inndata/resources/person_data_v1.parquet'
-    """
-    split_path = list(PurePath(TEST_PARQUET_FILEPATH).parts)
-    new_path = copy.copy(split_path)
-    new_path.insert(-2, dataset_state_path)
-    return PurePath().joinpath(*new_path)
-
-
 @pytest.mark.parametrize(
-    ("dataset_state_path", "expected_result"),
+    ("path_parts_to_insert", "expected_result"),
     [
         ("kildedata", DatasetState.SOURCE_DATA),
         ("inndata", DatasetState.INPUT_DATA),

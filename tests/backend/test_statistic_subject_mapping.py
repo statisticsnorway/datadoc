@@ -1,40 +1,15 @@
-import functools
-import pathlib
-
 import pytest
 from bs4 import BeautifulSoup
-from bs4 import ResultSet
 
 from datadoc.backend.statistic_subject_mapping import PrimarySubject
 from datadoc.backend.statistic_subject_mapping import SecondarySubject
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from tests.utils import TEST_RESOURCES_DIRECTORY
 
-SOURCE_URL = "https://www.ssb.no/xp/_/service/mimir/subjectStructurStatistics"
-
-
-@pytest.fixture()
-def _mock_fetch_statistical_structure(mocker, file_path: pathlib.Path) -> None:
-    def fake_statistical_structure(file_path, _) -> ResultSet:
-        with file_path.open() as f:
-            return BeautifulSoup(f.read(), features="xml").find_all("hovedemne")
-
-    mocker.patch(
-        "datadoc.backend.statistic_subject_mapping.StatisticSubjectMapping._fetch_statistical_structure",
-        functools.partial(fake_statistical_structure, file_path),
-    )
-
 
 @pytest.fixture()
 def subject_mapping() -> StatisticSubjectMapping:
-    return StatisticSubjectMapping(SOURCE_URL)
-
-
-@pytest.fixture()
-def file_path() -> pathlib.Path:
-    return pathlib.Path(
-        "tests/resources/statistical_subject_structure/extract_secondary_subject.xml",
-    )
+    return StatisticSubjectMapping("placeholder")
 
 
 def test_extract_titles():
@@ -50,7 +25,7 @@ STATISTICAL_SUBJECT_STRUCTURE_DIR = "statistical_subject_structure"
 
 
 @pytest.mark.parametrize(
-    ("file_path", "expected"),
+    ("subject_xml_file_path", "expected"),
     [
         (
             TEST_RESOURCES_DIRECTORY / STATISTICAL_SUBJECT_STRUCTURE_DIR / "simple.xml",
