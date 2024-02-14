@@ -15,8 +15,10 @@ from datadoc.frontend.callbacks.dataset import change_language_dataset_metadata
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.dataset import process_special_cases
 from datadoc.frontend.callbacks.dataset import update_dataset_metadata_language
+from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
 from datadoc.frontend.fields.display_dataset import MULTIPLE_LANGUAGE_DATASET_METADATA
+from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from tests.utils import TEST_PARQUET_FILEPATH
 
 DATASET_CALLBACKS_MODULE = "datadoc.frontend.callbacks.dataset"
@@ -32,12 +34,27 @@ def file_path():
     return "valid/path/to/file.json"
 
 
-def test_accept_dataset_metadata_input_new_data():
+@pytest.mark.parametrize(
+    ("metadata_identifier", "provided_value", "expected_model_value"),
+    [
+        (
+            DatasetIdentifiers.DATASET_STATE,
+            DatasetState.INPUT_DATA,
+            DatasetState.INPUT_DATA.value,
+        ),
+        (DatasetIdentifiers.VERSION, 1, "1"),
+    ],
+)
+def test_accept_dataset_metadata_input_valid_data(
+    metadata_identifier: DatasetIdentifiers,
+    provided_value: MetadataInputTypes,
+    expected_model_value: str,
+):
     state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
-    output = accept_dataset_metadata_input(DatasetState.INPUT_DATA, "dataset_state")
+    output = accept_dataset_metadata_input(provided_value, metadata_identifier)
     assert output[0] is False
     assert output[1] == ""
-    assert state.metadata.meta.dataset.dataset_state == "INPUT_DATA"
+    assert state.metadata.meta.dataset.dataset_state == expected_model_value
 
 
 def test_accept_dataset_metadata_input_incorrect_data_type():
