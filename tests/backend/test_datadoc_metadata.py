@@ -300,8 +300,8 @@ def test_dataset_assessment_default_value(
         dataset_path,
         metadata_document_path,
     )
-
     assert expected_type == datadoc_metadata.meta.dataset.assessment
+
 
 @pytest.mark.parametrize(
     ("path_parts_to_insert", "expected_subject_code"),
