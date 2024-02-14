@@ -18,6 +18,8 @@ from datadoc import config
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
+from datadoc.enums import Assessment
+from datadoc.enums import DatasetState
 from datadoc.enums import DatasetStatus
 from datadoc.enums import VariableRole
 from datadoc.frontend.fields import display_dataset
@@ -103,6 +105,7 @@ class DataDocMetadata:
         elif self.dataset is not None:
             self.extract_metadata_from_dataset(self.dataset)
             self.meta.dataset.id = uuid.uuid4()
+            self.meta.dataset.assessment = Assessment.PROTECTED
             # Set default values for variables where appropriate
             v: model.Variable
             for v in self.meta.variables:
@@ -175,6 +178,16 @@ class DataDocMetadata:
             short_name=self.short_name,
             dataset_state=dapla_dataset_path_info.dataset_state,
             dataset_status=DatasetStatus.DRAFT,
+            assessment=Assessment.PROTECTED
+            if dapla_dataset_path_info.dataset_state
+            in {
+                DatasetState.INPUT_DATA,
+                DatasetState.PROCESSED_DATA,
+                DatasetState.STATISTICS,
+            }
+            else Assessment.OPEN
+            if dapla_dataset_path_info.dataset_state == DatasetState.OUTPUT_DATA
+            else None,
             version=dapla_dataset_path_info.dataset_version,
             contains_data_from=str(dapla_dataset_path_info.contains_data_from),
             contains_data_until=str(dapla_dataset_path_info.contains_data_until),

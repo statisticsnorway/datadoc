@@ -17,6 +17,7 @@ from datadoc_model.model import Variable
 
 from datadoc.backend.datadoc_metadata import PLACEHOLDER_USERNAME
 from datadoc.backend.datadoc_metadata import DataDocMetadata
+from datadoc.enums import Assessment
 from datadoc.enums import DatasetState
 from datadoc.enums import DatasetStatus
 from datadoc.enums import DataType
@@ -257,3 +258,44 @@ def test_dataset_status_default_value(
     )
 
     assert expected_type == datadoc_metadata.meta.dataset.dataset_status
+
+
+@pytest.mark.parametrize(
+    ("dataset_path", "metadata_document_path", "expected_type"),
+    [
+        (
+            str(
+                TEST_PREPARED_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+            ),
+            str(
+                TEST_PREPARED_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
+            ),
+            Assessment.PROTECTED.value,
+        ),
+        (
+            str(
+                TEST_RESOURCES_DIRECTORY / "person_data_v1.parquet",
+            ),
+            None,
+            Assessment.PROTECTED.value,
+        ),
+        (
+            "",
+            None,
+            None,
+        ),
+    ],
+)
+def test_dataset_assessment_default_value(
+    dataset_path: str,
+    metadata_document_path: str | None,
+    expected_type: Assessment | None,
+):
+    datadoc_metadata = DataDocMetadata(
+        dataset_path,
+        metadata_document_path,
+    )
+
+    assert expected_type == datadoc_metadata.meta.dataset.assessment
