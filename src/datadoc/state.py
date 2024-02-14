@@ -12,11 +12,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from datadoc import config
-from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-
 if TYPE_CHECKING:
     from datadoc.backend.datadoc_metadata import DataDocMetadata
+    from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
     from datadoc.enums import SupportedLanguages
 
 
@@ -25,7 +23,4 @@ metadata: DataDocMetadata
 
 current_metadata_language: SupportedLanguages
 
-
-statistic_subject_mapping = StatisticSubjectMapping(
-    config.get_datadoc_dataset_path(),
-)
+statistic_subject_mapping: StatisticSubjectMapping
