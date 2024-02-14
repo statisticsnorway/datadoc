@@ -49,12 +49,16 @@ def test_accept_dataset_metadata_input_valid_data(
     metadata_identifier: DatasetIdentifiers,
     provided_value: MetadataInputTypes,
     expected_model_value: str,
+    metadata: DataDocMetadata,
 ):
-    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
+    state.metadata = metadata
     output = accept_dataset_metadata_input(provided_value, metadata_identifier)
     assert output[0] is False
     assert output[1] == ""
-    assert state.metadata.meta.dataset.dataset_state == expected_model_value
+    assert (
+        getattr(state.metadata.meta.dataset, metadata_identifier.value)
+        == expected_model_value
+    )
 
 
 def test_accept_dataset_metadata_input_incorrect_data_type():
