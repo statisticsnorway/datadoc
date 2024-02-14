@@ -2,6 +2,7 @@
 
 Members of this module should not be imported into any sub-modules, this will cause circular imports.
 """
+
 from __future__ import annotations
 
 import logging
@@ -14,6 +15,7 @@ from flask_healthz import healthz
 from datadoc import config
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
+from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.register_callbacks import register_callbacks
 from datadoc.frontend.components.alerts import dataset_validation_error
@@ -104,8 +106,24 @@ def get_app(dataset_path: str | None = None) -> tuple[Dash, int]:
     return app, port
 
 
+def collect_data_from_external_sources() -> None:
+    """Call classes and methods which collect data from external sources.
+
+    Must be non-blocking to prevent delays in app startup.
+    """
+    if source_url := config.get_statistical_subject_source_url():
+        state.statistic_subject_mapping = StatisticSubjectMapping(
+            source_url,
+        )
+    else:
+        logger.warning(
+            "No URL to fetch statistical subject structure supplied. Skipping fetching it. This may make it difficult to provide a value for the 'subject_field' metadata field.",
+        )
+
+
 def main(dataset_path: str | None = None) -> None:
     """Entrypoint when running as a script."""
+    collect_data_from_external_sources()
     if dataset_path:
         logger.info("Starting app with dataset_path = %s", dataset_path)
     app, port = get_app(dataset_path)
