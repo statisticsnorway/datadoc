@@ -15,6 +15,7 @@ from dapla import AuthClient
 from datadoc_model import model
 
 from datadoc import config
+from datadoc import state
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
@@ -171,6 +172,14 @@ class DataDocMetadata:
         """
         self.ds_schema: DatasetParser = DatasetParser.for_file(dataset)
         dapla_dataset_path_info = DaplaDatasetPathInfo(dataset)
+
+        if dapla_dataset_path_info.statistic_short_name:
+            subject_field = state.statistic_subject_mapping.get_secondary_subject(
+                dapla_dataset_path_info.statistic_short_name,
+            )
+        else:
+            subject_field = None
+
         self.meta.dataset = model.Dataset(
             short_name=self.short_name,
             dataset_state=dapla_dataset_path_info.dataset_state,
@@ -180,6 +189,9 @@ class DataDocMetadata:
             contains_data_until=str(dapla_dataset_path_info.contains_data_until),
             data_source_path=self.dataset,
             created_by=self.current_user,
+            # TODO @mmwinther: Remove multiple_language_support once the model is updated.
+            # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
+            subject_field=model.LanguageStringType(en=subject_field),
         )
         self.meta.variables = self.ds_schema.get_fields()
 

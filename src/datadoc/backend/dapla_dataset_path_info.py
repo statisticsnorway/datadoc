@@ -414,17 +414,17 @@ class DaplaDatasetPathInfo:
         return None
 
     @property
-    def dataset_shortname(
+    def statistic_short_name(
         self,
     ) -> str | None:
-        """Extract the shortname from the filepath right before the dataset_state, based on the Dapla filepath naming convention.
+        """Extract the statistical short name from the filepath right before the dataset_state, based on the Dapla filepath naming convention.
 
         Examples:
-        >>> DaplaDatasetPathInfo(prosjekt/befolkning/klargjordte_data/person_data_v1.parquet').dataset_shortname
+        >>> DaplaDatasetPathInfo('prosjekt/befolkning/klargjorte_data/person_data_v1.parquet').statistic_short_name
         befolkning
-        >>> DaplaDatasetPathInfo('befolkning/inndata/person_data_v1.parquet').dataset_shortname
+        >>> DaplaDatasetPathInfo('befolkning/inndata/person_data_v1.parquet').statistic_short_name
         befolkning
-        >>> DaplaDatasetPathInfo('befolkning/person_data.parquet').dataset_shortname
+        >>> DaplaDatasetPathInfo('befolkning/person_data.parquet').statistic_short_name
         None
         """
         dataset_state = self.dataset_state

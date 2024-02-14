@@ -15,6 +15,7 @@ from datadoc_model.model import DatadocJsonSchema
 from datadoc_model.model import Dataset
 from datadoc_model.model import Variable
 
+from datadoc import state
 from datadoc.backend.datadoc_metadata import PLACEHOLDER_USERNAME
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.enums import DatasetState
@@ -32,6 +33,8 @@ from tests.utils import TEST_RESOURCES_METADATA_DOCUMENT
 if TYPE_CHECKING:
     import os
     from datetime import datetime
+
+    from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 
 DATADOC_METADATA_MODULE = "datadoc.backend.datadoc_metadata"
 
@@ -257,3 +260,25 @@ def test_dataset_status_default_value(
     )
 
     assert expected_type == datadoc_metadata.meta.dataset.dataset_status
+
+
+@pytest.mark.parametrize(
+    ("path_parts_to_insert", "expected_subject_code"),
+    [
+        (["aa_kortnvan_01", "klargjorte_data"], "aa01"),
+        (["ab_kortnvan", "utdata"], "ab00"),
+        (["aa_kortnvan_01", "no_dataset_state"], None),
+        (["unknown_short_name", "klargjorte_data"], None),
+    ],
+)
+def test_extract_subject_field_value_from_statistic_(
+    subject_mapping: StatisticSubjectMapping,
+    copy_dataset_to_path: Path,
+    expected_subject_code: str,
+):
+    state.statistic_subject_mapping = subject_mapping
+    state.statistic_subject_mapping.wait_for_primary_subject()
+    metadata = DataDocMetadata(str(copy_dataset_to_path))
+    # TODO @mmwinther: Remove multiple_language_support once the model is updated.
+    # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
+    assert metadata.meta.dataset.subject_field.en == expected_subject_code
