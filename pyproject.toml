@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ssb-datadoc"
-version = "0.4.3"
+version = "0.4.4"
 description = "Document dataset metadata. For use in Statistics Norway's metadata system."
 authors = ["Statistics Norway <stat-dev@ssb.no>"]
 license = "MIT"
@@ -151,6 +151,7 @@ ignore = [
     "D100",   # Suppress undocumented-public-module. Only doc of public api required.
     "E501",   # Let black handle line length
     "TRY003",
+    "FIX002", # It's OK to use TODOs if they meet the requirements
 ]
 
 [tool.ruff.lint.isort]

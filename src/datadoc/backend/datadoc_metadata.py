@@ -15,13 +15,18 @@ from dapla import AuthClient
 from datadoc_model import model
 
 from datadoc import config
+from datadoc import state
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
-from datadoc.enums import DatasetState
+from datadoc.enums import DatasetStatus
 from datadoc.enums import VariableRole
-from datadoc.frontend.fields import display_dataset
-from datadoc.frontend.fields import display_variables
+from datadoc.frontend.fields.display_dataset import (
+    OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
+)
+from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
+from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
+from datadoc.utils import PLACEHOLDER_USERNAME
 from datadoc.utils import calculate_percentage
 from datadoc.utils import get_timestamp_now
 
@@ -29,10 +34,6 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 logger = logging.getLogger(__name__)
-
-METADATA_DOCUMENT_FILE_SUFFIX = "__DOC.json"
-
-PLACEHOLDER_USERNAME = "default_user@ssb.no"
 
 
 class DataDocMetadata:
@@ -49,7 +50,6 @@ class DataDocMetadata:
         self.metadata_document: pathlib.Path | CloudPath | None = None
         self.container: model.MetadataContainer | None = None
         self.dataset: pathlib.Path | CloudPath | None = None
-        self.dataset_state: DatasetState | None = None
         self.short_name: str | None = None
         self.current_user: str | None = None
         self.meta: model.DatadocJsonSchema = model.DatadocJsonSchema(
@@ -67,7 +67,6 @@ class DataDocMetadata:
             self.dataset = self._open_path(dataset_path)
             # The short_name is set as the dataset filename without file extension
             self.short_name = self.dataset.stem
-
             # Build the metadata document path based on the dataset path
             # Example: /path/to/dataset.parquet -> /path/to/dataset__DOC.json
             self.metadata_document = self.dataset.parent / (
@@ -173,14 +172,26 @@ class DataDocMetadata:
         """
         self.ds_schema: DatasetParser = DatasetParser.for_file(dataset)
         dapla_dataset_path_info = DaplaDatasetPathInfo(dataset)
+
+        if dapla_dataset_path_info.statistic_short_name:
+            subject_field = state.statistic_subject_mapping.get_secondary_subject(
+                dapla_dataset_path_info.statistic_short_name,
+            )
+        else:
+            subject_field = None
+
         self.meta.dataset = model.Dataset(
             short_name=self.short_name,
             dataset_state=dapla_dataset_path_info.dataset_state,
+            dataset_status=DatasetStatus.DRAFT,
             version=dapla_dataset_path_info.dataset_version,
             contains_data_from=str(dapla_dataset_path_info.contains_data_from),
             contains_data_until=str(dapla_dataset_path_info.contains_data_until),
             data_source_path=self.dataset,
             created_by=self.current_user,
+            # TODO @mmwinther: Remove multiple_language_support once the model is updated.
+            # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
+            subject_field=model.LanguageStringType(en=subject_field),
         )
         self.meta.variables = self.ds_schema.get_fields()
 
@@ -213,23 +224,21 @@ class DataDocMetadata:
         assigned. Used for a live progress bar in the UI, as well as being
         saved in the datadoc as a simple quality indicator.
         """
-        num_all_fields = len(display_dataset.OBLIGATORY_DATASET_METADATA_IDENTIFIERS)
+        num_all_fields = len(OBLIGATORY_DATASET_METADATA_IDENTIFIERS)
         num_set_fields = len(
             [
                 k
                 for k, v in self.meta.dataset.model_dump().items()
-                if k in display_dataset.OBLIGATORY_DATASET_METADATA_IDENTIFIERS
-                and v is not None
+                if k in OBLIGATORY_DATASET_METADATA_IDENTIFIERS and v is not None
             ],
         )
         for variable in self.meta.variables:
-            num_all_fields += len(display_variables.OBLIGATORY_VARIABLES_METADATA)
+            num_all_fields += len(OBLIGATORY_VARIABLES_METADATA)
             num_set_fields += len(
                 [
                     k
                     for k, v in variable.model_dump().items()
-                    if k in display_variables.OBLIGATORY_VARIABLES_METADATA
-                    and v is not None
+                    if k in OBLIGATORY_VARIABLES_METADATA and v is not None
                 ],
             )
         return calculate_percentage(num_set_fields, num_all_fields)

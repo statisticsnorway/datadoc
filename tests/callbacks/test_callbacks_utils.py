@@ -4,6 +4,7 @@ from enum import Enum
 import pytest
 from datadoc_model import model
 
+from datadoc import enums
 from datadoc import state
 from datadoc.enums import LanguageStringsEnum
 from datadoc.enums import SupportedLanguages
@@ -11,7 +12,6 @@ from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
 from datadoc.frontend.callbacks.utils import get_options_for_language
 from datadoc.frontend.callbacks.utils import update_global_language_state
-from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_ENUMS
 
 
 def test_find_existing_language_string_no_existing_strings(bokmål_name: str):
@@ -84,7 +84,14 @@ def test_get_language_strings_enum_unknown():
 
 @pytest.mark.parametrize(
     "enum",
-    DISPLAYED_DROPDOWN_DATASET_ENUMS,
+    [
+        enums.Assessment,
+        enums.DatasetState,
+        enums.DatasetStatus,
+        enums.TemporalityTypeType,
+        enums.DataType,
+        enums.VariableRole,
+    ],
 )
 @pytest.mark.parametrize("language", list(SupportedLanguages))
 def test_get_options_for_language(language: SupportedLanguages, enum: Enum):
