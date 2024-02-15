@@ -5,7 +5,7 @@
         "document_version": "2.0.0",
         "dataset": {
             "short_name": "person_testdata_p2021-12-31_p2021-12-31",
-            "assessment": "PROTECTED",
+            "assessment": "SENSITIVE",
             "dataset_status": "DRAFT",
             "dataset_state": "PROCESSED_DATA",
             "name": {

@@ -336,7 +336,7 @@ def test_dataset_status_default_value(
         (
             str(TEST_RESOURCES_DIRECTORY / "person_data_v1.parquet"),
             None,
-            Assessment.PROTECTED.value,
+            None,
         ),
         (
             "",
