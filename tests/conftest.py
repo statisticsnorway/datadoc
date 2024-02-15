@@ -53,8 +53,8 @@ def _mock_timestamp(mocker: MockerFixture, dummy_timestamp: datetime) -> None:
 @pytest.fixture()
 def metadata(
     _mock_timestamp: None,
-    subject_mapping: StatisticSubjectMapping,
 ) -> DataDocMetadata:
+    subject_mapping = StatisticSubjectMapping("Placeholder")
     state.statistic_subject_mapping = subject_mapping
     return DataDocMetadata(str(TEST_PARQUET_FILEPATH))
 

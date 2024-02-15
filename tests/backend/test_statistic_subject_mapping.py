@@ -93,4 +93,4 @@ def test_subject_mapping_http_exception(
     subject_mapping_http_exception: StatisticSubjectMapping,
 ) -> None:
     subject_mapping_http_exception.wait_for_primary_subject()
-    assert subject_mapping_http_exception.primary_subjects is []
+    assert subject_mapping_http_exception.primary_subjects == []

@@ -61,7 +61,7 @@ class StatisticSubjectMapping:
         """
         self.source_url = source_url
 
-        self.future: concurrent.futures.Future[ResultSet] | None = None
+        self.future: concurrent.futures.Future[ResultSet | None] | None = None
         self._statistic_subject_structure_xml: ResultSet | None = None
 
         if self.source_url:
@@ -135,7 +135,7 @@ class StatisticSubjectMapping:
             )
         return primary_subjects
 
-    def wait_for_primary_subject(self) -> ResultSet | None:
+    def wait_for_primary_subject(self) -> None:
         """Waits for the thread responsible for loading the xml to finish."""
         if not self.future:
             # Nothing to wait for in this case, just return immediately
