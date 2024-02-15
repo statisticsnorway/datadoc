@@ -12,7 +12,7 @@ from dash import dcc
 from datadoc import enums
 from datadoc import state
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
-from datadoc.frontend.fields.display_base import NUMBER_KWARGS
+from datadoc.frontend.fields.display_base import INPUT_KWARGS
 from datadoc.frontend.fields.display_base import DisplayDatasetMetadata
 from datadoc.frontend.fields.display_base import DisplayDatasetMetadataDropdown
 from datadoc.frontend.fields.display_base import get_comma_separated_string
@@ -155,7 +155,7 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         identifier=DatasetIdentifiers.VERSION.value,
         display_name="Versjon",
         description="Versjon",
-        extra_kwargs=NUMBER_KWARGS,
+        extra_kwargs=dict(type="number", min=1, **INPUT_KWARGS),
         obligatory=True,
     ),
     DatasetIdentifiers.VERSION_DESCRIPTION: DisplayDatasetMetadata(
