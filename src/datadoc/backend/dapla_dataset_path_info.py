@@ -144,7 +144,7 @@ class SsbDateFormat(DateFormat):
 
 SSB_BIMESTER = SsbDateFormat(
     name="SSB_BIMESTER",
-    regex_pattern=r"\d{4}[B]\d{1}$",
+    regex_pattern=r"^\d{4}[B]\d{1}$",
     arrow_pattern="YYYYMM",
     timeframe="month",
     ssb_dates={
@@ -177,7 +177,7 @@ SSB_BIMESTER = SsbDateFormat(
 
 SSB_QUARTERLY = SsbDateFormat(
     name="SSB_QUARTERLY",
-    regex_pattern=r"\d{4}[Q]\d{1}$",
+    regex_pattern=r"^\d{4}[Q]\d{1}$",
     arrow_pattern="YYYYMM",
     timeframe="month",
     ssb_dates={
@@ -202,7 +202,7 @@ SSB_QUARTERLY = SsbDateFormat(
 
 SSB_TRIANNUAL = SsbDateFormat(
     name="SSB_TRIANNUAL",
-    regex_pattern=r"\d{4}[T]\d{1}$",
+    regex_pattern=r"^\d{4}[T]\d{1}$",
     arrow_pattern="YYYYMM",
     timeframe="month",
     ssb_dates={
@@ -222,7 +222,7 @@ SSB_TRIANNUAL = SsbDateFormat(
 )
 SSB_HALF_YEAR = SsbDateFormat(
     name="SSB_HALF_YEAR",
-    regex_pattern=r"\d{4}[H]\d{1}$",
+    regex_pattern=r"^\d{4}[H]\d{1}$",
     arrow_pattern="YYYYMM",
     timeframe="month",
     ssb_dates={
@@ -309,14 +309,23 @@ class DaplaDatasetPathInfo:
         []
 
         """
-        date_format_regex = re.compile(
-            r"^p\d{4}(?:-\d{2}-\d{2}|-\d{2}|-{0,1}[QTHWB]\d{1,2})?$",
-        )
+
+        def insert_p(regex: str) -> str:
+            r"""Insert a p as the second character.
+
+            Examples:
+            >>> insert_p(r"^\d{4}[H]\d{1}$")
+            '^p\d{4}[H]\d{1}$'
+            """
+            return regex[:1] + "p" + regex[1:]
 
         return [
             x[1:]
             for x in dataset_name_sections
-            if re.match(date_format_regex, x) is not None
+            if any(
+                re.match(insert_p(date_format.regex_pattern), x)
+                for date_format in SUPPORTED_DATE_FORMATS
+            )
         ]
 
     def _extract_period_string_from_index(self, index: int) -> str | None:
