@@ -26,10 +26,13 @@ from datadoc.enums import VariableRole
 from tests.utils import TEST_BUCKET_PARQUET_FILEPATH
 from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
+from tests.utils import TEST_INPUT_DATA_POPULATION_DIRECTORY
+from tests.utils import TEST_OUTPUT_DATA_POPULATION_DIRECTORY
 from tests.utils import TEST_PARQUET_FILEPATH
-from tests.utils import TEST_PREPARED_DATA_POPULATION_DIRECTORY
+from tests.utils import TEST_PROCESSED_DATA_POPULATION_DIRECTORY
 from tests.utils import TEST_RESOURCES_DIRECTORY
 from tests.utils import TEST_RESOURCES_METADATA_DOCUMENT
+from tests.utils import TEST_STATISTICS_POPULATION_DIRECTORY
 
 if TYPE_CHECKING:
     import os
@@ -227,11 +230,11 @@ def test_open_file(
     [
         (
             str(
-                TEST_PREPARED_DATA_POPULATION_DIRECTORY
+                TEST_PROCESSED_DATA_POPULATION_DIRECTORY
                 / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
             ),
             str(
-                TEST_PREPARED_DATA_POPULATION_DIRECTORY
+                TEST_PROCESSED_DATA_POPULATION_DIRECTORY
                 / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
             ),
             DatasetStatus.DRAFT.value,
@@ -268,19 +271,70 @@ def test_dataset_status_default_value(
     [
         (
             str(
-                TEST_PREPARED_DATA_POPULATION_DIRECTORY
+                TEST_INPUT_DATA_POPULATION_DIRECTORY
                 / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
             ),
             str(
-                TEST_PREPARED_DATA_POPULATION_DIRECTORY
+                TEST_INPUT_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
+            ),
+            Assessment.SENSITIVE.value,
+        ),
+        (
+            str(TEST_INPUT_DATA_POPULATION_DIRECTORY / "person_data_v1.parquet"),
+            None,
+            Assessment.PROTECTED.value,
+        ),
+        (
+            str(
+                TEST_PROCESSED_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+            ),
+            str(
+                TEST_PROCESSED_DATA_POPULATION_DIRECTORY
                 / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
             ),
             Assessment.PROTECTED.value,
         ),
         (
+            str(TEST_PROCESSED_DATA_POPULATION_DIRECTORY / "person_data_v1.parquet"),
+            None,
+            Assessment.PROTECTED.value,
+        ),
+        (
             str(
-                TEST_RESOURCES_DIRECTORY / "person_data_v1.parquet",
+                TEST_STATISTICS_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
             ),
+            str(
+                TEST_STATISTICS_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
+            ),
+            Assessment.SENSITIVE.value,
+        ),
+        (
+            str(TEST_STATISTICS_POPULATION_DIRECTORY / "person_data_v1.parquet"),
+            None,
+            Assessment.PROTECTED.value,
+        ),
+        (
+            str(
+                TEST_OUTPUT_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+            ),
+            str(
+                TEST_OUTPUT_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
+            ),
+            Assessment.SENSITIVE.value,
+        ),
+        (
+            str(TEST_OUTPUT_DATA_POPULATION_DIRECTORY / "person_data_v1.parquet"),
+            None,
+            Assessment.OPEN.value,
+        ),
+        (
+            str(TEST_RESOURCES_DIRECTORY / "person_data_v1.parquet"),
             None,
             Assessment.PROTECTED.value,
         ),
