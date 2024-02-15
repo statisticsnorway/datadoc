@@ -118,7 +118,9 @@ class StatisticSubjectMapping:
             soup = BeautifulSoup(response.text, features="xml")
             return soup.find_all("hovedemne")
         except requests.exceptions.RequestException:
-            logger.debug("statistical structure file not avalable")
+            logger.exception(
+                "Exception while fetching statistical structure ",
+            )
             return None
 
     def _parse_statistic_subject_structure_xml(
@@ -145,9 +147,9 @@ class StatisticSubjectMapping:
             )
         return primary_subjects
 
-    def wait_for_primary_subject(self) -> None:
+    def wait_for_primary_subject(self) -> ResultSet | None:
         """Waits for the thread responsible for loading the xml to finish."""
-        self.future.result()
+        return self.future.result()
 
     @property
     def primary_subjects(self) -> list[PrimarySubject]:
