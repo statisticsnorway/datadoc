@@ -132,6 +132,9 @@ class StatisticSubjectMapping:
 
     def wait_for_primary_subject(self) -> None:
         """Waits for the thread responsible for loading the xml to finish."""
+        if not self.future:
+            # Nothing to wait for in this case, just return immediately
+            return
         self.future.result()
 
     @property
