@@ -62,6 +62,7 @@ def test_read_in_statistical_structure(
         ("ab_kortnvan_01", "ab01"),
         ("aa_kortnvan_01", "aa01"),
         ("unknown_name", None),
+        (None, None),
     ],
 )
 @pytest.mark.usefixtures("_mock_fetch_statistical_structure")
@@ -91,4 +92,5 @@ def test_get_secondary_subject(
 def test_subject_mapping_http_exception(
     subject_mapping_http_exception: StatisticSubjectMapping,
 ) -> None:
-    assert subject_mapping_http_exception.wait_for_primary_subject() is None
+    subject_mapping_http_exception.wait_for_primary_subject()
+    assert subject_mapping_http_exception.primary_subjects is []

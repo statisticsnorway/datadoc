@@ -43,18 +43,14 @@ def get_statistical_subject_options(
     language: SupportedLanguages,
 ) -> list[dict[str, str]]:
     """Collect the statistical subject options for the given language."""
-    try:
-        return [
-            {
-                "label": f"{primary.get_title(language)} - {secondary.get_title(language)}",
-                "value": secondary.subject_code,
-            }
-            for primary in state.statistic_subject_mapping.primary_subjects
-            for secondary in primary.secondary_subjects
-        ]
-    except AttributeError:
-        logger.warning("Could not populate Dropdown options for Statistical Subjects.")
-        return []
+    return [
+        {
+            "label": f"{primary.get_title(language)} - {secondary.get_title(language)}",
+            "value": secondary.subject_code,
+        }
+        for primary in state.statistic_subject_mapping.primary_subjects
+        for secondary in primary.secondary_subjects
+    ]
 
 
 class DatasetIdentifiers(str, Enum):
