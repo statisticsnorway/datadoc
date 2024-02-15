@@ -10,7 +10,6 @@ from dash import html
 from datadoc import state
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.utils import get_dataset_path
-from datadoc.frontend.components.builders import build_ssb_button
 from datadoc.utils import get_app_version
 
 COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
@@ -72,22 +71,15 @@ def build_controls_bar() -> dbc.CardBody:
                         dbc.Row(
                             [
                                 dbc.Col(
-                                    dcc.Input(
+                                    ssb.Input(
                                         value=get_dataset_path(),
-                                        size="50",
-                                        placeholder="Sti til datasettet f.eks 'gs://my-bucket/my-dataset.parquet'",
                                         id="dataset-path-input",
                                     ),
                                     align="center",
                                     width="auto",
                                 ),
                                 dbc.Col(
-                                    build_ssb_button(
-                                        text="Åpne fil",
-                                        icon_class="bi bi-folder2-open",
-                                        button_id="open-button",
-                                    ),
-                                    width=2,
+                                    ssb.Button("Åpne fil", id="open-button"),
                                 ),
                             ],
                         ),
@@ -95,12 +87,7 @@ def build_controls_bar() -> dbc.CardBody:
                     ),
                     dbc.Col(),
                     dbc.Col(
-                        build_ssb_button(
-                            text="Lagre metadata",
-                            icon_class="bi bi-save",
-                            button_id="save-button",
-                        ),
-                        width=2,
+                        ssb.Button("Lagre metadata", id="save-button"),
                     ),
                 ],
                 justify="between",
