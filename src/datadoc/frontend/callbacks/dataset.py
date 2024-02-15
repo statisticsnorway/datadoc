@@ -87,6 +87,8 @@ def process_special_cases(
         str,
     ):
         updated_value = process_keyword(value)
+    elif metadata_identifier == DatasetIdentifiers.VERSION.value:
+        updated_value = str(value)
     elif metadata_identifier in MULTIPLE_LANGUAGE_DATASET_METADATA and isinstance(
         value,
         str,
