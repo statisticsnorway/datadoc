@@ -61,6 +61,7 @@ def test_read_in_statistical_structure(
         ("ab_kortnvan_01", "ab01"),
         ("aa_kortnvan_01", "aa01"),
         ("unknown_name", None),
+        (None, None),
     ],
 )
 @pytest.mark.usefixtures("_mock_fetch_statistical_structure")
