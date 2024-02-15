@@ -175,12 +175,9 @@ class DataDocMetadata:
         self.ds_schema: DatasetParser = DatasetParser.for_file(dataset)
         dapla_dataset_path_info = DaplaDatasetPathInfo(dataset)
 
-        if dapla_dataset_path_info.statistic_short_name:
-            subject_field = state.statistic_subject_mapping.get_secondary_subject(
-                dapla_dataset_path_info.statistic_short_name,
-            )
-        else:
-            subject_field = None
+        subject_field = state.statistic_subject_mapping.get_secondary_subject(
+            dapla_dataset_path_info.statistic_short_name,
+        )
 
         self.meta.dataset = model.Dataset(
             short_name=self.short_name,
