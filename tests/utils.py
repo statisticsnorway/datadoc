@@ -6,7 +6,7 @@ TEST_BUCKET_PARQUET_FILEPATH = "gs://ssb-staging-dapla-felles-data-delt/datadoc/
 
 TEST_BUCKET_PARQUET_FILEPATH_WITH_SHORTNAME = "gs://ssb-staging-dapla-felles-data-delt/befolkning/klargjorte_data/person_data_v1.parquet"
 
-TEST_RESOURCES_DIRECTORY = Path("tests/resources/")
+TEST_RESOURCES_DIRECTORY = Path("tests/resources")
 
 TEST_PARQUET_FILEPATH = TEST_RESOURCES_DIRECTORY / "person_data_v1.parquet"
 TEST_SAS7BDAT_FILEPATH = TEST_RESOURCES_DIRECTORY / "sasdata.sas7bdat"
@@ -26,3 +26,7 @@ TEST_EXISTING_METADATA_WITH_VALID_ID_DIRECTORY = (
 )
 
 TEST_COMPATIBILITY_DIRECTORY = TEST_EXISTING_METADATA_DIRECTORY / "compatibility"
+
+TEST_PREPARED_DATA_POPULATION_DIRECTORY = (
+    TEST_RESOURCES_DIRECTORY / "klargjorte_data" / "befolkning"
+)

@@ -11,8 +11,6 @@ from datadoc_model import model
 from datadoc import config
 from datadoc import enums
 from datadoc import state
-from datadoc.backend.datadoc_metadata import METADATA_DOCUMENT_FILE_SUFFIX
-from datadoc.backend.datadoc_metadata import DataDocMetadata
 
 if TYPE_CHECKING:
     from enum import Enum
@@ -92,14 +90,3 @@ def get_dataset_path() -> str | None:
         path_from_env,
     )
     return path_from_env
-
-
-def open_file(file_path: str | None = None) -> DataDocMetadata:
-    """Load the given dataset into a DataDocMetadata instance."""
-    if file_path and file_path.endswith(METADATA_DOCUMENT_FILE_SUFFIX):
-        logger.info("Opening existing metadata document %s", file_path)
-        return DataDocMetadata(metadata_document_path=file_path)
-
-    dataset = file_path or get_dataset_path()
-    logger.info("Opening dataset %s", dataset)
-    return DataDocMetadata(dataset_path=dataset)

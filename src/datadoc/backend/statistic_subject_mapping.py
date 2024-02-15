@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import concurrent.futures
+import logging
 from dataclasses import dataclass
 
 import bs4
@@ -7,64 +9,75 @@ import requests
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
 
+from datadoc.enums import SupportedLanguages
+
+logger = logging.getLogger(__name__)
+
 
 @dataclass
-class SecondarySubject:
-    """Data structure for secondary subjects or 'delemne'."""
+class Subject:
+    """Base class for Primary and Secondary subjects."""
 
     titles: dict[str, str]
     subject_code: str
+
+    def get_title(self, language: SupportedLanguages) -> str:
+        """Get the title in the given language."""
+        return self.titles[
+            (
+                # Adjust to language codes in the StatisticSubjectMapping structure.
+                "no"
+                if language
+                in [
+                    SupportedLanguages.NORSK_BOKMÅL,
+                    SupportedLanguages.NORSK_NYNORSK,
+                ]
+                else "en"
+            )
+        ]
+
+
+@dataclass
+class SecondarySubject(Subject):
+    """Data structure for secondary subjects or 'delemne'."""
+
     statistic_short_names: list[str]
 
 
 @dataclass
-class PrimarySubject:
+class PrimarySubject(Subject):
     """Data structure for primary subjects or 'hovedemne'."""
 
-    titles: dict[str, str]
-    subject_code: str
     secondary_subjects: list[SecondarySubject]
 
 
 class StatisticSubjectMapping:
     """Allow mapping between statistic short name and primary and secondary subject."""
 
-    def __init__(self, source_url: str) -> None:
+    def __init__(self, source_url: str | None) -> None:
         """Retrieves the statistical structure document from the given URL.
 
         Initializes the mapping dicts. Based on the values in the statistical structure document.
         """
         self.source_url = source_url
-        self.secondary_subject_primary_subject_mapping: dict[str, str] = {"al03": "al"}
-        self.statistic_short_name_secondary_subject_mapping: dict[str, str] = {
-            "nav_statres": "al03",
-        }
-        self._statistic_subject_structure_xml = self._fetch_statistical_structure(
-            self.source_url,
-        )
-        self.primary_subjects: list[
-            PrimarySubject
-        ] = self._parse_statistic_subject_structure_xml(
-            self._statistic_subject_structure_xml,
-        )
 
-    def get_primary_subject(self, statistic_short_name: str) -> str | None:
-        """Returns the primary subject for the given statistic short name by mapping it through the secondary subject.
+        self.future: concurrent.futures.Future[ResultSet] | None = None
+        self._statistic_subject_structure_xml: ResultSet | None = None
 
-        Looks up the secondary subject for the statistic short name, then uses that
-        to look up the corresponding primary subject in the mapping dict.
-
-        Returns the primary subject string if found, else None.
-        """
-        if seconday_subject := self.get_secondary_subject(statistic_short_name):
-            return self.secondary_subject_primary_subject_mapping.get(
-                seconday_subject,
-                None,
+        if self.source_url:
+            executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+            self.future = executor.submit(
+                self._fetch_statistical_structure,
+                self.source_url,
+            )
+        else:
+            logger.warning(
+                "No URL to fetch statistical subject structure supplied. Skipping fetching it. This may make it difficult to provide a value for the 'subject_field' metadata field.",
             )
 
-        return None
+        self._primary_subjects: list[PrimarySubject] = []
 
-    def get_secondary_subject(self, statistic_short_name: str) -> str | None:
+    def get_secondary_subject(self, statistic_short_name: str | None) -> str | None:
         """Looks up the secondary subject for the given statistic short name in the mapping dict.
 
         Returns the secondary subject string if found, else None.
@@ -89,6 +102,7 @@ class StatisticSubjectMapping:
         Returns a BeautifulSoup ResultSet.
         """
         response = requests.get(source_url, timeout=30)
+        response.encoding = "utf-8"
         soup = BeautifulSoup(response.text, features="xml")
         return soup.find_all("hovedemne")
 
@@ -115,3 +129,31 @@ class StatisticSubjectMapping:
                 ),
             )
         return primary_subjects
+
+    def wait_for_primary_subject(self) -> None:
+        """Waits for the thread responsible for loading the xml to finish."""
+        if not self.future:
+            # Nothing to wait for in this case, just return immediately
+            return
+        self.future.result()
+
+    @property
+    def primary_subjects(self) -> list[PrimarySubject]:
+        """Getter for primary subjects."""
+        self._parse_xml_if_loaded()
+        return self._primary_subjects
+
+    def _parse_xml_if_loaded(self) -> bool:
+        """Checks if the xml is loaded, then parses the xml if it is loaded.
+
+        Returns true if it is loaded and parsed.
+        """
+        if self.future and self.future.done():
+            self._statistic_subject_structure_xml = self.future.result()
+
+            self._primary_subjects = self._parse_statistic_subject_structure_xml(
+                self._statistic_subject_structure_xml,
+            )
+
+            return True
+        return False

@@ -9,6 +9,10 @@ from pydantic import AnyUrl
 
 from datadoc.enums import SupportedLanguages
 
+METADATA_DOCUMENT_FILE_SUFFIX = "__DOC.json"
+
+PLACEHOLDER_USERNAME = "default_user@ssb.no"
+
 
 def running_in_notebook() -> bool:
     """Return True if running in Jupyter Notebook."""
