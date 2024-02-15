@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import concurrent.futures
+import logging
 from dataclasses import dataclass
 
 import bs4
@@ -9,6 +10,8 @@ from bs4 import BeautifulSoup
 from bs4 import ResultSet
 
 from datadoc.enums import SupportedLanguages
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -51,42 +54,30 @@ class PrimarySubject(Subject):
 class StatisticSubjectMapping:
     """Allow mapping between statistic short name and primary and secondary subject."""
 
-    def __init__(self, source_url: str) -> None:
+    def __init__(self, source_url: str | None) -> None:
         """Retrieves the statistical structure document from the given URL.
 
         Initializes the mapping dicts. Based on the values in the statistical structure document.
         """
         self.source_url = source_url
 
+        self.future: concurrent.futures.Future[ResultSet] | None = None
         self._statistic_subject_structure_xml: ResultSet | None = None
-        self.secondary_subject_primary_subject_mapping: dict[str, str] = {}
 
-        executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
-        self.future = executor.submit(
-            self._fetch_statistical_structure,
-            self.source_url,
-        )
-
-        self._primary_subjects: list[PrimarySubject]
-
-    def get_primary_subject(self, statistic_short_name: str) -> str | None:
-        """Returns the primary subject for the given statistic short name by mapping it through the secondary subject.
-
-        Looks up the secondary subject for the statistic short name, then uses that
-        to look up the corresponding primary subject in the mapping dict.
-
-        Returns the primary subject string if found, else None.
-        """
-        self._parse_xml_if_loaded()
-        if secondary_subject := self.get_secondary_subject(statistic_short_name):
-            return self.secondary_subject_primary_subject_mapping.get(
-                secondary_subject,
-                None,
+        if self.source_url:
+            executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+            self.future = executor.submit(
+                self._fetch_statistical_structure,
+                self.source_url,
+            )
+        else:
+            logger.warning(
+                "No URL to fetch statistical subject structure supplied. Skipping fetching it. This may make it difficult to provide a value for the 'subject_field' metadata field.",
             )
 
-        return None
+        self._primary_subjects: list[PrimarySubject] = []
 
-    def get_secondary_subject(self, statistic_short_name: str) -> str | None:
+    def get_secondary_subject(self, statistic_short_name: str | None) -> str | None:
         """Looks up the secondary subject for the given statistic short name in the mapping dict.
 
         Returns the secondary subject string if found, else None.
@@ -141,6 +132,9 @@ class StatisticSubjectMapping:
 
     def wait_for_primary_subject(self) -> None:
         """Waits for the thread responsible for loading the xml to finish."""
+        if not self.future:
+            # Nothing to wait for in this case, just return immediately
+            return
         self.future.result()
 
     @property
@@ -154,7 +148,7 @@ class StatisticSubjectMapping:
 
         Returns true if it is loaded and parsed.
         """
-        if self.future.done():
+        if self.future and self.future.done():
             self._statistic_subject_structure_xml = self.future.result()
 
             self._primary_subjects = self._parse_statistic_subject_structure_xml(
