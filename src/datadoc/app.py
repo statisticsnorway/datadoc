@@ -111,14 +111,9 @@ def collect_data_from_external_sources() -> None:
 
     Must be non-blocking to prevent delays in app startup.
     """
-    if source_url := config.get_statistical_subject_source_url():
-        state.statistic_subject_mapping = StatisticSubjectMapping(
-            source_url,
-        )
-    else:
-        logger.warning(
-            "No URL to fetch statistical subject structure supplied. Skipping fetching it. This may make it difficult to provide a value for the 'subject_field' metadata field.",
-        )
+    state.statistic_subject_mapping = StatisticSubjectMapping(
+        config.get_statistical_subject_source_url(),
+    )
 
 
 def main(dataset_path: str | None = None) -> None:
