@@ -23,18 +23,26 @@ class Subject:
 
     def get_title(self, language: SupportedLanguages) -> str:
         """Get the title in the given language."""
-        return self.titles[
-            (
-                # Adjust to language codes in the StatisticSubjectMapping structure.
-                "no"
-                if language
-                in [
-                    SupportedLanguages.NORSK_BOKMÅL,
-                    SupportedLanguages.NORSK_NYNORSK,
-                ]
-                else "en"
+        try:
+            return self.titles[
+                (
+                    # Adjust to language codes in the StatisticSubjectMapping structure.
+                    "no"
+                    if language
+                    in [
+                        SupportedLanguages.NORSK_BOKMÅL,
+                        SupportedLanguages.NORSK_NYNORSK,
+                    ]
+                    else "en"
+                )
+            ]
+        except KeyError:
+            logger.exception(
+                "Could not find title for subject %s  and language: %s",
+                self,
+                language.name,
             )
-        ]
+            return ""
 
 
 @dataclass
