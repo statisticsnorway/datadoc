@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import dash_bootstrap_components as dbc
 import ssb_dash_components as ssb
-from dash import dcc
 from dash import html
 
 from datadoc import state
@@ -14,6 +13,7 @@ from datadoc.utils import get_app_version
 
 COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
+# SSB Header with Title
 header = ssb.Header(
     [
         ssb.Title("DataDoc", size=1),
@@ -26,6 +26,7 @@ progress_bar = dbc.CardBody(
 )
 
 
+# ssb.Dropdown with error - value and options -> callback error
 def build_language_dropdown() -> dbc.Row:
     """Build the language dropdown."""
     return dbc.CardBody(
@@ -36,18 +37,15 @@ def build_language_dropdown() -> dbc.Row:
                     align="end",
                 ),
                 dbc.Col(
-                    dcc.Dropdown(
+                    ssb.Dropdown(
                         id="language-dropdown",
                         searchable=False,
-                        value=state.current_metadata_language.value,
-                        className="ssb-dropdown",
-                        options=[
-                            {"label": i.name, "value": i.value}
-                            for i in SupportedLanguages
+                        header="Velg språk",
+                        selectedItem=state.current_metadata_language.value,
+                        items=[
+                            {"id": i.value, "title": i.name} for i in SupportedLanguages
                         ],
                     ),
-                    align="center",
-                    width="auto",
                 ),
             ],
             justify="between",
@@ -55,6 +53,7 @@ def build_language_dropdown() -> dbc.Row:
     )
 
 
+# SSB Input and SSB Button
 def build_controls_bar() -> dbc.CardBody:
     """Build the Controls Bar.
 
@@ -74,6 +73,7 @@ def build_controls_bar() -> dbc.CardBody:
                                     ssb.Input(
                                         value=get_dataset_path(),
                                         id="dataset-path-input",
+                                        label="Dataset",
                                     ),
                                     align="center",
                                     width="auto",

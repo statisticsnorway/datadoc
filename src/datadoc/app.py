@@ -36,7 +36,23 @@ from datadoc.utils import running_in_notebook
 logging.basicConfig(level=config.get_log_level(), force=True)
 logger = logging.getLogger(__name__)
 
+# For testing Tabs
+tab_items = [
+    {
+        "title": "Datasett",
+        "path": "dataset/",
+    },
+    {
+        "title": "Variabler",
+        "path": "variables/",
+    },
+]
 
+# For testing later ssb.Tabs(id="ssb-tabs", items=tab_items),
+# For testing later html.Div(id="display-tab"),
+
+
+# Check Tabs after changes in ssb dash components are updated
 def build_app(app: type[Dash]) -> Dash:
     """Define the layout, register callbacks."""
     app.layout = dbc.Container(

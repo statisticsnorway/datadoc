@@ -3,7 +3,6 @@
 Implementations of the callback functionality should be in other functions (in other files), to enable unit testing.
 """
 
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -26,9 +25,13 @@ from datadoc.frontend.callbacks.variables import (
 )
 from datadoc.frontend.callbacks.variables import update_variable_table_language
 from datadoc.frontend.components.dataset_tab import DATASET_METADATA_INPUT
+from datadoc.frontend.components.dataset_tab import build_dataset_tab
+from datadoc.frontend.components.variables_tab import build_variables_tab
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
 
 if TYPE_CHECKING:
+    import dash_bootstrap_components as dbc
+
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 
@@ -64,6 +67,7 @@ def register_callbacks(app: Dash) -> None:
 
         return False
 
+    # selectedItem
     @app.callback(
         *[
             Output(
@@ -79,7 +83,7 @@ def register_callbacks(app: Dash) -> None:
             {"type": DATASET_METADATA_INPUT, "id": ALL},
             "value",
         ),
-        Input("language-dropdown", "value"),
+        Input("language-dropdown", "selectedItem"),
     )
     def callback_change_language_dataset_metadata(
         language: str,
@@ -167,3 +171,15 @@ def register_callbacks(app: Dash) -> None:
         by a more formal mechanism.
         """
         return open_dataset_handling(n_clicks, dataset_path)
+
+    # Fast test ssb Tabs component - must merge Tabs component first
+    @app.callback(
+        Output("display-tab", "children"),
+        Input("ssb-tabs", "active"),
+    )
+    def get_tabs_content(item: str) -> dbc.Tab:
+        if item == "dataset/":
+            return build_dataset_tab()
+        if item == "variables/":
+            return build_variables_tab()
+        return None

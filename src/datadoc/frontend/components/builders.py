@@ -6,6 +6,7 @@ from enum import Enum
 from enum import auto
 
 import dash_bootstrap_components as dbc
+import ssb_dash_components as ssb
 from dash import html
 
 
@@ -41,6 +42,7 @@ ALERT_TYPES = {
 }
 
 
+# issue with unique id
 def build_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:
     """Make a Dash Tab according to SSBs Design System."""
     return dbc.Tab(
@@ -54,6 +56,16 @@ def build_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:
     )
 
 
+# test Tabs ? - must be merged in ssb dash components first
+def build_ssb_tabs(items: list) -> ssb.Tabs:
+    """Return SSB Tabs with Tab."""
+    return ssb.Tabs(
+        id="",
+        items={items},
+    )
+
+
+# Replace Title and Paragraph
 def build_ssb_alert(
     alert_type: AlertTypes,
     alert_identifier: str,
@@ -70,10 +82,11 @@ def build_ssb_alert(
         color=alert.color,
         duration=5000 if alert_type == AlertTypes.SUCCESS else None,
         children=[
-            html.H5(
+            ssb.Title(
                 title,
+                size=5,
             ),
-            html.P(
+            ssb.Paragraph(
                 id=content_identifier,
             ),
         ],
