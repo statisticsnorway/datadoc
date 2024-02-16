@@ -9,6 +9,7 @@ from datadoc_model import model
 from datadoc import enums
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
+from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.enums import DatasetState
 from datadoc.enums import LanguageStringsEnum
 from datadoc.enums import SupportedLanguages
@@ -110,11 +111,13 @@ def test_update_dataset_metadata_language_enums():
 )
 @pytest.mark.parametrize("language", list(SupportedLanguages))
 def test_change_language_dataset_metadata_options_enums(
+    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
     metadata: DataDocMetadata,
     enum_for_options: LanguageStringsEnum,
     language: SupportedLanguages,
 ):
     state.metadata = metadata
+    state.statistic_subject_mapping = subject_mapping_fake_statistical_structure
     value = change_language_dataset_metadata(language)
 
     for options in cast(list[list[dict[str, str]]], value[0:-1]):

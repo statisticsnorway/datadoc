@@ -52,8 +52,63 @@ STATISTICAL_SUBJECT_STRUCTURE_DIR = "statistical_subject_structure"
         (
             TEST_RESOURCES_DIRECTORY
             / STATISTICAL_SUBJECT_STRUCTURE_DIR
-            / "missing_languages.xml",
-            [],
+            / "missing_language.xml",
+            [
+                PrimarySubject(
+                    titles={
+                        "en": "aa english",
+                    },
+                    subject_code="aa",
+                    secondary_subjects=[
+                        SecondarySubject(
+                            titles={
+                                "en": "aa00 english",
+                                "no": "aa00 norwegian",
+                            },
+                            subject_code="aa00",
+                            statistic_short_names=[
+                                "aa_kortnvan",
+                            ],
+                        ),
+                        SecondarySubject(
+                            titles={
+                                "no": "aa01 norwegian",
+                            },
+                            subject_code="aa01",
+                            statistic_short_names=[
+                                "aa_kortnvan_01",
+                            ],
+                        ),
+                    ],
+                ),
+                PrimarySubject(
+                    titles={
+                        "en": "ab english",
+                    },
+                    subject_code="ab",
+                    secondary_subjects=[
+                        SecondarySubject(
+                            titles={
+                                "en": "ab00 english",
+                                "no": "ab00 norwegian",
+                            },
+                            subject_code="ab00",
+                            statistic_short_names=[
+                                "ab_kortnvan",
+                            ],
+                        ),
+                        SecondarySubject(
+                            titles={
+                                "en": "ab01 english",
+                            },
+                            subject_code="ab01",
+                            statistic_short_names=[
+                                "ab_kortnvan_01",
+                            ],
+                        ),
+                    ],
+                ),
+            ],
         ),
     ],
 )
