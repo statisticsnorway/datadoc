@@ -125,7 +125,7 @@ def test_change_language_dataset_metadata(
     for options in cast(list[list[dict[str, str]]], value[0:-1]):
         assert all(list(d.keys()) == ["label", "value"] for d in options)
 
-        member_names = set(test._member_names_)  # noqa: SLF001
+        member_names = {m.name for m in test}  # type: ignore [attr-defined]
         values = [i for d in options for i in d.values()]
 
         if member_names.intersection(values):
@@ -133,9 +133,9 @@ def test_change_language_dataset_metadata(
                 e.get_value_for_language(
                     SupportedLanguages.NORSK_NYNORSK,
                 )
-                for e in test
+                for e in test  # type: ignore [attr-defined]
             }
-            assert {d["value"] for d in options} == {e.name for e in test}
+            assert {d["value"] for d in options} == {e.name for e in test}  # type: ignore [attr-defined]
 
 
 @patch(f"{DATASET_CALLBACKS_MODULE}.open_file")
