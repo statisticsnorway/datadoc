@@ -17,6 +17,8 @@ from datadoc_model.model import Variable
 
 from datadoc.backend.datadoc_metadata import PLACEHOLDER_USERNAME
 from datadoc.backend.datadoc_metadata import DataDocMetadata
+from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
+from datadoc.enums import Assessment
 from datadoc.enums import DatasetState
 from datadoc.enums import DatasetStatus
 from datadoc.enums import DataType
@@ -24,16 +26,18 @@ from datadoc.enums import VariableRole
 from tests.utils import TEST_BUCKET_PARQUET_FILEPATH
 from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
+from tests.utils import TEST_INPUT_DATA_POPULATION_DIRECTORY
+from tests.utils import TEST_OUTPUT_DATA_POPULATION_DIRECTORY
 from tests.utils import TEST_PARQUET_FILEPATH
-from tests.utils import TEST_PREPARED_DATA_POPULATION_DIRECTORY
+from tests.utils import TEST_PROCESSED_DATA_POPULATION_DIRECTORY
 from tests.utils import TEST_RESOURCES_DIRECTORY
 from tests.utils import TEST_RESOURCES_METADATA_DOCUMENT
+from tests.utils import TEST_STATISTICS_POPULATION_DIRECTORY
 
 if TYPE_CHECKING:
     import os
     from datetime import datetime
 
-    from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 
 DATADOC_METADATA_MODULE = "datadoc.backend.datadoc_metadata"
 
@@ -229,11 +233,11 @@ def test_open_file(
     [
         (
             str(
-                TEST_PREPARED_DATA_POPULATION_DIRECTORY
+                TEST_PROCESSED_DATA_POPULATION_DIRECTORY
                 / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
             ),
             str(
-                TEST_PREPARED_DATA_POPULATION_DIRECTORY
+                TEST_PROCESSED_DATA_POPULATION_DIRECTORY
                 / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
             ),
             DatasetStatus.DRAFT.value,
@@ -265,6 +269,98 @@ def test_dataset_status_default_value(
     )
 
     assert expected_type == datadoc_metadata.meta.dataset.dataset_status
+
+
+@pytest.mark.parametrize(
+    ("dataset_path", "metadata_document_path", "expected_type"),
+    [
+        (
+            str(
+                TEST_INPUT_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+            ),
+            str(
+                TEST_INPUT_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
+            ),
+            Assessment.SENSITIVE.value,
+        ),
+        (
+            str(TEST_INPUT_DATA_POPULATION_DIRECTORY / "person_data_v1.parquet"),
+            None,
+            Assessment.PROTECTED.value,
+        ),
+        (
+            str(
+                TEST_PROCESSED_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+            ),
+            str(
+                TEST_PROCESSED_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
+            ),
+            Assessment.PROTECTED.value,
+        ),
+        (
+            str(TEST_PROCESSED_DATA_POPULATION_DIRECTORY / "person_data_v1.parquet"),
+            None,
+            Assessment.PROTECTED.value,
+        ),
+        (
+            str(
+                TEST_STATISTICS_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+            ),
+            str(
+                TEST_STATISTICS_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
+            ),
+            Assessment.SENSITIVE.value,
+        ),
+        (
+            str(TEST_STATISTICS_POPULATION_DIRECTORY / "person_data_v1.parquet"),
+            None,
+            Assessment.PROTECTED.value,
+        ),
+        (
+            str(
+                TEST_OUTPUT_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+            ),
+            str(
+                TEST_OUTPUT_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
+            ),
+            Assessment.SENSITIVE.value,
+        ),
+        (
+            str(TEST_OUTPUT_DATA_POPULATION_DIRECTORY / "person_data_v1.parquet"),
+            None,
+            Assessment.OPEN.value,
+        ),
+        (
+            str(TEST_RESOURCES_DIRECTORY / "person_data_v1.parquet"),
+            None,
+            None,
+        ),
+        (
+            "",
+            None,
+            None,
+        ),
+    ],
+)
+def test_dataset_assessment_default_value(
+    dataset_path: str,
+    metadata_document_path: str | None,
+    expected_type: Assessment | None,
+):
+    datadoc_metadata = DataDocMetadata(
+        statistic_subject_mapping=StatisticSubjectMapping(source_url=""),
+        dataset_path=dataset_path,
+        metadata_document_path=metadata_document_path,
+    )
+    assert expected_type == datadoc_metadata.meta.dataset.assessment
 
 
 @pytest.mark.parametrize(

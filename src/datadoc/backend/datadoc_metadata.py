@@ -18,6 +18,8 @@ from datadoc import config
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
+from datadoc.enums import Assessment
+from datadoc.enums import DatasetState
 from datadoc.enums import DatasetStatus
 from datadoc.enums import VariableRole
 from datadoc.frontend.fields.display_dataset import (
@@ -184,6 +186,9 @@ class DataDocMetadata:
             short_name=self.short_name,
             dataset_state=dapla_dataset_path_info.dataset_state,
             dataset_status=DatasetStatus.DRAFT,
+            assessment=self.get_assessment_by_state(
+                dapla_dataset_path_info.dataset_state,
+            ),
             version=dapla_dataset_path_info.dataset_version,
             contains_data_from=str(dapla_dataset_path_info.contains_data_from),
             contains_data_until=str(dapla_dataset_path_info.contains_data_until),
@@ -194,6 +199,23 @@ class DataDocMetadata:
             subject_field=model.LanguageStringType(en=subject_field),
         )
         self.meta.variables = self.ds_schema.get_fields()
+
+    @staticmethod
+    def get_assessment_by_state(state: DatasetState | None) -> Assessment | None:
+        """Find assessment derived by dataset state."""
+        if state is None:
+            return None
+        match (state):
+            case (
+                DatasetState.INPUT_DATA
+                | DatasetState.PROCESSED_DATA
+                | DatasetState.STATISTICS
+            ):
+                return Assessment.PROTECTED
+            case DatasetState.OUTPUT_DATA:
+                return Assessment.OPEN
+            case _:
+                return None
 
     def write_metadata_document(self) -> None:
         """Write all currently known metadata to file."""
