@@ -274,12 +274,15 @@ def test_dataset_status_default_value(
     ],
 )
 def test_extract_subject_field_value_from_statistic_structure_xml(
-    subject_mapping: StatisticSubjectMapping,
+    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
     copy_dataset_to_path: Path,
     expected_subject_code: str,
 ):
-    subject_mapping.wait_for_primary_subject()
-    metadata = DataDocMetadata(subject_mapping, str(copy_dataset_to_path))
+    subject_mapping_fake_statistical_structure.wait_for_primary_subject()
+    metadata = DataDocMetadata(
+        subject_mapping_fake_statistical_structure,
+        str(copy_dataset_to_path),
+    )
     # TODO @mmwinther: Remove multiple_language_support once the model is updated.
     # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
     assert metadata.meta.dataset.subject_field.en == expected_subject_code

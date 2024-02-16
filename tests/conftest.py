@@ -52,9 +52,12 @@ def _mock_timestamp(mocker: MockerFixture, dummy_timestamp: datetime) -> None:
 @pytest.fixture()
 def metadata(
     _mock_timestamp: None,
-    subject_mapping: StatisticSubjectMapping,
+    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
 ) -> DataDocMetadata:
-    return DataDocMetadata(subject_mapping, str(TEST_PARQUET_FILEPATH))
+    return DataDocMetadata(
+        subject_mapping_fake_statistical_structure,
+        str(TEST_PARQUET_FILEPATH),
+    )
 
 
 @pytest.fixture(autouse=True)
@@ -201,7 +204,9 @@ def subject_xml_file_path() -> pathlib.Path:
 
 
 @pytest.fixture()
-def subject_mapping(_mock_fetch_statistical_structure) -> StatisticSubjectMapping:
+def subject_mapping_fake_statistical_structure(
+    _mock_fetch_statistical_structure,
+) -> StatisticSubjectMapping:
     return StatisticSubjectMapping("placeholder")
 
 
@@ -218,3 +223,15 @@ def _mock_fetch_statistical_structure(
         "datadoc.backend.statistic_subject_mapping.StatisticSubjectMapping._fetch_statistical_structure",
         functools.partial(fake_statistical_structure, subject_xml_file_path),
     )
+
+
+@pytest.fixture()
+def subject_mapping_http_exception(
+    requests_mock,
+    exception_to_raise,
+) -> StatisticSubjectMapping:
+    requests_mock.get(
+        "http://test.some.url.com",
+        exc=exception_to_raise,
+    )
+    return StatisticSubjectMapping("http://test.some.url.com")

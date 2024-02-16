@@ -61,7 +61,7 @@ class StatisticSubjectMapping:
         """
         self.source_url = source_url
 
-        self.future: concurrent.futures.Future[ResultSet] | None = None
+        self.future: concurrent.futures.Future[ResultSet | None] | None = None
         self._statistic_subject_structure_xml: ResultSet | None = None
 
         if self.source_url:
@@ -96,15 +96,20 @@ class StatisticSubjectMapping:
         return titles
 
     @staticmethod
-    def _fetch_statistical_structure(source_url: str) -> ResultSet:
+    def _fetch_statistical_structure(source_url: str) -> ResultSet | None:
         """Fetch statistical structure document from source_url.
 
         Returns a BeautifulSoup ResultSet.
         """
-        response = requests.get(source_url, timeout=30)
-        response.encoding = "utf-8"
-        soup = BeautifulSoup(response.text, features="xml")
-        return soup.find_all("hovedemne")
+        try:
+            response = requests.get(source_url, timeout=30)
+            soup = BeautifulSoup(response.text, features="xml")
+            return soup.find_all("hovedemne")
+        except requests.exceptions.RequestException:
+            logger.exception(
+                "Exception while fetching statistical structure ",
+            )
+            return None
 
     def _parse_statistic_subject_structure_xml(
         self,
@@ -151,9 +156,9 @@ class StatisticSubjectMapping:
         if self.future and self.future.done():
             self._statistic_subject_structure_xml = self.future.result()
 
-            self._primary_subjects = self._parse_statistic_subject_structure_xml(
-                self._statistic_subject_structure_xml,
-            )
-
-            return True
+            if self._statistic_subject_structure_xml is not None:
+                self._primary_subjects = self._parse_statistic_subject_structure_xml(
+                    self._statistic_subject_structure_xml,
+                )
+                return True
         return False
