@@ -183,16 +183,9 @@ class DataDocMetadata:
             short_name=self.short_name,
             dataset_state=dapla_dataset_path_info.dataset_state,
             dataset_status=DatasetStatus.DRAFT,
-            assessment=Assessment.PROTECTED
-            if dapla_dataset_path_info.dataset_state
-            in {
-                DatasetState.INPUT_DATA,
-                DatasetState.PROCESSED_DATA,
-                DatasetState.STATISTICS,
-            }
-            else Assessment.OPEN
-            if dapla_dataset_path_info.dataset_state == DatasetState.OUTPUT_DATA
-            else None,
+            assessment=self.get_assessment_by_state(
+                dapla_dataset_path_info.dataset_state,
+            ),
             version=dapla_dataset_path_info.dataset_version,
             contains_data_from=str(dapla_dataset_path_info.contains_data_from),
             contains_data_until=str(dapla_dataset_path_info.contains_data_until),
@@ -203,6 +196,23 @@ class DataDocMetadata:
             subject_field=model.LanguageStringType(en=subject_field),
         )
         self.meta.variables = self.ds_schema.get_fields()
+
+    @staticmethod
+    def get_assessment_by_state(state: DatasetState | None) -> Assessment | None:
+        """Find assessment derived by dataset state."""
+        if state is None:
+            return None
+        match (state):
+            case (
+                DatasetState.INPUT_DATA
+                | DatasetState.PROCESSED_DATA
+                | DatasetState.STATISTICS
+            ):
+                return Assessment.PROTECTED
+            case DatasetState.OUTPUT_DATA:
+                return Assessment.OPEN
+            case _:
+                return None
 
     def write_metadata_document(self) -> None:
         """Write all currently known metadata to file."""
