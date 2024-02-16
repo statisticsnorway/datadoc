@@ -76,7 +76,10 @@ def get_app(dataset_path: str | None = None) -> tuple[Dash, int]:
     """Centralize all the ugliness around initializing the app."""
     logger.info("Datadoc version v%s", get_app_version())
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
-    state.metadata = DataDocMetadata(dataset_path)
+    state.metadata = DataDocMetadata(
+        state.statistic_subject_mapping,
+        dataset_path=dataset_path,
+    )
 
     # The service prefix must be set to run correctly on Dapla Jupyter
     if prefix := config.get_jupyterhub_service_prefix():

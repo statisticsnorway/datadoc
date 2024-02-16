@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 from typing import TypeAlias
+from typing import cast
 
 from datadoc_model import model
 
@@ -31,17 +32,17 @@ def update_global_language_state(language: SupportedLanguages) -> None:
     state.current_metadata_language = language
 
 
-def get_language_strings_enum(enum: Enum) -> enums.LanguageStringsEnum:
+def get_language_strings_enum(
+    enum: Enum | type[enums.LanguageStringsEnum],
+) -> enums.LanguageStringsEnum:
     """Get the correct language strings enum for the given enum.
 
     We need multiple languages to display in the front end, but the model only defines a single language in the enums.
     """
-    language_strings_enum: enums.LanguageStringsEnum = getattr(enums, enum.__name__)  # type: ignore [attr-defined]
-    if not issubclass(language_strings_enum, enums.LanguageStringsEnum):  # type: ignore [arg-type]
-        message = f"Expected {language_strings_enum} to be a subclass of LanguageStringsEnum, but is {type(language_strings_enum)}"
-        raise TypeError(
-            message,
-        )
+    language_strings_enum: enums.LanguageStringsEnum = getattr(
+        enums,
+        cast(type[enums.LanguageStringsEnum], enum).__name__,
+    )
     return language_strings_enum
 
 
@@ -55,7 +56,7 @@ def get_options_for_language(
             "label": i.get_value_for_language(language),
             "value": i.name,
         }
-        for i in get_language_strings_enum(enum)  # type: ignore [attr-defined]
+        for i in get_language_strings_enum(enum)  # type: ignore [arg-type, attr-defined]
     ]
 
 

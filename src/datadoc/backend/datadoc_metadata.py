@@ -15,7 +15,6 @@ from dapla import AuthClient
 from datadoc_model import model
 
 from datadoc import config
-from datadoc import state
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
@@ -33,6 +32,8 @@ from datadoc.utils import get_timestamp_now
 if TYPE_CHECKING:
     from datetime import datetime
 
+    from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
+
 logger = logging.getLogger(__name__)
 
 
@@ -41,10 +42,12 @@ class DataDocMetadata:
 
     def __init__(
         self,
+        statistic_subject_mapping: StatisticSubjectMapping,
         dataset_path: str | None = None,
         metadata_document_path: str | None = None,
     ) -> None:
         """Read in a dataset if supplied, otherwise naively instantiate the class."""
+        self._statistic_subject_mapping = statistic_subject_mapping
         self.dataset_path = dataset_path
 
         self.metadata_document: pathlib.Path | CloudPath | None = None
@@ -173,7 +176,7 @@ class DataDocMetadata:
         self.ds_schema: DatasetParser = DatasetParser.for_file(dataset)
         dapla_dataset_path_info = DaplaDatasetPathInfo(dataset)
 
-        subject_field = state.statistic_subject_mapping.get_secondary_subject(
+        subject_field = self._statistic_subject_mapping.get_secondary_subject(
             dapla_dataset_path_info.statistic_short_name,
         )
 
