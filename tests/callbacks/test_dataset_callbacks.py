@@ -105,11 +105,11 @@ def test_update_dataset_metadata_language_enums(
 
 
 def test_change_language_dataset_metadata(
-    subject_mapping: StatisticSubjectMapping,
+    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
     metadata: DataDocMetadata,
 ):
     state.metadata = metadata
-    state.statistic_subject_mapping = subject_mapping
+    state.statistic_subject_mapping = subject_mapping_fake_statistical_structure
     value = change_language_dataset_metadata(SupportedLanguages.NORSK_NYNORSK)
     test = get_language_strings_enum(
         random.choice(  # noqa: S311 not for cryptographic purposes

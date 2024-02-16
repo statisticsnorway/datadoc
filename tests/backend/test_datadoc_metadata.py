@@ -187,12 +187,15 @@ def test_save_file_path_dataset_and_no_metadata(
     ],
 )
 def test_period_metadata_fields_saved(
-    subject_mapping: StatisticSubjectMapping,
+    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
     generate_periodic_file,
     expected_from,
     expected_until,
 ):
-    metadata = DataDocMetadata(subject_mapping, str(generate_periodic_file))
+    metadata = DataDocMetadata(
+        subject_mapping_fake_statistical_structure,
+        str(generate_periodic_file),
+    )
     assert metadata.meta.dataset.contains_data_from == expected_from
     assert metadata.meta.dataset.contains_data_until == expected_until
 
@@ -250,13 +253,13 @@ def test_open_file(
     ],
 )
 def test_dataset_status_default_value(
-    subject_mapping: StatisticSubjectMapping,
+    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
     dataset_path: str,
     metadata_document_path: str | None,
     expected_type: DatasetStatus | None,
 ):
     datadoc_metadata = DataDocMetadata(
-        subject_mapping,
+        subject_mapping_fake_statistical_structure,
         dataset_path,
         metadata_document_path,
     )
