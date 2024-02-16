@@ -63,19 +63,20 @@ def test_accept_dataset_metadata_input_valid_data(
     )
 
 
-def test_accept_dataset_metadata_input_incorrect_data_type():
-    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
+def test_accept_dataset_metadata_input_incorrect_data_type(metadata: DataDocMetadata):
+    state.metadata = metadata
     output = accept_dataset_metadata_input(3.1415, "dataset_state")
     assert output[0] is True
     assert "validation error for Dataset" in output[1]
 
 
 def test_update_dataset_metadata_language_strings(
+    metadata: DataDocMetadata,
     bokmål_name: str,
     english_name: str,
     language_object: model.LanguageStringType,
 ):
-    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
+    state.metadata = metadata
     state.metadata.meta.dataset.name = language_object
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     output = update_dataset_metadata_language()
@@ -123,7 +124,7 @@ def test_change_language_dataset_metadata_options_enums(
     for options in cast(list[list[dict[str, str]]], value[0:-1]):
         assert all(list(d.keys()) == ["label", "value"] for d in options)
 
-        member_names = set(enum_for_options._member_names_)  # noqa: SLF001
+        member_names = {m.name for m in enum_for_options}  # type: ignore [attr-defined]
         values = [i for d in options for i in d.values()]
 
         if member_names.intersection(values):
@@ -131,9 +132,9 @@ def test_change_language_dataset_metadata_options_enums(
                 e.get_value_for_language(
                     language,
                 )
-                for e in enum_for_options
+                for e in enum_for_options  # type: ignore [attr-defined]
             }
-            assert {d["value"] for d in options} == {e.name for e in enum_for_options}
+            assert {d["value"] for d in options} == {e.name for e in enum_for_options}  # type: ignore [attr-defined]
 
 
 @patch(f"{DATASET_CALLBACKS_MODULE}.open_file")
