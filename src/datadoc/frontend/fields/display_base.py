@@ -30,7 +30,6 @@ INPUT_KWARGS = {
     "style": {"width": "100%"},
     "className": "ssb-input",
 }
-NUMBER_KWARGS = dict(type="number", **INPUT_KWARGS)
 
 
 def input_kwargs_factory() -> dict[str, t.Any]:

@@ -367,11 +367,11 @@ def test_dataset_assessment_default_value(
     ],
 )
 def test_extract_subject_field_value_from_statistic_(
-    subject_mapping: StatisticSubjectMapping,
+    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
     copy_dataset_to_path: Path,
     expected_subject_code: str,
 ):
-    state.statistic_subject_mapping = subject_mapping
+    state.statistic_subject_mapping = subject_mapping_fake_statistical_structure
     state.statistic_subject_mapping.wait_for_primary_subject()
     metadata = DataDocMetadata(str(copy_dataset_to_path))
     # TODO @mmwinther: Remove multiple_language_support once the model is updated.
