@@ -8,6 +8,12 @@ from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from tests.utils import TEST_RESOURCES_DIRECTORY
 
 
+def test_no_source_url():
+    subject_mapping = StatisticSubjectMapping(None)
+    subject_mapping.wait_for_primary_subject()
+    assert subject_mapping.primary_subjects == []
+
+
 def test_extract_titles():
     xml_string = '<titler><tittel sprak="no">Partifinansiering</tittel><tittel sprak="en">Funding of political parties</tittel></titler>'
     soup = BeautifulSoup(xml_string, features="xml")
