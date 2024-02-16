@@ -66,6 +66,7 @@ types-Pygments = "*"
 types-colorama = "*"
 types-setuptools = "*"
 types-beautifulsoup4 = "^4.12.0.20240106"
+requests-mock = "^1.11.0"
 
 
 [tool.pytest.ini_options]
