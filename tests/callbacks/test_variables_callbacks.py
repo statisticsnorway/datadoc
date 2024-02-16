@@ -1,14 +1,15 @@
 """Tests for the callbacks package."""
+
 from __future__ import annotations
 
 import random
 from copy import deepcopy
+from typing import TYPE_CHECKING
 
 import pytest
 from datadoc_model import model
 
 from datadoc import state
-from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.enums import DataType
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
@@ -19,7 +20,9 @@ from datadoc.frontend.callbacks.variables import (
 )
 from datadoc.frontend.callbacks.variables import update_variable_table_language
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
-from tests.utils import TEST_PARQUET_FILEPATH
+
+if TYPE_CHECKING:
+    from datadoc.backend.datadoc_metadata import DataDocMetadata
 
 DATA_ORIGINAL = [
     {
@@ -64,9 +67,10 @@ def test_accept_variable_metadata_input_no_change_in_data(
 
 
 def test_accept_variable_metadata_input_new_data(
+    metadata: DataDocMetadata,
     active_cell: dict[str, MetadataInputTypes],
 ):
-    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
+    state.metadata = metadata
     output = accept_variable_metadata_input(DATA_VALID, active_cell, DATA_ORIGINAL)
 
     assert state.metadata.variables_lookup["pers_id"].variable_role == "IDENTIFIER"
@@ -76,9 +80,10 @@ def test_accept_variable_metadata_input_new_data(
 
 
 def test_accept_variable_metadata_clear_string(
+    metadata: DataDocMetadata,
     active_cell: dict[str, MetadataInputTypes],
 ):
-    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
+    state.metadata = metadata
     output = accept_variable_metadata_input(DATA_CLEAR_URI, active_cell, DATA_ORIGINAL)
 
     assert state.metadata.variables_lookup["pers_id"].definition_uri is None
@@ -88,9 +93,10 @@ def test_accept_variable_metadata_clear_string(
 
 
 def test_accept_variable_metadata_input_incorrect_data_type(
+    metadata: DataDocMetadata,
     active_cell: dict[str, MetadataInputTypes],
 ):
-    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
+    state.metadata = metadata
     previous_metadata = deepcopy(state.metadata.meta.variables)
     output = accept_variable_metadata_input(DATA_INVALID, active_cell, DATA_ORIGINAL)
 
@@ -122,10 +128,11 @@ def test_find_existing_language_string_pre_existing_strings(
 
 
 def test_update_variable_table_language(
+    metadata: DataDocMetadata,
     bokmål_name: str,
     language_object: model.LanguageStringType,
 ):
-    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
+    state.metadata = metadata
     test_variable = random.choice(  # noqa: S311 not for cryptographic purposes
         [v.short_name for v in state.metadata.meta.variables],
     )
@@ -146,10 +153,11 @@ def test_update_variable_table_language(
 
 
 def test_nonetype_value_for_language_string(
+    metadata: DataDocMetadata,
     active_cell: dict[str, MetadataInputTypes],
     language_object: model.LanguageStringType,
 ):
-    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
+    state.metadata = metadata
     state.metadata.variables_lookup["pers_id"].name = language_object
     state.current_metadata_language = SupportedLanguages.NORSK_NYNORSK
     accept_variable_metadata_input(DATA_NONETYPE, active_cell, DATA_ORIGINAL)
