@@ -43,6 +43,12 @@ STATISTICAL_SUBJECT_STRUCTURE_DIR = "statistical_subject_structure"
             TEST_RESOURCES_DIRECTORY / STATISTICAL_SUBJECT_STRUCTURE_DIR / "empty.xml",
             [],
         ),
+        (
+            TEST_RESOURCES_DIRECTORY
+            / STATISTICAL_SUBJECT_STRUCTURE_DIR
+            / "missing_languages.xml",
+            [],
+        ),
     ],
 )
 @pytest.mark.usefixtures("_mock_fetch_statistical_structure")

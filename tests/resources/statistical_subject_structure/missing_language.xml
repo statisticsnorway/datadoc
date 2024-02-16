@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<result>
+    <emnestruktur>
+        <hovedemne emnekode="aa">
+            <titler>
+                <tittel sprak="no">aa norwegian</tittel>
+            </titler>
+            <delemne emnekode="aa00">
+                <titler>
+                    <tittel sprak="en">aa00 english</tittel>
+                </titler>
+                <Statistikk kortnavn="aa_kortnvan" isPrimaerPlassering="true">
+                    <titler>
+                        <tittel sprak="no">aa_kortnvan norwegian</tittel>
+                    </titler>
+                </Statistikk>
+            </delemne>
+        </hovedemne>
+    </emnestruktur>
+</result>
