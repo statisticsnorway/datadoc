@@ -31,7 +31,9 @@ def update_global_language_state(language: SupportedLanguages) -> None:
     state.current_metadata_language = language
 
 
-def get_language_strings_enum(enum: Enum) -> enums.LanguageStringsEnum:
+def get_language_strings_enum(
+    enum: type[enums.LanguageStringsEnum],
+) -> enums.LanguageStringsEnum:
     """Get the correct language strings enum for the given enum.
 
     We need multiple languages to display in the front end, but the model only defines a single language in the enums.

@@ -1,4 +1,5 @@
 import random
+from typing import cast
 from unittest.mock import Mock
 from unittest.mock import patch
 
@@ -8,6 +9,7 @@ from datadoc_model import model
 from datadoc import enums
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
+from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.enums import DatasetState
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
@@ -19,7 +21,6 @@ from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
 from datadoc.frontend.fields.display_dataset import MULTIPLE_LANGUAGE_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
-from tests.utils import TEST_PARQUET_FILEPATH
 
 DATASET_CALLBACKS_MODULE = "datadoc.frontend.callbacks.dataset"
 
@@ -61,19 +62,22 @@ def test_accept_dataset_metadata_input_valid_data(
     )
 
 
-def test_accept_dataset_metadata_input_incorrect_data_type():
-    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
+def test_accept_dataset_metadata_input_incorrect_data_type(
+    metadata: DataDocMetadata,
+):
+    state.metadata = metadata
     output = accept_dataset_metadata_input(3.1415, "dataset_state")
     assert output[0] is True
     assert "validation error for Dataset" in output[1]
 
 
 def test_update_dataset_metadata_language_strings(
+    metadata: DataDocMetadata,
     bokmål_name: str,
     english_name: str,
     language_object: model.LanguageStringType,
 ):
-    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
+    state.metadata = metadata
     state.metadata.meta.dataset.name = language_object
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     output = update_dataset_metadata_language()
@@ -85,8 +89,10 @@ def test_update_dataset_metadata_language_strings(
     assert bokmål_name not in output
 
 
-def test_update_dataset_metadata_language_enums():
-    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
+def test_update_dataset_metadata_language_enums(
+    metadata: DataDocMetadata,
+):
+    state.metadata = metadata
     state.metadata.meta.dataset.dataset_state = DatasetState.PROCESSED_DATA
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     output = update_dataset_metadata_language()
@@ -98,8 +104,12 @@ def test_update_dataset_metadata_language_enums():
     assert DatasetState.PROCESSED_DATA.name in output
 
 
-def test_change_language_dataset_metadata():
-    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
+def test_change_language_dataset_metadata(
+    subject_mapping: StatisticSubjectMapping,
+    metadata: DataDocMetadata,
+):
+    state.metadata = metadata
+    state.statistic_subject_mapping = subject_mapping
     value = change_language_dataset_metadata(SupportedLanguages.NORSK_NYNORSK)
     test = get_language_strings_enum(
         random.choice(  # noqa: S311 not for cryptographic purposes
@@ -111,9 +121,8 @@ def test_change_language_dataset_metadata():
             ],
         ),
     )
-    assert isinstance(value, tuple)
 
-    for options in value[0:-1]:
+    for options in cast(list[list[dict[str, str]]], value[0:-1]):
         assert all(list(d.keys()) == ["label", "value"] for d in options)
 
         member_names = set(test._member_names_)  # noqa: SLF001

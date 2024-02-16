@@ -15,7 +15,6 @@ from datadoc_model.model import DatadocJsonSchema
 from datadoc_model.model import Dataset
 from datadoc_model.model import Variable
 
-from datadoc import state
 from datadoc.backend.datadoc_metadata import PLACEHOLDER_USERNAME
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.enums import DatasetState
@@ -188,11 +187,12 @@ def test_save_file_path_dataset_and_no_metadata(
     ],
 )
 def test_period_metadata_fields_saved(
+    subject_mapping: StatisticSubjectMapping,
     generate_periodic_file,
     expected_from,
     expected_until,
 ):
-    metadata = DataDocMetadata(str(generate_periodic_file))
+    metadata = DataDocMetadata(subject_mapping, str(generate_periodic_file))
     assert metadata.meta.dataset.contains_data_from == expected_from
     assert metadata.meta.dataset.contains_data_until == expected_until
 
@@ -250,11 +250,13 @@ def test_open_file(
     ],
 )
 def test_dataset_status_default_value(
+    subject_mapping: StatisticSubjectMapping,
     dataset_path: str,
     metadata_document_path: str | None,
     expected_type: DatasetStatus | None,
 ):
     datadoc_metadata = DataDocMetadata(
+        subject_mapping,
         dataset_path,
         metadata_document_path,
     )
@@ -271,14 +273,13 @@ def test_dataset_status_default_value(
         (["unknown_short_name", "klargjorte_data"], None),
     ],
 )
-def test_extract_subject_field_value_from_statistic_(
+def test_extract_subject_field_value_from_statistic_structure_xml(
     subject_mapping: StatisticSubjectMapping,
     copy_dataset_to_path: Path,
     expected_subject_code: str,
 ):
-    state.statistic_subject_mapping = subject_mapping
-    state.statistic_subject_mapping.wait_for_primary_subject()
-    metadata = DataDocMetadata(str(copy_dataset_to_path))
+    subject_mapping.wait_for_primary_subject()
+    metadata = DataDocMetadata(subject_mapping, str(copy_dataset_to_path))
     # TODO @mmwinther: Remove multiple_language_support once the model is updated.
     # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
     assert metadata.meta.dataset.subject_field.en == expected_subject_code

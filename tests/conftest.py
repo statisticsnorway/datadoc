@@ -19,7 +19,6 @@ from datadoc_model import model
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-from datadoc.enums import SupportedLanguages
 from tests.backend.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
 )
@@ -55,8 +54,7 @@ def metadata(
     _mock_timestamp: None,
     subject_mapping: StatisticSubjectMapping,
 ) -> DataDocMetadata:
-    state.statistic_subject_mapping = subject_mapping
-    return DataDocMetadata(str(TEST_PARQUET_FILEPATH))
+    return DataDocMetadata(subject_mapping, str(TEST_PARQUET_FILEPATH))
 
 
 @pytest.fixture(autouse=True)
@@ -87,11 +85,15 @@ def existing_metadata_with_valid_id_file(existing_metadata_file: Path) -> Path:
     return existing_metadata_file
 
 
-@pytest.fixture()
+@pytest.fixture(autouse=True)
 def _clear_state() -> None:
     """Global fixture, referred to in pytest.ini."""
-    state.metadata = None  # type: ignore [assignment]
-    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
+    try:
+        del state.metadata
+        del state.current_metadata_language
+        del state.statistic_subject_mapping
+    except AttributeError:
+        pass
 
 
 @pytest.fixture()
