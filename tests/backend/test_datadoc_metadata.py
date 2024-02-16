@@ -17,6 +17,7 @@ from datadoc_model.model import Variable
 
 from datadoc.backend.datadoc_metadata import PLACEHOLDER_USERNAME
 from datadoc.backend.datadoc_metadata import DataDocMetadata
+from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.enums import Assessment
 from datadoc.enums import DatasetState
 from datadoc.enums import DatasetStatus
@@ -37,7 +38,6 @@ if TYPE_CHECKING:
     import os
     from datetime import datetime
 
-    from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 
 DATADOC_METADATA_MODULE = "datadoc.backend.datadoc_metadata"
 
@@ -356,8 +356,9 @@ def test_dataset_assessment_default_value(
     expected_type: Assessment | None,
 ):
     datadoc_metadata = DataDocMetadata(
-        dataset_path,
-        metadata_document_path,
+        statistic_subject_mapping=StatisticSubjectMapping(source_url=""),
+        dataset_path=dataset_path,
+        metadata_document_path=metadata_document_path,
     )
     assert expected_type == datadoc_metadata.meta.dataset.assessment
 
