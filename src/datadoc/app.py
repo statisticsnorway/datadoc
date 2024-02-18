@@ -9,7 +9,9 @@ import logging
 from pathlib import Path
 
 import dash_bootstrap_components as dbc
+import ssb_dash_components as ssb
 from dash import Dash
+from dash import html
 from flask_healthz import healthz
 
 from datadoc import config
@@ -27,8 +29,6 @@ from datadoc.frontend.components.control_bars import build_controls_bar
 from datadoc.frontend.components.control_bars import build_language_dropdown
 from datadoc.frontend.components.control_bars import header
 from datadoc.frontend.components.control_bars import progress_bar
-from datadoc.frontend.components.dataset_tab import build_dataset_tab
-from datadoc.frontend.components.variables_tab import build_variables_tab
 from datadoc.utils import get_app_version
 from datadoc.utils import pick_random_port
 from datadoc.utils import running_in_notebook
@@ -48,11 +48,7 @@ tab_items = [
     },
 ]
 
-# For testing later ssb.Tabs(id="ssb-tabs", items=tab_items),
-# For testing later html.Div(id="display-tab"),
 
-
-# Check Tabs after changes in ssb dash components are updated
 def build_app(app: type[Dash]) -> Dash:
     """Define the layout, register callbacks."""
     app.layout = dbc.Container(
@@ -69,14 +65,8 @@ def build_app(app: type[Dash]) -> Dash:
             dbc.CardBody(
                 style={"padding": "4px"},
                 children=[
-                    dbc.Tabs(
-                        id="tabs",
-                        class_name="ssb-tabs",
-                        children=[
-                            build_dataset_tab(),
-                            build_variables_tab(),
-                        ],
-                    ),
+                    ssb.Tabs(id="ssb-tabs", items=tab_items),
+                    html.Div(id="display-tab"),
                 ],
             ),
             build_language_dropdown(),
