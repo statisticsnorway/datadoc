@@ -172,7 +172,7 @@ def register_callbacks(app: Dash) -> None:
         """
         return open_dataset_handling(n_clicks, dataset_path)
 
-    # Fast test ssb Tabs component - must merge Tabs component first
+    # Fast test ssb Tabs component
     @app.callback(
         Output("display-tab", "children"),
         Input("ssb-tabs", "active"),

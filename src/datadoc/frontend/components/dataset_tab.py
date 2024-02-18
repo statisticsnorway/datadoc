@@ -34,22 +34,9 @@ def build_dataset_metadata_accordion_item(
                             id=i.identifier,
                             type="text",
                             disabled=not i.editable,
+                            className="dataset-input",
                         ),
                     ),
-                    dbc.Col(html.Label(i.display_name)),
-                    dbc.Col(
-                        i.component(
-                            placeholder=i.description,
-                            disabled=not i.editable,
-                            id={
-                                "type": DATASET_METADATA_INPUT,
-                                "id": i.identifier,
-                            },
-                            **i.extra_kwargs,
-                        ),
-                        width=5,
-                    ),
-                    dbc.Col(width=4),
                 ],
             )
             for i in metadata_inputs

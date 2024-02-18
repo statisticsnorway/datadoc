@@ -2777,3 +2777,8 @@ mark::after {
   color: #fff;
   outline: 0;
 }
+
+/* Changed Input size */
+div .ssb-input{
+  max-width: 80%;
+}
