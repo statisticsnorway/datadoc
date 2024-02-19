@@ -56,7 +56,7 @@ def build_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:
     )
 
 
-# test Tabs ? - must be merged in ssb dash components first
+# test Tabs
 def build_ssb_tabs(items: list) -> ssb.Tabs:
     """Return SSB Tabs with Tab."""
     return ssb.Tabs(
