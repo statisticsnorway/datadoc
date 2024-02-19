@@ -31,7 +31,10 @@ def build_dataset_metadata_accordion_item(
                     dbc.Col(
                         ssb.Input(
                             label=i.display_name,
-                            id=i.identifier,
+                            id={
+                                "type": DATASET_METADATA_INPUT,
+                                "id": i.identifier,
+                            },
                             type="text",
                             disabled=not i.editable,
                             className="dataset-input",
