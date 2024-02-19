@@ -186,12 +186,13 @@ def full_dataset_state_path(
 
 @pytest.fixture()
 def copy_dataset_to_path(
+    tmp_path: pathlib.Path,
     full_dataset_state_path: pathlib.Path,
-) -> Generator[Path, None, None]:
-    full_dataset_state_path.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy(TEST_PARQUET_FILEPATH, full_dataset_state_path)
-    yield full_dataset_state_path
-    full_dataset_state_path.unlink()
+) -> pathlib.Path:
+    temporary_dataset = tmp_path / full_dataset_state_path
+    temporary_dataset.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy(TEST_PARQUET_FILEPATH, temporary_dataset)
+    return temporary_dataset
 
 
 @pytest.fixture()

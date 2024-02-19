@@ -23,18 +23,26 @@ class Subject:
 
     def get_title(self, language: SupportedLanguages) -> str:
         """Get the title in the given language."""
-        return self.titles[
-            (
-                # Adjust to language codes in the StatisticSubjectMapping structure.
-                "no"
-                if language
-                in [
-                    SupportedLanguages.NORSK_BOKMÅL,
-                    SupportedLanguages.NORSK_NYNORSK,
-                ]
-                else "en"
+        try:
+            return self.titles[
+                (
+                    # Adjust to language codes in the StatisticSubjectMapping structure.
+                    "no"
+                    if language
+                    in [
+                        SupportedLanguages.NORSK_BOKMÅL,
+                        SupportedLanguages.NORSK_NYNORSK,
+                    ]
+                    else "en"
+                )
+            ]
+        except KeyError:
+            logger.exception(
+                "Could not find title for subject %s  and language: %s",
+                self,
+                language.name,
             )
-        ]
+            return ""
 
 
 @dataclass
@@ -70,6 +78,7 @@ class StatisticSubjectMapping:
                 self._fetch_statistical_structure,
                 self.source_url,
             )
+            logger.debug("Thread started to fetch statistical subject structure.")
         else:
             logger.warning(
                 "No URL to fetch statistical subject structure supplied. Skipping fetching it. This may make it difficult to provide a value for the 'subject_field' metadata field.",
@@ -85,7 +94,10 @@ class StatisticSubjectMapping:
         for p in self.primary_subjects:
             for s in p.secondary_subjects:
                 if statistic_short_name in s.statistic_short_names:
+                    logger.debug("Got %s from %s", s, statistic_short_name)
                     return s.subject_code
+
+        logger.debug("No secondary subject found for %s", statistic_short_name)
         return None
 
     @staticmethod
@@ -103,6 +115,8 @@ class StatisticSubjectMapping:
         """
         try:
             response = requests.get(source_url, timeout=30)
+            response.encoding = "utf-8"
+            logger.debug("Got response %s from %s", response, source_url)
             soup = BeautifulSoup(response.text, features="xml")
             return soup.find_all("hovedemne")
         except requests.exceptions.RequestException:
@@ -138,6 +152,7 @@ class StatisticSubjectMapping:
     def wait_for_primary_subject(self) -> None:
         """Waits for the thread responsible for loading the xml to finish."""
         if not self.future:
+            logger.warning("No future to wait for.")
             # Nothing to wait for in this case, just return immediately
             return
         self.future.result()
@@ -146,6 +161,7 @@ class StatisticSubjectMapping:
     def primary_subjects(self) -> list[PrimarySubject]:
         """Getter for primary subjects."""
         self._parse_xml_if_loaded()
+        logger.debug("Got %s primary subjects", len(self._primary_subjects))
         return self._primary_subjects
 
     def _parse_xml_if_loaded(self) -> bool:
@@ -160,5 +176,11 @@ class StatisticSubjectMapping:
                 self._primary_subjects = self._parse_statistic_subject_structure_xml(
                     self._statistic_subject_structure_xml,
                 )
+                logger.debug(
+                    "Thread finished. Parsed %s primary subjects",
+                    len(self._primary_subjects),
+                )
                 return True
+
+        logger.warning("Future is not done. Cannot parse xml.")
         return False

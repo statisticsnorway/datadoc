@@ -11,6 +11,7 @@ from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.enums import DatasetState
+from datadoc.enums import LanguageStringsEnum
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import change_language_dataset_metadata
@@ -18,9 +19,9 @@ from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.dataset import process_special_cases
 from datadoc.frontend.callbacks.dataset import update_dataset_metadata_language
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
-from datadoc.frontend.callbacks.utils import get_language_strings_enum
 from datadoc.frontend.fields.display_dataset import MULTIPLE_LANGUAGE_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
+from tests.utils import TEST_PARQUET_FILEPATH
 
 DATASET_CALLBACKS_MODULE = "datadoc.frontend.callbacks.dataset"
 
@@ -62,9 +63,7 @@ def test_accept_dataset_metadata_input_valid_data(
     )
 
 
-def test_accept_dataset_metadata_input_incorrect_data_type(
-    metadata: DataDocMetadata,
-):
+def test_accept_dataset_metadata_input_incorrect_data_type(metadata: DataDocMetadata):
     state.metadata = metadata
     output = accept_dataset_metadata_input(3.1415, "dataset_state")
     assert output[0] is True
@@ -89,10 +88,8 @@ def test_update_dataset_metadata_language_strings(
     assert bokmål_name not in output
 
 
-def test_update_dataset_metadata_language_enums(
-    metadata: DataDocMetadata,
-):
-    state.metadata = metadata
+def test_update_dataset_metadata_language_enums():
+    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
     state.metadata.meta.dataset.dataset_state = DatasetState.PROCESSED_DATA
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     output = update_dataset_metadata_language()
@@ -104,38 +101,40 @@ def test_update_dataset_metadata_language_enums(
     assert DatasetState.PROCESSED_DATA.name in output
 
 
-def test_change_language_dataset_metadata(
+@pytest.mark.parametrize(
+    "enum_for_options",
+    [
+        enums.Assessment,
+        enums.DatasetState,
+        enums.DatasetStatus,
+        enums.TemporalityTypeType,
+    ],
+)
+@pytest.mark.parametrize("language", list(SupportedLanguages))
+def test_change_language_dataset_metadata_options_enums(
     subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
     metadata: DataDocMetadata,
+    enum_for_options: LanguageStringsEnum,
+    language: SupportedLanguages,
 ):
     state.metadata = metadata
     state.statistic_subject_mapping = subject_mapping_fake_statistical_structure
-    value = change_language_dataset_metadata(SupportedLanguages.NORSK_NYNORSK)
-    test = get_language_strings_enum(
-        random.choice(  # noqa: S311 not for cryptographic purposes
-            [
-                enums.Assessment,
-                enums.DatasetState,
-                enums.DatasetStatus,
-                enums.TemporalityTypeType,
-            ],
-        ),
-    )
+    value = change_language_dataset_metadata(language)
 
     for options in cast(list[list[dict[str, str]]], value[0:-1]):
         assert all(list(d.keys()) == ["label", "value"] for d in options)
 
-        member_names = {m.name for m in test}  # type: ignore [attr-defined]
+        member_names = {m.name for m in enum_for_options}  # type: ignore [attr-defined]
         values = [i for d in options for i in d.values()]
 
         if member_names.intersection(values):
             assert {d["label"] for d in options} == {
                 e.get_value_for_language(
-                    SupportedLanguages.NORSK_NYNORSK,
+                    language,
                 )
-                for e in test  # type: ignore [attr-defined]
+                for e in enum_for_options  # type: ignore [attr-defined]
             }
-            assert {d["value"] for d in options} == {e.name for e in test}  # type: ignore [attr-defined]
+            assert {d["value"] for d in options} == {e.name for e in enum_for_options}  # type: ignore [attr-defined]
 
 
 @patch(f"{DATASET_CALLBACKS_MODULE}.open_file")
