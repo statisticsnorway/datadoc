@@ -15,10 +15,11 @@ from dapla import AuthClient
 from datadoc_model import model
 
 from datadoc import config
-from datadoc import state
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
+from datadoc.enums import Assessment
+from datadoc.enums import DatasetState
 from datadoc.enums import DatasetStatus
 from datadoc.enums import VariableRole
 from datadoc.frontend.fields.display_dataset import (
@@ -33,6 +34,8 @@ from datadoc.utils import get_timestamp_now
 if TYPE_CHECKING:
     from datetime import datetime
 
+    from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
+
 logger = logging.getLogger(__name__)
 
 
@@ -41,10 +44,12 @@ class DataDocMetadata:
 
     def __init__(
         self,
+        statistic_subject_mapping: StatisticSubjectMapping,
         dataset_path: str | None = None,
         metadata_document_path: str | None = None,
     ) -> None:
         """Read in a dataset if supplied, otherwise naively instantiate the class."""
+        self._statistic_subject_mapping = statistic_subject_mapping
         self.dataset_path = dataset_path
 
         self.metadata_document: pathlib.Path | CloudPath | None = None
@@ -173,7 +178,7 @@ class DataDocMetadata:
         self.ds_schema: DatasetParser = DatasetParser.for_file(dataset)
         dapla_dataset_path_info = DaplaDatasetPathInfo(dataset)
 
-        subject_field = state.statistic_subject_mapping.get_secondary_subject(
+        subject_field = self._statistic_subject_mapping.get_secondary_subject(
             dapla_dataset_path_info.statistic_short_name,
         )
 
@@ -181,6 +186,9 @@ class DataDocMetadata:
             short_name=self.short_name,
             dataset_state=dapla_dataset_path_info.dataset_state,
             dataset_status=DatasetStatus.DRAFT,
+            assessment=self.get_assessment_by_state(
+                dapla_dataset_path_info.dataset_state,
+            ),
             version=dapla_dataset_path_info.dataset_version,
             contains_data_from=str(dapla_dataset_path_info.contains_data_from),
             contains_data_until=str(dapla_dataset_path_info.contains_data_until),
@@ -188,9 +196,30 @@ class DataDocMetadata:
             created_by=self.current_user,
             # TODO @mmwinther: Remove multiple_language_support once the model is updated.
             # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
-            subject_field=model.LanguageStringType(en=subject_field),
+            subject_field=model.LanguageStringType(
+                en=subject_field,
+                nb=subject_field,
+                nn=subject_field,
+            ),
         )
         self.meta.variables = self.ds_schema.get_fields()
+
+    @staticmethod
+    def get_assessment_by_state(state: DatasetState | None) -> Assessment | None:
+        """Find assessment derived by dataset state."""
+        if state is None:
+            return None
+        match (state):
+            case (
+                DatasetState.INPUT_DATA
+                | DatasetState.PROCESSED_DATA
+                | DatasetState.STATISTICS
+            ):
+                return Assessment.PROTECTED
+            case DatasetState.OUTPUT_DATA:
+                return Assessment.OPEN
+            case _:
+                return None
 
     def write_metadata_document(self) -> None:
         """Write all currently known metadata to file."""

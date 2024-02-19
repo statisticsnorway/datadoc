@@ -15,9 +15,10 @@ from datadoc_model.model import DatadocJsonSchema
 from datadoc_model.model import Dataset
 from datadoc_model.model import Variable
 
-from datadoc import state
 from datadoc.backend.datadoc_metadata import PLACEHOLDER_USERNAME
 from datadoc.backend.datadoc_metadata import DataDocMetadata
+from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
+from datadoc.enums import Assessment
 from datadoc.enums import DatasetState
 from datadoc.enums import DatasetStatus
 from datadoc.enums import DataType
@@ -25,16 +26,18 @@ from datadoc.enums import VariableRole
 from tests.utils import TEST_BUCKET_PARQUET_FILEPATH
 from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
+from tests.utils import TEST_INPUT_DATA_POPULATION_DIRECTORY
+from tests.utils import TEST_OUTPUT_DATA_POPULATION_DIRECTORY
 from tests.utils import TEST_PARQUET_FILEPATH
-from tests.utils import TEST_PREPARED_DATA_POPULATION_DIRECTORY
+from tests.utils import TEST_PROCESSED_DATA_POPULATION_DIRECTORY
 from tests.utils import TEST_RESOURCES_DIRECTORY
 from tests.utils import TEST_RESOURCES_METADATA_DOCUMENT
+from tests.utils import TEST_STATISTICS_POPULATION_DIRECTORY
 
 if TYPE_CHECKING:
     import os
     from datetime import datetime
 
-    from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 
 DATADOC_METADATA_MODULE = "datadoc.backend.datadoc_metadata"
 
@@ -188,11 +191,15 @@ def test_save_file_path_dataset_and_no_metadata(
     ],
 )
 def test_period_metadata_fields_saved(
+    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
     generate_periodic_file,
     expected_from,
     expected_until,
 ):
-    metadata = DataDocMetadata(str(generate_periodic_file))
+    metadata = DataDocMetadata(
+        subject_mapping_fake_statistical_structure,
+        str(generate_periodic_file),
+    )
     assert metadata.meta.dataset.contains_data_from == expected_from
     assert metadata.meta.dataset.contains_data_until == expected_until
 
@@ -226,11 +233,11 @@ def test_open_file(
     [
         (
             str(
-                TEST_PREPARED_DATA_POPULATION_DIRECTORY
+                TEST_PROCESSED_DATA_POPULATION_DIRECTORY
                 / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
             ),
             str(
-                TEST_PREPARED_DATA_POPULATION_DIRECTORY
+                TEST_PROCESSED_DATA_POPULATION_DIRECTORY
                 / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
             ),
             DatasetStatus.DRAFT.value,
@@ -250,16 +257,110 @@ def test_open_file(
     ],
 )
 def test_dataset_status_default_value(
+    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
     dataset_path: str,
     metadata_document_path: str | None,
     expected_type: DatasetStatus | None,
 ):
     datadoc_metadata = DataDocMetadata(
+        subject_mapping_fake_statistical_structure,
         dataset_path,
         metadata_document_path,
     )
 
     assert expected_type == datadoc_metadata.meta.dataset.dataset_status
+
+
+@pytest.mark.parametrize(
+    ("dataset_path", "metadata_document_path", "expected_type"),
+    [
+        (
+            str(
+                TEST_INPUT_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+            ),
+            str(
+                TEST_INPUT_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
+            ),
+            Assessment.SENSITIVE.value,
+        ),
+        (
+            str(TEST_INPUT_DATA_POPULATION_DIRECTORY / "person_data_v1.parquet"),
+            None,
+            Assessment.PROTECTED.value,
+        ),
+        (
+            str(
+                TEST_PROCESSED_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+            ),
+            str(
+                TEST_PROCESSED_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
+            ),
+            Assessment.PROTECTED.value,
+        ),
+        (
+            str(TEST_PROCESSED_DATA_POPULATION_DIRECTORY / "person_data_v1.parquet"),
+            None,
+            Assessment.PROTECTED.value,
+        ),
+        (
+            str(
+                TEST_STATISTICS_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+            ),
+            str(
+                TEST_STATISTICS_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
+            ),
+            Assessment.SENSITIVE.value,
+        ),
+        (
+            str(TEST_STATISTICS_POPULATION_DIRECTORY / "person_data_v1.parquet"),
+            None,
+            Assessment.PROTECTED.value,
+        ),
+        (
+            str(
+                TEST_OUTPUT_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+            ),
+            str(
+                TEST_OUTPUT_DATA_POPULATION_DIRECTORY
+                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
+            ),
+            Assessment.SENSITIVE.value,
+        ),
+        (
+            str(TEST_OUTPUT_DATA_POPULATION_DIRECTORY / "person_data_v1.parquet"),
+            None,
+            Assessment.OPEN.value,
+        ),
+        (
+            str(TEST_RESOURCES_DIRECTORY / "person_data_v1.parquet"),
+            None,
+            None,
+        ),
+        (
+            "",
+            None,
+            None,
+        ),
+    ],
+)
+def test_dataset_assessment_default_value(
+    dataset_path: str,
+    metadata_document_path: str | None,
+    expected_type: Assessment | None,
+):
+    datadoc_metadata = DataDocMetadata(
+        statistic_subject_mapping=StatisticSubjectMapping(source_url=""),
+        dataset_path=dataset_path,
+        metadata_document_path=metadata_document_path,
+    )
+    assert expected_type == datadoc_metadata.meta.dataset.assessment
 
 
 @pytest.mark.parametrize(
@@ -271,14 +372,16 @@ def test_dataset_status_default_value(
         (["unknown_short_name", "klargjorte_data"], None),
     ],
 )
-def test_extract_subject_field_value_from_statistic_(
-    subject_mapping: StatisticSubjectMapping,
+def test_extract_subject_field_value_from_statistic_structure_xml(
+    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
     copy_dataset_to_path: Path,
     expected_subject_code: str,
 ):
-    state.statistic_subject_mapping = subject_mapping
-    state.statistic_subject_mapping.wait_for_primary_subject()
-    metadata = DataDocMetadata(str(copy_dataset_to_path))
+    subject_mapping_fake_statistical_structure.wait_for_primary_subject()
+    metadata = DataDocMetadata(
+        subject_mapping_fake_statistical_structure,
+        str(copy_dataset_to_path),
+    )
     # TODO @mmwinther: Remove multiple_language_support once the model is updated.
     # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
     assert metadata.meta.dataset.subject_field.en == expected_subject_code

@@ -1,10 +1,17 @@
 import pytest
+import requests
 from bs4 import BeautifulSoup
 
 from datadoc.backend.statistic_subject_mapping import PrimarySubject
 from datadoc.backend.statistic_subject_mapping import SecondarySubject
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from tests.utils import TEST_RESOURCES_DIRECTORY
+
+
+def test_no_source_url():
+    subject_mapping = StatisticSubjectMapping(None)
+    subject_mapping.wait_for_primary_subject()
+    assert subject_mapping.primary_subjects == []
 
 
 def test_extract_titles():
@@ -42,15 +49,76 @@ STATISTICAL_SUBJECT_STRUCTURE_DIR = "statistical_subject_structure"
             TEST_RESOURCES_DIRECTORY / STATISTICAL_SUBJECT_STRUCTURE_DIR / "empty.xml",
             [],
         ),
+        (
+            TEST_RESOURCES_DIRECTORY
+            / STATISTICAL_SUBJECT_STRUCTURE_DIR
+            / "missing_language.xml",
+            [
+                PrimarySubject(
+                    titles={
+                        "en": "aa english",
+                    },
+                    subject_code="aa",
+                    secondary_subjects=[
+                        SecondarySubject(
+                            titles={
+                                "en": "aa00 english",
+                                "no": "aa00 norwegian",
+                            },
+                            subject_code="aa00",
+                            statistic_short_names=[
+                                "aa_kortnvan",
+                            ],
+                        ),
+                        SecondarySubject(
+                            titles={
+                                "no": "aa01 norwegian",
+                            },
+                            subject_code="aa01",
+                            statistic_short_names=[
+                                "aa_kortnvan_01",
+                            ],
+                        ),
+                    ],
+                ),
+                PrimarySubject(
+                    titles={
+                        "en": "ab english",
+                    },
+                    subject_code="ab",
+                    secondary_subjects=[
+                        SecondarySubject(
+                            titles={
+                                "en": "ab00 english",
+                                "no": "ab00 norwegian",
+                            },
+                            subject_code="ab00",
+                            statistic_short_names=[
+                                "ab_kortnvan",
+                            ],
+                        ),
+                        SecondarySubject(
+                            titles={
+                                "en": "ab01 english",
+                            },
+                            subject_code="ab01",
+                            statistic_short_names=[
+                                "ab_kortnvan_01",
+                            ],
+                        ),
+                    ],
+                ),
+            ],
+        ),
     ],
 )
 @pytest.mark.usefixtures("_mock_fetch_statistical_structure")
 def test_read_in_statistical_structure(
-    subject_mapping: StatisticSubjectMapping,
+    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
     expected: list[PrimarySubject],
 ) -> None:
-    subject_mapping.wait_for_primary_subject()
-    assert subject_mapping.primary_subjects == expected
+    subject_mapping_fake_statistical_structure.wait_for_primary_subject()
+    assert subject_mapping_fake_statistical_structure.primary_subjects == expected
 
 
 @pytest.mark.parametrize(
@@ -66,12 +134,30 @@ def test_read_in_statistical_structure(
 )
 @pytest.mark.usefixtures("_mock_fetch_statistical_structure")
 def test_get_secondary_subject(
-    subject_mapping: StatisticSubjectMapping,
+    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
     statistic_short_name: str,
     expected_secondary_subject: str,
 ) -> None:
-    subject_mapping.wait_for_primary_subject()
+    subject_mapping_fake_statistical_structure.wait_for_primary_subject()
     assert (
-        subject_mapping.get_secondary_subject(statistic_short_name)
+        subject_mapping_fake_statistical_structure.get_secondary_subject(
+            statistic_short_name,
+        )
         == expected_secondary_subject
     )
+
+
+@pytest.mark.parametrize(
+    ("exception_to_raise"),
+    [
+        (requests.exceptions.ConnectTimeout),
+        (requests.exceptions.HTTPError),
+        (requests.exceptions.ReadTimeout),
+        (requests.exceptions.ConnectionError),
+    ],
+)
+def test_subject_mapping_http_exception(
+    subject_mapping_http_exception: StatisticSubjectMapping,
+) -> None:
+    subject_mapping_http_exception.wait_for_primary_subject()
+    assert subject_mapping_http_exception.primary_subjects == []

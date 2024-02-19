@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<result>
+    <emnestruktur>
+        <hovedemne emnekode="aa">
+            <titler>
+                <tittel sprak="en">aa english</tittel>
+            </titler>
+            <delemne emnekode="aa00">
+                <titler>
+                    <tittel sprak="no">aa00 norwegian</tittel>
+                    <tittel sprak="en">aa00 english</tittel>
+                </titler>
+                <Statistikk kortnavn="aa_kortnvan" isPrimaerPlassering="true">
+                    <titler>
+                        <tittel sprak="no">aa_kortnvan norwegian</tittel>
+                        <tittel sprak="en">aa_kortnvan english</tittel>
+                    </titler>
+                </Statistikk>
+            </delemne>
+            <delemne emnekode="aa01">
+                <titler>
+                    <tittel sprak="no">aa01 norwegian</tittel>
+                </titler>
+                <Statistikk kortnavn="aa_kortnvan_01" isPrimaerPlassering="true">
+                    <titler>
+                        <tittel sprak="no">aa_kortnvan norwegian</tittel>
+                        <tittel sprak="en">aa_kortnvan english</tittel>
+                    </titler>
+                </Statistikk>
+            </delemne>
+        </hovedemne>
+        <hovedemne emnekode="ab">
+            <titler>
+                <tittel sprak="en">ab english</tittel>
+            </titler>
+            <delemne emnekode="ab00">
+                <titler>
+                    <tittel sprak="no">ab00 norwegian</tittel>
+                    <tittel sprak="en">ab00 english</tittel>
+                </titler>
+                <Statistikk kortnavn="ab_kortnvan" isPrimaerPlassering="true">
+                    <titler>
+                        <tittel sprak="no">ab_kortnvan norwegian</tittel>
+                        <tittel sprak="en">ab_kortnvan english</tittel>
+                    </titler>
+                </Statistikk>
+            </delemne>
+            <delemne emnekode="ab01">
+                <titler>
+                    <tittel sprak="en">ab01 english</tittel>
+                </titler>
+                <Statistikk kortnavn="ab_kortnvan_01" isPrimaerPlassering="true">
+                    <titler>
+                        <tittel sprak="no">ab_kortnvan norwegian</tittel>
+                        <tittel sprak="en">ab_kortnvan english</tittel>
+                    </titler>
+                </Statistikk>
+            </delemne>
+        </hovedemne>
+    </emnestruktur>
+</result>

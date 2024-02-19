@@ -19,7 +19,6 @@ from datadoc_model import model
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-from datadoc.enums import SupportedLanguages
 from tests.backend.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
 )
@@ -53,10 +52,12 @@ def _mock_timestamp(mocker: MockerFixture, dummy_timestamp: datetime) -> None:
 @pytest.fixture()
 def metadata(
     _mock_timestamp: None,
-    subject_mapping: StatisticSubjectMapping,
+    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
 ) -> DataDocMetadata:
-    state.statistic_subject_mapping = subject_mapping
-    return DataDocMetadata(str(TEST_PARQUET_FILEPATH))
+    return DataDocMetadata(
+        subject_mapping_fake_statistical_structure,
+        str(TEST_PARQUET_FILEPATH),
+    )
 
 
 @pytest.fixture(autouse=True)
@@ -87,11 +88,15 @@ def existing_metadata_with_valid_id_file(existing_metadata_file: Path) -> Path:
     return existing_metadata_file
 
 
-@pytest.fixture()
+@pytest.fixture(autouse=True)
 def _clear_state() -> None:
     """Global fixture, referred to in pytest.ini."""
-    state.metadata = None  # type: ignore [assignment]
-    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
+    try:
+        del state.metadata
+        del state.current_metadata_language
+        del state.statistic_subject_mapping
+    except AttributeError:
+        pass
 
 
 @pytest.fixture()
@@ -181,12 +186,13 @@ def full_dataset_state_path(
 
 @pytest.fixture()
 def copy_dataset_to_path(
+    tmp_path: pathlib.Path,
     full_dataset_state_path: pathlib.Path,
-) -> Generator[Path, None, None]:
-    full_dataset_state_path.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy(TEST_PARQUET_FILEPATH, full_dataset_state_path)
-    yield full_dataset_state_path
-    full_dataset_state_path.unlink()
+) -> pathlib.Path:
+    temporary_dataset = tmp_path / full_dataset_state_path
+    temporary_dataset.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy(TEST_PARQUET_FILEPATH, temporary_dataset)
+    return temporary_dataset
 
 
 @pytest.fixture()
@@ -199,7 +205,9 @@ def subject_xml_file_path() -> pathlib.Path:
 
 
 @pytest.fixture()
-def subject_mapping(_mock_fetch_statistical_structure) -> StatisticSubjectMapping:
+def subject_mapping_fake_statistical_structure(
+    _mock_fetch_statistical_structure,
+) -> StatisticSubjectMapping:
     return StatisticSubjectMapping("placeholder")
 
 
@@ -216,3 +224,15 @@ def _mock_fetch_statistical_structure(
         "datadoc.backend.statistic_subject_mapping.StatisticSubjectMapping._fetch_statistical_structure",
         functools.partial(fake_statistical_structure, subject_xml_file_path),
     )
+
+
+@pytest.fixture()
+def subject_mapping_http_exception(
+    requests_mock,
+    exception_to_raise,
+) -> StatisticSubjectMapping:
+    requests_mock.get(
+        "http://test.some.url.com",
+        exc=exception_to_raise,
+    )
+    return StatisticSubjectMapping("http://test.some.url.com")

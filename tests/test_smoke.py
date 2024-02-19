@@ -2,13 +2,10 @@
 
 from datadoc import state
 from datadoc.app import get_app
-from datadoc.backend.datadoc_metadata import DataDocMetadata
-
-from .utils import TEST_PARQUET_FILEPATH
 
 
-def test_get_app():
-    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
+def test_get_app(subject_mapping_fake_statistical_structure):
+    state.statistic_subject_mapping = subject_mapping_fake_statistical_structure
     app, _ = get_app()
     assert app.config["name"] == "Datadoc"
     assert len(app.callback_map.items()) > 0
