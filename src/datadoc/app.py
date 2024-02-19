@@ -75,6 +75,7 @@ def build_app(app: type[Dash]) -> Dash:
 def get_app(dataset_path: str | None = None) -> tuple[Dash, int]:
     """Centralize all the ugliness around initializing the app."""
     logger.info("Datadoc version v%s", get_app_version())
+    collect_data_from_external_sources()
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     state.metadata = DataDocMetadata(
         state.statistic_subject_mapping,
@@ -121,7 +122,6 @@ def collect_data_from_external_sources() -> None:
 
 def main(dataset_path: str | None = None) -> None:
     """Entrypoint when running as a script."""
-    collect_data_from_external_sources()
     if dataset_path:
         logger.info("Starting app with dataset_path = %s", dataset_path)
     app, port = get_app(dataset_path)
