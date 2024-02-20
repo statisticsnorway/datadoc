@@ -39,6 +39,7 @@ python-dotenv = ">=1.0.1"
 requests = ">=2.31.0"
 beautifulsoup4 = ">=4.12.3"
 cloudpathlib = { extras = ["gs"], version = ">=0.17.0" }
+ssb-dash-components = {git = "git@github.com:statisticsnorway/ssb-dash-components.git"}
 
 [tool.poetry.group.dev.dependencies]
 mypy = ">=0.950"
