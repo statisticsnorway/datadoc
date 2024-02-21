@@ -86,5 +86,5 @@ jobs:
             ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
 
-      - name: Output image digest 1
+      - name: Output image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
