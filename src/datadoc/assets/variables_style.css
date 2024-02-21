@@ -1,3 +1,38 @@
 .ssb-title.variabels-title{
     margin-top: 1rem;
 }
+
+.main-content{
+    border-left: 1px solid #274247;
+}
+
+/*.page-wrapper{
+
+}*/
+
+#display-variables-link{
+    list-style: none;
+    padding-left: 0;
+}
+
+.page-content{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.main-content{
+    margin-left: 1rem;
+    padding-left: 1rem;
+    width: 80%;
+}
+
+.ssb-accordion.variabel{
+    border: 2px solid #62919A;
+    padding: 0.5rem;
+}
+/*
+display: flex;
+    flex-direction: column;
+    position: relative;
+*/

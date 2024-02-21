@@ -26,37 +26,73 @@ variables_test_names = [
 ]
 
 
+def build_new_variabels_accordion(header: str) -> ssb.Accordion:
+    """Build workspace for single variabel to edit."""
+    return ssb.Accordion(
+        id="variabel",
+        className="variabel",
+        header=header,
+        openByDefault=True,
+        children=[ssb.Input(label="Test input", id="dataset", type="text")],
+    )
+
+
 def build_new_variables_tab() -> dbc.Tab:
     """Build page content fro new variables tab."""
     return build_ssb_styled_tab(
         "Variabler Ny",
         dbc.Container(
             [
-                dbc.Row(
-                    ssb.Title("Variabel detaljer", size=2, className="variabels-title"),
-                ),
-                dbc.Row(
+                html.Header(
                     [
+                        ssb.Title(
+                            "Variabel detaljer",
+                            size=2,
+                            className="variabels-title",
+                        ),
                         ssb.Paragraph("Informasjon"),
                     ],
-                ),  # info
-                dbc.Row(
-                    [
-                        dbc.Col(
-                            [
-                                html.Aside(
-                                    html.Ul(
-                                        id="variables-overview",
-                                        children=[
-                                            html.Li(i) for i in variables_test_names
-                                        ],
-                                    ),
+                ),
+                html.Div(
+                    id="variables-content",
+                    className="page-content",
+                    children=[
+                        html.Aside(
+                            id="variables-overview",
+                            children=[
+                                ssb.Title(
+                                    "Variabler A-Å",
+                                    size=4,
+                                    className="",
+                                ),
+                                html.Nav(
+                                    [
+                                        html.Ul(
+                                            id="display-variables-link",
+                                            children=[
+                                                html.Li(i) for i in variables_test_names
+                                            ],  # unique id list items dash bootstrap?
+                                        ),
+                                    ],
                                 ),
                             ],
-                        ),  # aside
-                        dbc.Col(),  # workspace
+                        ),
+                        html.Main(
+                            id="variabels-workspace",
+                            className="main-content",
+                            children=[
+                                ssb.Title("Test", size=3),
+                                html.Div(
+                                    children=[
+                                        build_new_variabels_accordion(header=name)
+                                        for name in variables_test_names
+                                    ],
+                                ),
+                            ],  # probably section iterated
+                        ),
                     ],
                 ),
             ],
+            class_name="page-wrapper",
         ),
     )
