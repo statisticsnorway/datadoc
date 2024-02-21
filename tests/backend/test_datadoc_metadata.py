@@ -66,12 +66,7 @@ def test_metadata_document_percent_complete(metadata: DataDocMetadata):
     assert metadata.percent_complete == 17  # noqa: PLR2004
 
 
-@patch(
-    "datadoc.backend.user_info.get_user_info_for_current_platform",
-    return_value=TestUserInfo(),
-)
 def test_write_metadata_document(
-    _mock_user_info: MagicMock,  # noqa: PT019 it's a patch, not a fixture
     dummy_timestamp: datetime,
     metadata: DataDocMetadata,
 ):
