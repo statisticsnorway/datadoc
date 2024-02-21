@@ -1,4 +1,4 @@
-name: Docker build
+name: Cached Docker build
 
 on:
   workflow_dispatch:
