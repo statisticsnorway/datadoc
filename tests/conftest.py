@@ -37,6 +37,11 @@ if TYPE_CHECKING:
     from pytest_mock import MockerFixture
 
 
+@pytest.fixture(scope="session", autouse=True)
+def faker_session_locale():
+    return ["no_NO"]
+
+
 @pytest.fixture()
 def dummy_timestamp() -> datetime:
     return datetime(2022, 1, 1, tzinfo=timezone.utc)
