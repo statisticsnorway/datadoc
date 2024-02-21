@@ -19,6 +19,7 @@ from datadoc_model import model
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
+from datadoc.backend.user_info import TestUserInfo
 from tests.backend.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
 )
@@ -50,8 +51,17 @@ def _mock_timestamp(mocker: MockerFixture, dummy_timestamp: datetime) -> None:
 
 
 @pytest.fixture()
+def _mock_user_info(mocker: MockerFixture) -> None:
+    mocker.patch(
+        "datadoc.backend.user_info.get_user_info_for_current_platform",
+        return_value=TestUserInfo(),
+    )
+
+
+@pytest.fixture()
 def metadata(
     _mock_timestamp: None,
+    _mock_user_info: None,
     subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
 ) -> DataDocMetadata:
     return DataDocMetadata(
