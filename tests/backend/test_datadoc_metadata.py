@@ -6,6 +6,8 @@ import json
 import pathlib
 from pathlib import Path
 from typing import TYPE_CHECKING
+from unittest.mock import MagicMock
+from unittest.mock import patch
 from uuid import UUID
 
 import pytest
@@ -15,9 +17,10 @@ from datadoc_model.model import DatadocJsonSchema
 from datadoc_model.model import Dataset
 from datadoc_model.model import Variable
 
-from datadoc.backend.datadoc_metadata import PLACEHOLDER_USERNAME
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
+from datadoc.backend.user_info import PLACEHOLDER_EMAIL_ADDRESS
+from datadoc.backend.user_info import TestUserInfo
 from datadoc.enums import Assessment
 from datadoc.enums import DatasetState
 from datadoc.enums import DatasetStatus
@@ -71,9 +74,9 @@ def test_write_metadata_document(
     written_document = TEST_RESOURCES_DIRECTORY / TEST_EXISTING_METADATA_FILE_NAME
     assert Path.exists(written_document)
     assert metadata.meta.dataset.metadata_created_date == dummy_timestamp
-    assert metadata.meta.dataset.metadata_created_by == PLACEHOLDER_USERNAME
+    assert metadata.meta.dataset.metadata_created_by == PLACEHOLDER_EMAIL_ADDRESS
     assert metadata.meta.dataset.metadata_last_updated_date == dummy_timestamp
-    assert metadata.meta.dataset.metadata_last_updated_by == PLACEHOLDER_USERNAME
+    assert metadata.meta.dataset.metadata_last_updated_by == PLACEHOLDER_EMAIL_ADDRESS
 
     with Path.open(written_document) as f:
         written_metadata = json.loads(f.read())
@@ -86,7 +89,7 @@ def test_write_metadata_document(
         ).metadata_created_date
         == dummy_timestamp
     )
-    assert datadoc_metadata["metadata_created_by"] == PLACEHOLDER_USERNAME
+    assert datadoc_metadata["metadata_created_by"] == PLACEHOLDER_EMAIL_ADDRESS
     assert (
         # Use our pydantic model to read in the datetime string so we get the correct format
         Dataset(
@@ -94,11 +97,16 @@ def test_write_metadata_document(
         ).metadata_last_updated_date
         == dummy_timestamp
     )
-    assert datadoc_metadata["metadata_last_updated_by"] == PLACEHOLDER_USERNAME
+    assert datadoc_metadata["metadata_last_updated_by"] == PLACEHOLDER_EMAIL_ADDRESS
 
 
 @pytest.mark.usefixtures("existing_metadata_file")
+@patch(
+    "datadoc.backend.user_info.get_user_info_for_current_platform",
+    return_value=TestUserInfo(),
+)
 def test_write_metadata_document_existing_document(
+    _mock_user_info: MagicMock,  # noqa: PT019 it's a patch, not a fixture
     dummy_timestamp: datetime,
     metadata: DataDocMetadata,
 ):
@@ -107,7 +115,7 @@ def test_write_metadata_document_existing_document(
     metadata.write_metadata_document()
     assert metadata.meta.dataset.metadata_created_by == original_created_by
     assert metadata.meta.dataset.metadata_created_date == original_created_date
-    assert metadata.meta.dataset.metadata_last_updated_by == PLACEHOLDER_USERNAME
+    assert metadata.meta.dataset.metadata_last_updated_by == PLACEHOLDER_EMAIL_ADDRESS
     assert metadata.meta.dataset.metadata_last_updated_date == dummy_timestamp
 
 

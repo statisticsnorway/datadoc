@@ -16,6 +16,8 @@ logger = logging.getLogger(__name__)
 
 DOT_ENV_FILE_PATH = Path(__file__).parent.joinpath(".env")
 
+JUPYTERHUB_USER = "JUPYTERHUB_USER"
+
 load_dotenv(DOT_ENV_FILE_PATH)
 
 logger.info(
@@ -33,7 +35,7 @@ def _get_config_item(item: str) -> str | None:
 
 def get_jupyterhub_user() -> str | None:
     """Get the JupyterHub user name."""
-    return _get_config_item("JUPYTERHUB_USER")
+    return _get_config_item(JUPYTERHUB_USER)
 
 
 def get_datadoc_dataset_path() -> str | None:
