@@ -22,7 +22,9 @@ def build_new_variables_tab() -> dbc.Tab:
         "Variabler Ny",
         dbc.Container(
             [
-                dbc.Row(ssb.Title("Variabel detaljer", size=2)),  # Title
+                dbc.Row(
+                    ssb.Title("Variabel detaljer", size=2, className="variabels-title"),
+                ),  # Title
                 dbc.Row(
                     [
                         ssb.Paragraph("Informasjon"),
