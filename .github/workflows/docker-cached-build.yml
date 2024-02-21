@@ -2,16 +2,6 @@ name: Cached Docker build
 
 on:
   workflow_dispatch:
-  release:
-    types: [published]
-  push:
-    branches:
-      - "**"
-    paths:
-      - 'src/datadoc/**'
-      - 'poetry.lock'
-      - 'Dockerfile'
-      - '.github/workflows/docker-build.yml'
 
 env:
   REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-metadata-docker/datadoc
