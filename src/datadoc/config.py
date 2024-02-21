@@ -10,6 +10,9 @@ from pprint import pformat
 from dotenv import dotenv_values
 from dotenv import load_dotenv
 
+from datadoc.enums import DaplaRegion
+from datadoc.enums import DaplaService
+
 logging.basicConfig(level=logging.DEBUG, force=True)
 
 logger = logging.getLogger(__name__)
@@ -17,6 +20,8 @@ logger = logging.getLogger(__name__)
 DOT_ENV_FILE_PATH = Path(__file__).parent.joinpath(".env")
 
 JUPYTERHUB_USER = "JUPYTERHUB_USER"
+DAPLA_REGION = "DAPLA_REGION"
+DAPLA_SERVICE = "DAPLA_SERVICE"
 
 load_dotenv(DOT_ENV_FILE_PATH)
 
@@ -90,3 +95,19 @@ def get_port() -> int:
 def get_statistical_subject_source_url() -> str | None:
     """Get the URL to the statistical subject source."""
     return _get_config_item("DATADOC_STATISTICAL_SUBJECT_SOURCE_URL")
+
+
+def get_dapla_region() -> DaplaRegion | None:
+    """Get the Dapla region we're running on."""
+    if region := _get_config_item(DAPLA_REGION):
+        return DaplaRegion(region)
+
+    return None
+
+
+def get_dapla_service() -> DaplaService | None:
+    """Get the Dapla service we're running on."""
+    if service := _get_config_item(DAPLA_SERVICE):
+        return DaplaService(service)
+
+    return None
