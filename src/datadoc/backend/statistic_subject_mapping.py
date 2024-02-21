@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import concurrent.futures
 import logging
 from dataclasses import dataclass
 
@@ -9,6 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
 
+from datadoc.backend.external_sources.external_sources import GetExternalSource
 from datadoc.enums import SupportedLanguages
 
 logger = logging.getLogger(__name__)
@@ -59,7 +59,7 @@ class PrimarySubject(Subject):
     secondary_subjects: list[SecondarySubject]
 
 
-class StatisticSubjectMapping:
+class StatisticSubjectMapping(GetExternalSource):
     """Allow mapping between statistic short name and primary and secondary subject."""
 
     def __init__(self, source_url: str | None) -> None:
@@ -67,22 +67,24 @@ class StatisticSubjectMapping:
 
         Initializes the mapping dicts. Based on the values in the statistical structure document.
         """
-        self.source_url = source_url
+        super().__init__(source_url)
 
-        self.future: concurrent.futures.Future[ResultSet | None] | None = None
+        # self.source_url = source_url
+
+        # self.future: concurrent.futures.Future[ResultSet | None] | None = None
         self._statistic_subject_structure_xml: ResultSet | None = None
 
-        if self.source_url:
-            executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
-            self.future = executor.submit(
-                self._fetch_statistical_structure,
-                self.source_url,
-            )
-            logger.debug("Thread started to fetch statistical subject structure.")
-        else:
-            logger.warning(
-                "No URL to fetch statistical subject structure supplied. Skipping fetching it. This may make it difficult to provide a value for the 'subject_field' metadata field.",
-            )
+        # if self.source_url:
+        #     executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+        #     self.future = executor.submit(
+        #         self._fetch_statistical_structure,
+        #         self.source_url,
+        #     )
+        #     logger.debug("Thread started to fetch statistical subject structure.")
+        # else:
+        #     logger.warning(
+        #         "No URL to fetch statistical subject structure supplied. Skipping fetching it. This may make it difficult to provide a value for the 'subject_field' metadata field.",
+        #     )
 
         self._primary_subjects: list[PrimarySubject] = []
 
@@ -106,6 +108,15 @@ class StatisticSubjectMapping:
         for title in titles_xml.find_all("tittel"):
             titles[title["sprak"]] = title.text
         return titles
+
+    def map_data_from_external_source(self) -> ResultSet | None:
+        if self.future and self.future.done():
+            response = self._statistic_subject_structure_xml = self.future.result()
+            response.encoding = "utf-8"
+            logger.debug("Got response %s from %s", response, self.source_url)
+            soup = BeautifulSoup(response.text, features="xml")
+            return soup.find_all("hovedemne")
+        return None
 
     @staticmethod
     def _fetch_statistical_structure(source_url: str) -> ResultSet | None:
