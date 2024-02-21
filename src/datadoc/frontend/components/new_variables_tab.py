@@ -4,16 +4,26 @@ from __future__ import annotations
 
 import dash_bootstrap_components as dbc
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
+from dash import html
 
 from datadoc.frontend.components.builders import build_ssb_styled_tab
 
 # build variables Tab
-# This will be returned when you select new variables
+# This will be returned when you select new variables in Tabs menu
 # A menu/aside section with interactive buttons .. with variables name
 # click/select and open a section ... form?
 # two "sections" obligatory and reccomended
 # In each section each detail from  https://statistics-norway.atlassian.net/wiki/spaces/MPD/pages/3042869256/Variabelforekomst is represented by a Input component with Label
 # Some Input components have dropdown enum values
+
+variables_test_names = [
+    "fnr",
+    "sivilstand",
+    "bostedskommune",
+    "inntekt",
+    "bankinnskudd",
+    "dato",
+]
 
 
 def build_new_variables_tab() -> dbc.Tab:
@@ -24,7 +34,7 @@ def build_new_variables_tab() -> dbc.Tab:
             [
                 dbc.Row(
                     ssb.Title("Variabel detaljer", size=2, className="variabels-title"),
-                ),  # Title
+                ),
                 dbc.Row(
                     [
                         ssb.Paragraph("Informasjon"),
@@ -33,7 +43,16 @@ def build_new_variables_tab() -> dbc.Tab:
                 dbc.Row(
                     [
                         dbc.Col(
-                            [],
+                            [
+                                html.Aside(
+                                    html.Ul(
+                                        id="variables-overview",
+                                        children=[
+                                            html.Li(i) for i in variables_test_names
+                                        ],
+                                    ),
+                                ),
+                            ],
                         ),  # aside
                         dbc.Col(),  # workspace
                     ],
