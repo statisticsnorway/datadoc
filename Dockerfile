@@ -57,8 +57,8 @@ ENV PATH="/home/appuser/.local/bin:$PATH"
 
 # Get build artifact wheel and install it respecting dependency versions
 WORKDIR $APP_PATH
-COPY --from=build $APP_PATH/dist/*.whl ./
 COPY --from=build $APP_PATH/constraints.txt ./
+COPY --from=build $APP_PATH/dist/*.whl ./
 RUN pip install ./$APP_NAME*.whl --constraint constraints.txt
 COPY ./gunicorn.conf.py ./
 
