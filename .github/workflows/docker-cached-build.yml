@@ -1,7 +1,9 @@
 name: Cached Docker build
 
 on:
-  workflow_dispatch:
+   push:
+    branches:
+      - "feat/add-build-cache "
 
 env:
   REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-metadata-docker/datadoc
