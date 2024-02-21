@@ -4,7 +4,6 @@ import logging
 from dataclasses import dataclass
 
 import bs4
-import requests
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
 
@@ -68,6 +67,7 @@ class StatisticSubjectMapping(GetExternalSource):
         Initializes the mapping dicts. Based on the values in the statistical structure document.
         """
         super().__init__(source_url)
+        self.source_url = source_url
 
         # self.source_url = source_url
 
@@ -109,32 +109,32 @@ class StatisticSubjectMapping(GetExternalSource):
             titles[title["sprak"]] = title.text
         return titles
 
-    def map_data_from_external_source(self) -> ResultSet | None:
-        if self.future and self.future.done():
-            response = self._statistic_subject_structure_xml = self.future.result()
+    def _map_data_from_external_source(self) -> ResultSet | None:
+        if self.check_if_external_data_is_loaded():
+            response = self.future.result()
             response.encoding = "utf-8"
             logger.debug("Got response %s from %s", response, self.source_url)
             soup = BeautifulSoup(response.text, features="xml")
             return soup.find_all("hovedemne")
         return None
 
-    @staticmethod
-    def _fetch_statistical_structure(source_url: str) -> ResultSet | None:
-        """Fetch statistical structure document from source_url.
+    # @staticmethod
+    # def _fetch_statistical_structure(source_url: str) -> ResultSet | None:
+    #     """Fetch statistical structure document from source_url.
 
-        Returns a BeautifulSoup ResultSet.
-        """
-        try:
-            response = requests.get(source_url, timeout=30)
-            response.encoding = "utf-8"
-            logger.debug("Got response %s from %s", response, source_url)
-            soup = BeautifulSoup(response.text, features="xml")
-            return soup.find_all("hovedemne")
-        except requests.exceptions.RequestException:
-            logger.exception(
-                "Exception while fetching statistical structure ",
-            )
-            return None
+    #     Returns a BeautifulSoup ResultSet.
+    #     """
+    #     try:
+    #         response = requests.get(source_url, timeout=30)
+    #         response.encoding = "utf-8"
+    #         logger.debug("Got response %s from %s", response, source_url)
+    #         soup = BeautifulSoup(response.text, features="xml")
+    #         return soup.find_all("hovedemne")
+    #     except requests.exceptions.RequestException:
+    #         logger.exception(
+    #             "Exception while fetching statistical structure ",
+    #         )
+    #         return None
 
     def _parse_statistic_subject_structure_xml(
         self,
@@ -171,7 +171,7 @@ class StatisticSubjectMapping(GetExternalSource):
     @property
     def primary_subjects(self) -> list[PrimarySubject]:
         """Getter for primary subjects."""
-        self._parse_xml_if_loaded()
+        self._map_data_from_external_source()
         logger.debug("Got %s primary subjects", len(self._primary_subjects))
         return self._primary_subjects
 
@@ -180,18 +180,19 @@ class StatisticSubjectMapping(GetExternalSource):
 
         Returns true if it is loaded and parsed.
         """
-        if self.future and self.future.done():
-            self._statistic_subject_structure_xml = self.future.result()
+        ##if self.future and self.future.done():
 
-            if self._statistic_subject_structure_xml is not None:
-                self._primary_subjects = self._parse_statistic_subject_structure_xml(
-                    self._statistic_subject_structure_xml,
-                )
-                logger.debug(
-                    "Thread finished. Parsed %s primary subjects",
-                    len(self._primary_subjects),
-                )
-                return True
+        self._statistic_subject_structure_xml = self.future.result()
+
+        if self._statistic_subject_structure_xml is not None:
+            self._primary_subjects = self._parse_statistic_subject_structure_xml(
+                self._statistic_subject_structure_xml,
+            )
+            logger.debug(
+                "Thread finished. Parsed %s primary subjects",
+                len(self._primary_subjects),
+            )
+            return True
 
         logger.warning("Future is not done. Cannot parse xml.")
         return False

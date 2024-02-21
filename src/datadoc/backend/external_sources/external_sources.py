@@ -20,13 +20,11 @@ class GetExternalSource(ABC):
         """
         self.future: concurrent.futures.Future[None] | None = None
 
-        self.source_url = source_url
-
-        if self.source_url:
+        if source_url:
             executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
             self.future = executor.submit(
                 self._fetch_external_source,
-                self.source_url,
+                source_url,
             )
             logger.debug("Thread started to fetch external resource.")
         else:
@@ -51,6 +49,12 @@ class GetExternalSource(ABC):
             return
         self.future.result()
 
+    def check_if_external_data_is_loaded(self) -> bool:
+        """Method to check if the thread getting the extarnal data has finished running."""
+        if self.future():
+            return self.future.done()
+        return False
+
     @abstractmethod
-    def map_data_from_external_source(self):
+    def map_data_from_external_source(self) -> None:
         """Abstract method implemented in the child class to handle the external data."""
