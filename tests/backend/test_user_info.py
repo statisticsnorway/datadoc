@@ -75,7 +75,7 @@ def fake_jwt(raw_jwt_payload):
     ],
 )
 def test_get_user_info_for_current_platform(
-    monkeypatch,
+    monkeypatch: pytest.MonkeyPatch,
     environment_variable_name: str,
     environment_variable_value: str,
     expected_class: type[UserInfo],
@@ -85,11 +85,28 @@ def test_get_user_info_for_current_platform(
     assert isinstance(user_info.get_user_info_for_current_platform(), expected_class)
 
 
-def test_jupyterhub_user_info_short_email(monkeypatch):
+def test_jupyterhub_user_info_short_email(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv(JUPYTERHUB_USER, PLACEHOLDER_EMAIL_ADDRESS)
     assert JupyterHubUserInfo().short_email == PLACEHOLDER_EMAIL_ADDRESS
 
 
-def test_dapla_lab_user_info_short_email(fake_jwt: str, raw_jwt_payload, monkeypatch):
+def test_dapla_lab_user_info_short_email(
+    fake_jwt: str,
+    raw_jwt_payload: dict[str, object],
+    monkeypatch: pytest.MonkeyPatch,
+):
     monkeypatch.setenv("OIDC_TOKEN", fake_jwt)
     assert DaplaLabUserInfo().short_email == raw_jwt_payload["email"]
+
+
+def test_dapla_lab_user_info_short_email_no_jwt_available():
+    assert DaplaLabUserInfo().short_email is None
+
+
+@pytest.mark.parametrize(("raw_jwt_payload"), [{"no_email": "no_email_in_jwt"}])
+def test_dapla_lab_user_info_short_email_no_email_in_jwt(
+    fake_jwt: str,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setenv("OIDC_TOKEN", fake_jwt)
+    assert DaplaLabUserInfo().short_email is None

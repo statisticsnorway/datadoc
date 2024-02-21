@@ -23,16 +23,23 @@ JUPYTERHUB_USER = "JUPYTERHUB_USER"
 DAPLA_REGION = "DAPLA_REGION"
 DAPLA_SERVICE = "DAPLA_SERVICE"
 
-load_dotenv(DOT_ENV_FILE_PATH)
+env_loaded = False
 
-logger.info(
-    "Loaded .env file with config keys: \n%s",
-    pformat(list(dotenv_values(DOT_ENV_FILE_PATH).keys())),
-)
+
+def _load_dotenv_file() -> None:
+    global env_loaded  # noqa: PLW0603
+    if not env_loaded and DOT_ENV_FILE_PATH.exists():
+        load_dotenv(DOT_ENV_FILE_PATH)
+        env_loaded = True
+        logger.info(
+            "Loaded .env file with config keys: \n%s",
+            pformat(list(dotenv_values(DOT_ENV_FILE_PATH).keys())),
+        )
 
 
 def _get_config_item(item: str) -> str | None:
     """Get a config item. Makes sure all access is logged."""
+    _load_dotenv_file()
     value = os.getenv(item)
     logger.debug("Config accessed. %s", item)
     return value
@@ -111,3 +118,8 @@ def get_dapla_service() -> DaplaService | None:
         return DaplaService(service)
 
     return None
+
+
+def get_oidc_token() -> str | None:
+    """Get the JWT token from the environment."""
+    return _get_config_item("OIDC_TOKEN")

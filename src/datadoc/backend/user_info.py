@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import contextlib
 import logging
 from typing import Protocol
+
+import jwt
 
 from datadoc import config
 from datadoc.enums import DaplaRegion
@@ -49,7 +52,18 @@ class DaplaLabUserInfo:
     @property
     def short_email(self) -> str | None:
         """Get the short email address."""
-        raise NotImplementedError
+        encoded_jwt = config.get_oidc_token()
+        if encoded_jwt:
+            # The JWT has been verified by the platform prior to injection, no need to verify.
+            decoded_jwt = jwt.decode(encoded_jwt, options={"verify_signature": False})
+            with contextlib.suppress(KeyError):
+                # If email can't be found in the JWT, fall through and return None
+                return decoded_jwt["email"]
+
+        logger.warning(
+            "Could not access JWT from environment. Could not get short email address.",
+        )
+        return None
 
 
 class JupyterHubUserInfo:
