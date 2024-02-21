@@ -69,8 +69,8 @@ def fake_jwt(raw_jwt_payload):
 @pytest.mark.parametrize(
     ("environment_variable_name", "environment_variable_value", "expected_class"),
     [
-        (DAPLA_SERVICE, DaplaService.JUPYTERLAB, JupyterHubUserInfo),
-        (DAPLA_REGION, DaplaRegion.DAPLA_LAB, DaplaLabUserInfo),
+        (DAPLA_SERVICE, DaplaService.JUPYTERLAB.value, JupyterHubUserInfo),
+        (DAPLA_REGION, DaplaRegion.DAPLA_LAB.value, DaplaLabUserInfo),
         (None, None, UnknownUserInfo),
     ],
 )
