@@ -22,11 +22,17 @@ def build_new_variables_tab() -> dbc.Tab:
         "Variabler Ny",
         dbc.Container(
             [
-                dbc.Row(ssb.Title("Variabler", size=2)),  # Title
-                dbc.Row(),  # info
+                dbc.Row(ssb.Title("Variabel detaljer", size=2)),  # Title
                 dbc.Row(
                     [
-                        dbc.Col(),  # aside
+                        ssb.Paragraph("Informasjon"),
+                    ],
+                ),  # info
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            [],
+                        ),  # aside
                         dbc.Col(),  # workspace
                     ],
                 ),

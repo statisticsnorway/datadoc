@@ -28,6 +28,7 @@ from datadoc.frontend.components.control_bars import build_language_dropdown
 from datadoc.frontend.components.control_bars import header
 from datadoc.frontend.components.control_bars import progress_bar
 from datadoc.frontend.components.dataset_tab import build_dataset_tab
+from datadoc.frontend.components.new_variables_tab import build_new_variables_tab
 from datadoc.frontend.components.variables_tab import build_variables_tab
 from datadoc.utils import get_app_version
 from datadoc.utils import pick_random_port
@@ -59,6 +60,7 @@ def build_app(app: type[Dash]) -> Dash:
                         children=[
                             build_dataset_tab(),
                             build_variables_tab(),
+                            build_new_variables_tab(),
                         ],
                     ),
                 ],
