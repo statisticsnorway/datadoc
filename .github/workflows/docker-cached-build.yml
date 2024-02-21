@@ -1,9 +1,14 @@
 name: Cached Docker build
 
 on:
-   push:
+  push:
     branches:
       - "feat/add-build-cache "
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/docker-cached-build.yaml"
 
 env:
   REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-metadata-docker/datadoc
