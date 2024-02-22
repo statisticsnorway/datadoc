@@ -4,13 +4,15 @@ import concurrent.futures
 import logging
 from abc import ABC
 from abc import abstractmethod
-
-from requests import Request
+from typing import Generic
+from typing import TypeVar
 
 logger = logging.getLogger(__name__)
 
+T = TypeVar("T")
 
-class GetExternalSource(ABC):
+
+class GetExternalSource(ABC, Generic[T]):
     """Abstract base class for getting data from external sources."""
 
     def __init__(self, source_url: str | None) -> None:
@@ -18,7 +20,7 @@ class GetExternalSource(ABC):
 
         Initilizes the future object.
         """
-        self.future: concurrent.futures.Future[None] | None = None
+        self.future: concurrent.futures.Future[T | None] | None = None
 
         if source_url:
             executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
@@ -29,10 +31,10 @@ class GetExternalSource(ABC):
             logger.debug("Thread started to fetch external resource.")
         else:
             logger.warning(
-                "No URL to fetch external resource supplied. Skipping fetching it. This may make it difficult to provide a value for the 'subject_field' metadata field.",
+                "No URL to fetch external resource supplied, the resource will not be fetched.",
             )
 
-    def wait_external_result(self) -> None:
+    def wait_for_external_result(self) -> None:
         """Waits for the thread responsible for loading the external request to finish."""
         if not self.future:
             logger.warning("No future to wait for.")
@@ -46,10 +48,13 @@ class GetExternalSource(ABC):
             return self.future.done()
         return False
 
-    def get_external_data(self) -> Request:
+    def get_external_data(self) -> T | None:
         """Method that returns the result of the thread."""
-        return self.future.result()
+        if self.future:
+            return self.future.result()
+        return None
 
     @abstractmethod
-    def _fetch_data_from_external_source(self) -> None:
+    def _fetch_data_from_external_source(self, source_url: str) -> T | None:
         """Abstract method implemented in the child class to handle the external data."""
+        raise NotImplementedError

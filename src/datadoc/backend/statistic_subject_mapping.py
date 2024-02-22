@@ -68,24 +68,8 @@ class StatisticSubjectMapping(GetExternalSource):
         Initializes the mapping dicts. Based on the values in the statistical structure document.
         """
         super().__init__(source_url)
-        self.source_url = source_url
 
-        # self.source_url = source_url
-
-        # self.future: concurrent.futures.Future[ResultSet | None] | None = None
         self._statistic_subject_structure_xml: ResultSet | None = None
-
-        # if self.source_url:
-        #     executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
-        #     self.future = executor.submit(
-        #         self._fetch_statistical_structure,
-        #         self.source_url,
-        #     )
-        #     logger.debug("Thread started to fetch statistical subject structure.")
-        # else:
-        #     logger.warning(
-        #         "No URL to fetch statistical subject structure supplied. Skipping fetching it. This may make it difficult to provide a value for the 'subject_field' metadata field.",
-        #     )
 
         self._primary_subjects: list[PrimarySubject] = []
 
@@ -110,17 +94,7 @@ class StatisticSubjectMapping(GetExternalSource):
             titles[title["sprak"]] = title.text
         return titles
 
-    # def _map_data_from_external_source(self) -> ResultSet | None:
-    #     if self.check_if_external_data_is_loaded():
-    #         response = self.get_external_data()
-    #         if response is not None:
-    #             response.encoding = "utf-8"
-    #             logger.debug("Got response %s from %s", response, self.source_url)
-    #             soup = BeautifulSoup(response.text, features="xml")
-    #             return soup.find_all("hovedemne")
-    #     return None
-
-    def _fetch_data_from_external_source(self, source_url) -> ResultSet | None:
+    def _fetch_data_from_external_source(self, source_url: str) -> ResultSet | None:
         """Fetch statistical structure document from source_url.
 
         Returns a BeautifulSoup ResultSet.
@@ -161,14 +135,6 @@ class StatisticSubjectMapping(GetExternalSource):
             )
         return primary_subjects
 
-    # def wait_for_primary_subject(self) -> None:
-    #     """Waits for the thread responsible for loading the xml to finish."""
-    #     if not self.future:
-    #         logger.warning("No future to wait for.")
-    #         # Nothing to wait for in this case, just return immediately
-    #         return
-    #     self.future.result()
-
     @property
     def primary_subjects(self) -> list[PrimarySubject]:
         """Getter for primary subjects."""
@@ -181,18 +147,18 @@ class StatisticSubjectMapping(GetExternalSource):
 
         Returns true if it is loaded and parsed.
         """
-        ##if self.future and self.future.done():
-        self._statistic_subject_structure_xml = self._map_data_from_external_source()
+        if self.check_if_external_data_is_loaded():
+            self._statistic_subject_structure_xml = self.get_external_data()
 
-        if self._statistic_subject_structure_xml is not None:
-            self._primary_subjects = self._parse_statistic_subject_structure_xml(
-                self._statistic_subject_structure_xml,
-            )
-            logger.debug(
-                "Thread finished. Parsed %s primary subjects",
-                len(self._primary_subjects),
-            )
-            return True
+            if self._statistic_subject_structure_xml is not None:
+                self._primary_subjects = self._parse_statistic_subject_structure_xml(
+                    self._statistic_subject_structure_xml,
+                )
+                logger.debug(
+                    "Thread finished. Parsed %s primary subjects",
+                    len(self._primary_subjects),
+                )
+                return True
 
-        logger.warning("Future is not done. Cannot parse xml.")
+            logger.warning("Future is not done. Cannot parse xml.")
         return False
