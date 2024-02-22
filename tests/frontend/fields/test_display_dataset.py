@@ -41,5 +41,5 @@ def test_get_statistical_subject_options(
     expected,
 ):
     state.statistic_subject_mapping = subject_mapping_fake_statistical_structure
-    state.statistic_subject_mapping.wait_for_primary_subject()
+    state.statistic_subject_mapping.wait_for_external_result()
     assert get_statistical_subject_options(SupportedLanguages.NORSK_BOKMÅL) == expected
