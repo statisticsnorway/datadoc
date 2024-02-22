@@ -8,14 +8,10 @@ from dash import html
 
 from datadoc.frontend.components.builders import build_ssb_styled_tab
 
-# build variables Tab
-# This will be returned when you select new variables in Tabs menu
-# A menu/aside section with interactive buttons .. with variables name
-# click/select and open a section ... form?
-# two "sections" obligatory and reccomended
 # In each section each detail from  https://statistics-norway.atlassian.net/wiki/spaces/MPD/pages/3042869256/Variabelforekomst is represented by a Input component with Label
 # Some Input components have dropdown enum values
 
+# Test data
 variables_test_names = [
     "fnr",
     "sivilstand",
@@ -25,20 +21,101 @@ variables_test_names = [
     "dato",
 ]
 
+# dropdown: datatype,variabelens, DPI,temporalitetstype,
+variables_details_test_obligatory = [
+    "Kortnavn",
+    "Navn",
+    "Datatype",
+    "Variabelens rolle",
+    "Definition URI",
+    "DPI",
+]
 
-def build_new_variabels_accordion(header: str) -> ssb.Accordion:
-    """Build workspace for single variabel to edit."""
-    return ssb.Accordion(
-        id="variabel",
-        className="variabel",
-        header=header,
-        openByDefault=True,
-        children=[ssb.Input(label="Test input", id="dataset", type="text")],
+data_type = [
+    {
+        "title": "Tekst",
+        "id": "text",
+    },
+    {
+        "title": "Heltall",
+        "id": "integer",
+    },
+    {
+        "title": "Desimaltall",
+        "id": "float",
+    },
+    {
+        "title": "Datotid",
+        "id": "datetime",
+    },
+    {
+        "title": "Boolsk",
+        "id": "bool",
+    },
+]
+
+variables_details_test_recommended = [
+    "Nøkkelord",
+    "Geografisk dekningsområde",
+    "Datakilde",
+    "Populasjonen",
+    "Kommentar",
+    "Temporalitetstype",
+    "Måleenhet",
+    "Format",
+    "Kodeverkets URI",
+    "Spesialverdienes URI",
+    "Ugyldige verdier",
+    "Inneholder data f.o.m.",
+    "Inneholder data t.o.m",
+]
+
+
+# builders
+def build_input_dropdowns(name: str, values: list) -> ssb.Dropdown:
+    """Create dropdown."""
+    return ssb.Dropdown(
+        id=name,
+        header=name,
+        items=values,
+        className="variabels-dropdown",
+    )
+
+
+def build_input_field_section(variabel_list: list, id_type: str) -> html.Section:
+    """Create input fields."""
+    return html.Section(
+        [
+            html.Section(
+                [
+                    ssb.Input(
+                        label=value,
+                        id={"type": id_type, "id": str(index)},
+                        className="variabels-input",
+                    )
+                    for index, value in enumerate(variabel_list)
+                ],
+                className="variables-input-group",
+            ),
+            build_input_dropdowns("Datatype", data_type),
+        ],
+        className="variables-input-group",
+    )
+
+
+def build_edit_section(variabel_list: list, id_type: str, title: str) -> html.Section:
+    """Create obligatory input section."""
+    return html.Section(
+        children=[
+            ssb.Title(title, size=3, className="input-section-title"),
+            build_input_field_section(variabel_list, id_type),
+        ],
+        className="input-section",
     )
 
 
 def build_new_variables_tab() -> dbc.Tab:
-    """Build page content fro new variables tab."""
+    """Build page content for new variables tab."""
     return build_ssb_styled_tab(
         "Variabler Ny",
         dbc.Container(
@@ -50,45 +127,42 @@ def build_new_variables_tab() -> dbc.Tab:
                             size=2,
                             className="variabels-title",
                         ),
-                        ssb.Paragraph("Informasjon"),
+                        ssb.Paragraph(
+                            f"Informasjon om antall variabler i datasettet {len(variables_test_names)} og hvordan/hva",
+                        ),
                     ],
+                    className="variabels-header",
                 ),
-                html.Div(
-                    id="variables-content",
-                    className="page-content",
+                html.Main(
+                    id="variabels-details",
+                    className="main-content",
                     children=[
-                        html.Aside(
-                            id="variables-overview",
-                            children=[
-                                ssb.Title(
-                                    "Variabler A-Å",
-                                    size=4,
-                                    className="",
-                                ),
-                                html.Nav(
-                                    [
-                                        html.Ul(
-                                            id="display-variables-link",
-                                            children=[
-                                                html.Li(i) for i in variables_test_names
-                                            ],  # unique id list items dash bootstrap?
+                        html.Div(
+                            [
+                                ssb.Accordion(
+                                    id={"type": "variables", "id": index},
+                                    header=variable,
+                                    className="variabel",
+                                    children=[
+                                        ssb.Input(label="Ferdig", type="checkbox"),
+                                        build_edit_section(
+                                            variables_details_test_obligatory,
+                                            "obligatory",
+                                            "Obligatoriske verdier",
+                                        ),
+                                        build_edit_section(
+                                            variables_details_test_recommended,
+                                            "recommended",
+                                            "Anbefalte verdier",
                                         ),
                                     ],
-                                ),
+                                )
+                                for index, variable in enumerate(
+                                    sorted(variables_test_names),
+                                )
                             ],
-                        ),
-                        html.Main(
-                            id="variabels-workspace",
-                            className="main-content",
-                            children=[
-                                ssb.Title("Test", size=3),
-                                html.Div(
-                                    children=[
-                                        build_new_variabels_accordion(header=name)
-                                        for name in variables_test_names
-                                    ],
-                                ),
-                            ],  # probably section iterated
+                            id="accordion-wrapper",
+                            className="accordion-wrapper",
                         ),
                     ],
                 ),
