@@ -159,6 +159,5 @@ class StatisticSubjectMapping(GetExternalSource):
                     len(self._primary_subjects),
                 )
                 return True
-
-            logger.warning("Future is not done. Cannot parse xml.")
+            logger.warning("Thread is not done. Cannot parse xml.")
         return False

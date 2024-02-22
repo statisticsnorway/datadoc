@@ -16,9 +16,9 @@ class GetExternalSource(ABC, Generic[T]):
     """Abstract base class for getting data from external sources."""
 
     def __init__(self, source_url: str | None) -> None:
-        """Retrieves data from an external source asynchronusly.
+        """Retrieves data from an external source asynchronously.
 
-        Initilizes the future object.
+        Initializes the future object.
         """
         self.future: concurrent.futures.Future[T | None] | None = None
 
@@ -43,7 +43,7 @@ class GetExternalSource(ABC, Generic[T]):
         self.future.result()
 
     def check_if_external_data_is_loaded(self) -> bool:
-        """Method to check if the thread getting the extarnal data has finished running."""
+        """Method to check if the thread getting the external data has finished running."""
         if self.future:
             return self.future.done()
         return False

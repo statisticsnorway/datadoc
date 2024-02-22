@@ -1,1 +1,1 @@
-"""Code which does not directly interact with th UI."""
+"""Abstract parent class for interacting with external resources asynchorously."""
