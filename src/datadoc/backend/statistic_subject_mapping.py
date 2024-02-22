@@ -4,6 +4,7 @@ import logging
 from dataclasses import dataclass
 
 import bs4
+import requests
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
 
@@ -109,32 +110,32 @@ class StatisticSubjectMapping(GetExternalSource):
             titles[title["sprak"]] = title.text
         return titles
 
-    def _map_data_from_external_source(self) -> ResultSet | None:
-        if self.check_if_external_data_is_loaded():
-            response = self.future.result()
+    # def _map_data_from_external_source(self) -> ResultSet | None:
+    #     if self.check_if_external_data_is_loaded():
+    #         response = self.get_external_data()
+    #         if response is not None:
+    #             response.encoding = "utf-8"
+    #             logger.debug("Got response %s from %s", response, self.source_url)
+    #             soup = BeautifulSoup(response.text, features="xml")
+    #             return soup.find_all("hovedemne")
+    #     return None
+
+    def _fetch_data_from_external_source(self, source_url) -> ResultSet | None:
+        """Fetch statistical structure document from source_url.
+
+        Returns a BeautifulSoup ResultSet.
+        """
+        try:
+            response = requests.get(source_url, timeout=30)
             response.encoding = "utf-8"
-            logger.debug("Got response %s from %s", response, self.source_url)
+            logger.debug("Got response %s from %s", response, source_url)
             soup = BeautifulSoup(response.text, features="xml")
             return soup.find_all("hovedemne")
-        return None
-
-    # @staticmethod
-    # def _fetch_statistical_structure(source_url: str) -> ResultSet | None:
-    #     """Fetch statistical structure document from source_url.
-
-    #     Returns a BeautifulSoup ResultSet.
-    #     """
-    #     try:
-    #         response = requests.get(source_url, timeout=30)
-    #         response.encoding = "utf-8"
-    #         logger.debug("Got response %s from %s", response, source_url)
-    #         soup = BeautifulSoup(response.text, features="xml")
-    #         return soup.find_all("hovedemne")
-    #     except requests.exceptions.RequestException:
-    #         logger.exception(
-    #             "Exception while fetching statistical structure ",
-    #         )
-    #         return None
+        except requests.exceptions.RequestException:
+            logger.exception(
+                "Exception while fetching statistical structure ",
+            )
+            return None
 
     def _parse_statistic_subject_structure_xml(
         self,
@@ -160,18 +161,18 @@ class StatisticSubjectMapping(GetExternalSource):
             )
         return primary_subjects
 
-    def wait_for_primary_subject(self) -> None:
-        """Waits for the thread responsible for loading the xml to finish."""
-        if not self.future:
-            logger.warning("No future to wait for.")
-            # Nothing to wait for in this case, just return immediately
-            return
-        self.future.result()
+    # def wait_for_primary_subject(self) -> None:
+    #     """Waits for the thread responsible for loading the xml to finish."""
+    #     if not self.future:
+    #         logger.warning("No future to wait for.")
+    #         # Nothing to wait for in this case, just return immediately
+    #         return
+    #     self.future.result()
 
     @property
     def primary_subjects(self) -> list[PrimarySubject]:
         """Getter for primary subjects."""
-        self._map_data_from_external_source()
+        self._parse_xml_if_loaded()
         logger.debug("Got %s primary subjects", len(self._primary_subjects))
         return self._primary_subjects
 
@@ -181,8 +182,7 @@ class StatisticSubjectMapping(GetExternalSource):
         Returns true if it is loaded and parsed.
         """
         ##if self.future and self.future.done():
-
-        self._statistic_subject_structure_xml = self.future.result()
+        self._statistic_subject_structure_xml = self._map_data_from_external_source()
 
         if self._statistic_subject_structure_xml is not None:
             self._primary_subjects = self._parse_statistic_subject_structure_xml(
