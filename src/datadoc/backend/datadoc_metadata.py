@@ -14,7 +14,7 @@ from cloudpathlib import GSPath
 from dapla import AuthClient
 from datadoc_model import model
 
-from datadoc import config
+from datadoc.backend import user_info
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
@@ -27,7 +27,6 @@ from datadoc.frontend.fields.display_dataset import (
 )
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
-from datadoc.utils import PLACEHOLDER_USERNAME
 from datadoc.utils import calculate_percentage
 from datadoc.utils import get_timestamp_now
 
@@ -56,7 +55,6 @@ class DataDocMetadata:
         self.container: model.MetadataContainer | None = None
         self.dataset: pathlib.Path | CloudPath | None = None
         self.short_name: str | None = None
-        self.current_user: str | None = None
         self.meta: model.DatadocJsonSchema = model.DatadocJsonSchema(
             percentage_complete=0,
             dataset=model.Dataset(),
@@ -78,13 +76,6 @@ class DataDocMetadata:
                 self.dataset.stem + METADATA_DOCUMENT_FILE_SUFFIX
             )
             self.extract_metadata_from_files()
-        self.current_user = config.get_jupyterhub_user()
-        if not self.current_user:
-            self.current_user = PLACEHOLDER_USERNAME
-            logger.warning(
-                "JUPYTERHUB_USER env variable not set, using %s as placeholder",
-                self.current_user,
-            )
 
     @staticmethod
     def _open_path(path: str) -> pathlib.Path | CloudPath:
@@ -193,7 +184,7 @@ class DataDocMetadata:
             contains_data_from=str(dapla_dataset_path_info.contains_data_from),
             contains_data_until=str(dapla_dataset_path_info.contains_data_until),
             data_source_path=self.dataset,
-            created_by=self.current_user,
+            metadata_created_by=user_info.get_user_info_for_current_platform().short_email,
             # TODO @mmwinther: Remove multiple_language_support once the model is updated.
             # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
             subject_field=model.LanguageStringType(
@@ -224,12 +215,13 @@ class DataDocMetadata:
     def write_metadata_document(self) -> None:
         """Write all currently known metadata to file."""
         timestamp: datetime = get_timestamp_now()
+
         if self.meta.dataset.metadata_created_date is None:
             self.meta.dataset.metadata_created_date = timestamp
-        if self.meta.dataset.metadata_created_by is None:
-            self.meta.dataset.metadata_created_by = self.current_user
         self.meta.dataset.metadata_last_updated_date = timestamp
-        self.meta.dataset.metadata_last_updated_by = self.current_user
+        self.meta.dataset.metadata_last_updated_by = (
+            user_info.get_user_info_for_current_platform().short_email
+        )
         self.meta.dataset.file_path = str(self.dataset)
         if self.container:
             self.container.datadoc = self.meta

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import functools
+import os
 import pathlib
 import shutil
 from datetime import datetime
@@ -19,6 +20,7 @@ from datadoc_model import model
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
+from datadoc.backend.user_info import TestUserInfo
 from tests.backend.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
 )
@@ -36,6 +38,17 @@ if TYPE_CHECKING:
     from pytest_mock import MockerFixture
 
 
+@pytest.fixture(autouse=True)
+def _clear_environment(mocker: MockerFixture) -> None:
+    """Ensure that the environment is cleared."""
+    mocker.patch.dict(os.environ, clear=True)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def faker_session_locale():
+    return ["no_NO"]
+
+
 @pytest.fixture()
 def dummy_timestamp() -> datetime:
     return datetime(2022, 1, 1, tzinfo=timezone.utc)
@@ -50,8 +63,17 @@ def _mock_timestamp(mocker: MockerFixture, dummy_timestamp: datetime) -> None:
 
 
 @pytest.fixture()
+def _mock_user_info(mocker: MockerFixture) -> None:
+    mocker.patch(
+        "datadoc.backend.user_info.get_user_info_for_current_platform",
+        return_value=TestUserInfo(),
+    )
+
+
+@pytest.fixture()
 def metadata(
     _mock_timestamp: None,
+    _mock_user_info: None,
     subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
 ) -> DataDocMetadata:
     return DataDocMetadata(
@@ -221,7 +243,7 @@ def _mock_fetch_statistical_structure(
             return BeautifulSoup(f.read(), features="xml").find_all("hovedemne")
 
     mocker.patch(
-        "datadoc.backend.statistic_subject_mapping.StatisticSubjectMapping._fetch_statistical_structure",
+        "datadoc.backend.statistic_subject_mapping.StatisticSubjectMapping._fetch_data_from_external_source",
         functools.partial(fake_statistical_structure, subject_xml_file_path),
     )
 

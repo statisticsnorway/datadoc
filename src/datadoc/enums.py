@@ -1,10 +1,30 @@
 """Enumerations used in Datadoc."""
+
 from __future__ import annotations
 
 from enum import Enum
 
 from datadoc_model import model
 from datadoc_model.model import LanguageStringType
+
+
+class DaplaRegion(str, Enum):
+    """Dapla platforms/regions."""
+
+    DAPLA_LAB = "DAPLA_LAB"
+    BIP = "BIP"
+    ON_PREM = "ON_PREM"
+    CLOUD_RUN = "CLOUD_RUN"
+
+
+class DaplaService(str, Enum):
+    """Dapla services."""
+
+    DATADOC = "DATADOC"
+    JUPYTERLAB = "JUPYTERLAB"
+    VS_CODE = "VS_CODE"
+    R_STUDIO = "R_STUDIO"
+    KILDOMATEN = "KILDOMATEN"
 
 
 class SupportedLanguages(str, Enum):
