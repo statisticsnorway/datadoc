@@ -18,6 +18,9 @@ from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.register_callbacks import register_callbacks
+from datadoc.frontend.callbacks.register_callbacks import (
+    register_new_variables_tab_callbacks,
+)
 from datadoc.frontend.components.alerts import dataset_validation_error
 from datadoc.frontend.components.alerts import opened_dataset_error
 from datadoc.frontend.components.alerts import opened_dataset_success
@@ -40,6 +43,19 @@ logger = logging.getLogger(__name__)
 
 def build_app(app: type[Dash]) -> Dash:
     """Define the layout, register callbacks."""
+    tabs_children = [
+        build_dataset_tab(),
+        build_variables_tab(),
+    ]
+
+    # TODO @mmwinther: Remove this when new variables workspace is ready for production.
+    # https://statistics-norway.atlassian.net/browse/DPMETA-14
+    if config.get_toggle_new_variables_workspace():
+        tabs_children.append(build_new_variables_tab())
+        logger.warning(
+            "New variables workspace is enabled, not yet ready for production!",
+        )
+
     app.layout = dbc.Container(
         style={"padding": "4px"},
         children=[
@@ -57,11 +73,7 @@ def build_app(app: type[Dash]) -> Dash:
                     dbc.Tabs(
                         id="tabs",
                         class_name="ssb-tabs",
-                        children=[
-                            build_dataset_tab(),
-                            build_variables_tab(),
-                            build_new_variables_tab(),
-                        ],
+                        children=tabs_children,
                     ),
                 ],
             ),
@@ -70,6 +82,11 @@ def build_app(app: type[Dash]) -> Dash:
     )
 
     register_callbacks(app)
+
+    # TODO @mmwinther: Remove this when new variables workspace is ready for production.
+    # https://statistics-norway.atlassian.net/browse/DPMETA-14
+    if config.get_toggle_new_variables_workspace():
+        register_new_variables_tab_callbacks(app)
 
     return app
 
