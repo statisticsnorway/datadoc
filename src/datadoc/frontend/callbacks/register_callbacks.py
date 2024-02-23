@@ -3,9 +3,9 @@
 Implementations of the callback functionality should be in other functions (in other files), to enable unit testing.
 """
 
-
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
 
 from dash import ALL
@@ -30,6 +30,8 @@ from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_M
 
 if TYPE_CHECKING:
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
+
+logger = logging.getLogger(__name__)
 
 
 def register_callbacks(app: Dash) -> None:
@@ -167,3 +169,12 @@ def register_callbacks(app: Dash) -> None:
         by a more formal mechanism.
         """
         return open_dataset_handling(n_clicks, dataset_path)
+
+
+def register_new_variables_tab_callbacks(app: Dash) -> None:
+    """Define and register callbacks for the new variables tab.
+
+    This may be included in the main register_callbacks function once it's
+    ready for production.
+    """
+    logger.info("Registering callbacks for the new variable tab for %s", app.title)
