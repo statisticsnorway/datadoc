@@ -75,6 +75,8 @@ variables_details_test_recommended = [
     "Inneholder data t.o.m",
 ]
 
+info_section = f"Informasjon om hvordan jobbe i Datadoc, antall variabler i datasettet: {len(variables_test_names)} osv.."
+
 
 # builders
 def build_input_dropdowns(name: str, values: list) -> ssb.Dropdown:

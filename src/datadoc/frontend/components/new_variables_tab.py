@@ -8,6 +8,7 @@ from dash import html
 
 from datadoc.frontend.components.builders import build_ssb_styled_tab
 from datadoc.frontend.components.resources_test_new_variables import build_edit_section
+from datadoc.frontend.components.resources_test_new_variables import info_section
 from datadoc.frontend.components.resources_test_new_variables import (
     variables_details_test_obligatory,
 )
@@ -33,7 +34,7 @@ def build_new_variables_tab() -> dbc.Tab:
                             className="variabels-title",
                         ),
                         ssb.Paragraph(
-                            f"Informasjon om antall variabler i datasettet {len(variables_test_names)} og hvordan/hva",
+                            info_section,
                         ),
                         ssb.Input(
                             label="Søk i variabler",
