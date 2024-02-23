@@ -56,11 +56,6 @@ def build_new_variables_tab() -> dbc.Tab:
                                     header=variable,
                                     className="variabel",
                                     children=[
-                                        ssb.Input(
-                                            label="Ferdig",
-                                            type="checkbox",
-                                            id="variabels-checkbox",
-                                        ),
                                         build_edit_section(
                                             variables_details_test_obligatory,
                                             "obligatory",

@@ -38,11 +38,6 @@
     gap: 1rem;
 }
 
-#accordion-wrapper2{
-    padding-left: 1rem;
-    border-left: 2px solid #2D6975;
-}
-
 .ssb-accordion.variabel{
     border: 2px solid #62919A;
     padding: 0.5rem;
@@ -69,17 +64,4 @@
 .ssb-input.variabels-input{
     max-width: 800px;
     width: 100%;
-}
-
-.ssb-dropdown.variabels-dropdown{
-    max-width: 800px;
-    width: 100%;
-}
-
-#variabels-checkbox{
-    width: 3rem;
-}
-
-#variabels-checkbox2{
-    width: 3rem;
 }
