@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import functools
+import os
 import pathlib
 import shutil
 from datetime import datetime
@@ -35,6 +36,17 @@ if TYPE_CHECKING:
     from unittest import mock
 
     from pytest_mock import MockerFixture
+
+
+@pytest.fixture(autouse=True)
+def _clear_environment(mocker: MockerFixture) -> None:
+    """Ensure that the environment is cleared."""
+    mocker.patch.dict(os.environ, clear=True)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def faker_session_locale():
+    return ["no_NO"]
 
 
 @pytest.fixture()
@@ -231,7 +243,7 @@ def _mock_fetch_statistical_structure(
             return BeautifulSoup(f.read(), features="xml").find_all("hovedemne")
 
     mocker.patch(
-        "datadoc.backend.statistic_subject_mapping.StatisticSubjectMapping._fetch_statistical_structure",
+        "datadoc.backend.statistic_subject_mapping.StatisticSubjectMapping._fetch_data_from_external_source",
         functools.partial(fake_statistical_structure, subject_xml_file_path),
     )
 

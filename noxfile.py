@@ -151,6 +151,7 @@ def mypy(session: Session) -> None:
         "types-Pygments",
         "types-colorama",
         "types-beautifulsoup4",
+        "faker",
     )
     session.run("mypy", *args)
     if not session.posargs:
@@ -162,7 +163,7 @@ def tests(session: Session) -> None:
     """Run the test suite."""
     session.install(".")
     session.install(
-        "coverage[toml]", "pytest", "pygments", "pytest-mock", "requests-mock"
+        "coverage[toml]", "pytest", "pygments", "pytest-mock", "requests-mock", "faker"
     )
     try:
         session.run(
@@ -197,7 +198,9 @@ def coverage(session: Session) -> None:
 def typeguard(session: Session) -> None:
     """Runtime type checking using Typeguard."""
     session.install(".")
-    session.install("pytest", "typeguard", "pygments", "pytest_mock", "requests_mock")
+    session.install(
+        "pytest", "typeguard", "pygments", "pytest_mock", "requests_mock", "faker"
+    )
     session.run("pytest", f"--typeguard-packages={package}", *session.posargs)
 
 

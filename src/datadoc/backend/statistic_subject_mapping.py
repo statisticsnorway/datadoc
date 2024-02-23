@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import concurrent.futures
 import logging
 from dataclasses import dataclass
 
@@ -9,6 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
 
+from datadoc.backend.external_sources.external_sources import GetExternalSource
 from datadoc.enums import SupportedLanguages
 
 logger = logging.getLogger(__name__)
@@ -59,7 +59,7 @@ class PrimarySubject(Subject):
     secondary_subjects: list[SecondarySubject]
 
 
-class StatisticSubjectMapping:
+class StatisticSubjectMapping(GetExternalSource):
     """Allow mapping between statistic short name and primary and secondary subject."""
 
     def __init__(self, source_url: str | None) -> None:
@@ -67,22 +67,9 @@ class StatisticSubjectMapping:
 
         Initializes the mapping dicts. Based on the values in the statistical structure document.
         """
-        self.source_url = source_url
+        super().__init__(source_url)
 
-        self.future: concurrent.futures.Future[ResultSet | None] | None = None
         self._statistic_subject_structure_xml: ResultSet | None = None
-
-        if self.source_url:
-            executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
-            self.future = executor.submit(
-                self._fetch_statistical_structure,
-                self.source_url,
-            )
-            logger.debug("Thread started to fetch statistical subject structure.")
-        else:
-            logger.warning(
-                "No URL to fetch statistical subject structure supplied. Skipping fetching it. This may make it difficult to provide a value for the 'subject_field' metadata field.",
-            )
 
         self._primary_subjects: list[PrimarySubject] = []
 
@@ -107,8 +94,7 @@ class StatisticSubjectMapping:
             titles[title["sprak"]] = title.text
         return titles
 
-    @staticmethod
-    def _fetch_statistical_structure(source_url: str) -> ResultSet | None:
+    def _fetch_data_from_external_source(self, source_url: str) -> ResultSet | None:
         """Fetch statistical structure document from source_url.
 
         Returns a BeautifulSoup ResultSet.
@@ -149,14 +135,6 @@ class StatisticSubjectMapping:
             )
         return primary_subjects
 
-    def wait_for_primary_subject(self) -> None:
-        """Waits for the thread responsible for loading the xml to finish."""
-        if not self.future:
-            logger.warning("No future to wait for.")
-            # Nothing to wait for in this case, just return immediately
-            return
-        self.future.result()
-
     @property
     def primary_subjects(self) -> list[PrimarySubject]:
         """Getter for primary subjects."""
@@ -169,8 +147,8 @@ class StatisticSubjectMapping:
 
         Returns true if it is loaded and parsed.
         """
-        if self.future and self.future.done():
-            self._statistic_subject_structure_xml = self.future.result()
+        if self.check_if_external_data_is_loaded():
+            self._statistic_subject_structure_xml = self.get_external_data()
 
             if self._statistic_subject_structure_xml is not None:
                 self._primary_subjects = self._parse_statistic_subject_structure_xml(
@@ -181,6 +159,5 @@ class StatisticSubjectMapping:
                     len(self._primary_subjects),
                 )
                 return True
-
-        logger.warning("Future is not done. Cannot parse xml.")
+            logger.warning("Thread is not done. Cannot parse xml.")
         return False
