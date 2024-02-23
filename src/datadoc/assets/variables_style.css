@@ -11,12 +11,20 @@
 
 .variabels-header{
     width: 100%;
+    display:flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .ssb-title.variabels-title{
     margin-top: 1rem;
+    width: 100%;
 }
 
+.ssb-input{
+    margin-bottom: 1rem;
+}
 .accordion-wrapper{
     display: flex;
     flex-direction: column;
@@ -40,9 +48,6 @@
     margin: 1rem;
 }
 
-.input-section-title{
-    margin-left: 4rem;
-}
 .ssb-title.input-section-title{
     border-bottom: 2px solid #62919A;
     margin-bottom: 1rem;
@@ -57,4 +62,8 @@
 .ssb-dropdown.variabels-dropdown{
     max-width: 800px;
     width: 100%;
+}
+
+#variabels-checkbox{
+    width: 3rem;
 }

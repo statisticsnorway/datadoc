@@ -130,6 +130,12 @@ def build_new_variables_tab() -> dbc.Tab:
                         ssb.Paragraph(
                             f"Informasjon om antall variabler i datasettet {len(variables_test_names)} og hvordan/hva",
                         ),
+                        ssb.Input(
+                            label="Søk i variabler",
+                            searchField=True,
+                            id="search-variables",
+                            n_submit=0,
+                        ),
                     ],
                     className="variabels-header",
                 ),
@@ -144,7 +150,11 @@ def build_new_variables_tab() -> dbc.Tab:
                                     header=variable,
                                     className="variabel",
                                     children=[
-                                        ssb.Input(label="Ferdig", type="checkbox"),
+                                        ssb.Input(
+                                            label="Ferdig",
+                                            type="checkbox",
+                                            id="variabels-checkbox",
+                                        ),
                                         build_edit_section(
                                             variables_details_test_obligatory,
                                             "obligatory",
