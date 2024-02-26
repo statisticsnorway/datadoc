@@ -30,6 +30,7 @@ def build_input_field_section(
                         disabled=not i.editable,
                         className="variabels-input",
                         id={"type": DATASET_METADATA_INPUT, "id": i.identifier},
+                        value="",
                         # **i.extra_kwargs,
                     )
                     for i in metadata_inputs
@@ -59,7 +60,7 @@ def build_ssb_accordion(
     header: str,
     key: dict,
 ) -> ssb.Accordion:
-    """Build."""
+    """Build Accordion for one variabel."""
     return ssb.Accordion(
         header=header,
         id=key,  # must have unique key/id
