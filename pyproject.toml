@@ -25,7 +25,7 @@ Changelog = "https://github.com/statisticsnorway/datadoc/releases"
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
 pyarrow = ">=8.0.0"
-dash = ">=2.11"
+dash = ">=2.15.0"
 pydantic = ">2"
 dash-bootstrap-components = ">=1.1.0"
 pandas = ">=1.4.2"
@@ -39,6 +39,9 @@ python-dotenv = ">=1.0.1"
 requests = ">=2.31.0"
 beautifulsoup4 = ">=4.12.3"
 cloudpathlib = { extras = ["gs"], version = ">=0.17.0" }
+pyjwt = ">=2.8.0"
+ssb-klass-python = "^0.0.9"
+ssb-dash-components = "^0.3.0"
 
 [tool.poetry.group.dev.dependencies]
 mypy = ">=0.950"
@@ -65,8 +68,9 @@ pandas-stubs = "*"
 types-Pygments = "*"
 types-colorama = "*"
 types-setuptools = "*"
-types-beautifulsoup4 = "^4.12.0.20240106"
-requests-mock = "^1.11.0"
+types-beautifulsoup4 = "*"
+requests-mock = "*"
+faker = "*"
 
 
 [tool.pytest.ini_options]

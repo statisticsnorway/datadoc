@@ -1,9 +1,14 @@
 from __future__ import annotations
 
+import contextlib
 import logging
 from typing import Protocol
 
+import jwt
+
 from datadoc import config
+from datadoc.enums import DaplaRegion
+from datadoc.enums import DaplaService
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +46,26 @@ class TestUserInfo:
         return PLACEHOLDER_EMAIL_ADDRESS
 
 
+class DaplaLabUserInfo:
+    """Information about the current user when running on Dapla Lab."""
+
+    @property
+    def short_email(self) -> str | None:
+        """Get the short email address."""
+        encoded_jwt = config.get_oidc_token()
+        if encoded_jwt:
+            # The JWT has been verified by the platform prior to injection, no need to verify.
+            decoded_jwt = jwt.decode(encoded_jwt, options={"verify_signature": False})
+            with contextlib.suppress(KeyError):
+                # If email can't be found in the JWT, fall through and return None
+                return decoded_jwt["email"]
+
+        logger.warning(
+            "Could not access JWT from environment. Could not get short email address.",
+        )
+        return None
+
+
 class JupyterHubUserInfo:
     """Information about the current user when running on JupyterHub."""
 
@@ -52,10 +77,12 @@ class JupyterHubUserInfo:
 
 def get_user_info_for_current_platform() -> UserInfo:
     """Return the correct implementation of UserInfo for the current platform."""
-    if JupyterHubUserInfo().short_email:
+    if config.get_dapla_region() == DaplaRegion.DAPLA_LAB:
+        return DaplaLabUserInfo()
+    elif config.get_dapla_service() == DaplaService.JUPYTERLAB:  # noqa: RET505
         return JupyterHubUserInfo()
-
-    logger.warning(
-        "Was not possible to retrieve user information! Some fields may not be set.",
-    )
-    return UnknownUserInfo()
+    else:
+        logger.warning(
+            "Was not possible to retrieve user information! Some fields may not be set.",
+        )
+        return UnknownUserInfo()
