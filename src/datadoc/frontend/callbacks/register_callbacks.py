@@ -8,6 +8,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
+import ssb_dash_components as ssb  # type: ignore[import-untyped]  # noqa: TCH002
 from dash import ALL
 from dash import Dash
 from dash import Input
@@ -26,6 +27,7 @@ from datadoc.frontend.callbacks.variables import (
 )
 from datadoc.frontend.callbacks.variables import update_variable_table_language
 from datadoc.frontend.components.dataset_tab import DATASET_METADATA_INPUT
+from datadoc.frontend.components.resources_test_new_variables import build_ssb_accordion
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
 
 if TYPE_CHECKING:
@@ -178,3 +180,13 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
     ready for production.
     """
     logger.info("Registering callbacks for the new variable tab for %s", app.title)
+
+    @app.callback(
+        Output("accordion-wrapper", "children"),
+        Input("open-button", "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def callback_new_variables_tab(n_clicks: int) -> ssb.Accordion | None:
+        if n_clicks and n_clicks > 0:
+            return build_ssb_accordion("Test")
+        return None

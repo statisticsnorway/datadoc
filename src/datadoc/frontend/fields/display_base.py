@@ -104,6 +104,20 @@ class DisplayVariablesMetadata(DisplayMetadata):
     presentation: str | None = "input"
 
 
+# New variables
+@dataclass
+class DisplayNewVariablesMetadata(DisplayMetadata):
+    """Controls for how a given metadata field should be displayed.
+
+    Specific to variable fields.
+    """
+
+    extra_kwargs: dict[str, Any] = field(default_factory=input_kwargs_factory)
+    component: type[Component] = dcc.Input
+    value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
+    presentation: str | None = "input"
+
+
 @dataclass
 class DisplayDatasetMetadata(DisplayMetadata):
     """Controls for how a given metadata field should be displayed.
