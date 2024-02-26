@@ -8,7 +8,6 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-import ssb_dash_components as ssb  # type: ignore[import-untyped]  # noqa: TCH002
 from dash import ALL
 from dash import Dash
 from dash import Input
@@ -29,6 +28,7 @@ from datadoc.frontend.callbacks.variables import update_variable_table_language
 from datadoc.frontend.components.dataset_tab import DATASET_METADATA_INPUT
 from datadoc.frontend.components.resources_test_new_variables import build_ssb_accordion
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
+from datadoc.utils import get_display_values
 
 if TYPE_CHECKING:
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
@@ -183,10 +183,22 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
 
     @app.callback(
         Output("accordion-wrapper", "children"),
+        Input("language-dropdown", "value"),
         Input("open-button", "n_clicks"),
         prevent_initial_call=True,
     )
-    def callback_new_variables_tab(n_clicks: int) -> ssb.Accordion | None:
+    def callback_new_variables_list(value: str, n_clicks: int) -> list:  # noqa: ARG001
+        response = {}
+        respons_list: list = []
+        index = 0
         if n_clicks and n_clicks > 0:
-            return build_ssb_accordion("Test")
-        return None
+            for v in state.metadata.meta.variables:
+                index += 1
+                response = get_display_values(v, state.current_metadata_language)
+                respons_list.append(
+                    build_ssb_accordion(
+                        response["short_name"],
+                        {"type": "variabels-accordion", "id": index},
+                    ),
+                )
+        return respons_list

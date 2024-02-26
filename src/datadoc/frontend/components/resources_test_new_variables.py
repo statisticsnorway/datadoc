@@ -28,6 +28,7 @@ def build_input_field_section(
                     ssb.Input(
                         label=i.display_name,
                         disabled=not i.editable,
+                        className="variabels-input",
                         id={"type": DATASET_METADATA_INPUT, "id": i.identifier},
                         # **i.extra_kwargs,
                     )
@@ -56,11 +57,12 @@ def build_edit_section(
 
 def build_ssb_accordion(
     header: str,
+    key: dict,
 ) -> ssb.Accordion:
     """Build."""
     return ssb.Accordion(
         header=header,
-        id="variable-accordion",
+        id=key,  # must have unique key/id
         children=[
             build_edit_section(OBLIGATORY_VARIABLES_METADATA, "Obligatorisk"),
             build_edit_section(OPTIONAL_VARIABLES_METADATA, "Anbefalt"),
