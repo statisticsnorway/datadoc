@@ -40,6 +40,10 @@ TEST_UNIT_TYPES_DIR = "unit_types"
                 "Virksomhet",
             ],
         ),
+        (
+            TEST_RESOURCES_DIRECTORY / TEST_UNIT_TYPES_DIR / "empty.csv",
+            [],
+        ),
     ],
 )
 @pytest.mark.usefixtures("_mock_fetch_dataframe")
