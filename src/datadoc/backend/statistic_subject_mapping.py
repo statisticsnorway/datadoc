@@ -151,7 +151,7 @@ class StatisticSubjectMapping(GetExternalSource):
         Returns true if it is loaded and parsed.
         """
         if self.check_if_external_data_is_loaded():
-            self._statistic_subject_structure_xml = self.get_external_data()
+            self._statistic_subject_structure_xml = self.retrieve_external_data()
 
             if self._statistic_subject_structure_xml is not None:
                 self._primary_subjects = self._parse_statistic_subject_structure_xml(

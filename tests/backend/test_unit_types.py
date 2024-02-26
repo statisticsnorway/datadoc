@@ -51,4 +51,11 @@ def test_read_dataframe(
     unit_types_fake_structure: UnitTypes,
     expected: list[str],
 ):
+    unit_types_fake_structure.wait_for_external_result()
     assert unit_types_fake_structure.classifications == expected
+
+
+def test_no_source_url():
+    unit_types = UnitTypes(None)
+    unit_types.wait_for_external_result()
+    assert unit_types.classifications == []
