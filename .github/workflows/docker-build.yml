@@ -1,16 +1,12 @@
 name: Docker build
 
 on:
-  release:
-    types: [published]
   push:
     branches:
-      - "**"
-    paths:
-      - 'src/datadoc/**'
-      - 'poetry.lock'
-      - 'Dockerfile'
-      - '.github/workflows/docker-build.yml'
+      - "master"
+  pull_request:
+    branches:
+      - "master"
 
 env:
   REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-metadata-docker/datadoc
@@ -24,9 +20,10 @@ jobs:
       id-token: "write"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - id: "auth"
-        name: "Authenticate to Google Cloud"
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: "Authenticate to Google Cloud"
+        id: "auth"
         uses: "google-github-actions/auth@v2.1.0"
         with:
           workload_identity_provider: "projects/848539402404/locations/global/workloadIdentityPools/gh-actions/providers/gh-actions"
@@ -58,10 +55,24 @@ jobs:
             type=semver,pattern=v{{major}}
             type=sha
             type=raw,value=${{ env.TAG }}, enable=true
+      - name: Set up build cache
+        uses: actions/cache@v3
+        with:
+          path: build-cache
+          key: ${{ runner.os }}-build-cache-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Inject build cache into docker
+        # v1 was composed of two actions: "inject" and "extract".
+        # v2 is unified to a single action.
+        uses: reproducible-containers/buildkit-cache-dance@v2.1.2
+        with:
+          cache-source: build-cache
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
           context: .
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64
           file: Dockerfile
           push: true
