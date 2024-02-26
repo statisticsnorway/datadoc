@@ -238,13 +238,13 @@ def _mock_fetch_statistical_structure(
     mocker,
     subject_xml_file_path: pathlib.Path,
 ) -> None:
-    def fake_statistical_structure(subject_xml_file_path, _) -> ResultSet:
+    def fake_statistical_structure() -> ResultSet:
         with subject_xml_file_path.open() as f:
             return BeautifulSoup(f.read(), features="xml").find_all("hovedemne")
 
     mocker.patch(
         "datadoc.backend.statistic_subject_mapping.StatisticSubjectMapping._fetch_data_from_external_source",
-        functools.partial(fake_statistical_structure, subject_xml_file_path),
+        functools.partial(fake_statistical_structure),
     )
 
 
