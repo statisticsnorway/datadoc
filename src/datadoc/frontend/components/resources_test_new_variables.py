@@ -27,7 +27,7 @@ def build_input_field_section(
                 i.component(
                     label=i.display_name,
                     disabled=not i.editable,
-                    className="variabels-input",
+                    className="variables-input",
                     id={
                         "type": NEW_DATASET_METADATA_INPUT,
                         "id": i.identifier,
@@ -37,7 +37,7 @@ def build_input_field_section(
                 )
                 if i.component == ssb.Input
                 else i.component(
-                    className="variabels-input",
+                    className="variables-input",
                     id={
                         "type": NEW_DATASET_METADATA_INPUT,
                         "id": i.identifier,

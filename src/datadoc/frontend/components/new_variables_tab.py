@@ -21,11 +21,11 @@ def build_new_variables_tab() -> dbc.Tab:
                         ssb.Title(
                             "Variabel detaljer",
                             size=2,
-                            className="variabels-title",
+                            className="variables-title",
                         ),
                         ssb.Paragraph(
                             info_section,
-                            id="variabels-information",
+                            id="variables-information",
                         ),
                         ssb.Input(
                             label="Søk i variabler",
@@ -35,7 +35,7 @@ def build_new_variables_tab() -> dbc.Tab:
                             value="",
                         ),
                     ],
-                    className="variabels-header",
+                    className="variables-header",
                 ),
                 html.Main(
                     id="accordion-wrapper",

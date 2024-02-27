@@ -19,7 +19,7 @@
 }
 
 
-.variabels-header{
+.variables-header{
     width: 100%;
     display:flex;
     flex-wrap: wrap;
@@ -27,7 +27,7 @@
     align-items: center;
 }
 
-.ssb-title.variabels-title{
+.ssb-title.variables-title{
     margin-top: 1rem;
     width: 100%;
 }
@@ -64,17 +64,17 @@
 
 }
 
-.ssb-input.variabels-input{
+.ssb-input.variables-input{
     max-width: 800px;
     width: 100%;
 }
 
-.ssb-dropdown.variabels-dropdown{
+.ssb-dropdown.variables-dropdown{
     max-width: 800px;
     width: 100%;
 }
 
-.ssb-dropdown.variabels-input{
+.ssb-dropdown.variables-input{
     max-width: 800px;
     width: 100%;
 }

@@ -219,12 +219,12 @@ DISPLAYED_VARIABLES_METADATA: list[DisplayNewVariablesMetadata] = (
     OBLIGATORY_VARIABLES_METADATA + OPTIONAL_VARIABLES_METADATA
 )
 
-DISPLAYED_DROPDOWN_VARIABELS_METADATA: list[DisplayNewVariablesMetadataDropdown] = [
+DISPLAYED_DROPDOWN_VARIABLES_METADATA: list[DisplayNewVariablesMetadataDropdown] = [
     m
     for m in DISPLAYED_VARIABLES_METADATA
     if isinstance(m, DisplayNewVariablesMetadataDropdown)
 ]
 
-OBLIGATORY_VARIABELS_METADATA_IDENTIFIERS: list[str] = [
+OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS: list[str] = [
     m.identifier for m in DISPLAY_VARIABLES.values() if m.obligatory and m.editable
 ]

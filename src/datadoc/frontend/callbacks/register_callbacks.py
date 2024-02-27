@@ -198,7 +198,7 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
                 respons_list.append(
                     build_ssb_accordion(
                         response["short_name"],
-                        {"type": "variabels-accordion", "id": index},
+                        {"type": "variables-accordion", "id": response["short_name"]},
                     ),
                 )
         return respons_list
