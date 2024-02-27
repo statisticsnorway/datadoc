@@ -14,18 +14,25 @@ from dash import Input
 from dash import Output
 from dash import State
 from dash import ctx
+from dash.exceptions import PreventUpdate
 
 from datadoc import state
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import change_language_dataset_metadata
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
+from datadoc.frontend.callbacks.variables import (
+    accept_variable_datatable_metadata_input,
+)
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import (
     update_variable_table_dropdown_options_for_language,
 )
 from datadoc.frontend.callbacks.variables import update_variable_table_language
 from datadoc.frontend.components.dataset_tab import DATASET_METADATA_INPUT
+from datadoc.frontend.components.resources_test_new_variables import (
+    VARIABLES_METADATA_INPUT,
+)
 from datadoc.frontend.components.resources_test_new_variables import build_ssb_accordion
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
 from datadoc.utils import get_display_values
@@ -137,7 +144,11 @@ def register_callbacks(app: Dash) -> None:
         if ctx.triggered_id == "language-dropdown":
             return update_variable_table_language(SupportedLanguages(language))
 
-        return accept_variable_metadata_input(data, active_cell, data_previous)
+        return accept_variable_datatable_metadata_input(
+            data,
+            active_cell,
+            data_previous,
+        )
 
     @app.callback(
         Output("variables-table", "dropdown"),
@@ -205,3 +216,23 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
                     ),
                 )
         return respons_list
+
+    @app.callback(
+        Output("variables-information", "children"),  # do-nothing
+        Input(
+            {"type": VARIABLES_METADATA_INPUT, "variable_short_name": ALL, "id": ALL},
+            "value",
+        ),
+        prevent_initial_call=True,
+    )
+    def callback_accept_variable_metadata_input(
+        value: MetadataInputTypes,  # noqa: ARG001 argument required by Dash
+    ) -> None:
+        """Save updated variable metadata values."""
+        # Get the ID of the input that changed. This MUST match the attribute name defined in DataDocDataSet
+        accept_variable_metadata_input(
+            ctx.triggered[0]["value"],
+            ctx.triggered_id["variable_short_name"],
+            ctx.triggered_id["id"],
+        )
+        raise PreventUpdate
