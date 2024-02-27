@@ -12,6 +12,7 @@ from datetime import timezone
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import pandas as pd
 import pytest
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
@@ -20,10 +21,12 @@ from datadoc_model import model
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
+from datadoc.backend.unit_types import UnitTypes
 from datadoc.backend.user_info import TestUserInfo
 from tests.backend.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
 )
+from tests.backend.test_unit_types import TEST_UNIT_TYPES_DIR
 
 from .utils import TEST_EXISTING_METADATA_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_FILE_NAME
@@ -238,13 +241,13 @@ def _mock_fetch_statistical_structure(
     mocker,
     subject_xml_file_path: pathlib.Path,
 ) -> None:
-    def fake_statistical_structure(subject_xml_file_path, _) -> ResultSet:
+    def fake_statistical_structure() -> ResultSet:
         with subject_xml_file_path.open() as f:
             return BeautifulSoup(f.read(), features="xml").find_all("hovedemne")
 
     mocker.patch(
         "datadoc.backend.statistic_subject_mapping.StatisticSubjectMapping._fetch_data_from_external_source",
-        functools.partial(fake_statistical_structure, subject_xml_file_path),
+        functools.partial(fake_statistical_structure),
     )
 
 
@@ -258,3 +261,31 @@ def subject_mapping_http_exception(
         exc=exception_to_raise,
     )
     return StatisticSubjectMapping("http://test.some.url.com")
+
+
+@pytest.fixture()
+def unit_types_csv_filepath() -> pathlib.Path:
+    return (
+        TEST_RESOURCES_DIRECTORY / TEST_UNIT_TYPES_DIR / "extract_secondary_subject.xml"
+    )
+
+
+@pytest.fixture()
+def unit_types_fake_structure(
+    _mock_fetch_dataframe,
+) -> UnitTypes:
+    return UnitTypes(100)
+
+
+@pytest.fixture()
+def _mock_fetch_dataframe(
+    mocker,
+    unit_types_csv_filepath: pathlib.Path,
+) -> None:
+    def fake_unit_types() -> pd.DataFrame:
+        return pd.read_csv(unit_types_csv_filepath)
+
+    mocker.patch(
+        "datadoc.backend.unit_types.UnitTypes._fetch_data_from_external_source",
+        functools.partial(fake_unit_types),
+    )
