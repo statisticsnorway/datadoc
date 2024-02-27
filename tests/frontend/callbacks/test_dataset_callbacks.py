@@ -84,6 +84,7 @@ later = str(datetime.date(2024, 1, 1))
         (earlier, earlier, False),
         (earlier, later, False),
         (later, earlier, True),
+        (None, "12th March 1953", True),
     ],
     ids=[
         "no-input",
@@ -92,6 +93,7 @@ later = str(datetime.date(2024, 1, 1))
         "identical-dates",
         "correct-order",
         "incorrect-order",
+        "invalid-date-format",
     ],
 )
 def test_accept_dataset_metadata_input_data_ordering(
@@ -111,7 +113,7 @@ def test_accept_dataset_metadata_input_data_ordering(
     )
     assert output[0] is expect_error
     if expect_error:
-        assert "Validation error for Dataset" in output[1]
+        assert "Validation error" in output[1]
     else:
         assert output[1] == ""
 

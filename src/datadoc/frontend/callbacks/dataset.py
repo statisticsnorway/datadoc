@@ -25,7 +25,8 @@ from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
 
 logger = logging.getLogger(__name__)
 
-DATE_VALIDATION_MESSAGE = f"Validation error for Dataset: {DatasetIdentifiers.CONTAINS_DATA_FROM.value} must be the same or earlier date than {DatasetIdentifiers.CONTAINS_DATA_UNTIL.value}"
+VALIDATION_ERROR = "Validation error: "
+DATE_VALIDATION_MESSAGE = f"{VALIDATION_ERROR}{DatasetIdentifiers.CONTAINS_DATA_FROM.value} must be the same or earlier date than {DatasetIdentifiers.CONTAINS_DATA_UNTIL.value}"
 
 
 def open_file(file_path: str | None = None) -> DataDocMetadata:
@@ -82,27 +83,29 @@ def _validate_dates(
     value: MetadataInputTypes,
 ) -> MetadataInputTypes:
     """Validate that CONTAINS_DATA_FROM is earlier or identical to CONTAINS_DATA_UNTIL."""
+    if not value:
+        return value
+    try:
+        parsed_value = arrow.get(str(value), "YYYY-MM-DD")
+    except arrow.parser.ParserMatchError as e:
+        raise ValueError(VALIDATION_ERROR + str(e)) from e
     if (
         metadata_identifier == DatasetIdentifiers.CONTAINS_DATA_FROM.value
-        and value
         and state.metadata.meta.dataset.contains_data_until
         and state.metadata.meta.dataset.contains_data_until != "None"
     ):
-        if arrow.get(str(value)) > arrow.get(
+        if parsed_value > arrow.get(
             state.metadata.meta.dataset.contains_data_until,
         ):
             raise ValueError(DATE_VALIDATION_MESSAGE)
     elif (
         metadata_identifier == DatasetIdentifiers.CONTAINS_DATA_UNTIL.value
-        and value
         and state.metadata.meta.dataset.contains_data_from
         and state.metadata.meta.dataset.contains_data_from != "None"
-    ) and arrow.get(state.metadata.meta.dataset.contains_data_from) > arrow.get(
-        str(value),
-    ):
+    ) and arrow.get(state.metadata.meta.dataset.contains_data_from) > parsed_value:
         raise ValueError(DATE_VALIDATION_MESSAGE)
 
-    return value
+    return parsed_value.format("YYYY-MM-DD")
 
 
 def process_special_cases(
@@ -164,7 +167,7 @@ def accept_dataset_metadata_input(
         )
     except (ValidationError, ValueError) as e:
         show_error = True
-        error_explanation = f"`{e}`"
+        error_explanation = f"{e}"
         logger.exception("Error while reading in value for %s", metadata_identifier)
     else:
         show_error = False
