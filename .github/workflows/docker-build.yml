@@ -1,6 +1,7 @@
 name: Docker build
 
 on:
+  release:
   push:
     branches:
       - "master"
