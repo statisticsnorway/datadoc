@@ -17,7 +17,6 @@ info_section = (
 NEW_DATASET_METADATA_INPUT = "new-dataset-metadata-input"
 
 
-# set Input type ...
 def build_input_field_section(
     metadata_inputs: list[DisplayNewVariablesMetadata],
 ) -> dbc.Form:
@@ -73,7 +72,7 @@ def build_ssb_accordion(
     """Build Accordion for one variabel."""
     return ssb.Accordion(
         header=header,
-        id=key,  # must have unique key/id
+        id=key,
         children=[
             build_edit_section(
                 OBLIGATORY_VARIABLES_METADATA,
