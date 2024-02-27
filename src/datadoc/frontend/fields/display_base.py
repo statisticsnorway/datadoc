@@ -9,6 +9,7 @@ from dataclasses import field
 from typing import TYPE_CHECKING
 from typing import Any
 
+import ssb_dash_components as ssb  # type: ignore[import-untyped]
 from dash import dcc
 
 from datadoc import state
@@ -113,7 +114,7 @@ class DisplayNewVariablesMetadata(DisplayMetadata):
     """
 
     extra_kwargs: dict[str, Any] = field(default_factory=input_kwargs_factory)
-    component: type[Component] = dcc.Input
+    component: type[Component] = ssb.Input
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
     presentation: str | None = "input"
 
@@ -139,3 +140,15 @@ class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
     # fmt: on
     extra_kwargs: dict[str, Any] = field(default_factory=dropdown_kwargs_factory)
     component: type[Component] = dcc.Dropdown
+
+
+# new variables
+@dataclass
+class DisplayNewVariablesMetadataDropdown(DisplayNewVariablesMetadata):
+    """Include the possible options which a user may choose from."""
+
+    # fmt: off
+    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
+    # fmt: on
+    extra_kwargs: dict[str, Any] = field(default_factory=dropdown_kwargs_factory)
+    component: type[Component] = ssb.Dropdown

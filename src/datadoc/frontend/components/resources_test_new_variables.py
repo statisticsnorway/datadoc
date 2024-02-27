@@ -20,34 +20,34 @@ NEW_DATASET_METADATA_INPUT = "new-dataset-metadata-input"
 # set Input type ...
 def build_input_field_section(
     metadata_inputs: list[DisplayNewVariablesMetadata],
-    input_type: str,
-) -> html.Section:
+) -> dbc.Form:
     """Create input fields."""
-    return html.Section(
+    return dbc.Form(
         [
-            html.Section(
-                [
-                    dbc.Form(
-                        [
-                            ssb.Input(
-                                label=i.display_name,
-                                disabled=not i.editable,
-                                className="variabels-input",
-                                id={
-                                    "type": NEW_DATASET_METADATA_INPUT,
-                                    "id": i.identifier,
-                                },
-                                value="",
-                                type=input_type,
-                            ),
-                        ],
-                    )
-                    for i in metadata_inputs
-                ],
-                className="variables-input-group",
-                id=NEW_DATASET_METADATA_INPUT,
-            ),
+            (
+                i.component(
+                    label=i.display_name,
+                    disabled=not i.editable,
+                    className="variabels-input",
+                    id={
+                        "type": NEW_DATASET_METADATA_INPUT,
+                        "id": i.identifier,
+                    },
+                    value="",
+                    type=i.presentation,
+                )
+                if i.component == ssb.Input
+                else i.component(
+                    className="variabels-input",
+                    id={
+                        "type": NEW_DATASET_METADATA_INPUT,
+                        "id": i.identifier,
+                    },
+                )
+            )
+            for i in metadata_inputs
         ],
+        id=NEW_DATASET_METADATA_INPUT,
         className="variables-input-group",
     )
 
@@ -55,13 +55,12 @@ def build_input_field_section(
 def build_edit_section(
     metadata_inputs: list,
     title: str,
-    input_type: str,
 ) -> html.Section:
     """Create input section."""
     return html.Section(
         children=[
             ssb.Title(title, size=3, className="input-section-title"),
-            build_input_field_section(metadata_inputs, input_type),
+            build_input_field_section(metadata_inputs),
         ],
         className="input-section",
     )
@@ -79,8 +78,7 @@ def build_ssb_accordion(
             build_edit_section(
                 OBLIGATORY_VARIABLES_METADATA,
                 "Obligatorisk",
-                "text",
             ),
-            build_edit_section(OPTIONAL_VARIABLES_METADATA, "Anbefalt", "text"),
+            build_edit_section(OPTIONAL_VARIABLES_METADATA, "Anbefalt"),
         ],
     )

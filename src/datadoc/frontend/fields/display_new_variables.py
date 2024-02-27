@@ -6,10 +6,12 @@ import logging
 from enum import Enum
 from typing import TYPE_CHECKING
 
+import ssb_dash_components as ssb  # type: ignore[import-untyped]
+
 from datadoc import state
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
-from datadoc.frontend.fields.display_base import DisplayDatasetMetadataDropdown
 from datadoc.frontend.fields.display_base import DisplayNewVariablesMetadata
+from datadoc.frontend.fields.display_base import DisplayNewVariablesMetadataDropdown
 from datadoc.frontend.fields.display_base import get_multi_language_metadata
 
 if TYPE_CHECKING:
@@ -84,6 +86,7 @@ DISPLAY_VARIABLES: dict[VariableIdentifiers, DisplayNewVariablesMetadata] = {
         obligatory=True,
         multiple_language_support=True,
         presentation="text",
+        component=ssb.Input,
     ),
     VariableIdentifiers.DATA_TYPE: DisplayNewVariablesMetadata(
         identifier=VariableIdentifiers.DATA_TYPE.value,
@@ -91,6 +94,7 @@ DISPLAY_VARIABLES: dict[VariableIdentifiers, DisplayNewVariablesMetadata] = {
         description="Datatype",
         obligatory=True,
         presentation="dropdown",
+        component=ssb.Dropdown,
     ),
     VariableIdentifiers.VARIABLE_ROLE: DisplayNewVariablesMetadata(
         identifier=VariableIdentifiers.VARIABLE_ROLE.value,
@@ -98,6 +102,7 @@ DISPLAY_VARIABLES: dict[VariableIdentifiers, DisplayNewVariablesMetadata] = {
         description="Variabelens rolle i datasett",
         obligatory=True,
         presentation="dropdown",
+        component=ssb.Dropdown,
     ),
     VariableIdentifiers.DEFINITION_URI: DisplayNewVariablesMetadata(
         identifier=VariableIdentifiers.DEFINITION_URI.value,
@@ -105,6 +110,8 @@ DISPLAY_VARIABLES: dict[VariableIdentifiers, DisplayNewVariablesMetadata] = {
         description="En lenke (URI) til variabelens definisjon i SSB (Vardok/VarDef)",
         url=True,
         obligatory=True,
+        presentation="url",
+        component=ssb.Input,
     ),
     VariableIdentifiers.DIRECT_PERSON_IDENTIFYING: DisplayNewVariablesMetadata(
         identifier=VariableIdentifiers.DIRECT_PERSON_IDENTIFYING.value,
@@ -112,6 +119,7 @@ DISPLAY_VARIABLES: dict[VariableIdentifiers, DisplayNewVariablesMetadata] = {
         description="Direkte personidentifiserende informasjon (DPI)",
         obligatory=True,
         presentation="dropdown",
+        component=ssb.Dropdown,
     ),
     VariableIdentifiers.DATA_SOURCE: DisplayNewVariablesMetadata(
         identifier=VariableIdentifiers.DATA_SOURCE.value,
@@ -131,6 +139,7 @@ DISPLAY_VARIABLES: dict[VariableIdentifiers, DisplayNewVariablesMetadata] = {
         description="Ytterligere presiseringer av variabeldefinisjon",
         multiple_language_support=True,
         presentation="textArea",
+        component=ssb.Input,
     ),
     VariableIdentifiers.MEASUREMENT_UNIT: DisplayNewVariablesMetadata(
         identifier=VariableIdentifiers.MEASUREMENT_UNIT.value,
@@ -154,6 +163,7 @@ DISPLAY_VARIABLES: dict[VariableIdentifiers, DisplayNewVariablesMetadata] = {
         display_name="Spesialverdienes URI",
         description="En lenke (URI) til en oversikt over 'spesialverdier' som inngår i variabelen.",
         url=True,
+        presentation="url",
     ),
     VariableIdentifiers.INVALID_VALUE_DESCRIPTION: DisplayNewVariablesMetadata(
         identifier=VariableIdentifiers.INVALID_VALUE_DESCRIPTION.value,
@@ -207,10 +217,10 @@ DISPLAYED_VARIABLES_METADATA: list[DisplayNewVariablesMetadata] = (
     OBLIGATORY_VARIABLES_METADATA + OPTIONAL_VARIABLES_METADATA
 )
 
-DISPLAYED_DROPDOWN_VARIABELS_METADATA: list[DisplayDatasetMetadataDropdown] = [
+DISPLAYED_DROPDOWN_VARIABELS_METADATA: list[DisplayNewVariablesMetadataDropdown] = [
     m
     for m in DISPLAYED_VARIABLES_METADATA
-    if isinstance(m, DisplayDatasetMetadataDropdown)
+    if isinstance(m, DisplayNewVariablesMetadataDropdown)
 ]
 
 OBLIGATORY_VARIABELS_METADATA_IDENTIFIERS: list[str] = [
