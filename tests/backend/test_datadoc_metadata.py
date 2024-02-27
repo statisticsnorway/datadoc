@@ -385,7 +385,7 @@ def test_extract_subject_field_value_from_statistic_structure_xml(
     copy_dataset_to_path: Path,
     expected_subject_code: str,
 ):
-    subject_mapping_fake_statistical_structure.wait_for_primary_subject()
+    subject_mapping_fake_statistical_structure.wait_for_external_result()
     metadata = DataDocMetadata(
         subject_mapping_fake_statistical_structure,
         str(copy_dataset_to_path),

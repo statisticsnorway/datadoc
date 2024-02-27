@@ -1,3 +1,4 @@
+import datetime
 import random
 from typing import cast
 from unittest.mock import Mock
@@ -68,6 +69,53 @@ def test_accept_dataset_metadata_input_incorrect_data_type(metadata: DataDocMeta
     output = accept_dataset_metadata_input(3.1415, "dataset_state")
     assert output[0] is True
     assert "validation error for Dataset" in output[1]
+
+
+earlier = str(datetime.date(2020, 1, 1))
+later = str(datetime.date(2024, 1, 1))
+
+
+@pytest.mark.parametrize(
+    ("start_date", "end_date", "expect_error"),
+    [
+        (None, None, False),
+        (later, None, False),
+        (None, earlier, False),
+        (earlier, earlier, False),
+        (earlier, later, False),
+        (later, earlier, True),
+        (None, "12th March 1953", True),
+    ],
+    ids=[
+        "no-input",
+        "start-date-only",
+        "end-date-only",
+        "identical-dates",
+        "correct-order",
+        "incorrect-order",
+        "invalid-date-format",
+    ],
+)
+def test_accept_dataset_metadata_input_data_ordering(
+    metadata: DataDocMetadata,
+    start_date: str,
+    end_date: str,
+    expect_error: bool,  # noqa: FBT001
+):
+    state.metadata = metadata
+    accept_dataset_metadata_input(
+        start_date,
+        DatasetIdentifiers.CONTAINS_DATA_FROM.value,
+    )
+    output = accept_dataset_metadata_input(
+        end_date,
+        DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
+    )
+    assert output[0] is expect_error
+    if expect_error:
+        assert "Validation error" in output[1]
+    else:
+        assert output[1] == ""
 
 
 def test_update_dataset_metadata_language_strings(

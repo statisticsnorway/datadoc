@@ -10,7 +10,7 @@ from tests.utils import TEST_RESOURCES_DIRECTORY
 
 def test_no_source_url():
     subject_mapping = StatisticSubjectMapping(None)
-    subject_mapping.wait_for_primary_subject()
+    subject_mapping.wait_for_external_result()
     assert subject_mapping.primary_subjects == []
 
 
@@ -117,7 +117,7 @@ def test_read_in_statistical_structure(
     subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
     expected: list[PrimarySubject],
 ) -> None:
-    subject_mapping_fake_statistical_structure.wait_for_primary_subject()
+    subject_mapping_fake_statistical_structure.wait_for_external_result()
     assert subject_mapping_fake_statistical_structure.primary_subjects == expected
 
 
@@ -138,7 +138,7 @@ def test_get_secondary_subject(
     statistic_short_name: str,
     expected_secondary_subject: str,
 ) -> None:
-    subject_mapping_fake_statistical_structure.wait_for_primary_subject()
+    subject_mapping_fake_statistical_structure.wait_for_external_result()
     assert (
         subject_mapping_fake_statistical_structure.get_secondary_subject(
             statistic_short_name,
@@ -159,5 +159,5 @@ def test_get_secondary_subject(
 def test_subject_mapping_http_exception(
     subject_mapping_http_exception: StatisticSubjectMapping,
 ) -> None:
-    subject_mapping_http_exception.wait_for_primary_subject()
+    subject_mapping_http_exception.wait_for_external_result()
     assert subject_mapping_http_exception.primary_subjects == []
