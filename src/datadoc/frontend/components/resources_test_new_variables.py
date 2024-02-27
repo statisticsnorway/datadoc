@@ -14,7 +14,7 @@ info_section = (
     "Informasjon om hvordan jobbe i Datadoc, antall variabler i datasettet: osv.."
 )
 
-NEW_DATASET_METADATA_INPUT = "new-dataset-metadata-input"
+VARIABLES_METADATA_INPUT = "new-dataset-metadata-input"
 
 
 def build_input_field_section(
@@ -29,7 +29,7 @@ def build_input_field_section(
                     disabled=not i.editable,
                     className="variables-input",
                     id={
-                        "type": NEW_DATASET_METADATA_INPUT,
+                        "type": VARIABLES_METADATA_INPUT,
                         "id": i.identifier,
                     },
                     value="",
@@ -39,14 +39,14 @@ def build_input_field_section(
                 else i.component(
                     className="variables-input",
                     id={
-                        "type": NEW_DATASET_METADATA_INPUT,
+                        "type": VARIABLES_METADATA_INPUT,
                         "id": i.identifier,
                     },
                 )
             )
             for i in metadata_inputs
         ],
-        id=NEW_DATASET_METADATA_INPUT,
+        id=VARIABLES_METADATA_INPUT,
         className="variables-input-group",
     )
 
