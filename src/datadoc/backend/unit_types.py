@@ -1,16 +1,51 @@
 from __future__ import annotations
 
 import logging
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import pandas as pd
+
+    from datadoc.enums import SupportedLanguages
 
 from klass import KlassClassification  # type: ignore [attr-defined]
 
 logger = logging.getLogger(__name__)
 
 
+@dataclass
+class UnitType:
+    """Data structure for the a unit type."""
+
+    titles: dict[str, str]
+    unit_code: str
+
+    def get_title(self, language: SupportedLanguages) -> str:
+        """Get the title in the given language."""
+        try:
+            return self.titles[
+                (
+                    # Adjust to language codes in the StatisticSubjectMapping structure.
+                    "no"
+                    if language
+                    in [
+                        SupportedLanguages.NORSK_BOKMÅL,
+                        SupportedLanguages.NORSK_NYNORSK,
+                    ]
+                    else "en"
+                )
+            ]
+        except KeyError:
+            logger.exception(
+                "Could not find title for subject %s  and language: %s",
+                self,
+                language.name,
+            )
+            return ""
+
+
+@dataclass
 class UnitTypes:
     """Class for retrieving classifications from Klass."""
 
@@ -19,7 +54,7 @@ class UnitTypes:
 
         Initializes the classifications list and starts fetching the classifications.
         """
-        self._classifications: list[str] = []
+        self._classifications: list[UnitType] = []
 
         self.classifications_dataframe = self._fetch_data_from_external_source(
             classification_id,
