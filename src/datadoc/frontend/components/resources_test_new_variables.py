@@ -5,6 +5,7 @@ from __future__ import annotations
 import dash_bootstrap_components as dbc
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
 from dash import html
+from datadoc_model.model import DataType
 
 from datadoc.frontend.fields.display_new_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.frontend.fields.display_new_variables import OPTIONAL_VARIABLES_METADATA
@@ -15,6 +16,12 @@ info_section = (
 )
 
 VARIABLES_METADATA_INPUT = "variables-metadata-input"
+
+dropdown = []
+index = 0
+
+for index, val in enumerate(DataType):
+    dropdown.append({"id": str(index), "title": val})
 
 
 def build_input_field_section(
@@ -46,6 +53,7 @@ def build_input_field_section(
                         "variable_short_name": variable_short_name,
                         "id": i.identifier,
                     },
+                    items=dropdown,
                 )
             )
             for i in metadata_inputs
