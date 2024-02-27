@@ -14,7 +14,7 @@ info_section = (
     "Informasjon om hvordan jobbe i Datadoc, antall variabler i datasettet: osv.."
 )
 
-VARIABLES_METADATA_INPUT = "new-dataset-metadata-input"
+VARIABLES_METADATA_INPUT = "variables-metadata-input"
 
 
 def build_input_field_section(
