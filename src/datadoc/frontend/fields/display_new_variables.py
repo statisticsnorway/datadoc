@@ -138,8 +138,6 @@ DISPLAY_VARIABLES: dict[VariableIdentifiers, DisplayNewVariablesMetadata] = {
         display_name="Kommentar",
         description="Ytterligere presiseringer av variabeldefinisjon",
         multiple_language_support=True,
-        presentation="textArea",
-        component=ssb.Input,
     ),
     VariableIdentifiers.MEASUREMENT_UNIT: DisplayNewVariablesMetadata(
         identifier=VariableIdentifiers.MEASUREMENT_UNIT.value,
@@ -182,11 +180,15 @@ DISPLAY_VARIABLES: dict[VariableIdentifiers, DisplayNewVariablesMetadata] = {
         identifier=VariableIdentifiers.CONTAINS_DATA_FROM.value,
         display_name="Inneholder data f.o.m.",
         description="Variabelforekomsten i datasettet inneholder data fra og med denne dato.",
+        presentation="date",
+        component=ssb.Input,
     ),
     VariableIdentifiers.CONTAINS_DATA_UNTIL: DisplayNewVariablesMetadata(
         identifier=VariableIdentifiers.CONTAINS_DATA_UNTIL.value,
         display_name="Inneholder data t.o.m.",
         description="Variabelforekomsten i datasettet inneholder data til og med denne dato.",
+        presentation="date",
+        component=ssb.Input,
     ),
 }
 

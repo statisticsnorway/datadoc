@@ -32,6 +32,7 @@ def build_new_variables_tab() -> dbc.Tab:
                             searchField=True,
                             id="search-variables",
                             n_submit=0,
+                            value="",
                         ),
                     ],
                     className="variabels-header",
