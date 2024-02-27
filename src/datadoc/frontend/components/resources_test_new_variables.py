@@ -69,7 +69,7 @@ def build_ssb_accordion(
     header: str,
     key: dict,
 ) -> ssb.Accordion:
-    """Build Accordion for one variabel."""
+    """Build Accordion for one variable."""
     return ssb.Accordion(
         header=header,
         id=key,
@@ -80,4 +80,5 @@ def build_ssb_accordion(
             ),
             build_edit_section(OPTIONAL_VARIABLES_METADATA, "Anbefalt"),
         ],
+        className="variable",
     )
