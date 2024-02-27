@@ -43,6 +43,7 @@ def build_input_field_section(
                     className="variables-input",
                     id={
                         "type": VARIABLES_METADATA_INPUT,
+                        "variable_short_name": variable_short_name,
                         "id": i.identifier,
                     },
                 )
