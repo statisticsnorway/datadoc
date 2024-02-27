@@ -19,6 +19,7 @@ VARIABLES_METADATA_INPUT = "variables-metadata-input"
 
 def build_input_field_section(
     metadata_inputs: list[DisplayNewVariablesMetadata],
+    variable_short_name: str,
 ) -> dbc.Form:
     """Create input fields."""
     return dbc.Form(
@@ -30,6 +31,7 @@ def build_input_field_section(
                     className="variables-input",
                     id={
                         "type": VARIABLES_METADATA_INPUT,
+                        "variable_short_name": variable_short_name,
                         "id": i.identifier,
                     },
                     value="",
@@ -54,12 +56,13 @@ def build_input_field_section(
 def build_edit_section(
     metadata_inputs: list,
     title: str,
+    variable_short_name: str,
 ) -> html.Section:
     """Create input section."""
     return html.Section(
         children=[
             ssb.Title(title, size=3, className="input-section-title"),
-            build_input_field_section(metadata_inputs),
+            build_input_field_section(metadata_inputs, variable_short_name),
         ],
         className="input-section",
     )
@@ -68,6 +71,7 @@ def build_edit_section(
 def build_ssb_accordion(
     header: str,
     key: dict,
+    variable_short_name: str,
 ) -> ssb.Accordion:
     """Build Accordion for one variable."""
     return ssb.Accordion(
@@ -77,8 +81,13 @@ def build_ssb_accordion(
             build_edit_section(
                 OBLIGATORY_VARIABLES_METADATA,
                 "Obligatorisk",
+                variable_short_name,
             ),
-            build_edit_section(OPTIONAL_VARIABLES_METADATA, "Anbefalt"),
+            build_edit_section(
+                OPTIONAL_VARIABLES_METADATA,
+                "Anbefalt",
+                variable_short_name,
+            ),
         ],
         className="variable",
     )

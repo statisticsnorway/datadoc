@@ -191,14 +191,17 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         response = {}
         respons_list: list = []
         index = 0
+        variable_short_name = ""
         if n_clicks and n_clicks > 0:
             for v in state.metadata.meta.variables:
                 index += 1
                 response = get_display_values(v, state.current_metadata_language)
+                variable_short_name = response["short_name"]
                 respons_list.append(
                     build_ssb_accordion(
-                        response["short_name"],
-                        {"type": "variables-accordion", "id": response["short_name"]},
+                        variable_short_name,
+                        {"type": "variables-accordion", "id": variable_short_name},
+                        variable_short_name,
                     ),
                 )
         return respons_list
