@@ -83,6 +83,7 @@ DISPLAY_VARIABLES: dict[VariableIdentifiers, DisplayNewVariablesMetadata] = {
         description="Variabelnavn kan arves fra VarDef, men kan også dokumenteres/endres her.",
         obligatory=True,
         multiple_language_support=True,
+        presentation="text",
     ),
     VariableIdentifiers.DATA_TYPE: DisplayNewVariablesMetadata(
         identifier=VariableIdentifiers.DATA_TYPE.value,
@@ -129,6 +130,7 @@ DISPLAY_VARIABLES: dict[VariableIdentifiers, DisplayNewVariablesMetadata] = {
         display_name="Kommentar",
         description="Ytterligere presiseringer av variabeldefinisjon",
         multiple_language_support=True,
+        presentation="textArea",
     ),
     VariableIdentifiers.MEASUREMENT_UNIT: DisplayNewVariablesMetadata(
         identifier=VariableIdentifiers.MEASUREMENT_UNIT.value,
