@@ -3,7 +3,6 @@
 Implementations of the callback functionality should be in other functions (in other files), to enable unit testing.
 """
 
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -14,6 +13,7 @@ from dash import Input
 from dash import Output
 from dash import State
 from dash import ctx
+from dash import no_update
 
 from datadoc import state
 from datadoc.enums import SupportedLanguages
@@ -26,9 +26,12 @@ from datadoc.frontend.callbacks.variables import (
 )
 from datadoc.frontend.callbacks.variables import update_variable_table_language
 from datadoc.frontend.components.dataset_tab import DATASET_METADATA_INPUT
+from datadoc.frontend.components.dataset_tab import build_dataset_metadata_accordion
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
 
 if TYPE_CHECKING:
+    import dash_bootstrap_components as dbc
+
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 
@@ -167,3 +170,18 @@ def register_callbacks(app: Dash) -> None:
         by a more formal mechanism.
         """
         return open_dataset_handling(n_clicks, dataset_path)
+
+    @app.callback(
+        Output("dataset-accordion", "children"),
+        Input("open-button", "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def callback_clear_accordion_values(n_clicks: int) -> list[dbc.AccordionItem]:
+        """Recreate accordion items with unique IDs.
+
+        The purpose is to avoid browser caching and clear the values of all
+        components inside the dataset accordion when new file is opened
+        """
+        if n_clicks and n_clicks > 0:
+            return build_dataset_metadata_accordion(n_clicks)
+        return no_update
