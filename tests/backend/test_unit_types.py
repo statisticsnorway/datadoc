@@ -1,9 +1,34 @@
+import functools
+import pathlib
+
+import pandas as pd
 import pytest
 
 from datadoc.backend.unit_types import UnitTypes
 from tests.utils import TEST_RESOURCES_DIRECTORY
 
 TEST_UNIT_TYPES_DIR = "unit_types"
+
+
+@pytest.fixture()
+def _mock_fetch_dataframe(
+    mocker,
+    unit_types_csv_filepath: pathlib.Path,
+) -> None:
+    def fake_unit_types() -> pd.DataFrame:
+        return pd.read_csv(unit_types_csv_filepath)
+
+    mocker.patch(
+        "datadoc.backend.unit_types.UnitTypes._fetch_data_from_external_source",
+        functools.partial(fake_unit_types),
+    )
+
+
+@pytest.fixture()
+def unit_types_fake_structure(
+    _mock_fetch_dataframe,
+) -> UnitTypes:
+    return UnitTypes(100)
 
 
 @pytest.mark.parametrize(

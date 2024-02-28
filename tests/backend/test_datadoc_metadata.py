@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import shutil
 from pathlib import Path
 from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
@@ -34,15 +35,41 @@ from tests.utils import TEST_OUTPUT_DATA_POPULATION_DIRECTORY
 from tests.utils import TEST_PARQUET_FILEPATH
 from tests.utils import TEST_PROCESSED_DATA_POPULATION_DIRECTORY
 from tests.utils import TEST_RESOURCES_DIRECTORY
-from tests.utils import TEST_RESOURCES_METADATA_DOCUMENT
 from tests.utils import TEST_STATISTICS_POPULATION_DIRECTORY
 
 if TYPE_CHECKING:
     import os
+    from collections.abc import Generator
     from datetime import datetime
 
 
 DATADOC_METADATA_MODULE = "datadoc.backend.datadoc_metadata"
+
+
+@pytest.fixture()
+def copy_dataset_to_path(
+    tmp_path: pathlib.Path,
+    full_dataset_state_path: pathlib.Path,
+) -> pathlib.Path:
+    temporary_dataset = tmp_path / full_dataset_state_path
+    temporary_dataset.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy(TEST_PARQUET_FILEPATH, temporary_dataset)
+    return temporary_dataset
+
+
+@pytest.fixture()
+def generate_periodic_file(
+    existing_data_path: Path,
+    insert_string: str,
+) -> Generator[Path, None, None]:
+    file_name = existing_data_path.name
+    insert_pos = file_name.find("_v1")
+    new_file_name = file_name[:insert_pos] + insert_string + file_name[insert_pos:]
+    new_path = TEST_RESOURCES_DIRECTORY / new_file_name
+    shutil.copy(existing_data_path, new_path)
+    yield new_path
+    if new_path.exists():
+        new_path.unlink()
 
 
 @pytest.mark.usefixtures("existing_metadata_file")
@@ -69,9 +96,10 @@ def test_metadata_document_percent_complete(metadata: DataDocMetadata):
 def test_write_metadata_document(
     dummy_timestamp: datetime,
     metadata: DataDocMetadata,
+    tmp_path: pathlib.Path,
 ):
     metadata.write_metadata_document()
-    written_document = TEST_RESOURCES_DIRECTORY / TEST_EXISTING_METADATA_FILE_NAME
+    written_document = tmp_path / TEST_EXISTING_METADATA_FILE_NAME
     assert Path.exists(written_document)
     assert metadata.meta.dataset.metadata_created_date == dummy_timestamp
     assert metadata.meta.dataset.metadata_created_by == PLACEHOLDER_EMAIL_ADDRESS
@@ -184,9 +212,10 @@ def test_save_file_path_metadata_field(
 
 def test_save_file_path_dataset_and_no_metadata(
     metadata: DataDocMetadata,
+    tmp_path: pathlib.Path,
 ):
     metadata.write_metadata_document()
-    with Path.open(Path(TEST_RESOURCES_METADATA_DOCUMENT)) as f:
+    with (tmp_path / TEST_EXISTING_METADATA_FILE_NAME).open() as f:
         saved_file_path = json.load(f)["datadoc"]["dataset"]["file_path"]
     assert saved_file_path == str(metadata.dataset)
 

@@ -12,7 +12,6 @@ from datetime import timezone
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import pandas as pd
 import pytest
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
@@ -21,23 +20,18 @@ from datadoc_model import model
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-from datadoc.backend.unit_types import UnitTypes
 from datadoc.backend.user_info import TestUserInfo
 from tests.backend.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
 )
-from tests.backend.test_unit_types import TEST_UNIT_TYPES_DIR
 
 from .utils import TEST_EXISTING_METADATA_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_FILE_NAME
+from .utils import TEST_PARQUET_FILE_NAME
 from .utils import TEST_PARQUET_FILEPATH
 from .utils import TEST_RESOURCES_DIRECTORY
-from .utils import TEST_RESOURCES_METADATA_DOCUMENT
 
 if TYPE_CHECKING:
-    from collections.abc import Generator
-    from unittest import mock
-
     from pytest_mock import MockerFixture
 
 
@@ -78,19 +72,13 @@ def metadata(
     _mock_timestamp: None,
     _mock_user_info: None,
     subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
+    tmp_path: Path,
 ) -> DataDocMetadata:
+    shutil.copy(TEST_PARQUET_FILEPATH, tmp_path / TEST_PARQUET_FILE_NAME)
     return DataDocMetadata(
         subject_mapping_fake_statistical_structure,
-        str(TEST_PARQUET_FILEPATH),
+        str(tmp_path / TEST_PARQUET_FILE_NAME),
     )
-
-
-@pytest.fixture(autouse=True)
-def remove_document_file() -> Generator[None, None, None]:
-    # Yield so we only run teardown
-    yield None
-    if TEST_RESOURCES_METADATA_DOCUMENT.exists():
-        TEST_RESOURCES_METADATA_DOCUMENT.unlink()
 
 
 @pytest.fixture()
@@ -99,18 +87,13 @@ def existing_metadata_path() -> Path:
 
 
 @pytest.fixture()
-def existing_metadata_file(existing_metadata_path: Path) -> str:
+def existing_metadata_file(tmp_path: Path, existing_metadata_path: Path) -> str:
     # Setup by copying the file into the relevant directory
     shutil.copy(
         existing_metadata_path / TEST_EXISTING_METADATA_FILE_NAME,
-        TEST_RESOURCES_METADATA_DOCUMENT,
+        tmp_path / TEST_EXISTING_METADATA_FILE_NAME,
     )
-    return str(TEST_RESOURCES_METADATA_DOCUMENT)
-
-
-@pytest.fixture()
-def existing_metadata_with_valid_id_file(existing_metadata_file: Path) -> Path:
-    return existing_metadata_file
+    return str(tmp_path / TEST_EXISTING_METADATA_FILE_NAME)
 
 
 @pytest.fixture(autouse=True)
@@ -122,28 +105,6 @@ def _clear_state() -> None:
         del state.statistic_subject_mapping
     except AttributeError:
         pass
-
-
-@pytest.fixture()
-def mock_gcsfs_open(mocker: MockerFixture) -> mock.Mock:
-    return mocker.patch("gcsfs.GCSFileSystem.open")
-
-
-@pytest.fixture()
-def mock_gcsfs_exists(mocker: MockerFixture) -> mock.Mock:
-    mock = mocker.patch("gcsfs.GCSFileSystem.exists")
-    mock.return_value = True
-    return mock
-
-
-@pytest.fixture()
-def mock_pathlib_write_text(mocker: MockerFixture) -> mock.Mock:
-    return mocker.patch("pathlib.Path.write_text")
-
-
-ENGLISH_NAME = "English Name"
-BOKMÅL_NAME = "Bokmål Name"
-NYNORSK_NAME = "Nynorsk Name"
 
 
 @pytest.fixture()
@@ -172,21 +133,6 @@ def existing_data_path() -> Path:
 
 
 @pytest.fixture()
-def generate_periodic_file(
-    existing_data_path: Path,
-    insert_string: str,
-) -> Generator[Path, None, None]:
-    file_name = existing_data_path.name
-    insert_pos = file_name.find("_v1")
-    new_file_name = file_name[:insert_pos] + insert_string + file_name[insert_pos:]
-    new_path = TEST_RESOURCES_DIRECTORY / new_file_name
-    shutil.copy(existing_data_path, new_path)
-    yield new_path
-    if new_path.exists():
-        new_path.unlink()
-
-
-@pytest.fixture()
 def full_dataset_state_path(
     path_parts_to_insert: str | list[str],
 ) -> pathlib.Path:
@@ -200,6 +146,7 @@ def full_dataset_state_path(
     """
     split_path = list(pathlib.Path(TEST_PARQUET_FILEPATH).parts)
     new_path = copy.copy(split_path)
+
     if isinstance(path_parts_to_insert, str):
         parts = [path_parts_to_insert]
     else:
@@ -207,17 +154,6 @@ def full_dataset_state_path(
     for p in parts:
         new_path.insert(-2, p)
     return pathlib.Path().joinpath(*new_path)
-
-
-@pytest.fixture()
-def copy_dataset_to_path(
-    tmp_path: pathlib.Path,
-    full_dataset_state_path: pathlib.Path,
-) -> pathlib.Path:
-    temporary_dataset = tmp_path / full_dataset_state_path
-    temporary_dataset.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy(TEST_PARQUET_FILEPATH, temporary_dataset)
-    return temporary_dataset
 
 
 @pytest.fixture()
@@ -248,44 +184,4 @@ def _mock_fetch_statistical_structure(
     mocker.patch(
         "datadoc.backend.statistic_subject_mapping.StatisticSubjectMapping._fetch_data_from_external_source",
         functools.partial(fake_statistical_structure),
-    )
-
-
-@pytest.fixture()
-def subject_mapping_http_exception(
-    requests_mock,
-    exception_to_raise,
-) -> StatisticSubjectMapping:
-    requests_mock.get(
-        "http://test.some.url.com",
-        exc=exception_to_raise,
-    )
-    return StatisticSubjectMapping("http://test.some.url.com")
-
-
-@pytest.fixture()
-def unit_types_csv_filepath() -> pathlib.Path:
-    return (
-        TEST_RESOURCES_DIRECTORY / TEST_UNIT_TYPES_DIR / "extract_secondary_subject.xml"
-    )
-
-
-@pytest.fixture()
-def unit_types_fake_structure(
-    _mock_fetch_dataframe,
-) -> UnitTypes:
-    return UnitTypes(100)
-
-
-@pytest.fixture()
-def _mock_fetch_dataframe(
-    mocker,
-    unit_types_csv_filepath: pathlib.Path,
-) -> None:
-    def fake_unit_types() -> pd.DataFrame:
-        return pd.read_csv(unit_types_csv_filepath)
-
-    mocker.patch(
-        "datadoc.backend.unit_types.UnitTypes._fetch_data_from_external_source",
-        functools.partial(fake_unit_types),
     )

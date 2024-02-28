@@ -147,6 +147,18 @@ def test_get_secondary_subject(
     )
 
 
+@pytest.fixture()
+def subject_mapping_http_exception(
+    requests_mock,
+    exception_to_raise,
+) -> StatisticSubjectMapping:
+    requests_mock.get(
+        "http://test.some.url.com",
+        exc=exception_to_raise,
+    )
+    return StatisticSubjectMapping("http://test.some.url.com")
+
+
 @pytest.mark.parametrize(
     ("exception_to_raise"),
     [
