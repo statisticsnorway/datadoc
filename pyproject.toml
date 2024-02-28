@@ -105,7 +105,7 @@ exclude = ["docs/conf.py", "noxfile.py", "gunicorn.conf.py"]
 [[tool.mypy.overrides]]
 # Allow missing type hints in third-party libraries without type information.
 module = [
-    "dash",
+    "dash.*",
     "dash_bootstrap_components",
     "flask_healthz",
     "dapla",

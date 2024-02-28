@@ -58,6 +58,14 @@
     margin: 1rem;
 }
 
+.alert-section{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 1rem;
+    padding-top: 1rem;
+}
+
 .ssb-title.input-section-title{
     border-bottom: 2px solid #62919A;
     margin-bottom: 1rem;
