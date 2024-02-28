@@ -17,13 +17,15 @@ DATASET_METADATA_INPUT = "dataset-metadata-input"
 def build_dataset_metadata_accordion_item(
     title: str,
     metadata_inputs: list[DisplayDatasetMetadata],
+    accordion_item_id: str,
 ) -> dbc.AccordionItem:
-    """Build a Dash AccordionItem for the given Metadata inputs.
+    """Build a Dash AccordionItem for the given Metadata inputs with a unique ID.
 
     Typically used to categorize metadata fields.
     """
     return dbc.AccordionItem(
         title=title,
+        id=accordion_item_id,
         children=[
             dbc.Row(
                 [
@@ -48,6 +50,30 @@ def build_dataset_metadata_accordion_item(
     )
 
 
+def build_dataset_metadata_accordion(n_clicks: int = 0) -> list[dbc.AccordionItem]:
+    """Build the accordion on Dataset metadata tab.
+
+    n_clicks parameter is appended to the accordions' items id
+    to avoid browser caching and refresh the values
+    """
+    obligatory = build_dataset_metadata_accordion_item(
+        "Obligatorisk",
+        OBLIGATORY_EDITABLE_DATASET_METADATA,
+        accordion_item_id=f"obligatory-metadata-accordion-item-{n_clicks}",
+    )
+    optional = build_dataset_metadata_accordion_item(
+        "Valgfritt",
+        OPTIONAL_DATASET_METADATA,
+        accordion_item_id=f"optional-metadata-accordion-item-{n_clicks}",
+    )
+    non_editable = build_dataset_metadata_accordion_item(
+        "Maskingenerert",
+        NON_EDITABLE_DATASET_METADATA,
+        accordion_item_id=f"non-editable-metadata-accordion-item-{n_clicks}",
+    )
+    return [obligatory, optional, non_editable]
+
+
 def build_dataset_tab() -> dbc.Tab:
     """Build the Dataset metadata tab."""
     return build_ssb_styled_tab(
@@ -56,21 +82,9 @@ def build_dataset_tab() -> dbc.Tab:
             [
                 dbc.Row(html.H2("Datasett detaljer", className="ssb-title")),
                 dbc.Accordion(
+                    id="dataset-accordion",
                     always_open=True,
-                    children=[
-                        build_dataset_metadata_accordion_item(
-                            "Obligatorisk",
-                            OBLIGATORY_EDITABLE_DATASET_METADATA,
-                        ),
-                        build_dataset_metadata_accordion_item(
-                            "Valgfritt",
-                            OPTIONAL_DATASET_METADATA,
-                        ),
-                        build_dataset_metadata_accordion_item(
-                            "Maskingenerert",
-                            NON_EDITABLE_DATASET_METADATA,
-                        ),
-                    ],
+                    children=build_dataset_metadata_accordion(),
                 ),
             ],
         ),
