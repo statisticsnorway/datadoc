@@ -26,8 +26,14 @@ from datadoc.frontend.callbacks.variables import (
 )
 from datadoc.frontend.callbacks.variables import update_variable_table_language
 from datadoc.frontend.components.dataset_tab import DATASET_METADATA_INPUT
+from datadoc.frontend.components.resources_test_new_variables import (
+    VARIABLES_METADATA_INPUT,
+)
 from datadoc.frontend.components.resources_test_new_variables import build_ssb_accordion
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
+from datadoc.frontend.fields.display_new_variables import (
+    DISPLAYED_DROPDOWN_VARIABLES_METADATA,
+)
 from datadoc.utils import get_display_values
 
 if TYPE_CHECKING:
@@ -205,3 +211,31 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
                     ),
                 )
         return respons_list
+
+    @app.callback(
+        *[
+            Output(
+                {
+                    "type": VARIABLES_METADATA_INPUT,
+                    "variable_short_name": ALL,
+                    "id": m.identifier,
+                },
+                "items",
+            )
+            for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+        ],
+        Input("language-dropdown", "value"),
+    )
+    def callback_change_language_dataset_metadata_new_input(
+        language: str,
+    ) -> tuple[object, ...]:
+        """Update dataset metadata values upon change of language."""
+        return (
+            *(
+                e.options_getter(SupportedLanguages(language))
+                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            ),
+        )
+
+
+# loope

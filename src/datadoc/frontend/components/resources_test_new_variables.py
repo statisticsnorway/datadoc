@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import logging
+
 import dash_bootstrap_components as dbc
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
 from dash import html
@@ -10,6 +12,8 @@ from datadoc_model.model import DataType
 from datadoc.frontend.fields.display_new_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.frontend.fields.display_new_variables import OPTIONAL_VARIABLES_METADATA
 from datadoc.frontend.fields.display_new_variables import DisplayNewVariablesMetadata
+
+logger = logging.getLogger(__name__)
 
 info_section = (
     "Informasjon om hvordan jobbe i Datadoc, antall variabler i datasettet: osv.."
@@ -53,7 +57,7 @@ def build_input_field_section(
                         "variable_short_name": variable_short_name,
                         "id": i.identifier,
                     },
-                    items=dropdown,
+                    **i.extra_kwargs,
                 )
             )
             for i in metadata_inputs
@@ -101,3 +105,16 @@ def build_ssb_accordion(
         ],
         className="variable",
     )
+
+
+"""if i.component == ssb.Input
+                else i.component(
+                    header=i.display_name,
+                    className="variables-input",
+                    id={
+                        "type": VARIABLES_METADATA_INPUT,
+                        "variable_short_name": variable_short_name,
+                        "id": i.identifier,
+                    },
+                    items=dropdown,
+                )"""

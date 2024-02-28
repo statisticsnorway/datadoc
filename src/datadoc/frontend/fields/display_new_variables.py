@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+import functools
 import logging
 from enum import Enum
 from typing import TYPE_CHECKING
 
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
 
-from datadoc import state
+from datadoc import enums
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
 from datadoc.frontend.fields.display_base import DisplayNewVariablesMetadata
 from datadoc.frontend.fields.display_base import DisplayNewVariablesMetadataDropdown
@@ -27,24 +28,10 @@ def get_enum_options_for_language(
     """Generate the list of options based on the currently chosen language."""
     return [
         {
-            "label": i.get_value_for_language(language),
-            "value": i.name,
+            "title": i.get_value_for_language(language),
+            "id": i.name,
         }
         for i in get_language_strings_enum(enum)  # type: ignore [attr-defined]
-    ]
-
-
-def get_statistical_subject_options(
-    language: SupportedLanguages,
-) -> list[dict[str, str]]:
-    """Collect the statistical subject options for the given language."""
-    return [
-        {
-            "label": f"{primary.get_title(language)} - {secondary.get_title(language)}",
-            "value": secondary.subject_code,
-        }
-        for primary in state.statistic_subject_mapping.primary_subjects
-        for secondary in primary.secondary_subjects
     ]
 
 
@@ -88,21 +75,29 @@ DISPLAY_VARIABLES: dict[VariableIdentifiers, DisplayNewVariablesMetadata] = {
         presentation="text",
         component=ssb.Input,
     ),
-    VariableIdentifiers.DATA_TYPE: DisplayNewVariablesMetadata(
+    VariableIdentifiers.DATA_TYPE: DisplayNewVariablesMetadataDropdown(
         identifier=VariableIdentifiers.DATA_TYPE.value,
         display_name="Datatype",
         description="Datatype",
         obligatory=True,
         presentation="dropdown",
         component=ssb.Dropdown,
+        options_getter=functools.partial(
+            get_enum_options_for_language,
+            enums.DataType,
+        ),
     ),
-    VariableIdentifiers.VARIABLE_ROLE: DisplayNewVariablesMetadata(
+    VariableIdentifiers.VARIABLE_ROLE: DisplayNewVariablesMetadataDropdown(
         identifier=VariableIdentifiers.VARIABLE_ROLE.value,
         display_name="Variabelens rolle",
         description="Variabelens rolle i datasett",
         obligatory=True,
         presentation="dropdown",
         component=ssb.Dropdown,
+        options_getter=functools.partial(
+            get_enum_options_for_language,
+            enums.VariableRole,
+        ),
     ),
     VariableIdentifiers.DEFINITION_URI: DisplayNewVariablesMetadata(
         identifier=VariableIdentifiers.DEFINITION_URI.value,
@@ -113,7 +108,7 @@ DISPLAY_VARIABLES: dict[VariableIdentifiers, DisplayNewVariablesMetadata] = {
         presentation="url",
         component=ssb.Input,
     ),
-    VariableIdentifiers.DIRECT_PERSON_IDENTIFYING: DisplayNewVariablesMetadata(
+    VariableIdentifiers.DIRECT_PERSON_IDENTIFYING: DisplayNewVariablesMetadataDropdown(
         identifier=VariableIdentifiers.DIRECT_PERSON_IDENTIFYING.value,
         display_name="DPI",
         description="Direkte personidentifiserende informasjon (DPI)",
