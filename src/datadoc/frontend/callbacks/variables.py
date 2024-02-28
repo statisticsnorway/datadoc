@@ -215,8 +215,11 @@ def accept_variable_metadata_input(
     value: MetadataInputTypes,
     variable_short_name: str,
     metadata_field: str,
-) -> None:
-    """Validate and save the value when variable metadata is updated."""
+) -> str | None:
+    """Validate and save the value when variable metadata is updated.
+
+    Returns an error message if an exception was raised, otherwise returns None.
+    """
     try:
         if metadata_field in MULTIPLE_LANGUAGE_VARIABLES_METADATA:
             new_value = handle_multi_language_metadata(
@@ -224,9 +227,11 @@ def accept_variable_metadata_input(
                 value,
                 variable_short_name,
             )
-        elif new_value == "":
+        elif value == "":
             # Allow clearing non-multiple-language text fields
             new_value = None
+        else:
+            new_value = value
 
         # Write the value to the variables structure
         setattr(
@@ -234,13 +239,14 @@ def accept_variable_metadata_input(
             metadata_field,
             new_value,
         )
-    except ValidationError:
+    except ValidationError as e:
         logger.exception(
             "Could not validate %s, %s, %s:",
             metadata_field,
             variable_short_name,
             value,
         )
+        return str(e)
     else:
         logger.debug(
             "Successfully updated %s, %s with %s",
@@ -248,3 +254,4 @@ def accept_variable_metadata_input(
             variable_short_name,
             value,
         )
+        return None

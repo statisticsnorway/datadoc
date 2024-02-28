@@ -9,9 +9,11 @@ import logging
 from typing import TYPE_CHECKING
 
 from dash import ALL
+from dash import MATCH
 from dash import Dash
 from dash import Input
 from dash import Output
+from dash import Patch
 from dash import State
 from dash import ctx
 from dash.exceptions import PreventUpdate
@@ -29,6 +31,8 @@ from datadoc.frontend.callbacks.variables import (
     update_variable_table_dropdown_options_for_language,
 )
 from datadoc.frontend.callbacks.variables import update_variable_table_language
+from datadoc.frontend.components.builders import AlertTypes
+from datadoc.frontend.components.builders import build_ssb_alert
 from datadoc.frontend.components.dataset_tab import DATASET_METADATA_INPUT
 from datadoc.frontend.components.resources_test_new_variables import (
     VARIABLES_METADATA_INPUT,
@@ -38,6 +42,8 @@ from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_M
 from datadoc.utils import get_display_values
 
 if TYPE_CHECKING:
+    import dash_bootstrap_components as dbc
+
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 logger = logging.getLogger(__name__)
@@ -218,21 +224,39 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         return respons_list
 
     @app.callback(
-        Output("variables-information", "children"),  # do-nothing
+        Output(
+            {"type": "variable-input-alerts", "variable_short_name": MATCH},
+            "children",
+        ),
         Input(
-            {"type": VARIABLES_METADATA_INPUT, "variable_short_name": ALL, "id": ALL},
+            {"type": VARIABLES_METADATA_INPUT, "variable_short_name": MATCH, "id": ALL},
             "value",
         ),
         prevent_initial_call=True,
     )
     def callback_accept_variable_metadata_input(
         value: MetadataInputTypes,  # noqa: ARG001 argument required by Dash
-    ) -> None:
+    ) -> dbc.Alert:
         """Save updated variable metadata values."""
-        # Get the ID of the input that changed. This MUST match the attribute name defined in DataDocDataSet
-        accept_variable_metadata_input(
+        message = accept_variable_metadata_input(
             ctx.triggered[0]["value"],
             ctx.triggered_id["variable_short_name"],
             ctx.triggered_id["id"],
         )
-        raise PreventUpdate
+        if not message:
+            # Nothing to display to the user in this case.
+            raise PreventUpdate
+
+        # Render a new alert on the page with the error message
+        alert_children = Patch()
+        alert_children.append(
+            build_ssb_alert(
+                AlertTypes.WARNING,
+                f"alert-{ctx.triggered_id['variable_short_name']}",
+                "Validering feilet",
+                f"alert-content-{ctx.triggered_id['variable_short_name']}",
+                message=message,
+                start_open=True,
+            ),
+        )
+        return alert_children
