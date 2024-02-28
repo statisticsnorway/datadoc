@@ -153,13 +153,6 @@ MULTIPLE_LANGUAGE_VARIABLES_METADATA = [
 
 URL_VARIABLES_METADATA = [m.identifier for m in DISPLAY_VARIABLES.values() if m.url]
 
-DATE_VARIABLES_METADATA = (
-    [
-        VariableIdentifiers.CONTAINS_DATA_FROM.value,
-        VariableIdentifiers.CONTAINS_DATA_UNTIL.value,
-    ],
-)
-
 DISPLAYED_DROPDOWN_VARIABLES_METADATA = [
     m.identifier for m in DISPLAY_VARIABLES.values() if m.presentation == "dropdown"
 ]
