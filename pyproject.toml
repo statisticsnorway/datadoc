@@ -40,6 +40,8 @@ requests = ">=2.31.0"
 beautifulsoup4 = ">=4.12.3"
 cloudpathlib = { extras = ["gs"], version = ">=0.17.0" }
 pyjwt = ">=2.8.0"
+ssb-klass-python = "^0.0.9"
+ssb-dash-components = "^0.3.0"
 
 [tool.poetry.group.dev.dependencies]
 mypy = ">=0.950"

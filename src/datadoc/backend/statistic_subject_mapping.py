@@ -67,11 +67,13 @@ class StatisticSubjectMapping(GetExternalSource):
 
         Initializes the mapping dicts. Based on the values in the statistical structure document.
         """
-        super().__init__(source_url)
+        self.source_url = source_url
 
         self._statistic_subject_structure_xml: ResultSet | None = None
 
         self._primary_subjects: list[PrimarySubject] = []
+
+        super().__init__()
 
     def get_secondary_subject(self, statistic_short_name: str | None) -> str | None:
         """Looks up the secondary subject for the given statistic short name in the mapping dict.
@@ -94,15 +96,16 @@ class StatisticSubjectMapping(GetExternalSource):
             titles[title["sprak"]] = title.text
         return titles
 
-    def _fetch_data_from_external_source(self, source_url: str) -> ResultSet | None:
+    def _fetch_data_from_external_source(self) -> ResultSet | None:
         """Fetch statistical structure document from source_url.
 
         Returns a BeautifulSoup ResultSet.
         """
         try:
-            response = requests.get(source_url, timeout=30)
+            url = str(self.source_url)
+            response = requests.get(url, timeout=30)
             response.encoding = "utf-8"
-            logger.debug("Got response %s from %s", response, source_url)
+            logger.debug("Got response %s from %s", response, url)
             soup = BeautifulSoup(response.text, features="xml")
             return soup.find_all("hovedemne")
         except requests.exceptions.RequestException:
@@ -148,7 +151,7 @@ class StatisticSubjectMapping(GetExternalSource):
         Returns true if it is loaded and parsed.
         """
         if self.check_if_external_data_is_loaded():
-            self._statistic_subject_structure_xml = self.get_external_data()
+            self._statistic_subject_structure_xml = self.retrieve_external_data()
 
             if self._statistic_subject_structure_xml is not None:
                 self._primary_subjects = self._parse_statistic_subject_structure_xml(

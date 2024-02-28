@@ -5,6 +5,7 @@ Implementations of the callback functionality should be in other functions (in o
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
 
 from dash import ALL
@@ -27,12 +28,16 @@ from datadoc.frontend.callbacks.variables import (
 from datadoc.frontend.callbacks.variables import update_variable_table_language
 from datadoc.frontend.components.dataset_tab import DATASET_METADATA_INPUT
 from datadoc.frontend.components.dataset_tab import build_dataset_metadata_accordion
+from datadoc.frontend.components.resources_test_new_variables import build_ssb_accordion
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
+from datadoc.utils import get_display_values
 
 if TYPE_CHECKING:
     import dash_bootstrap_components as dbc
 
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
+
+logger = logging.getLogger(__name__)
 
 
 def register_callbacks(app: Dash) -> None:
@@ -170,6 +175,40 @@ def register_callbacks(app: Dash) -> None:
         by a more formal mechanism.
         """
         return open_dataset_handling(n_clicks, dataset_path)
+
+
+def register_new_variables_tab_callbacks(app: Dash) -> None:
+    """Define and register callbacks for the new variables tab.
+
+    This may be included in the main register_callbacks function once it's
+    ready for production.
+    """
+    logger.info("Registering callbacks for the new variable tab for %s", app.title)
+
+    @app.callback(
+        Output("accordion-wrapper", "children"),
+        Input("language-dropdown", "value"),
+        Input("open-button", "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def callback_new_variables_list(value: str, n_clicks: int) -> list:  # noqa: ARG001
+        response = {}
+        respons_list: list = []
+        index = 0
+        variable_short_name = ""
+        if n_clicks and n_clicks > 0:
+            for v in state.metadata.meta.variables:
+                index += 1
+                response = get_display_values(v, state.current_metadata_language)
+                variable_short_name = response["short_name"]
+                respons_list.append(
+                    build_ssb_accordion(
+                        variable_short_name,
+                        {"type": "variables-accordion", "id": variable_short_name},
+                        variable_short_name,
+                    ),
+                )
+        return respons_list
 
     @app.callback(
         Output("dataset-accordion", "children"),

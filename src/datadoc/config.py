@@ -74,9 +74,14 @@ def get_log_level() -> int:
         return log_levels["INFO"]
 
 
-def get_dash_development_mode() -> bool | None:
+def get_dash_development_mode() -> bool:
     """Get the development mode for Dash."""
     return _get_config_item("DATADOC_DASH_DEVELOPMENT_MODE") == "True"
+
+
+def get_toggle_new_variables_workspace() -> bool:
+    """Toggle on the new variables workspace."""
+    return _get_config_item("DATADOC_TOGGLE_NEW_VARIABLE_WORKSPACE") == "True"
 
 
 def get_jupyterhub_service_prefix() -> str | None:
