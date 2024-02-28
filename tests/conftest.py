@@ -185,3 +185,14 @@ def _mock_fetch_statistical_structure(
         "datadoc.backend.statistic_subject_mapping.StatisticSubjectMapping._fetch_data_from_external_source",
         functools.partial(fake_statistical_structure),
     )
+
+
+@pytest.fixture()
+def copy_dataset_to_path(
+    tmp_path: pathlib.Path,
+    full_dataset_state_path: pathlib.Path,
+) -> pathlib.Path:
+    temporary_dataset = tmp_path / full_dataset_state_path
+    temporary_dataset.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy(TEST_PARQUET_FILEPATH, temporary_dataset)
+    return temporary_dataset

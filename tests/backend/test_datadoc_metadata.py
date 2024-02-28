@@ -30,12 +30,9 @@ from datadoc.enums import VariableRole
 from tests.utils import TEST_BUCKET_PARQUET_FILEPATH
 from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
-from tests.utils import TEST_INPUT_DATA_POPULATION_DIRECTORY
-from tests.utils import TEST_OUTPUT_DATA_POPULATION_DIRECTORY
 from tests.utils import TEST_PARQUET_FILEPATH
 from tests.utils import TEST_PROCESSED_DATA_POPULATION_DIRECTORY
 from tests.utils import TEST_RESOURCES_DIRECTORY
-from tests.utils import TEST_STATISTICS_POPULATION_DIRECTORY
 
 if TYPE_CHECKING:
     import os
@@ -44,17 +41,6 @@ if TYPE_CHECKING:
 
 
 DATADOC_METADATA_MODULE = "datadoc.backend.datadoc_metadata"
-
-
-@pytest.fixture()
-def copy_dataset_to_path(
-    tmp_path: pathlib.Path,
-    full_dataset_state_path: pathlib.Path,
-) -> pathlib.Path:
-    temporary_dataset = tmp_path / full_dataset_state_path
-    temporary_dataset.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy(TEST_PARQUET_FILEPATH, temporary_dataset)
-    return temporary_dataset
 
 
 @pytest.fixture()
@@ -266,29 +252,19 @@ def test_open_file(
 
 
 @pytest.mark.parametrize(
-    ("dataset_path", "metadata_document_path", "expected_type"),
+    ("dataset_path", "expected_type"),
     [
         (
-            str(
-                TEST_PROCESSED_DATA_POPULATION_DIRECTORY
-                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
-            ),
-            str(
-                TEST_PROCESSED_DATA_POPULATION_DIRECTORY
-                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
-            ),
-            DatasetStatus.DRAFT.value,
+            TEST_PROCESSED_DATA_POPULATION_DIRECTORY
+            / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+            DatasetStatus.INTERNAL.value,
         ),
         (
-            str(
-                TEST_RESOURCES_DIRECTORY / "person_data_v1.parquet",
-            ),
-            None,
+            TEST_PARQUET_FILEPATH,
             DatasetStatus.DRAFT.value,
         ),
         (
             "",
-            None,
             None,
         ),
     ],
@@ -296,108 +272,54 @@ def test_open_file(
 def test_dataset_status_default_value(
     subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
     dataset_path: str,
-    metadata_document_path: str | None,
     expected_type: DatasetStatus | None,
 ):
     datadoc_metadata = DataDocMetadata(
         subject_mapping_fake_statistical_structure,
-        dataset_path,
-        metadata_document_path,
+        str(dataset_path),
     )
 
-    assert expected_type == datadoc_metadata.meta.dataset.dataset_status
+    assert datadoc_metadata.meta.dataset.dataset_status == expected_type
 
 
 @pytest.mark.parametrize(
-    ("dataset_path", "metadata_document_path", "expected_type"),
+    ("path_parts_to_insert", "expected_type"),
     [
         (
-            str(
-                TEST_INPUT_DATA_POPULATION_DIRECTORY
-                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
-            ),
-            str(
-                TEST_INPUT_DATA_POPULATION_DIRECTORY
-                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
-            ),
-            Assessment.SENSITIVE.value,
+            "kildedata",
+            None,
         ),
         (
-            str(TEST_INPUT_DATA_POPULATION_DIRECTORY / "person_data_v1.parquet"),
-            None,
+            "inndata",
             Assessment.PROTECTED.value,
         ),
         (
-            str(
-                TEST_PROCESSED_DATA_POPULATION_DIRECTORY
-                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
-            ),
-            str(
-                TEST_PROCESSED_DATA_POPULATION_DIRECTORY
-                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
-            ),
+            "klargjorte_data",
             Assessment.PROTECTED.value,
         ),
         (
-            str(TEST_PROCESSED_DATA_POPULATION_DIRECTORY / "person_data_v1.parquet"),
-            None,
+            "statistikk",
             Assessment.PROTECTED.value,
         ),
         (
-            str(
-                TEST_STATISTICS_POPULATION_DIRECTORY
-                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
-            ),
-            str(
-                TEST_STATISTICS_POPULATION_DIRECTORY
-                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
-            ),
-            Assessment.SENSITIVE.value,
-        ),
-        (
-            str(TEST_STATISTICS_POPULATION_DIRECTORY / "person_data_v1.parquet"),
-            None,
-            Assessment.PROTECTED.value,
-        ),
-        (
-            str(
-                TEST_OUTPUT_DATA_POPULATION_DIRECTORY
-                / "person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
-            ),
-            str(
-                TEST_OUTPUT_DATA_POPULATION_DIRECTORY
-                / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
-            ),
-            Assessment.SENSITIVE.value,
-        ),
-        (
-            str(TEST_OUTPUT_DATA_POPULATION_DIRECTORY / "person_data_v1.parquet"),
-            None,
+            "utdata",
             Assessment.OPEN.value,
         ),
         (
-            str(TEST_RESOURCES_DIRECTORY / "person_data_v1.parquet"),
-            None,
-            None,
-        ),
-        (
             "",
-            None,
             None,
         ),
     ],
 )
 def test_dataset_assessment_default_value(
-    dataset_path: str,
-    metadata_document_path: str | None,
     expected_type: Assessment | None,
+    copy_dataset_to_path: Path,
 ):
     datadoc_metadata = DataDocMetadata(
         statistic_subject_mapping=StatisticSubjectMapping(source_url=""),
-        dataset_path=dataset_path,
-        metadata_document_path=metadata_document_path,
+        dataset_path=str(copy_dataset_to_path),
     )
-    assert expected_type == datadoc_metadata.meta.dataset.assessment
+    assert datadoc_metadata.meta.dataset.assessment == expected_type
 
 
 @pytest.mark.parametrize(
