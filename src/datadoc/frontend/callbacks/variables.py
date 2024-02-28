@@ -12,6 +12,7 @@ from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_options_for_language
+from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.fields.display_variables import (
     DISPLAYED_DROPDOWN_VARIABLES_METADATA,
 )
@@ -226,6 +227,22 @@ def accept_variable_metadata_input(
                 metadata_field,
                 value,
                 variable_short_name,
+            )
+        elif value and metadata_field == VariableIdentifiers.CONTAINS_DATA_FROM:
+            new_value, _ = parse_and_validate_dates(
+                value,
+                getattr(
+                    state.metadata.variables_lookup[variable_short_name],
+                    VariableIdentifiers.CONTAINS_DATA_UNTIL.value,
+                ),
+            )
+        elif value and metadata_field == VariableIdentifiers.CONTAINS_DATA_UNTIL:
+            _, new_value = parse_and_validate_dates(
+                getattr(
+                    state.metadata.variables_lookup[variable_short_name],
+                    VariableIdentifiers.CONTAINS_DATA_FROM.value,
+                ),
+                value,
             )
         elif value == "":
             # Allow clearing non-multiple-language text fields

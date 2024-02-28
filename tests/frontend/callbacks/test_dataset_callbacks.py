@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import datetime
 import random
+from typing import TYPE_CHECKING
 from typing import cast
 from unittest.mock import Mock
 from unittest.mock import patch
@@ -10,7 +13,6 @@ from datadoc_model import model
 from datadoc import enums
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
-from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.enums import DatasetState
 from datadoc.enums import LanguageStringsEnum
 from datadoc.enums import SupportedLanguages
@@ -19,10 +21,13 @@ from datadoc.frontend.callbacks.dataset import change_language_dataset_metadata
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.dataset import process_special_cases
 from datadoc.frontend.callbacks.dataset import update_dataset_metadata_language
-from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.fields.display_dataset import MULTIPLE_LANGUAGE_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from tests.utils import TEST_PARQUET_FILEPATH
+
+if TYPE_CHECKING:
+    from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
+    from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 DATASET_CALLBACKS_MODULE = "datadoc.frontend.callbacks.dataset"
 
@@ -96,10 +101,10 @@ later = str(datetime.date(2024, 1, 1))
         "invalid-date-format",
     ],
 )
-def test_accept_dataset_metadata_input_data_ordering(
+def test_accept_dataset_metadata_input_date_ordering(
     metadata: DataDocMetadata,
-    start_date: str,
-    end_date: str,
+    start_date: str | None,
+    end_date: str | None,
     expect_error: bool,  # noqa: FBT001
 ):
     state.metadata = metadata

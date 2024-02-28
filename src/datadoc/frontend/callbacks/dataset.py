@@ -5,7 +5,6 @@ from __future__ import annotations
 import logging
 import traceback
 
-import arrow
 from pydantic import ValidationError
 
 from datadoc import state
@@ -16,6 +15,7 @@ from datadoc.enums import (
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
+from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.callbacks.utils import update_global_language_state
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
@@ -78,36 +78,6 @@ def process_keyword(value: str) -> list[str]:
     return [item.strip() for item in value.split(",")]
 
 
-def _validate_dates(
-    metadata_identifier: str,
-    value: MetadataInputTypes,
-) -> MetadataInputTypes:
-    """Validate that CONTAINS_DATA_FROM is earlier or identical to CONTAINS_DATA_UNTIL."""
-    if not value:
-        return value
-    try:
-        parsed_value = arrow.get(str(value), "YYYY-MM-DD")
-    except arrow.parser.ParserMatchError as e:
-        raise ValueError(VALIDATION_ERROR + str(e)) from e
-    if (
-        metadata_identifier == DatasetIdentifiers.CONTAINS_DATA_FROM.value
-        and state.metadata.meta.dataset.contains_data_until
-        and state.metadata.meta.dataset.contains_data_until != "None"
-    ):
-        if parsed_value > arrow.get(
-            state.metadata.meta.dataset.contains_data_until,
-        ):
-            raise ValueError(DATE_VALIDATION_MESSAGE)
-    elif (
-        metadata_identifier == DatasetIdentifiers.CONTAINS_DATA_UNTIL.value
-        and state.metadata.meta.dataset.contains_data_from
-        and state.metadata.meta.dataset.contains_data_from != "None"
-    ) and arrow.get(state.metadata.meta.dataset.contains_data_from) > parsed_value:
-        raise ValueError(DATE_VALIDATION_MESSAGE)
-
-    return parsed_value.format("YYYY-MM-DD")
-
-
 def process_special_cases(
     value: MetadataInputTypes,
     metadata_identifier: str,
@@ -124,11 +94,26 @@ def process_special_cases(
         str,
     ):
         updated_value = process_keyword(value)
-    elif metadata_identifier in [
-        DatasetIdentifiers.CONTAINS_DATA_FROM.value,
-        DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
-    ]:
-        updated_value = _validate_dates(metadata_identifier, value)
+    elif metadata_identifier == DatasetIdentifiers.CONTAINS_DATA_FROM.value:
+        updated_value, _ = parse_and_validate_dates(
+            value,
+            getattr(
+                state.metadata.meta.dataset,
+                DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
+            ),
+        )
+        if updated_value:
+            updated_value = updated_value.isoformat()
+    elif metadata_identifier == DatasetIdentifiers.CONTAINS_DATA_UNTIL.value:
+        _, updated_value = parse_and_validate_dates(
+            getattr(
+                state.metadata.meta.dataset,
+                DatasetIdentifiers.CONTAINS_DATA_FROM.value,
+            ),
+            value,
+        )
+        if updated_value:
+            updated_value = updated_value.isoformat()
     elif metadata_identifier == DatasetIdentifiers.VERSION.value:
         updated_value = str(value)
     elif metadata_identifier in MULTIPLE_LANGUAGE_DATASET_METADATA and isinstance(
@@ -167,7 +152,7 @@ def accept_dataset_metadata_input(
         )
     except (ValidationError, ValueError) as e:
         show_error = True
-        error_explanation = f"{e}"
+        error_explanation = str(e)
         logger.exception("Error while reading in value for %s", metadata_identifier)
     else:
         show_error = False

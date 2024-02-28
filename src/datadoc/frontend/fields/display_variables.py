@@ -104,7 +104,6 @@ DISPLAY_VARIABLES = {
         identifier=VariableIdentifiers.MEASUREMENT_UNIT.value,
         display_name="Måleenhet",
         description="Måleenhet. Eksempel: NOK eller USD for valuta, KG eller TONN for vekt. Se også forslag til SSBs måletyper/måleenheter.",
-        multiple_language_support=True,
     ),
     VariableIdentifiers.FORMAT: DisplayVariablesMetadata(
         identifier=VariableIdentifiers.FORMAT.value,
@@ -153,6 +152,13 @@ MULTIPLE_LANGUAGE_VARIABLES_METADATA = [
 ]
 
 URL_VARIABLES_METADATA = [m.identifier for m in DISPLAY_VARIABLES.values() if m.url]
+
+DATE_VARIABLES_METADATA = (
+    [
+        VariableIdentifiers.CONTAINS_DATA_FROM.value,
+        VariableIdentifiers.CONTAINS_DATA_UNTIL.value,
+    ],
+)
 
 DISPLAYED_DROPDOWN_VARIABLES_METADATA = [
     m.identifier for m in DISPLAY_VARIABLES.values() if m.presentation == "dropdown"
