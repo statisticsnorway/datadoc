@@ -92,6 +92,13 @@ def build_ssb_accordion(
         header=header,
         id=key,
         children=[
+            html.Section(
+                id={
+                    "type": "variable-input-alerts",
+                    "variable_short_name": variable_short_name,
+                },
+                className="alert-section",
+            ),
             build_edit_section(
                 OBLIGATORY_VARIABLES_METADATA,
                 "Obligatorisk",
