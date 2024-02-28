@@ -14,7 +14,9 @@ from datadoc.enums import DataType
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
-from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
+from datadoc.frontend.callbacks.variables import (
+    accept_variable_datatable_metadata_input,
+)
 from datadoc.frontend.callbacks.variables import (
     update_variable_table_dropdown_options_for_language,
 )
@@ -60,7 +62,11 @@ def test_accept_variable_metadata_input_no_change_in_data(
     active_cell: dict[str, MetadataInputTypes],
 ):
     state.metadata = metadata
-    output = accept_variable_metadata_input(DATA_ORIGINAL, active_cell, DATA_ORIGINAL)
+    output = accept_variable_datatable_metadata_input(
+        DATA_ORIGINAL,
+        active_cell,
+        DATA_ORIGINAL,
+    )
     assert output[0] == DATA_ORIGINAL
     assert output[1] is False
     assert output[2] == ""
@@ -71,7 +77,11 @@ def test_accept_variable_metadata_input_new_data(
     active_cell: dict[str, MetadataInputTypes],
 ):
     state.metadata = metadata
-    output = accept_variable_metadata_input(DATA_VALID, active_cell, DATA_ORIGINAL)
+    output = accept_variable_datatable_metadata_input(
+        DATA_VALID,
+        active_cell,
+        DATA_ORIGINAL,
+    )
 
     assert state.metadata.variables_lookup["pers_id"].variable_role == "IDENTIFIER"
     assert output[0] == DATA_VALID
@@ -84,7 +94,11 @@ def test_accept_variable_metadata_clear_string(
     active_cell: dict[str, MetadataInputTypes],
 ):
     state.metadata = metadata
-    output = accept_variable_metadata_input(DATA_CLEAR_URI, active_cell, DATA_ORIGINAL)
+    output = accept_variable_datatable_metadata_input(
+        DATA_CLEAR_URI,
+        active_cell,
+        DATA_ORIGINAL,
+    )
 
     assert state.metadata.variables_lookup["pers_id"].definition_uri is None
     assert output[0] == DATA_CLEAR_URI
@@ -98,7 +112,11 @@ def test_accept_variable_metadata_input_incorrect_data_type(
 ):
     state.metadata = metadata
     previous_metadata = deepcopy(state.metadata.meta.variables)
-    output = accept_variable_metadata_input(DATA_INVALID, active_cell, DATA_ORIGINAL)
+    output = accept_variable_datatable_metadata_input(
+        DATA_INVALID,
+        active_cell,
+        DATA_ORIGINAL,
+    )
 
     assert output[0] == DATA_ORIGINAL
     assert output[1] is True
@@ -160,7 +178,7 @@ def test_nonetype_value_for_language_string(
     state.metadata = metadata
     state.metadata.variables_lookup["pers_id"].name = language_object
     state.current_metadata_language = SupportedLanguages.NORSK_NYNORSK
-    accept_variable_metadata_input(DATA_NONETYPE, active_cell, DATA_ORIGINAL)
+    accept_variable_datatable_metadata_input(DATA_NONETYPE, active_cell, DATA_ORIGINAL)
 
     assert state.metadata.variables_lookup["pers_id"].name == language_object
 
