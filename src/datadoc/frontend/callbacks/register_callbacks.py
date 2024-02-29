@@ -282,6 +282,13 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         language: str,
     ) -> tuple[object, ...]:
         """Update dataset metadata values upon change of language."""
+        logger.info(
+            "Variables info: %s",
+            *(
+                e.options_getter(SupportedLanguages(language))
+                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            ),
+        )
         return (
             *(
                 e.options_getter(SupportedLanguages(language))
