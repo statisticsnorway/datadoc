@@ -104,7 +104,6 @@ DISPLAY_VARIABLES = {
         identifier=VariableIdentifiers.MEASUREMENT_UNIT.value,
         display_name="Måleenhet",
         description="Måleenhet. Eksempel: NOK eller USD for valuta, KG eller TONN for vekt. Se også forslag til SSBs måletyper/måleenheter.",
-        multiple_language_support=True,
     ),
     VariableIdentifiers.FORMAT: DisplayVariablesMetadata(
         identifier=VariableIdentifiers.FORMAT.value,

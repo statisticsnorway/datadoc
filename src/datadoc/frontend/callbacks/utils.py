@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import datetime
 import logging
 from typing import TYPE_CHECKING
 from typing import TypeAlias
 from typing import cast
 
+import arrow
 from datadoc_model import model
 
 from datadoc import config
@@ -23,7 +25,9 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-MetadataInputTypes: TypeAlias = str | list[str] | int | float | bool | None
+MetadataInputTypes: TypeAlias = (
+    str | list[str] | int | float | bool | datetime.date | None
+)
 
 
 def update_global_language_state(language: SupportedLanguages) -> None:
@@ -91,3 +95,60 @@ def get_dataset_path() -> str | None:
         path_from_env,
     )
     return path_from_env
+
+
+ISO_DATE_FORMAT = "YYYY-MM-DD"
+
+VALIDATION_ERROR = "Validation error: "
+DATE_VALIDATION_MESSAGE = f"{VALIDATION_ERROR}contains_data_from must be the same or earlier date than contains_data_until"
+
+
+def parse_and_validate_dates(
+    start_date: MetadataInputTypes,
+    end_date: MetadataInputTypes,
+) -> tuple[datetime.date | None, datetime.date | None]:
+    """Parse and validate the given dates.
+
+     Validate that:
+         - The dates are in YYYY-MM-DD format
+         - The start date is earlier or identical to the end date.
+
+    Examples:
+    >>> parse_and_validate_dates("2021-01-01", "2021-01-01")
+    (datetime.datetime(2021, 1, 1, 0, 0, tzinfo=datetime.timezone.utc), datetime.datetime(2021, 1, 1, 0, 0, tzinfo=datetime.timezone.utc))
+
+    >>> parse_and_validate_dates("1990-01-01", "2050-01-01")
+    (datetime.datetime(1990, 1, 1, 0, 0, tzinfo=datetime.timezone.utc), datetime.datetime(2050, 1, 1, 0, 0, tzinfo=datetime.timezone.utc))
+
+    >>> parse_and_validate_dates(None, None)
+    (None, None)
+
+    >>> parse_and_validate_dates("1st January 2021", "1st January 2021")
+    Traceback (most recent call last):
+    ...
+    ValueError: Validation error: Expected an ISO 8601-like string, but was given '1st January 2021'. Try passing in a format string to resolve this.
+
+    >>> parse_and_validate_dates("2050-01-01", "1990-01-01")
+    Traceback (most recent call last):
+    ...
+    ValueError: Validation error: contains_data_from must be the same or earlier date than contains_data_until
+    """
+    parsed_start = None
+    parsed_end = None
+    try:
+        if isinstance(start_date, str) and start_date != "None":
+            parsed_start = arrow.get(str(start_date))
+        if isinstance(end_date, str) and end_date != "None":
+            parsed_end = arrow.get(str(end_date))
+    except arrow.parser.ParserError as e:
+        raise ValueError(VALIDATION_ERROR + str(e)) from e
+
+    if parsed_start and parsed_end and (parsed_start > parsed_end):
+        raise ValueError(DATE_VALIDATION_MESSAGE)
+
+    start_output = (
+        parsed_start.astimezone(tz=datetime.timezone.utc) if parsed_start else None
+    )
+    end_output = parsed_end.astimezone(tz=datetime.timezone.utc) if parsed_end else None
+
+    return start_output, end_output
