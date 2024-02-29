@@ -562,13 +562,13 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "cloudpathlib"
-version = "0.18.0"
+version = "0.18.1"
 description = "pathlib-style classes for cloud storage services."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "cloudpathlib-0.18.0-py3-none-any.whl", hash = "sha256:15cceae0631e0c4c71fe47fa738af99def564820a18cef74faadb9175ec293ad"},
-    {file = "cloudpathlib-0.18.0.tar.gz", hash = "sha256:07b72c3ce596a65b55f94339c7aa9601e18597b88c857354c90431b22e5c32fd"},
+    {file = "cloudpathlib-0.18.1-py3-none-any.whl", hash = "sha256:20efd5d772c75df91bb2ac52e053be53fd9000f5e9755fd92375a2a9fe6005e0"},
+    {file = "cloudpathlib-0.18.1.tar.gz", hash = "sha256:ffd22f324bfbf9c3f2bc1bec6e8372cb372a0feef17c7f2b48030cd6810ea859"},
 ]
 
 [package.dependencies]
@@ -4516,4 +4516,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "1041e61c0ed5b69ab850d2af18e4a5ad04f49f2d0f16e1c9c5962a146d1beab0"
+content-hash = "ceded9a042b244b44f7de5f6366d934081cbe583b797cb665141ba5f6f23fe14"
