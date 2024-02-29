@@ -74,6 +74,7 @@ def build_edit_section(
 ) -> html.Section:
     """Create input section."""
     return html.Section(
+        id={"type": "edit-section", "title": title},
         children=[
             ssb.Title(title, size=3, className="input-section-title"),
             build_input_field_section(metadata_inputs, variable_short_name),
@@ -112,16 +113,3 @@ def build_ssb_accordion(
         ],
         className="variable",
     )
-
-
-"""if i.component == ssb.Input
-                else i.component(
-                    header=i.display_name,
-                    className="variables-input",
-                    id={
-                        "type": VARIABLES_METADATA_INPUT,
-                        "variable_short_name": variable_short_name,
-                        "id": i.identifier,
-                    },
-                    items=dropdown,
-                )"""
