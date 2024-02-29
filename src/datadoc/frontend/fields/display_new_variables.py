@@ -7,6 +7,7 @@ import logging
 from enum import Enum
 from typing import TYPE_CHECKING
 
+import dash_bootstrap_components as dbc
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
 
 from datadoc import enums
@@ -113,7 +114,12 @@ DISPLAY_VARIABLES: dict[NewVariableIdentifiers, DisplayNewVariablesMetadata] = {
         display_name="DPI",
         description="Direkte personidentifiserende informasjon (DPI)",
         obligatory=True,
-        presentation="bool",
+        component=dbc.Checkbox,
+        extra_kwargs={
+            "label": "Direkte Personidentifiserende Informasjon",
+            "label_class_name": "ssb-checkbox checkbox-label",
+            "class_name": "ssb-checkbox",
+        },
     ),
     NewVariableIdentifiers.DATA_SOURCE: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.DATA_SOURCE.value,

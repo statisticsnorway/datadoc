@@ -1,8 +1,12 @@
+from __future__ import annotations
+
 import datetime
 import random
+from typing import TYPE_CHECKING
 from typing import cast
 from unittest.mock import Mock
 from unittest.mock import patch
+from uuid import UUID
 
 import pytest
 from datadoc_model import model
@@ -10,7 +14,6 @@ from datadoc_model import model
 from datadoc import enums
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
-from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.enums import DatasetState
 from datadoc.enums import LanguageStringsEnum
 from datadoc.enums import SupportedLanguages
@@ -19,10 +22,13 @@ from datadoc.frontend.callbacks.dataset import change_language_dataset_metadata
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.dataset import process_special_cases
 from datadoc.frontend.callbacks.dataset import update_dataset_metadata_language
-from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.fields.display_dataset import MULTIPLE_LANGUAGE_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from tests.utils import TEST_PARQUET_FILEPATH
+
+if TYPE_CHECKING:
+    from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
+    from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 DATASET_CALLBACKS_MODULE = "datadoc.frontend.callbacks.dataset"
 
@@ -40,12 +46,88 @@ def file_path():
 @pytest.mark.parametrize(
     ("metadata_identifier", "provided_value", "expected_model_value"),
     [
+        (DatasetIdentifiers.SHORT_NAME, "person_data_v1", "person_data_v1"),
+        (
+            DatasetIdentifiers.ASSESSMENT,
+            enums.Assessment.PROTECTED,
+            enums.Assessment.PROTECTED.value,
+        ),
+        (
+            DatasetIdentifiers.DATASET_STATUS,
+            enums.DatasetStatus.INTERNAL,
+            enums.DatasetStatus.INTERNAL.value,
+        ),
         (
             DatasetIdentifiers.DATASET_STATE,
-            DatasetState.INPUT_DATA,
-            DatasetState.INPUT_DATA.value,
+            enums.DatasetState.INPUT_DATA,
+            enums.DatasetState.INPUT_DATA.value,
+        ),
+        (
+            DatasetIdentifiers.NAME,
+            "Dataset name",
+            enums.LanguageStringType(nb="Dataset name"),
+        ),
+        (
+            DatasetIdentifiers.DESCRIPTION,
+            "Dataset description",
+            enums.LanguageStringType(nb="Dataset description"),
+        ),
+        (
+            DatasetIdentifiers.DATA_SOURCE,
+            "Census",
+            enums.LanguageStringType(nb="Census"),
+        ),
+        (
+            DatasetIdentifiers.REGISTER_URI,
+            "https://www.example.com",
+            enums.LanguageStringType(nb="https://www.example.com"),
+        ),
+        (
+            DatasetIdentifiers.DESCRIPTION,
+            "Population description",
+            enums.LanguageStringType(nb="Population description"),
         ),
         (DatasetIdentifiers.VERSION, 1, "1"),
+        (
+            DatasetIdentifiers.VERSION_DESCRIPTION,
+            "Version description",
+            enums.LanguageStringType(nb="Version description"),
+        ),
+        (
+            DatasetIdentifiers.UNIT_TYPE,
+            enums.UnitType.ARBEIDSULYKKE,
+            enums.UnitType.ARBEIDSULYKKE.value,
+        ),
+        (
+            DatasetIdentifiers.TEMPORALITY_TYPE,
+            enums.TemporalityTypeType.ACCUMULATED,
+            enums.TemporalityTypeType.ACCUMULATED.value,
+        ),
+        (
+            DatasetIdentifiers.SUBJECT_FIELD,
+            "al03",
+            enums.LanguageStringType(nb="al03"),
+        ),
+        (
+            DatasetIdentifiers.KEYWORD,
+            "one,two,three",
+            ["one", "two", "three"],
+        ),
+        (
+            DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION,
+            "Spatial coverage description",
+            enums.LanguageStringType(nb="Spatial coverage description"),
+        ),
+        (
+            DatasetIdentifiers.ID,
+            "2f72477a-f051-43ee-bf8b-0d8f47b5e0a7",
+            UUID("2f72477a-f051-43ee-bf8b-0d8f47b5e0a7"),
+        ),
+        (
+            DatasetIdentifiers.OWNER,
+            "Seksjon for dataplattform",
+            enums.LanguageStringType(nb="Seksjon for dataplattform"),
+        ),
     ],
 )
 def test_accept_dataset_metadata_input_valid_data(
@@ -55,6 +137,7 @@ def test_accept_dataset_metadata_input_valid_data(
     metadata: DataDocMetadata,
 ):
     state.metadata = metadata
+    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     output = accept_dataset_metadata_input(provided_value, metadata_identifier)
     assert output[0] is False
     assert output[1] == ""
@@ -66,7 +149,10 @@ def test_accept_dataset_metadata_input_valid_data(
 
 def test_accept_dataset_metadata_input_incorrect_data_type(metadata: DataDocMetadata):
     state.metadata = metadata
-    output = accept_dataset_metadata_input(3.1415, "dataset_state")
+    output = accept_dataset_metadata_input(
+        3.1415,
+        DatasetIdentifiers.DATASET_STATE.value,
+    )
     assert output[0] is True
     assert "validation error for Dataset" in output[1]
 
@@ -96,10 +182,10 @@ later = str(datetime.date(2024, 1, 1))
         "invalid-date-format",
     ],
 )
-def test_accept_dataset_metadata_input_data_ordering(
+def test_accept_dataset_metadata_input_date_validation(
     metadata: DataDocMetadata,
-    start_date: str,
-    end_date: str,
+    start_date: str | None,
+    end_date: str | None,
     expect_error: bool,  # noqa: FBT001
 ):
     state.metadata = metadata

@@ -16,6 +16,7 @@ from dash import Output
 from dash import Patch
 from dash import State
 from dash import ctx
+from dash import no_update
 from dash.exceptions import PreventUpdate
 
 from datadoc import state
@@ -34,6 +35,7 @@ from datadoc.frontend.callbacks.variables import update_variable_table_language
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_ssb_alert
 from datadoc.frontend.components.dataset_tab import DATASET_METADATA_INPUT
+from datadoc.frontend.components.dataset_tab import build_dataset_metadata_accordion
 from datadoc.frontend.components.resources_test_new_variables import (
     VARIABLES_METADATA_INPUT,
 )
@@ -263,6 +265,21 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
             ),
         )
         return alert_children
+
+    @app.callback(
+        Output("dataset-accordion", "children"),
+        Input("open-button", "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def callback_clear_accordion_values(n_clicks: int) -> list[dbc.AccordionItem]:
+        """Recreate accordion items with unique IDs.
+
+        The purpose is to avoid browser caching and clear the values of all
+        components inside the dataset accordion when new file is opened
+        """
+        if n_clicks and n_clicks > 0:
+            return build_dataset_metadata_accordion(n_clicks)
+        return no_update
 
     @app.callback(
         *[

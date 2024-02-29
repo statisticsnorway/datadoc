@@ -51,7 +51,6 @@ def build_input_field_section(
                 if i.component == ssb.Input
                 else i.component(
                     header=i.display_name,
-                    className="variables-input",
                     id={
                         "type": VARIABLES_METADATA_INPUT,
                         "variable_short_name": variable_short_name,
