@@ -287,7 +287,5 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
                 e.options_getter(SupportedLanguages(language))
                 for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
             ),
+            [],
         )
-
-
-# loope
