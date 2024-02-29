@@ -12,6 +12,7 @@ from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_options_for_language
+from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.fields.display_variables import (
     DISPLAYED_DROPDOWN_VARIABLES_METADATA,
 )
@@ -101,7 +102,7 @@ def handle_multi_language_metadata(
     return new_value
 
 
-def accept_variable_metadata_input(
+def accept_variable_datatable_metadata_input(
     data: list[dict],
     active_cell: dict,
     data_previous: list[dict],
@@ -209,3 +210,65 @@ def update_variable_table_language(
         False,  # Don't show validation error
         "",  # No validation explanation needed
     )
+
+
+def accept_variable_metadata_input(
+    value: MetadataInputTypes,
+    variable_short_name: str,
+    metadata_field: str,
+) -> str | None:
+    """Validate and save the value when variable metadata is updated.
+
+    Returns an error message if an exception was raised, otherwise returns None.
+    """
+    try:
+        if metadata_field in MULTIPLE_LANGUAGE_VARIABLES_METADATA:
+            new_value = handle_multi_language_metadata(
+                metadata_field,
+                value,
+                variable_short_name,
+            )
+        elif value and metadata_field == VariableIdentifiers.CONTAINS_DATA_FROM:
+            new_value, _ = parse_and_validate_dates(
+                value,
+                getattr(
+                    state.metadata.variables_lookup[variable_short_name],
+                    VariableIdentifiers.CONTAINS_DATA_UNTIL.value,
+                ),
+            )
+        elif value and metadata_field == VariableIdentifiers.CONTAINS_DATA_UNTIL:
+            _, new_value = parse_and_validate_dates(
+                getattr(
+                    state.metadata.variables_lookup[variable_short_name],
+                    VariableIdentifiers.CONTAINS_DATA_FROM.value,
+                ),
+                value,
+            )
+        elif value == "":
+            # Allow clearing non-multiple-language text fields
+            new_value = None
+        else:
+            new_value = value
+
+        # Write the value to the variables structure
+        setattr(
+            state.metadata.variables_lookup[variable_short_name],
+            metadata_field,
+            new_value,
+        )
+    except ValidationError as e:
+        logger.exception(
+            "Could not validate %s, %s, %s:",
+            metadata_field,
+            variable_short_name,
+            value,
+        )
+        return str(e)
+    else:
+        logger.debug(
+            "Successfully updated %s, %s with %s",
+            metadata_field,
+            variable_short_name,
+            value,
+        )
+        return None
