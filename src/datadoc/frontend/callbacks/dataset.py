@@ -15,6 +15,7 @@ from datadoc.enums import (
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
+from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.callbacks.utils import update_global_language_state
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
@@ -23,6 +24,9 @@ from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
 
 logger = logging.getLogger(__name__)
+
+VALIDATION_ERROR = "Validation error: "
+DATE_VALIDATION_MESSAGE = f"{VALIDATION_ERROR}{DatasetIdentifiers.CONTAINS_DATA_FROM.value} must be the same or earlier date than {DatasetIdentifiers.CONTAINS_DATA_UNTIL.value}"
 
 
 def open_file(file_path: str | None = None) -> DataDocMetadata:
@@ -90,6 +94,26 @@ def process_special_cases(
         str,
     ):
         updated_value = process_keyword(value)
+    elif metadata_identifier == DatasetIdentifiers.CONTAINS_DATA_FROM.value:
+        updated_value, _ = parse_and_validate_dates(
+            value,
+            getattr(
+                state.metadata.meta.dataset,
+                DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
+            ),
+        )
+        if updated_value:
+            updated_value = updated_value.isoformat()
+    elif metadata_identifier == DatasetIdentifiers.CONTAINS_DATA_UNTIL.value:
+        _, updated_value = parse_and_validate_dates(
+            getattr(
+                state.metadata.meta.dataset,
+                DatasetIdentifiers.CONTAINS_DATA_FROM.value,
+            ),
+            value,
+        )
+        if updated_value:
+            updated_value = updated_value.isoformat()
     elif metadata_identifier == DatasetIdentifiers.VERSION.value:
         updated_value = str(value)
     elif metadata_identifier in MULTIPLE_LANGUAGE_DATASET_METADATA and isinstance(
@@ -126,10 +150,10 @@ def accept_dataset_metadata_input(
             metadata_identifier,
             value,
         )
-    except ValidationError as e:
+    except (ValidationError, ValueError) as e:
         show_error = True
-        error_explanation = f"`{e}`"
-        logger.debug("Caught ValidationError:", exc_info=True)
+        error_explanation = str(e)
+        logger.exception("Error while reading in value for %s", metadata_identifier)
     else:
         show_error = False
         error_explanation = ""

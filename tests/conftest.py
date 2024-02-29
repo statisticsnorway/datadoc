@@ -282,10 +282,10 @@ def _mock_fetch_dataframe(
     mocker,
     unit_types_csv_filepath: pathlib.Path,
 ) -> None:
-    def fake_unit_types(unit_types_csv_filepath, _) -> pd.DataFrame:
+    def fake_unit_types() -> pd.DataFrame:
         return pd.read_csv(unit_types_csv_filepath)
 
     mocker.patch(
         "datadoc.backend.unit_types.UnitTypes._fetch_data_from_external_source",
-        functools.partial(fake_unit_types, unit_types_csv_filepath),
+        functools.partial(fake_unit_types),
     )

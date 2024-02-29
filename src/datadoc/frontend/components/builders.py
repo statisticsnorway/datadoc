@@ -1,5 +1,7 @@
 """Factory functions for different components are defined here."""
 
+from __future__ import annotations
+
 import re
 from dataclasses import dataclass
 from enum import Enum
@@ -24,7 +26,7 @@ class AlertType:
     color: str
 
     @staticmethod
-    def get_type(alert_type: AlertTypes) -> "AlertType":
+    def get_type(alert_type: AlertTypes) -> AlertType:
         """Get a concrete alert type based on the given enum values."""
         return ALERT_TYPES[alert_type]
 
@@ -48,23 +50,26 @@ def build_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:
         # Replace all whitespace with dashes
         tab_id=re.sub(r"\s+", "-", label.lower()),
         label_class_name="ssb-tabs navigation-item",
-        label_style={"margin-left": "10px", "margin-right": "10px"},
+        label_style={"marginLeft": "10px", "marginRight": "10px"},
         style={"padding": "4px"},
         children=content,
     )
 
 
-def build_ssb_alert(
+def build_ssb_alert(  # noqa: PLR0913 not immediately obvious how to improve this
     alert_type: AlertTypes,
     alert_identifier: str,
     title: str,
     content_identifier: str,
+    message: str | None = None,
+    *,
+    start_open: bool = False,
 ) -> dbc.Alert:
     """Make a Dash Alert according to SSBs Design System."""
     alert = AlertType.get_type(alert_type)
     return dbc.Alert(
         id=alert_identifier,
-        is_open=False,
+        is_open=start_open,
         dismissable=True,
         fade=True,
         color=alert.color,
@@ -75,8 +80,10 @@ def build_ssb_alert(
             ),
             html.P(
                 id=content_identifier,
+                children=message,
             ),
         ],
+        style={"width": "70%"},
     )
 
 
@@ -86,7 +93,7 @@ def build_ssb_button(text: str, icon_class: str, button_id: str) -> dbc.Button:
         [
             html.I(
                 className=icon_class,
-                style={"padding-right": "10px"},
+                style={"paddingRight": "10px"},
             ),
             f"   {text}",
         ],

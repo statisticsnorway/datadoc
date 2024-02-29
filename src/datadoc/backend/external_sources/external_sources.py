@@ -41,7 +41,7 @@ class GetExternalSource(ABC, Generic[T]):
             return self.future.done()
         return False
 
-    def get_external_data(self) -> T | None:
+    def retrieve_external_data(self) -> T | None:
         """Method that returns the result of the thread."""
         if self.future:
             return self.future.result()
