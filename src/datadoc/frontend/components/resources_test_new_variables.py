@@ -49,13 +49,25 @@ def build_input_field_section(
                     type=i.presentation,
                 )
                 if i.component == ssb.Input
-                else i.component(
-                    id={
-                        "type": VARIABLES_METADATA_INPUT,
-                        "variable_short_name": variable_short_name,
-                        "id": i.identifier,
-                    },
-                    **i.extra_kwargs,
+                else (
+                    i.component(
+                        id={
+                            "type": VARIABLES_METADATA_INPUT,
+                            "variable_short_name": variable_short_name,
+                            "id": i.identifier,
+                        },
+                        **i.extra_kwargs,
+                    )
+                    if i.component == dbc.Checkbox
+                    else i.component(
+                        header=i.display_name,
+                        id={
+                            "type": VARIABLES_METADATA_INPUT,
+                            "variable_short_name": variable_short_name,
+                            "id": i.identifier,
+                        },
+                        **i.extra_kwargs,
+                    )
                 )
             )
             for i in metadata_inputs
