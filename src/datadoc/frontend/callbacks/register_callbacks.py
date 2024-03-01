@@ -283,15 +283,94 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
 
     @app.callback(
         *[
-            Output(
-                {
-                    "type": VARIABLES_METADATA_INPUT,
-                    "variable_short_name": "pers_id",
-                    "id": m.identifier,
-                },
-                "items",
-            )
-            for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            [
+                Output(
+                    {
+                        "type": VARIABLES_METADATA_INPUT,
+                        "variable_short_name": "pers_id",
+                        "id": m.identifier,
+                    },
+                    "items",
+                )
+                for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            ],
+            [
+                Output(
+                    {
+                        "type": VARIABLES_METADATA_INPUT,
+                        "variable_short_name": "tidspunkt",
+                        "id": m.identifier,
+                    },
+                    "items",
+                )
+                for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            ],
+            [
+                Output(
+                    {
+                        "type": VARIABLES_METADATA_INPUT,
+                        "variable_short_name": "sivilstand",
+                        "id": m.identifier,
+                    },
+                    "items",
+                )
+                for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            ],
+            [
+                Output(
+                    {
+                        "type": VARIABLES_METADATA_INPUT,
+                        "variable_short_name": "alm_inntekt",
+                        "id": m.identifier,
+                    },
+                    "items",
+                )
+                for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            ],
+            [
+                Output(
+                    {
+                        "type": VARIABLES_METADATA_INPUT,
+                        "variable_short_name": "sykepenger",
+                        "id": m.identifier,
+                    },
+                    "items",
+                )
+                for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            ],
+            [
+                Output(
+                    {
+                        "type": VARIABLES_METADATA_INPUT,
+                        "variable_short_name": "ber_bruttoformue",
+                        "id": m.identifier,
+                    },
+                    "items",
+                )
+                for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            ],
+            [
+                Output(
+                    {
+                        "type": VARIABLES_METADATA_INPUT,
+                        "variable_short_name": "fullf_utdanning",
+                        "id": m.identifier,
+                    },
+                    "items",
+                )
+                for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            ],
+            [
+                Output(
+                    {
+                        "type": VARIABLES_METADATA_INPUT,
+                        "variable_short_name": "hoveddiagnose",
+                        "id": m.identifier,
+                    },
+                    "items",
+                )
+                for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            ],
         ],
         Input("language-dropdown", "value"),
     )
@@ -299,14 +378,50 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         language: str,
     ) -> tuple[object, ...]:
         """Update dataset metadata values upon change of language."""
+        response = {}
+        variable_short_name = ""
+        variables: list = []
+        for v in state.metadata.meta.variables:
+            response = get_display_values(v, state.current_metadata_language)
+            variable_short_name = response["short_name"]
+            variables.append(variable_short_name)
         logger.info(
-            "Variables info: %s",
+            "Variables info: %s %s",
             [
                 e.options_getter(SupportedLanguages(language))
                 for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
             ],
+            variables,
         )
         return (
+            *(
+                e.options_getter(SupportedLanguages(language))
+                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            ),
+            *(
+                e.options_getter(SupportedLanguages(language))
+                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            ),
+            *(
+                e.options_getter(SupportedLanguages(language))
+                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            ),
+            *(
+                e.options_getter(SupportedLanguages(language))
+                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            ),
+            *(
+                e.options_getter(SupportedLanguages(language))
+                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            ),
+            *(
+                e.options_getter(SupportedLanguages(language))
+                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            ),
+            *(
+                e.options_getter(SupportedLanguages(language))
+                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+            ),
             *(
                 e.options_getter(SupportedLanguages(language))
                 for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
