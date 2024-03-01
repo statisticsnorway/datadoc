@@ -410,17 +410,15 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         ),
         Input({"type": "variables-accordion", "id": ALL}, "children"),
     )
-    def callback_populate_input_section(children: list) -> list:  # noqa: ARG001
+    def callback_populate_edit_section(children: list) -> list:  # noqa: ARG001
         """Return two edit sections."""
         short_names = get_variables_short_names()
         return [
             (
-                (
-                    build_edit_section(
-                        OBLIGATORY_VARIABLES_METADATA,
-                        "Obligatorisk",
-                        short_name,
-                    )
+                build_edit_section(
+                    OBLIGATORY_VARIABLES_METADATA,
+                    "Obligatorisk",
+                    short_name,
                 ),
                 build_edit_section(
                     OPTIONAL_VARIABLES_METADATA,
