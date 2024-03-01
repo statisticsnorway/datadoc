@@ -16,3 +16,5 @@ spec:
   type: service
   owner: dapla-metadata-developers
   lifecycle: experimental
+  dependsOn: dapla-beta
+  system: dapla-metadata
