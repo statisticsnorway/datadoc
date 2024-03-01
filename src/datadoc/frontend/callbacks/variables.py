@@ -228,21 +228,21 @@ def accept_variable_metadata_input(
                 value,
                 variable_short_name,
             )
-        elif value and metadata_field == VariableIdentifiers.CONTAINS_DATA_FROM:
+        elif value and metadata_field == VariableIdentifiers.CONTAINS_DATA_FROM.value:
             new_value, _ = parse_and_validate_dates(
-                value,
+                str(value),
                 getattr(
                     state.metadata.variables_lookup[variable_short_name],
                     VariableIdentifiers.CONTAINS_DATA_UNTIL.value,
                 ),
             )
-        elif value and metadata_field == VariableIdentifiers.CONTAINS_DATA_UNTIL:
+        elif value and metadata_field == VariableIdentifiers.CONTAINS_DATA_UNTIL.value:
             _, new_value = parse_and_validate_dates(
                 getattr(
                     state.metadata.variables_lookup[variable_short_name],
                     VariableIdentifiers.CONTAINS_DATA_FROM.value,
                 ),
-                value,
+                str(value),
             )
         elif value == "":
             # Allow clearing non-multiple-language text fields
@@ -256,7 +256,7 @@ def accept_variable_metadata_input(
             metadata_field,
             new_value,
         )
-    except ValidationError as e:
+    except (ValidationError, ValueError) as e:
         logger.exception(
             "Could not validate %s, %s, %s:",
             metadata_field,
