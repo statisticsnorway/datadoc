@@ -104,8 +104,8 @@ DATE_VALIDATION_MESSAGE = f"{VALIDATION_ERROR}contains_data_from must be the sam
 
 
 def parse_and_validate_dates(
-    start_date: MetadataInputTypes,
-    end_date: MetadataInputTypes,
+    start_date: str | datetime.datetime | None,
+    end_date: str | datetime.datetime | None,
 ) -> tuple[datetime.date | None, datetime.date | None]:
     """Parse and validate the given dates.
 
@@ -128,6 +128,11 @@ def parse_and_validate_dates(
     ...
     ValueError: Validation error: Expected an ISO 8601-like string, but was given '1st January 2021'. Try passing in a format string to resolve this.
 
+    >>> parse_and_validate_dates(datetime.datetime(2050, 1, 1, 0, 0, tzinfo=datetime.timezone.utc), "1990-01-01")
+    Traceback (most recent call last):
+    ...
+    ValueError: Validation error: contains_data_from must be the same or earlier date than contains_data_until
+
     >>> parse_and_validate_dates("2050-01-01", "1990-01-01")
     Traceback (most recent call last):
     ...
@@ -136,10 +141,10 @@ def parse_and_validate_dates(
     parsed_start = None
     parsed_end = None
     try:
-        if isinstance(start_date, str) and start_date != "None":
-            parsed_start = arrow.get(str(start_date))
-        if isinstance(end_date, str) and end_date != "None":
-            parsed_end = arrow.get(str(end_date))
+        if start_date and start_date != "None":
+            parsed_start = arrow.get(start_date)
+        if end_date and end_date != "None":
+            parsed_end = arrow.get(end_date)
     except arrow.parser.ParserError as e:
         raise ValueError(VALIDATION_ERROR + str(e)) from e
 
