@@ -24,6 +24,8 @@ from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import change_language_dataset_metadata
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
+from datadoc.frontend.callbacks.new_variables import get_variables_in_dataset
+from datadoc.frontend.callbacks.new_variables import get_variables_short_names
 from datadoc.frontend.callbacks.variables import (
     accept_variable_datatable_metadata_input,
 )
@@ -44,7 +46,6 @@ from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_M
 from datadoc.frontend.fields.display_new_variables import (
     DISPLAYED_DROPDOWN_VARIABLES_METADATA,
 )
-from datadoc.utils import get_display_values
 
 if TYPE_CHECKING:
     import dash_bootstrap_components as dbc
@@ -202,28 +203,6 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
     ready for production.
     """
     logger.info("Registering callbacks for the new variable tab for %s", app.title)
-
-    def get_variables_in_dataset() -> list:
-        """Get variable objects in dataset."""
-        response = {}
-        respons_list = []
-        for v in state.metadata.meta.variables:
-            response = get_display_values(v, state.current_metadata_language)
-            respons_list.append(response)
-        return respons_list
-
-    def get_variable_in_dataset(short_name: str) -> object:
-        """Get one variable."""
-        variables = get_variables_in_dataset()
-        variable = {}
-        for v in variables:
-            if v.short_name == short_name:
-                variable = v
-        return variable
-
-    def get_variables_short_names() -> list[str]:
-        """Get list of variables short_names."""
-        return [response["short_name"] for response in get_variables_in_dataset()]
 
     @app.callback(
         Output("accordion-wrapper", "children"),
@@ -406,7 +385,7 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
                     for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
                 ),
             ],
-            *(accordion["id"] for accordion in accordions),
+            *(accordion for accordion in accordions),
         )
         return (
             *(
