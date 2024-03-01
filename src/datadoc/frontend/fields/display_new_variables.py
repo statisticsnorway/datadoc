@@ -6,6 +6,7 @@ import logging
 from enum import Enum
 from typing import TYPE_CHECKING
 
+import dash_bootstrap_components as dbc
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
 
 from datadoc import state
@@ -88,7 +89,7 @@ DISPLAY_VARIABLES: dict[VariableIdentifiers, DisplayNewVariablesMetadata] = {
         presentation="text",
         component=ssb.Input,
     ),
-    VariableIdentifiers.DATA_TYPE: DisplayNewVariablesMetadata(
+    VariableIdentifiers.DATA_TYPE: DisplayNewVariablesMetadataDropdown(
         identifier=VariableIdentifiers.DATA_TYPE.value,
         display_name="Datatype",
         description="Datatype",
@@ -96,7 +97,7 @@ DISPLAY_VARIABLES: dict[VariableIdentifiers, DisplayNewVariablesMetadata] = {
         presentation="dropdown",
         component=ssb.Dropdown,
     ),
-    VariableIdentifiers.VARIABLE_ROLE: DisplayNewVariablesMetadata(
+    VariableIdentifiers.VARIABLE_ROLE: DisplayNewVariablesMetadataDropdown(
         identifier=VariableIdentifiers.VARIABLE_ROLE.value,
         display_name="Variabelens rolle",
         description="Variabelens rolle i datasett",
@@ -118,8 +119,12 @@ DISPLAY_VARIABLES: dict[VariableIdentifiers, DisplayNewVariablesMetadata] = {
         display_name="DPI",
         description="Direkte personidentifiserende informasjon (DPI)",
         obligatory=True,
-        presentation="dropdown",
-        component=ssb.Dropdown,
+        component=dbc.Checkbox,
+        extra_kwargs={
+            "label": "Direkte Personidentifiserende Informasjon",
+            "label_class_name": "ssb-checkbox checkbox-label",
+            "class_name": "ssb-checkbox",
+        },
     ),
     VariableIdentifiers.DATA_SOURCE: DisplayNewVariablesMetadata(
         identifier=VariableIdentifiers.DATA_SOURCE.value,
