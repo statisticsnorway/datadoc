@@ -41,11 +41,14 @@ from datadoc.frontend.components.dataset_tab import build_dataset_metadata_accor
 from datadoc.frontend.components.resources_test_new_variables import (
     VARIABLES_METADATA_INPUT,
 )
+from datadoc.frontend.components.resources_test_new_variables import build_edit_section
 from datadoc.frontend.components.resources_test_new_variables import build_ssb_accordion
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
 from datadoc.frontend.fields.display_new_variables import (
     DISPLAYED_DROPDOWN_VARIABLES_METADATA,
 )
+from datadoc.frontend.fields.display_new_variables import OBLIGATORY_VARIABLES_METADATA
+from datadoc.frontend.fields.display_new_variables import OPTIONAL_VARIABLES_METADATA
 
 if TYPE_CHECKING:
     import dash_bootstrap_components as dbc
@@ -219,11 +222,11 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         if n_clicks and n_clicks > 0:
             accordion_list = [
                 build_ssb_accordion(
-                    response["short_name"],
-                    {"type": "variables-accordion", "id": response["short_name"]},
-                    response["short_name"],
+                    variable["short_name"],
+                    {"type": "variables-accordion", "id": variable["short_name"]},
+                    variable["short_name"],
                 )
-                for response in variables
+                for variable in variables
             ]
         return accordion_list
 
@@ -396,3 +399,34 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
                 for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
             ),
         ) * len(variables_short_names)
+
+    @app.callback(
+        Output(
+            {
+                "type": "variable-inputs",
+                "variable_short_name": ALL,
+            },
+            "children",
+        ),
+        Input({"type": "variables-accordion", "id": ALL}, "children"),
+    )
+    def callback_populate_input_section(children: list) -> list:  # noqa: ARG001
+        """Return two edit sections."""
+        short_names = get_variables_short_names()
+        return [
+            (
+                (
+                    build_edit_section(
+                        OBLIGATORY_VARIABLES_METADATA,
+                        "Obligatorisk",
+                        short_name,
+                    )
+                ),
+                build_edit_section(
+                    OPTIONAL_VARIABLES_METADATA,
+                    "Anbefalt",
+                    short_name,
+                ),
+            )
+            for short_name in short_names
+        ]

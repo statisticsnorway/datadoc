@@ -3,15 +3,17 @@
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 
 import dash_bootstrap_components as dbc
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
 from dash import html
 from datadoc_model.model import DataType
 
-from datadoc.frontend.fields.display_new_variables import OBLIGATORY_VARIABLES_METADATA
-from datadoc.frontend.fields.display_new_variables import OPTIONAL_VARIABLES_METADATA
-from datadoc.frontend.fields.display_new_variables import DisplayNewVariablesMetadata
+if TYPE_CHECKING:
+    from datadoc.frontend.fields.display_new_variables import (
+        DisplayNewVariablesMetadata,
+    )
 
 logger = logging.getLogger(__name__)
 
@@ -110,15 +112,11 @@ def build_ssb_accordion(
                 },
                 className="alert-section",
             ),
-            build_edit_section(
-                OBLIGATORY_VARIABLES_METADATA,
-                "Obligatorisk",
-                variable_short_name,
-            ),
-            build_edit_section(
-                OPTIONAL_VARIABLES_METADATA,
-                "Anbefalt",
-                variable_short_name,
+            html.Section(
+                id={
+                    "type": "variable-inputs",
+                    "variable_short_name": variable_short_name,
+                },
             ),
         ],
         className="variable",
