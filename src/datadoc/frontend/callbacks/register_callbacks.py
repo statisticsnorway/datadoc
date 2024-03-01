@@ -195,26 +195,6 @@ def register_callbacks(app: Dash) -> None:
         return open_dataset_handling(n_clicks, dataset_path)
 
 
-def get_variables_in_dataset() -> list:
-    """Get variable objects in dataset."""
-    response = {}
-    respons_list = []
-    for v in state.metadata.meta.variables:
-        response = get_display_values(v, state.current_metadata_language)
-        respons_list.append(response)
-    return respons_list
-
-
-def get_variable_in_dataset(short_name: str) -> object:
-    """Get one variable."""
-    variables = get_variables_in_dataset()
-    variable = {}
-    for v in variables:
-        if v.short_name == short_name:
-            variable = v
-    return variable
-
-
 def register_new_variables_tab_callbacks(app: Dash) -> None:
     """Define and register callbacks for the new variables tab.
 
@@ -223,6 +203,28 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
     """
     logger.info("Registering callbacks for the new variable tab for %s", app.title)
 
+    def get_variables_in_dataset() -> list:
+        """Get variable objects in dataset."""
+        response = {}
+        respons_list = []
+        for v in state.metadata.meta.variables:
+            response = get_display_values(v, state.current_metadata_language)
+            respons_list.append(response)
+        return respons_list
+
+    def get_variable_in_dataset(short_name: str) -> object:
+        """Get one variable."""
+        variables = get_variables_in_dataset()
+        variable = {}
+        for v in variables:
+            if v.short_name == short_name:
+                variable = v
+        return variable
+
+    def get_variables_short_names() -> list[str]:
+        """Get list of variables short_names."""
+        return [response["short_name"] for response in get_variables_in_dataset()]
+
     @app.callback(
         Output("accordion-wrapper", "children"),
         Input("language-dropdown", "value"),
@@ -230,19 +232,17 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         prevent_initial_call=True,
     )
     def callback_new_variables_list(value: str, n_clicks: int) -> list:  # noqa: ARG001
-        respons_list = get_variables_in_dataset()
+        variables = get_variables_in_dataset()
         accordion_list = []
-        variable_short_name = ""
         if n_clicks and n_clicks > 0:
-            for response in respons_list:
-                variable_short_name = response["short_name"]
-                accordion_list.append(
-                    build_ssb_accordion(
-                        variable_short_name,
-                        {"type": "variables-accordion", "id": variable_short_name},
-                        variable_short_name,
-                    ),
+            accordion_list = [
+                build_ssb_accordion(
+                    response["short_name"],
+                    {"type": "variables-accordion", "id": response["short_name"]},
+                    response["short_name"],
                 )
+                for response in variables
+            ]
         return accordion_list
 
     @app.callback(
@@ -389,67 +389,28 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
                 for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
             ],
         ],
+        State({"type": "variables-accordion", "id": ALL}, "id"),
         Input("language-dropdown", "value"),
     )
     def callback_change_language_variable_metadata_new_input(
+        accordions: list,
         language: str,
     ) -> tuple[object, ...]:
         """Update dataset metadata values upon change of language."""
-        response = {}
-        variable_short_name = ""
-        variables: list = []
-        for v in state.metadata.meta.variables:
-            response = get_display_values(v, state.current_metadata_language)
-            variable_short_name = response["short_name"]
-            variables.append(variable_short_name)
+        variables_short_names = get_variables_short_names()
         logger.info(
             "Variables info: %s %s",
             [
-                (
-                    *(
-                        e.options_getter(SupportedLanguages(language))
-                        for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-                    ),
-                    *(
-                        e.options_getter(SupportedLanguages(language))
-                        for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-                    ),
-                )
-                for i in range(len(variables))
+                *(
+                    e.options_getter(SupportedLanguages(language))
+                    for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
+                ),
             ],
-            variables,
+            *(accordion["id"] for accordion in accordions),
         )
         return (
             *(
                 e.options_getter(SupportedLanguages(language))
                 for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
             ),
-            *(
-                e.options_getter(SupportedLanguages(language))
-                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-            ),
-            *(
-                e.options_getter(SupportedLanguages(language))
-                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-            ),
-            *(
-                e.options_getter(SupportedLanguages(language))
-                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-            ),
-            *(
-                e.options_getter(SupportedLanguages(language))
-                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-            ),
-            *(
-                e.options_getter(SupportedLanguages(language))
-                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-            ),
-            *(
-                e.options_getter(SupportedLanguages(language))
-                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-            ),
-            *(
-                e.options_getter(SupportedLanguages(language))
-                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-            ),
-        )
+        ) * len(variables_short_names)
