@@ -374,7 +374,7 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         ],
         Input("language-dropdown", "value"),
     )
-    def callback_change_language_dataset_metadata_new_input(
+    def callback_change_language_variable_metadata_new_input(
         language: str,
     ) -> tuple[object, ...]:
         """Update dataset metadata values upon change of language."""
