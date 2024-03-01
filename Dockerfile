@@ -55,15 +55,16 @@ RUN useradd --create-home appuser
 USER appuser
 ENV PATH="/home/appuser/.local/bin:$PATH"
 
-# Get build artifact wheel and install it respecting dependency versions
-WORKDIR $APP_PATH
-COPY --from=build $APP_PATH/dist/*.whl ./
-COPY --from=build $APP_PATH/constraints.txt ./
-RUN pip install ./$APP_NAME*.whl --constraint constraints.txt
-COPY ./gunicorn.conf.py ./
-
 # export environment variables for the CMD
 ENV PACKAGE_NAME=$PACKAGE_NAME
 ENV APP_PATH=$APP_PATH
+
+# Get build artifact wheel and install it respecting dependency versions
+WORKDIR $APP_PATH
+COPY ./gunicorn.conf.py ./
+COPY --from=build $APP_PATH/constraints.txt ./
+RUN pip install -r constraints.txt
+COPY --from=build $APP_PATH/dist/*.whl ./
+RUN pip install ./$APP_NAME*.whl
 
 CMD exec gunicorn --config "./gunicorn.conf.py" "$PACKAGE_NAME.wsgi:server"
