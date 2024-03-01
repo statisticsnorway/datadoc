@@ -210,7 +210,10 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         Input("open-button", "n_clicks"),
         prevent_initial_call=True,
     )
-    def callback_new_variables_list(value: str, n_clicks: int) -> list:  # noqa: ARG001
+    def callback_populate_new_variables_workspace(
+        value: str,  # noqa: ARG001
+        n_clicks: int,
+    ) -> list:
         variables = get_variables_in_dataset()
         accordion_list = []
         if n_clicks and n_clicks > 0:
