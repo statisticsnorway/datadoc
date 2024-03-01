@@ -195,6 +195,26 @@ def register_callbacks(app: Dash) -> None:
         return open_dataset_handling(n_clicks, dataset_path)
 
 
+def get_variables_in_dataset() -> list:
+    """Get variable objects in dataset."""
+    response = {}
+    respons_list = []
+    for v in state.metadata.meta.variables:
+        response = get_display_values(v, state.current_metadata_language)
+        respons_list.append(response)
+    return respons_list
+
+
+def get_variable_in_dataset(short_name: str) -> object:
+    """Get one variable."""
+    variables = get_variables_in_dataset()
+    variable = {}
+    for v in variables:
+        if v.short_name == short_name:
+            variable = v
+    return variable
+
+
 def register_new_variables_tab_callbacks(app: Dash) -> None:
     """Define and register callbacks for the new variables tab.
 
@@ -210,23 +230,20 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         prevent_initial_call=True,
     )
     def callback_new_variables_list(value: str, n_clicks: int) -> list:  # noqa: ARG001
-        response = {}
-        respons_list: list = []
-        index = 0
+        respons_list = get_variables_in_dataset()
+        accordion_list = []
         variable_short_name = ""
         if n_clicks and n_clicks > 0:
-            for v in state.metadata.meta.variables:
-                index += 1
-                response = get_display_values(v, state.current_metadata_language)
+            for response in respons_list:
                 variable_short_name = response["short_name"]
-                respons_list.append(
+                accordion_list.append(
                     build_ssb_accordion(
                         variable_short_name,
                         {"type": "variables-accordion", "id": variable_short_name},
                         variable_short_name,
                     ),
                 )
-        return respons_list
+        return accordion_list
 
     @app.callback(
         Output(
