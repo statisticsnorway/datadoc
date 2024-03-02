@@ -59,7 +59,10 @@ class NewVariableIdentifiers(str, Enum):
     CONTAINS_DATA_UNTIL = "contains_data_until"
 
 
-DISPLAY_VARIABLES: dict[NewVariableIdentifiers, DisplayNewVariablesMetadata] = {
+DISPLAY_VARIABLES: dict[
+    NewVariableIdentifiers,
+    DisplayNewVariablesMetadata,
+] = {
     NewVariableIdentifiers.SHORT_NAME: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.SHORT_NAME.value,
         display_name="Kortnavn",
@@ -76,7 +79,7 @@ DISPLAY_VARIABLES: dict[NewVariableIdentifiers, DisplayNewVariablesMetadata] = {
         presentation="text",
         component=ssb.Input,
     ),
-    NewVariableIdentifiers.DATA_TYPE: DisplayNewVariablesMetadataDropdown(
+    NewVariableIdentifiers.DATA_TYPE: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.DATA_TYPE.value,
         display_name="Datatype",
         description="Datatype",
@@ -88,7 +91,7 @@ DISPLAY_VARIABLES: dict[NewVariableIdentifiers, DisplayNewVariablesMetadata] = {
             enums.DataType,
         ),
     ),
-    NewVariableIdentifiers.VARIABLE_ROLE: DisplayNewVariablesMetadataDropdown(
+    NewVariableIdentifiers.VARIABLE_ROLE: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.VARIABLE_ROLE.value,
         display_name="Variabelens rolle",
         description="Variabelens rolle i datasett",
@@ -203,6 +206,12 @@ MULTIPLE_LANGUAGE_VARIABLES_METADATA = [
 
 OBLIGATORY_VARIABLES_METADATA = [
     m for m in DISPLAY_VARIABLES.values() if m.obligatory and m.editable
+]
+
+OBLIGATORY_VARIABLES_DROPDOWN_METADATA = [
+    m
+    for m in DISPLAY_VARIABLES.values()
+    if m.obligatory and m.editable and m.presentation == "dropdown"
 ]
 
 OPTIONAL_VARIABLES_METADATA = [

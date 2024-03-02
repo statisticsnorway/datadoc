@@ -105,7 +105,7 @@ class DisplayVariablesMetadata(DisplayMetadata):
     presentation: str | None = "input"
 
 
-# New variables
+# New variables - with options_getter?
 @dataclass
 class DisplayNewVariablesMetadata(DisplayMetadata):
     """Controls for how a given metadata field should be displayed.
@@ -117,6 +117,10 @@ class DisplayNewVariablesMetadata(DisplayMetadata):
     component: type[Component] = ssb.Input
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
     presentation: str | None = "input"
+    options_getter: Callable[  # noqa: E731
+        [SupportedLanguages],
+        list[dict[str, str]],
+    ] = lambda _: []
 
 
 @dataclass

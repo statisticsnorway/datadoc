@@ -15,6 +15,8 @@ if TYPE_CHECKING:
         DisplayNewVariablesMetadata,
     )
 
+from datadoc.enums import SupportedLanguages
+
 logger = logging.getLogger(__name__)
 
 info_section = (
@@ -33,10 +35,11 @@ for index, val in enumerate(DataType):
 def build_input_field_section(
     metadata_inputs: list[DisplayNewVariablesMetadata],
     variable_short_name: str,
+    language: str,
 ) -> dbc.Form:
     """Create input fields."""
     return dbc.Form(
-        [
+        [  # if metadata_inputs.isInstance(DisplayNewVariablesMetadata)
             (
                 i.component(
                     label=i.display_name,
@@ -47,8 +50,8 @@ def build_input_field_section(
                         "variable_short_name": variable_short_name,
                         "id": i.identifier,
                     },
-                    value="",
                     type=i.presentation,
+                    debounce=True,
                 )
                 if i.component == ssb.Input
                 else (
@@ -68,7 +71,7 @@ def build_input_field_section(
                             "variable_short_name": variable_short_name,
                             "id": i.identifier,
                         },
-                        **i.extra_kwargs,
+                        items=i.options_getter(SupportedLanguages(language)),
                     )
                 )
             )
@@ -83,13 +86,14 @@ def build_edit_section(
     metadata_inputs: list,
     title: str,
     variable_short_name: str,
+    language: str,
 ) -> html.Section:
     """Create input section."""
     return html.Section(
         id={"type": "edit-section", "title": title},
         children=[
             ssb.Title(title, size=3, className="input-section-title"),
-            build_input_field_section(metadata_inputs, variable_short_name),
+            build_input_field_section(metadata_inputs, variable_short_name, language),
         ],
         className="input-section",
     )

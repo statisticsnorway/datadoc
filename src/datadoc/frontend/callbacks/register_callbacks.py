@@ -44,9 +44,6 @@ from datadoc.frontend.components.resources_test_new_variables import (
 from datadoc.frontend.components.resources_test_new_variables import build_edit_section
 from datadoc.frontend.components.resources_test_new_variables import build_ssb_accordion
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
-from datadoc.frontend.fields.display_new_variables import (
-    DISPLAYED_DROPDOWN_VARIABLES_METADATA,
-)
 from datadoc.frontend.fields.display_new_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.frontend.fields.display_new_variables import OPTIONAL_VARIABLES_METADATA
 
@@ -284,123 +281,6 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         return no_update
 
     @app.callback(
-        *[
-            [
-                Output(
-                    {
-                        "type": VARIABLES_METADATA_INPUT,
-                        "variable_short_name": "pers_id",
-                        "id": m.identifier,
-                    },
-                    "items",
-                )
-                for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-            ],
-            [
-                Output(
-                    {
-                        "type": VARIABLES_METADATA_INPUT,
-                        "variable_short_name": "tidspunkt",
-                        "id": m.identifier,
-                    },
-                    "items",
-                )
-                for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-            ],
-            [
-                Output(
-                    {
-                        "type": VARIABLES_METADATA_INPUT,
-                        "variable_short_name": "sivilstand",
-                        "id": m.identifier,
-                    },
-                    "items",
-                )
-                for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-            ],
-            [
-                Output(
-                    {
-                        "type": VARIABLES_METADATA_INPUT,
-                        "variable_short_name": "alm_inntekt",
-                        "id": m.identifier,
-                    },
-                    "items",
-                )
-                for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-            ],
-            [
-                Output(
-                    {
-                        "type": VARIABLES_METADATA_INPUT,
-                        "variable_short_name": "sykepenger",
-                        "id": m.identifier,
-                    },
-                    "items",
-                )
-                for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-            ],
-            [
-                Output(
-                    {
-                        "type": VARIABLES_METADATA_INPUT,
-                        "variable_short_name": "ber_bruttoformue",
-                        "id": m.identifier,
-                    },
-                    "items",
-                )
-                for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-            ],
-            [
-                Output(
-                    {
-                        "type": VARIABLES_METADATA_INPUT,
-                        "variable_short_name": "fullf_utdanning",
-                        "id": m.identifier,
-                    },
-                    "items",
-                )
-                for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-            ],
-            [
-                Output(
-                    {
-                        "type": VARIABLES_METADATA_INPUT,
-                        "variable_short_name": "hoveddiagnose",
-                        "id": m.identifier,
-                    },
-                    "items",
-                )
-                for m in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-            ],
-        ],
-        State({"type": "variables-accordion", "id": ALL}, "id"),
-        Input("language-dropdown", "value"),
-    )
-    def callback_change_language_variable_metadata_new_input(
-        accordions: list,
-        language: str,
-    ) -> tuple[object, ...]:
-        """Update dataset metadata values upon change of language."""
-        variables_short_names = get_variables_short_names()
-        logger.info(
-            "Variables info: %s %s",
-            [
-                *(
-                    e.options_getter(SupportedLanguages(language))
-                    for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-                ),
-            ],
-            *(accordion for accordion in accordions),
-        )
-        return (
-            *(
-                e.options_getter(SupportedLanguages(language))
-                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-            ),
-        ) * len(variables_short_names)
-
-    @app.callback(
         Output(
             {
                 "type": "variable-inputs",
@@ -409,8 +289,12 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
             "children",
         ),
         Input({"type": "variables-accordion", "id": ALL}, "children"),
+        Input("language-dropdown", "value"),
     )
-    def callback_populate_edit_section(children: list) -> list:  # noqa: ARG001
+    def callback_populate_edit_section(
+        children: list,  # noqa: ARG001
+        language: str,
+    ) -> list:
         """Return two edit sections."""
         short_names = get_variables_short_names()
         return [
@@ -419,11 +303,13 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
                     OBLIGATORY_VARIABLES_METADATA,
                     "Obligatorisk",
                     short_name,
+                    language,
                 ),
                 build_edit_section(
                     OPTIONAL_VARIABLES_METADATA,
                     "Anbefalt",
                     short_name,
+                    language,
                 ),
             )
             for short_name in short_names
