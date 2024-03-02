@@ -96,7 +96,7 @@ def process_special_cases(
         updated_value = process_keyword(value)
     elif metadata_identifier == DatasetIdentifiers.CONTAINS_DATA_FROM.value:
         updated_value, _ = parse_and_validate_dates(
-            value,
+            str(value),
             getattr(
                 state.metadata.meta.dataset,
                 DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
@@ -110,7 +110,7 @@ def process_special_cases(
                 state.metadata.meta.dataset,
                 DatasetIdentifiers.CONTAINS_DATA_FROM.value,
             ),
-            value,
+            str(value),
         )
         if updated_value:
             updated_value = updated_value.isoformat()
