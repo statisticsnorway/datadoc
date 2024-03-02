@@ -1,14 +1,13 @@
-"""New variables tab."""
+"""New variables tab.
+
+Some attemps to get values from state, in use in some callbacks right now
+"""
 
 from __future__ import annotations
 
 import logging
 
 from datadoc import state
-from datadoc.enums import SupportedLanguages
-from datadoc.frontend.fields.display_new_variables import (
-    DISPLAYED_DROPDOWN_VARIABLES_METADATA,
-)
 from datadoc.utils import get_display_values
 
 logger = logging.getLogger(__name__)
@@ -39,7 +38,8 @@ def get_variables_short_names() -> list[str]:
     return [response["short_name"] for response in get_variables_in_dataset()]
 
 
-# temp move for testing another solution
+# First attempt with getting dropdown items, temporary move for testing new solution
+# Very hard to get variable_short_name
 """@app.callback(
         *[
             [
@@ -133,25 +133,13 @@ def get_variables_short_names() -> list[str]:
         ],
         State({"type": "variables-accordion", "id": ALL}, "id"),
         Input("language-dropdown", "value"),
-    )"""
-
-
-def callback_change_language_variable_metadata_new_input(
+    )
+    def callback_change_language_variable_metadata_new_input(
     accordions: list,
     language: str,
 ) -> tuple[object, ...]:
-    """Update dataset metadata values upon change of language."""
+    Update dataset metadata values upon change of language.
     variables_short_names = get_variables_short_names()
-    logger.info(
-        "Variables info: %s %s",
-        [
-            *(
-                e.options_getter(SupportedLanguages(language))
-                for e in DISPLAYED_DROPDOWN_VARIABLES_METADATA
-            ),
-        ],
-        *(accordion for accordion in accordions),
-    )
     return (
         *(
             e.options_getter(SupportedLanguages(language))
@@ -159,22 +147,4 @@ def callback_change_language_variable_metadata_new_input(
         ),
     ) * len(variables_short_names)
 
-
-""" return [
-            (
-                build_edit_section(
-                    OBLIGATORY_VARIABLES_METADATA,
-                    "Obligatorisk",
-                    short_name,
-                    language,
-                ),
-                build_edit_section(
-                    OPTIONAL_VARIABLES_METADATA,
-                    "Anbefalt",
-                    short_name,
-                    language,
-                ),
-            )
-            for short_name in short_names
-        ]
 """

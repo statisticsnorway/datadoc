@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 import dash_bootstrap_components as dbc
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
 from dash import html
-from datadoc_model.model import DataType
 
 if TYPE_CHECKING:
     from datadoc.frontend.fields.display_new_variables import (
@@ -25,13 +24,8 @@ info_section = (
 
 VARIABLES_METADATA_INPUT = "variables-metadata-input"
 
-dropdown = []
-index = 0
 
-for index, val in enumerate(DataType):
-    dropdown.append({"id": str(index), "title": val})
-
-
+# section of Inputs: Input, checkbox or dropdown
 def build_input_field_section(
     metadata_inputs: list[DisplayNewVariablesMetadata],
     variable_short_name: str,
@@ -39,7 +33,7 @@ def build_input_field_section(
 ) -> dbc.Form:
     """Create input fields."""
     return dbc.Form(
-        [  # if metadata_inputs.isInstance(DisplayNewVariablesMetadata)
+        [
             (
                 i.component(
                     label=i.display_name,
@@ -82,6 +76,7 @@ def build_input_field_section(
     )
 
 
+# One section of inputs (either obligatory or recommended)
 def build_edit_section(
     metadata_inputs: list,
     title: str,
@@ -99,6 +94,7 @@ def build_edit_section(
     )
 
 
+# Accordion for variable
 def build_ssb_accordion(
     header: str,
     key: dict,

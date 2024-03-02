@@ -214,6 +214,7 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         value: str,  # noqa: ARG001
         n_clicks: int,
     ) -> list:
+        """Create variable workspace with accordions for variables."""
         variables = get_variables_in_dataset()
         accordion_list = []
         if n_clicks and n_clicks > 0:
@@ -295,7 +296,7 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         children: list,  # noqa: ARG001
         language: str,
     ) -> list:
-        """Return two edit sections."""
+        """Return edit sections for obligatory and recommended variable details within variable accordion ."""
         short_names = get_variables_short_names()
         return [
             (

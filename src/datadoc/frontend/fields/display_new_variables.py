@@ -1,4 +1,4 @@
-"""Functionality for displaying new nvariables metadata."""
+"""Functionality for displaying new variables metadata."""
 
 from __future__ import annotations
 
@@ -208,26 +208,16 @@ OBLIGATORY_VARIABLES_METADATA = [
     m for m in DISPLAY_VARIABLES.values() if m.obligatory and m.editable
 ]
 
-OBLIGATORY_VARIABLES_DROPDOWN_METADATA = [
-    m
-    for m in DISPLAY_VARIABLES.values()
-    if m.obligatory and m.editable and m.presentation == "dropdown"
-]
-
 OPTIONAL_VARIABLES_METADATA = [
     m for m in DISPLAY_VARIABLES.values() if not m.obligatory and m.editable
 ]
 
-NON_EDITABLE_DATASET_METADATA = [
-    m for m in DISPLAY_VARIABLES.values() if not m.editable
-]
-
-
-# The order of this list MUST match the order of display components, as defined in DatasetTab.py
+# The order of this list MUST match the order of display components, as defined in DatasetTab.py ?
 DISPLAYED_VARIABLES_METADATA: list[DisplayNewVariablesMetadata] = (
     OBLIGATORY_VARIABLES_METADATA + OPTIONAL_VARIABLES_METADATA
 )
 
+# Remove if we change to new design
 DISPLAYED_DROPDOWN_VARIABLES_METADATA: list[DisplayNewVariablesMetadataDropdown] = [
     m
     for m in DISPLAYED_VARIABLES_METADATA

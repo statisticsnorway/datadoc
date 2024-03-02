@@ -26,6 +26,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+# Must be changed if new design
 INPUT_KWARGS = {
     "debounce": True,
     "style": {"width": "100%"},
@@ -105,7 +106,7 @@ class DisplayVariablesMetadata(DisplayMetadata):
     presentation: str | None = "input"
 
 
-# New variables - with options_getter?
+# New design for variables - one structure for all input components (dropdown, Input, checkobox and textArea)
 @dataclass
 class DisplayNewVariablesMetadata(DisplayMetadata):
     """Controls for how a given metadata field should be displayed.
@@ -146,7 +147,7 @@ class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
     component: type[Component] = dcc.Dropdown
 
 
-# new variables
+# new variables - Not in use in newest design
 @dataclass
 class DisplayNewVariablesMetadataDropdown(DisplayNewVariablesMetadata):
     """Include the possible options which a user may choose from."""
