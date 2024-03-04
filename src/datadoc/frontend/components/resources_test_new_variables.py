@@ -25,7 +25,8 @@ info_section = (
 VARIABLES_METADATA_INPUT = "variables-metadata-input"
 
 
-# section of Inputs: Input, checkbox or dropdown
+# section of Inputs: Input, checkbox or dropdown -
+# It is hard to separate between DisplayNewVariablesMetatdata and NewVariablesMetadataDropddown - with NewVariablesMetadataDropddown in type hint it's temporary solved
 def build_input_field_section(
     metadata_inputs: list[DisplayNewVariablesMetadataDropdown],
     variable_short_name: str,
