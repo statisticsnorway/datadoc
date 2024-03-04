@@ -190,7 +190,7 @@ class DataDocMetadata:
         )
 
         self.meta.dataset = model.Dataset(
-            short_name=self.dataset.stem,
+            short_name=self.dataset.stem if self.dataset else None,
             dataset_state=dapla_dataset_path_info.dataset_state,
             dataset_status=DatasetStatus.DRAFT,
             assessment=self.get_assessment_by_state(
