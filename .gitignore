@@ -1,6 +1,7 @@
 # Project specific ignores
 tests/resources/*.json
 src/datadoc/.env
+profiling
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
