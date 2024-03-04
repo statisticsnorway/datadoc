@@ -118,6 +118,7 @@ class DisplayNewVariablesMetadata(DisplayMetadata):
     component: type[Component] = ssb.Input
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
     presentation: str | None = "input"
+    label: str = DisplayMetadata.display_name
 
 
 @dataclass
