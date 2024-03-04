@@ -11,7 +11,7 @@ from dash import html
 
 if TYPE_CHECKING:
     from datadoc.frontend.fields.display_new_variables import (
-        DisplayNewVariablesMetadata,
+        DisplayNewVariablesMetadataDropdown,
     )
 
 from datadoc.enums import SupportedLanguages
@@ -27,7 +27,7 @@ VARIABLES_METADATA_INPUT = "variables-metadata-input"
 
 # section of Inputs: Input, checkbox or dropdown
 def build_input_field_section(
-    metadata_inputs: list[DisplayNewVariablesMetadata],
+    metadata_inputs: list[DisplayNewVariablesMetadataDropdown],
     variable_short_name: str,
     language: str,
 ) -> dbc.Form:
@@ -50,15 +50,6 @@ def build_input_field_section(
                 if i.component == ssb.Input
                 else (
                     i.component(
-                        id={
-                            "type": VARIABLES_METADATA_INPUT,
-                            "variable_short_name": variable_short_name,
-                            "id": i.identifier,
-                        },
-                        **i.extra_kwargs,
-                    )
-                    if i.component == dbc.Checkbox
-                    else i.component(
                         header=i.display_name,
                         id={
                             "type": VARIABLES_METADATA_INPUT,
@@ -66,6 +57,15 @@ def build_input_field_section(
                             "id": i.identifier,
                         },
                         items=i.options_getter(SupportedLanguages(language)),
+                    )
+                    if i.component == ssb.Dropdown
+                    else i.component(
+                        id={
+                            "type": VARIABLES_METADATA_INPUT,
+                            "variable_short_name": variable_short_name,
+                            "id": i.identifier,
+                        },
+                        **i.extra_kwargs,
                     )
                 )
             )
