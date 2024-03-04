@@ -24,8 +24,6 @@ from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import change_language_dataset_metadata
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
-from datadoc.frontend.callbacks.new_variables import get_variables_in_dataset
-from datadoc.frontend.callbacks.new_variables import get_variables_short_names
 from datadoc.frontend.callbacks.variables import (
     accept_variable_datatable_metadata_input,
 )
@@ -195,6 +193,21 @@ def register_callbacks(app: Dash) -> None:
         """
         return open_dataset_handling(n_clicks, dataset_path)
 
+    @app.callback(
+        Output("dataset-accordion", "children"),
+        Input("open-button", "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def callback_clear_accordion_values(n_clicks: int) -> list[dbc.AccordionItem]:
+        """Recreate accordion items with unique IDs.
+
+        The purpose is to avoid browser caching and clear the values of all
+        components inside the dataset accordion when new file is opened
+        """
+        if n_clicks and n_clicks > 0:
+            return build_dataset_metadata_accordion(n_clicks)
+        return no_update
+
 
 def register_new_variables_tab_callbacks(app: Dash) -> None:
     """Define and register callbacks for the new variables tab.
@@ -206,27 +219,39 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
 
     @app.callback(
         Output("accordion-wrapper", "children"),
-        Input("language-dropdown", "value"),
         Input("open-button", "n_clicks"),
         prevent_initial_call=True,
     )
     def callback_populate_new_variables_workspace(
-        value: str,  # noqa: ARG001
+        # value: str,
         n_clicks: int,
     ) -> list:
         """Create variable workspace with accordions for variables."""
-        variables = get_variables_in_dataset()
-        accordion_list = []
         if n_clicks and n_clicks > 0:
-            accordion_list = [
+            return [
                 build_ssb_accordion(
-                    variable["short_name"],
-                    {"type": "variables-accordion", "id": variable["short_name"]},
-                    variable["short_name"],
+                    variable,
+                    {"type": "variables-accordion", "id": variable},
+                    variable,
+                    children=[
+                        build_edit_section(
+                            OBLIGATORY_VARIABLES_METADATA,
+                            "Obligatorisk",
+                            variable,
+                            state.current_metadata_language.value,
+                        ),
+                        build_edit_section(
+                            OPTIONAL_VARIABLES_METADATA,
+                            "Anbefalt",
+                            variable,
+                            state.current_metadata_language.value,
+                        ),
+                    ],
                 )
-                for variable in variables
+                for variable in list(state.metadata.variables_lookup.keys())
             ]
-        return accordion_list
+
+        raise PreventUpdate
 
     @app.callback(
         Output(
@@ -265,53 +290,3 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
             ),
         )
         return alert_children
-
-    @app.callback(
-        Output("dataset-accordion", "children"),
-        Input("open-button", "n_clicks"),
-        prevent_initial_call=True,
-    )
-    def callback_clear_accordion_values(n_clicks: int) -> list[dbc.AccordionItem]:
-        """Recreate accordion items with unique IDs.
-
-        The purpose is to avoid browser caching and clear the values of all
-        components inside the dataset accordion when new file is opened
-        """
-        if n_clicks and n_clicks > 0:
-            return build_dataset_metadata_accordion(n_clicks)
-        return no_update
-
-    @app.callback(
-        Output(
-            {
-                "type": "variable-inputs",
-                "variable_short_name": ALL,
-            },
-            "children",
-        ),
-        Input({"type": "variables-accordion", "id": ALL}, "children"),
-        Input("language-dropdown", "value"),
-    )
-    def callback_populate_edit_section(
-        children: list,  # noqa: ARG001
-        language: str,
-    ) -> list:
-        """Return edit sections for obligatory and recommended variable details within variable accordion ."""
-        short_names = get_variables_short_names()
-        return [
-            (
-                build_edit_section(
-                    OBLIGATORY_VARIABLES_METADATA,
-                    "Obligatorisk",
-                    short_name,
-                    language,
-                ),
-                build_edit_section(
-                    OPTIONAL_VARIABLES_METADATA,
-                    "Anbefalt",
-                    short_name,
-                    language,
-                ),
-            )
-            for short_name in short_names
-        ]

@@ -100,6 +100,7 @@ def build_ssb_accordion(
     header: str,
     key: dict,
     variable_short_name: str,
+    children: list,
 ) -> ssb.Accordion:
     """Build Accordion for one variable."""
     return ssb.Accordion(
@@ -118,6 +119,7 @@ def build_ssb_accordion(
                     "type": "variable-inputs",
                     "variable_short_name": variable_short_name,
                 },
+                children=children,
             ),
         ],
         className="variable",
