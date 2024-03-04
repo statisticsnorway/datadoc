@@ -216,39 +216,35 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
 
     @app.callback(
         Output("accordion-wrapper", "children"),
-        Input("open-button", "n_clicks"),
+        Input("language-dropdown", "value"),
         prevent_initial_call=True,
     )
     def callback_populate_new_variables_workspace(
-        # value: str,
-        n_clicks: int,
+        language: str,  # noqa: ARG001
     ) -> list:
         """Create variable workspace with accordions for variables."""
-        if n_clicks and n_clicks > 0:
-            return [
-                build_ssb_accordion(
-                    variable,
-                    {"type": "variables-accordion", "id": variable},
-                    variable,
-                    children=[
-                        build_edit_section(
-                            OBLIGATORY_VARIABLES_METADATA,
-                            "Obligatorisk",
-                            variable,
-                            state.current_metadata_language.value,
-                        ),
-                        build_edit_section(
-                            OPTIONAL_VARIABLES_METADATA,
-                            "Anbefalt",
-                            variable,
-                            state.current_metadata_language.value,
-                        ),
-                    ],
-                )
-                for variable in list(state.metadata.variables_lookup.keys())
-            ]
-
-        raise PreventUpdate
+        return [
+            build_ssb_accordion(
+                variable,
+                {"type": "variables-accordion", "id": variable},
+                variable,
+                children=[
+                    build_edit_section(
+                        OBLIGATORY_VARIABLES_METADATA,
+                        "Obligatorisk",
+                        variable,
+                        state.current_metadata_language.value,
+                    ),
+                    build_edit_section(
+                        OPTIONAL_VARIABLES_METADATA,
+                        "Anbefalt",
+                        variable,
+                        state.current_metadata_language.value,
+                    ),
+                ],
+            )
+            for variable in list(state.metadata.variables_lookup.keys())
+        ]
 
     @app.callback(
         Output(
