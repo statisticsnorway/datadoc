@@ -53,6 +53,19 @@ def get_statistical_subject_options(
     ]
 
 
+def get_unit_type_options(
+    language: SupportedLanguages,
+) -> list[dict[str, str]]:
+    """Collect the unit type options for the given language."""
+    return [
+        {
+            "label": unit_type.get_title(language),
+            "value": unit_type.unit_code,
+        }
+        for unit_type in state.unit_types.classifications
+    ]
+
+
 class DatasetIdentifiers(str, Enum):
     """As defined here: https://statistics-norway.atlassian.net/l/c/aoSfEWJU."""
 
@@ -107,7 +120,7 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         description="Livssyklus for datasettet",
         options_getter=functools.partial(
             get_enum_options_for_language,
-            enums.DatasetStatus,
+            enums.DataSetStatus,
         ),
     ),
     DatasetIdentifiers.DATASET_STATE: DisplayDatasetMetadataDropdown(
@@ -117,7 +130,7 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         obligatory=True,
         options_getter=functools.partial(
             get_enum_options_for_language,
-            enums.DatasetState,
+            enums.DataSetState,
         ),
     ),
     DatasetIdentifiers.NAME: DisplayDatasetMetadata(
@@ -164,10 +177,8 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         identifier=DatasetIdentifiers.UNIT_TYPE.value,
         display_name="Enhetstype",
         description="Primær enhetstype for datafil, datatabell eller datasett. Se  Vi jobber med en avklaring av behov for flere enhetstyper her.",
-        options_getter=functools.partial(
-            get_enum_options_for_language,
-            enums.UnitType,
-        ),
+        multiple_language_support=True,
+        options_getter=get_unit_type_options,
     ),
     DatasetIdentifiers.TEMPORALITY_TYPE: DisplayDatasetMetadataDropdown(
         identifier=DatasetIdentifiers.TEMPORALITY_TYPE.value,

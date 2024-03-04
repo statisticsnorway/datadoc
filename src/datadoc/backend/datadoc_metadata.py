@@ -19,8 +19,8 @@ from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
 from datadoc.enums import Assessment
-from datadoc.enums import DatasetState
-from datadoc.enums import DatasetStatus
+from datadoc.enums import DataSetState
+from datadoc.enums import DataSetStatus
 from datadoc.enums import VariableRole
 from datadoc.frontend.fields.display_dataset import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
@@ -55,7 +55,7 @@ class DataDocMetadata:
         self.container: model.MetadataContainer | None = None
         self.dataset: pathlib.Path | CloudPath | None = None
         self.short_name: str | None = None
-        self.meta: model.DatadocJsonSchema = model.DatadocJsonSchema(
+        self.meta: model.DatadocMetadata = model.DatadocMetadata(
             percentage_complete=0,
             dataset=model.Dataset(),
             variables=[],
@@ -135,7 +135,7 @@ class DataDocMetadata:
             datadoc_metadata = upgrade_metadata(
                 datadoc_metadata,
             )
-            self.meta = model.DatadocJsonSchema.model_validate_json(
+            self.meta = model.DatadocMetadata.model_validate_json(
                 json.dumps(datadoc_metadata),
             )
         except json.JSONDecodeError:
@@ -176,7 +176,7 @@ class DataDocMetadata:
         self.meta.dataset = model.Dataset(
             short_name=self.short_name,
             dataset_state=dapla_dataset_path_info.dataset_state,
-            dataset_status=DatasetStatus.DRAFT,
+            dataset_status=DataSetStatus.DRAFT,
             assessment=self.get_assessment_by_state(
                 dapla_dataset_path_info.dataset_state,
             ),
@@ -196,18 +196,18 @@ class DataDocMetadata:
         self.meta.variables = self.ds_schema.get_fields()
 
     @staticmethod
-    def get_assessment_by_state(state: DatasetState | None) -> Assessment | None:
+    def get_assessment_by_state(state: DataSetState | None) -> Assessment | None:
         """Find assessment derived by dataset state."""
         if state is None:
             return None
         match (state):
             case (
-                DatasetState.INPUT_DATA
-                | DatasetState.PROCESSED_DATA
-                | DatasetState.STATISTICS
+                DataSetState.INPUT_DATA
+                | DataSetState.PROCESSED_DATA
+                | DataSetState.STATISTICS
             ):
                 return Assessment.PROTECTED
-            case DatasetState.OUTPUT_DATA:
+            case DataSetState.OUTPUT_DATA:
                 return Assessment.OPEN
             case _:
                 return None

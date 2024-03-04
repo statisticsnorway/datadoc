@@ -4,10 +4,12 @@ import logging
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+from datadoc.backend.external_sources.external_sources import GetExternalSource
+from datadoc.enums import SupportedLanguages
+
 if TYPE_CHECKING:
     import pandas as pd
 
-    from datadoc.enums import SupportedLanguages
 
 from klass import KlassClassification  # type: ignore [attr-defined]
 
@@ -27,7 +29,7 @@ class UnitType:
             return self.titles[
                 (
                     # Adjust to language codes in the StatisticSubjectMapping structure.
-                    "no"
+                    "nb"
                     if language
                     in [
                         SupportedLanguages.NORSK_BOKMÅL,
@@ -46,7 +48,7 @@ class UnitType:
 
 
 @dataclass
-class UnitTypes:
+class UnitTypes(GetExternalSource):
     """Class for retrieving classifications from Klass."""
 
     def __init__(self, classification_id: int) -> None:
@@ -54,58 +56,108 @@ class UnitTypes:
 
         Initializes the classifications list and starts fetching the classifications.
         """
+        self.supported_languages = [
+            SupportedLanguages.NORSK_BOKMÅL,
+            SupportedLanguages.ENGLISH,
+        ]
+
         self._classifications: list[UnitType] = []
 
-        self.classifications_dataframe = self._fetch_data_from_external_source(
-            classification_id,
-        )
+        self.classification_id = classification_id
 
-        self._parse_classification_dataframe_if_loaded()
+        self.classifications_dataframes: (
+            dict[SupportedLanguages, pd.DataFrame] | None
+        ) = None
+
+        super().__init__()
 
     def _fetch_data_from_external_source(
         self,
-        classification_id: int,
-    ) -> pd.DataFrame | None:
+    ) -> dict[SupportedLanguages, pd.DataFrame] | None:
         """Fetches the classifications from Klass by classification id.
 
         returns a pandas dataframe with the class data for the given classification id.
         """
         try:
-            klass_dataframe = KlassClassification(classification_id)
-            return klass_dataframe.get_codes()
+            classifications_dataframes = {}
+            for i in self.supported_languages:
+
+                classifications_dataframes[i] = (
+                    KlassClassification(
+                        self.classification_id,
+                        i,
+                    )
+                    .get_codes()
+                    .data
+                )
+
         except Exception:
             logger.exception(
                 "Exception while getting classifications from Klass",
             )
             return None
+        else:
+            return classifications_dataframes
 
-    def _parse_classification_dataframe(
+    def _extract_titles(
         self,
-        classifications_dataframe: pd.DataFrame,
-    ) -> list[str]:
-        """Method that finds the name column in the dataframe, and returns all values in a list."""
-        if "name" in classifications_dataframe.columns:
-            return classifications_dataframe.loc[:, "name"].to_list()
-        return []
+        dataframes: dict[SupportedLanguages, pd.DataFrame],
+    ) -> list[dict[str, str]]:
+        list_of_titles = []
+        languages = list(dataframes)
+        for i in range(len(dataframes[SupportedLanguages.NORSK_BOKMÅL])):
+            titles = {}
+            for j in languages:
+                if "name" in dataframes[j]:
+                    titles[str(j)] = dataframes[j].loc[:, "name"][i]
+                else:
+                    titles[str(j)] = None
+            list_of_titles.append(titles)
+        return list_of_titles
 
-    def _parse_classification_dataframe_if_loaded(self) -> bool:
+    def _create_unit_types_from_dataframe(
+        self,
+        classifications_dataframes: dict[SupportedLanguages, pd.DataFrame],
+    ) -> list[UnitType]:
+        """Method that finds the name column in the dataframe, and returns all values in a list."""
+        classification_names = self._extract_titles(classifications_dataframes)
+        classification_codes: list
+        if "code" in classifications_dataframes[SupportedLanguages.NORSK_BOKMÅL]:
+            classification_codes = (
+                classifications_dataframes[SupportedLanguages.NORSK_BOKMÅL]
+                .loc[:, "code"]
+                .to_list()
+            )
+        else:
+            classification_codes = [None] * len(classification_names)
+        unit_types = []
+        for a, b in zip(classification_names, classification_codes):
+            unit_types.append(
+                UnitType(a, b),
+            )
+        return unit_types
+
+    def _get_classification_dataframe_if_loaded(self) -> bool:
         """Checks if the data from Klass is loaded, then gets the classifications from the dataframe."""
-        if self.classifications_dataframe is not None:
-            self._classifications = self._parse_classification_dataframe(
-                self.classifications_dataframe,
+        if self.check_if_external_data_is_loaded():
+            self.classifications_dataframes = self.retrieve_external_data()
+            if self.classifications_dataframes is not None:
+                self._classifications = self._create_unit_types_from_dataframe(
+                    self.classifications_dataframes,
+                )
+                logger.debug(
+                    "Thread finished. found %s classifications",
+                    len(self._classifications),
+                )
+                return True
+            logger.warning(
+                "Thread is not done. Cannot get classifications from the dataframe.",
             )
-            logger.debug(
-                "Thread finished. found %s classifications",
-                len(self._classifications),
-            )
-            return True
-        logger.warning(
-            "Thread is not done. Cannot get classifications from the dataframe.",
-        )
         return False
 
     @property
-    def classifications(self) -> list[str]:
+    def classifications(self) -> list[UnitType]:
         """Getter for primary subjects."""
+        self._get_classification_dataframe_if_loaded()
         logger.debug("Got %s classifications subjects", len(self._classifications))
         return self._classifications

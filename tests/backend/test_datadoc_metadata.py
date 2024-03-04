@@ -13,7 +13,7 @@ from uuid import UUID
 import pytest
 from cloudpathlib.local import LocalGSClient
 from cloudpathlib.local import LocalGSPath
-from datadoc_model.model import DatadocJsonSchema
+from datadoc_model.model import DatadocMetadata
 from datadoc_model.model import Dataset
 from datadoc_model.model import Variable
 
@@ -22,8 +22,8 @@ from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.backend.user_info import PLACEHOLDER_EMAIL_ADDRESS
 from datadoc.backend.user_info import TestUserInfo
 from datadoc.enums import Assessment
-from datadoc.enums import DatasetState
-from datadoc.enums import DatasetStatus
+from datadoc.enums import DataSetState
+from datadoc.enums import DataSetStatus
 from datadoc.enums import DataType
 from datadoc.enums import VariableRole
 from tests.utils import TEST_BUCKET_PARQUET_FILEPATH
@@ -53,10 +53,10 @@ def test_existing_metadata_file(
 
 
 def test_metadata_document_percent_complete(metadata: DataDocMetadata):
-    dataset = Dataset(dataset_state=DatasetState.OUTPUT_DATA)
+    dataset = Dataset(dataset_state=DataSetState.OUTPUT_DATA)
     variable_1 = Variable(data_type=DataType.BOOLEAN)
     variable_2 = Variable(data_type=DataType.INTEGER)
-    document = DatadocJsonSchema(
+    document = DatadocMetadata(
         percentage_complete=0,
         dataset=dataset,
         variables=[variable_1, variable_2],
@@ -248,14 +248,14 @@ def test_open_file(
                 TEST_PROCESSED_DATA_POPULATION_DIRECTORY
                 / "person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json",
             ),
-            DatasetStatus.DRAFT.value,
+            DataSetStatus.DRAFT.value,
         ),
         (
             str(
                 TEST_RESOURCES_DIRECTORY / "person_data_v1.parquet",
             ),
             None,
-            DatasetStatus.DRAFT.value,
+            DataSetStatus.DRAFT.value,
         ),
         (
             "",
@@ -268,7 +268,7 @@ def test_dataset_status_default_value(
     subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
     dataset_path: str,
     metadata_document_path: str | None,
-    expected_type: DatasetStatus | None,
+    expected_type: DataSetStatus | None,
 ):
     datadoc_metadata = DataDocMetadata(
         subject_mapping_fake_statistical_structure,

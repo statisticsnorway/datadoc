@@ -10,7 +10,8 @@ from datadoc import enums
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-from datadoc.enums import DatasetState
+from datadoc.backend.unit_types import UnitTypes
+from datadoc.enums import DataSetState
 from datadoc.enums import LanguageStringsEnum
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
@@ -41,8 +42,8 @@ def file_path():
     [
         (
             DatasetIdentifiers.DATASET_STATE,
-            DatasetState.INPUT_DATA,
-            DatasetState.INPUT_DATA.value,
+            DataSetState.INPUT_DATA,
+            DataSetState.INPUT_DATA.value,
         ),
         (DatasetIdentifiers.VERSION, 1, "1"),
     ],
@@ -90,35 +91,37 @@ def test_update_dataset_metadata_language_strings(
 
 def test_update_dataset_metadata_language_enums():
     state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
-    state.metadata.meta.dataset.dataset_state = DatasetState.PROCESSED_DATA
+    state.metadata.meta.dataset.dataset_state = DataSetState.PROCESSED_DATA
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     output = update_dataset_metadata_language()
-    assert DatasetState.PROCESSED_DATA.language_strings.nb not in output
-    assert DatasetState.PROCESSED_DATA.name in output
+    assert DataSetState.PROCESSED_DATA.language_strings.nb not in output
+    assert DataSetState.PROCESSED_DATA.name in output
     state.current_metadata_language = SupportedLanguages.ENGLISH
     output = update_dataset_metadata_language()
-    assert DatasetState.PROCESSED_DATA.language_strings.nb not in output
-    assert DatasetState.PROCESSED_DATA.name in output
+    assert DataSetState.PROCESSED_DATA.language_strings.nb not in output
+    assert DataSetState.PROCESSED_DATA.name in output
 
 
 @pytest.mark.parametrize(
     "enum_for_options",
     [
         enums.Assessment,
-        enums.DatasetState,
-        enums.DatasetStatus,
+        enums.DataSetState,
+        enums.DataSetStatus,
         enums.TemporalityTypeType,
     ],
 )
 @pytest.mark.parametrize("language", list(SupportedLanguages))
 def test_change_language_dataset_metadata_options_enums(
     subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
+    unit_types_fake_structure: UnitTypes,
     metadata: DataDocMetadata,
     enum_for_options: LanguageStringsEnum,
     language: SupportedLanguages,
 ):
     state.metadata = metadata
     state.statistic_subject_mapping = subject_mapping_fake_statistical_structure
+    state.unit_types = unit_types_fake_structure
     value = change_language_dataset_metadata(language)
 
     for options in cast(list[list[dict[str, str]]], value[0:-1]):
