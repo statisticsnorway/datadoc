@@ -79,7 +79,7 @@ DISPLAY_VARIABLES: dict[
         presentation="text",
         component=ssb.Input,
     ),
-    NewVariableIdentifiers.DATA_TYPE: DisplayNewVariablesMetadata(
+    NewVariableIdentifiers.DATA_TYPE: DisplayNewVariablesMetadataDropdown(
         identifier=NewVariableIdentifiers.DATA_TYPE.value,
         display_name="Datatype",
         description="Datatype",
@@ -91,7 +91,7 @@ DISPLAY_VARIABLES: dict[
             enums.DataType,
         ),
     ),
-    NewVariableIdentifiers.VARIABLE_ROLE: DisplayNewVariablesMetadata(
+    NewVariableIdentifiers.VARIABLE_ROLE: DisplayNewVariablesMetadataDropdown(
         identifier=NewVariableIdentifiers.VARIABLE_ROLE.value,
         display_name="Variabelens rolle",
         description="Variabelens rolle i datasett",
@@ -200,6 +200,7 @@ for v in DISPLAY_VARIABLES.values():
     if v.multiple_language_support:
         v.value_getter = get_multi_language_metadata
 
+# Copied from dataset_tab - not in use - should we use this?
 MULTIPLE_LANGUAGE_VARIABLES_METADATA = [
     m.identifier for m in DISPLAY_VARIABLES.values() if m.multiple_language_support
 ]
@@ -212,18 +213,12 @@ OPTIONAL_VARIABLES_METADATA = [
     m for m in DISPLAY_VARIABLES.values() if not m.obligatory and m.editable
 ]
 
-# The order of this list MUST match the order of display components, as defined in DatasetTab.py ?
+# Copied from dataset_tab - not in use - should we use this?
 DISPLAYED_VARIABLES_METADATA: list[DisplayNewVariablesMetadata] = (
     OBLIGATORY_VARIABLES_METADATA + OPTIONAL_VARIABLES_METADATA
 )
 
-# Remove if we change to new design
-DISPLAYED_DROPDOWN_VARIABLES_METADATA: list[DisplayNewVariablesMetadataDropdown] = [
-    m
-    for m in DISPLAYED_VARIABLES_METADATA
-    if isinstance(m, DisplayNewVariablesMetadataDropdown)
-]
-
+# Copied from dataset_tab - not in use - should we use this?
 OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS: list[str] = [
     m.identifier for m in DISPLAY_VARIABLES.values() if m.obligatory and m.editable
 ]

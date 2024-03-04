@@ -118,10 +118,6 @@ class DisplayNewVariablesMetadata(DisplayMetadata):
     component: type[Component] = ssb.Input
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
     presentation: str | None = "input"
-    options_getter: Callable[  # noqa: E731
-        [SupportedLanguages],
-        list[dict[str, str]],
-    ] = lambda _: []
 
 
 @dataclass
@@ -147,7 +143,7 @@ class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
     component: type[Component] = dcc.Dropdown
 
 
-# new variables - Not in use in newest design
+# new variables dropdowns
 @dataclass
 class DisplayNewVariablesMetadataDropdown(DisplayNewVariablesMetadata):
     """Include the possible options which a user may choose from."""
