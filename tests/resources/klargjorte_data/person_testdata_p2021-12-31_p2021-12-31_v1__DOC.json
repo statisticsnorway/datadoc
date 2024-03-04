@@ -6,7 +6,7 @@
         "dataset": {
             "short_name": "person_testdata_p2021-12-31_p2021-12-31",
             "assessment": "PROTECTED",
-            "dataset_status": "DRAFT",
+            "dataset_status": "INTERNAL",
             "dataset_state": "PROCESSED_DATA",
             "name": {
                 "en": "",

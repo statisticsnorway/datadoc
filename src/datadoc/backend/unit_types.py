@@ -7,8 +7,9 @@ from datadoc.backend.external_sources.external_sources import GetExternalSource
 
 if TYPE_CHECKING:
     import pandas as pd
+    from klass.classes.codes import KlassCodes
 
-from klass import KlassClassification  # type: ignore [attr-defined]
+from klass.classes.classification import KlassClassification
 
 logger = logging.getLogger(__name__)
 
@@ -31,14 +32,13 @@ class UnitTypes(GetExternalSource):
 
     def _fetch_data_from_external_source(
         self,
-    ) -> pd.DataFrame | None:
+    ) -> KlassCodes | None:
         """Fetches the classifications from Klass by classification id.
 
         returns a pandas dataframe with the class data for the given classification id.
         """
         try:
-            klass_dataframe = KlassClassification(self.classification_id)
-            return klass_dataframe.get_codes()
+            return KlassClassification(str(self.classification_id)).get_codes()
         except Exception:
             logger.exception(
                 "Exception while getting classifications from Klass",
