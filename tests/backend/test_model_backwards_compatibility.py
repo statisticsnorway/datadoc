@@ -37,10 +37,10 @@ def test_existing_metadata_unknown_model_version():
     ids=BACKWARDS_COMPATIBLE_VERSION_NAMES,
 )
 def test_backwards_compatibility(
-    existing_metadata_file: str,
+    existing_metadata_file: Path,
     metadata: DataDocMetadata,
 ):
-    with Path.open(Path(existing_metadata_file)) as f:
+    with existing_metadata_file.open() as f:
         file_metadata = json.loads(f.read())
 
     # Just test a single value to make sure we have a working model
