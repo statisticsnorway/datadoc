@@ -128,3 +128,13 @@ def get_dapla_service() -> DaplaService | None:
 def get_oidc_token() -> str | None:
     """Get the JWT token from the environment."""
     return _get_config_item("OIDC_TOKEN")
+
+
+def get_profiling() -> bool:
+    """Run the profiler."""
+    return _get_config_item("DATADOC_ACTIVATE_PROFILING") == "True"
+
+
+def get_profiling_dir() -> Path:
+    """Allow for customization of the profiling directory. Defaults to ./profiling."""
+    return Path(_get_config_item("DATADOC_PROFILING_DIRECTORY") or "./profiling")

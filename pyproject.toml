@@ -70,6 +70,7 @@ types-setuptools = "*"
 types-beautifulsoup4 = "*"
 requests-mock = "*"
 faker = "*"
+snakeviz = "^2.2.0"
 
 
 [tool.pytest.ini_options]

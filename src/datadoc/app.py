@@ -117,6 +117,22 @@ def get_app(dataset_path: str | None = None) -> tuple[Dash, int]:
         assets_folder=f"{Path(__file__).parent}/assets",
         requests_pathname_prefix=requests_pathname_prefix,
     )
+
+    if config.get_profiling():
+        from werkzeug.middleware.profiler import ProfilerMiddleware
+
+        profiling_dir = config.get_profiling_dir()
+        profiling_dir.mkdir(parents=True, exist_ok=True)
+
+        app.server.config["PROFILE"] = True
+        app.server.wsgi_app = ProfilerMiddleware(
+            app.server.wsgi_app,
+            sort_by=["cumtime"],
+            restrictions=[50],
+            stream=None,
+            profile_dir=str(profiling_dir),
+        )
+
     app = build_app(app)
     app.server.register_blueprint(healthz, url_prefix="/healthz")
     app.server.config["HEALTHZ"] = {
