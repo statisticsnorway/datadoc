@@ -11,10 +11,9 @@ from dash import html
 
 if TYPE_CHECKING:
     from datadoc.frontend.fields.display_new_variables import (
-        DisplayNewVariablesMetadataDropdown,
+        DisplayNewVariablesMetadata,
     )
-
-from datadoc.enums import SupportedLanguages
+from datadoc.enums import SupportedLanguages  # noqa: TCH001
 
 logger = logging.getLogger(__name__)
 
@@ -28,47 +27,20 @@ VARIABLES_METADATA_INPUT = "variables-metadata-input"
 # section of Inputs: Input, checkbox or dropdown -
 # It is hard to separate between DisplayNewVariablesMetatdata and NewVariablesMetadataDropddown - with NewVariablesMetadataDropddown in type hint it's temporary solved
 def build_input_field_section(
-    metadata_inputs: list[DisplayNewVariablesMetadataDropdown],
+    metadata_inputs: list[DisplayNewVariablesMetadata],
     variable_short_name: str,
-    language: str,
+    language: SupportedLanguages,
 ) -> dbc.Form:
     """Create input fields."""
     return dbc.Form(
         [
-            (
-                i.component(
-                    label=i.display_name,
-                    disabled=not i.editable,
-                    className="variables-input",
-                    id={
-                        "type": VARIABLES_METADATA_INPUT,
-                        "variable_short_name": variable_short_name,
-                        "id": i.identifier,
-                    },
-                    type=i.presentation,
-                    debounce=True,
-                )
-                if i.component == ssb.Input
-                else (
-                    i.component(
-                        header=i.display_name,
-                        id={
-                            "type": VARIABLES_METADATA_INPUT,
-                            "variable_short_name": variable_short_name,
-                            "id": i.identifier,
-                        },
-                        items=i.options_getter(SupportedLanguages(language)),
-                    )
-                    if i.component == ssb.Dropdown
-                    else i.component(
-                        id={
-                            "type": VARIABLES_METADATA_INPUT,
-                            "variable_short_name": variable_short_name,
-                            "id": i.identifier,
-                        },
-                        **i.extra_kwargs,
-                    )
-                )
+            i.render(
+                {
+                    "type": VARIABLES_METADATA_INPUT,
+                    "variable_short_name": variable_short_name,
+                    "id": i.identifier,
+                },
+                language,
             )
             for i in metadata_inputs
         ],
@@ -82,7 +54,7 @@ def build_edit_section(
     metadata_inputs: list,
     title: str,
     variable_short_name: str,
-    language: str,
+    language: SupportedLanguages,
 ) -> html.Section:
     """Create input section."""
     return html.Section(

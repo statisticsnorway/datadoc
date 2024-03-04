@@ -13,6 +13,7 @@ import ssb_dash_components as ssb  # type: ignore[import-untyped]
 from dash import dcc
 
 from datadoc import state
+from datadoc.enums import SupportedLanguages
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -21,7 +22,6 @@ if TYPE_CHECKING:
     from datadoc_model.model import LanguageStringType
     from pydantic import BaseModel
 
-    from datadoc.enums import SupportedLanguages
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 logger = logging.getLogger(__name__)
@@ -119,6 +119,16 @@ class DisplayNewVariablesMetadata(DisplayMetadata):
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
     presentation: str | None = "input"
 
+    def render(self, variable_id: dict, language: SupportedLanguages) -> ssb.Input:
+        """Build Dropdown component with props."""
+        self.language = language
+        return ssb.Input(
+            label=self.display_name,
+            id=variable_id,
+            disabled=not self.editable,
+            # **self.extra_kwargs,
+        )
+
 
 @dataclass
 class DisplayDatasetMetadata(DisplayMetadata):
@@ -152,4 +162,12 @@ class DisplayNewVariablesMetadataDropdown(DisplayNewVariablesMetadata):
     options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
     # fmt: on
     extra_kwargs: dict[str, Any] = field(default_factory=dropdown_kwargs_factory)
-    component: type[Component] = ssb.Dropdown
+
+    def render(self, variable_id: dict, language: SupportedLanguages) -> ssb.Dropdown:
+        """Build Dropdown component with props."""
+        return ssb.Dropdown(
+            header=self.display_name,
+            id=variable_id,
+            items=self.options_getter(SupportedLanguages(language)),
+            **self.extra_kwargs,
+        )

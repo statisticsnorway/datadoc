@@ -8,7 +8,6 @@ from enum import Enum
 from typing import TYPE_CHECKING
 
 import dash_bootstrap_components as dbc
-import ssb_dash_components as ssb  # type: ignore[import-untyped]
 
 from datadoc import enums
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
@@ -77,15 +76,15 @@ DISPLAY_VARIABLES: dict[
         obligatory=True,
         multiple_language_support=True,
         presentation="text",
-        component=ssb.Input,
+        extra_kwargs={
+            "debounce": True,
+        },
     ),
     NewVariableIdentifiers.DATA_TYPE: DisplayNewVariablesMetadataDropdown(
         identifier=NewVariableIdentifiers.DATA_TYPE.value,
         display_name="Datatype",
         description="Datatype",
         obligatory=True,
-        presentation="dropdown",
-        component=ssb.Dropdown,
         options_getter=functools.partial(
             get_enum_options_for_language,
             enums.DataType,
@@ -96,8 +95,6 @@ DISPLAY_VARIABLES: dict[
         display_name="Variabelens rolle",
         description="Variabelens rolle i datasett",
         obligatory=True,
-        presentation="dropdown",
-        component=ssb.Dropdown,
         options_getter=functools.partial(
             get_enum_options_for_language,
             enums.VariableRole,
@@ -110,7 +107,9 @@ DISPLAY_VARIABLES: dict[
         url=True,
         obligatory=True,
         presentation="url",
-        component=ssb.Input,
+        extra_kwargs={
+            "debounce": True,
+        },
     ),
     NewVariableIdentifiers.DIRECT_PERSON_IDENTIFYING: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.DIRECT_PERSON_IDENTIFYING.value,
@@ -135,18 +134,27 @@ DISPLAY_VARIABLES: dict[
         display_name="Populasjonen",
         description="Populasjonen variabelen beskriver kan spesifiseres nærmere her. Settes på datasettnivå, men kan overstyres på variabelforekomstnivå.",
         multiple_language_support=True,
+        extra_kwargs={
+            "debounce": True,
+        },
     ),
     NewVariableIdentifiers.COMMENT: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.COMMENT.value,
         display_name="Kommentar",
         description="Ytterligere presiseringer av variabeldefinisjon",
         multiple_language_support=True,
+        extra_kwargs={
+            "debounce": True,
+        },
     ),
     NewVariableIdentifiers.MEASUREMENT_UNIT: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.MEASUREMENT_UNIT.value,
         display_name="Måleenhet",
         description="Måleenhet. Eksempel: NOK eller USD for valuta, KG eller TONN for vekt. Se også forslag til SSBs måletyper/måleenheter.",
         multiple_language_support=True,
+        extra_kwargs={
+            "debounce": True,
+        },
     ),
     NewVariableIdentifiers.FORMAT: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.FORMAT.value,
@@ -158,6 +166,9 @@ DISPLAY_VARIABLES: dict[
         display_name="Kodeverkets URI",
         description="Lenke (URI) til gyldige kodeverk (klassifikasjon eller kodeliste) i KLASS",
         url=True,
+        extra_kwargs={
+            "debounce": True,
+        },
     ),
     NewVariableIdentifiers.SENTINEL_VALUE_URI: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.SENTINEL_VALUE_URI.value,
@@ -165,6 +176,9 @@ DISPLAY_VARIABLES: dict[
         description="En lenke (URI) til en oversikt over 'spesialverdier' som inngår i variabelen.",
         url=True,
         presentation="url",
+        extra_kwargs={
+            "debounce": True,
+        },
     ),
     NewVariableIdentifiers.INVALID_VALUE_DESCRIPTION: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.INVALID_VALUE_DESCRIPTION.value,
@@ -178,20 +192,21 @@ DISPLAY_VARIABLES: dict[
         description="Unik SSB identifikator for variabelforekomsten i datasettet",
         obligatory=False,
         editable=False,
+        extra_kwargs={
+            "debounce": True,
+        },
     ),
     NewVariableIdentifiers.CONTAINS_DATA_FROM: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.CONTAINS_DATA_FROM.value,
         display_name="Inneholder data f.o.m.",
         description="Variabelforekomsten i datasettet inneholder data fra og med denne dato.",
         presentation="date",
-        component=ssb.Input,
     ),
     NewVariableIdentifiers.CONTAINS_DATA_UNTIL: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.CONTAINS_DATA_UNTIL.value,
         display_name="Inneholder data t.o.m.",
         description="Variabelforekomsten i datasettet inneholder data til og med denne dato.",
         presentation="date",
-        component=ssb.Input,
     ),
 }
 
