@@ -12,6 +12,7 @@ import dash_bootstrap_components as dbc
 from datadoc import enums
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
 from datadoc.frontend.fields.display_base import DisplayNewVariablesMetadata
+from datadoc.frontend.fields.display_base import DisplayNewVariablesMetadataCheckbox
 from datadoc.frontend.fields.display_base import DisplayNewVariablesMetadataDropdown
 from datadoc.frontend.fields.display_base import get_multi_language_metadata
 
@@ -76,9 +77,6 @@ DISPLAY_VARIABLES: dict[
         obligatory=True,
         multiple_language_support=True,
         presentation="text",
-        extra_kwargs={
-            "debounce": True,
-        },
     ),
     NewVariableIdentifiers.DATA_TYPE: DisplayNewVariablesMetadataDropdown(
         identifier=NewVariableIdentifiers.DATA_TYPE.value,
@@ -107,18 +105,14 @@ DISPLAY_VARIABLES: dict[
         url=True,
         obligatory=True,
         presentation="url",
-        extra_kwargs={
-            "debounce": True,
-        },
     ),
-    NewVariableIdentifiers.DIRECT_PERSON_IDENTIFYING: DisplayNewVariablesMetadata(
+    NewVariableIdentifiers.DIRECT_PERSON_IDENTIFYING: DisplayNewVariablesMetadataCheckbox(
         identifier=NewVariableIdentifiers.DIRECT_PERSON_IDENTIFYING.value,
         display_name="DPI",
         description="Direkte personidentifiserende informasjon (DPI)",
         obligatory=True,
         component=dbc.Checkbox,
         extra_kwargs={
-            "label": "Direkte Personidentifiserende Informasjon",
             "label_class_name": "ssb-checkbox checkbox-label",
             "class_name": "ssb-checkbox",
         },
@@ -134,27 +128,18 @@ DISPLAY_VARIABLES: dict[
         display_name="Populasjonen",
         description="Populasjonen variabelen beskriver kan spesifiseres nærmere her. Settes på datasettnivå, men kan overstyres på variabelforekomstnivå.",
         multiple_language_support=True,
-        extra_kwargs={
-            "debounce": True,
-        },
     ),
     NewVariableIdentifiers.COMMENT: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.COMMENT.value,
         display_name="Kommentar",
         description="Ytterligere presiseringer av variabeldefinisjon",
         multiple_language_support=True,
-        extra_kwargs={
-            "debounce": True,
-        },
     ),
     NewVariableIdentifiers.MEASUREMENT_UNIT: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.MEASUREMENT_UNIT.value,
         display_name="Måleenhet",
         description="Måleenhet. Eksempel: NOK eller USD for valuta, KG eller TONN for vekt. Se også forslag til SSBs måletyper/måleenheter.",
         multiple_language_support=True,
-        extra_kwargs={
-            "debounce": True,
-        },
     ),
     NewVariableIdentifiers.FORMAT: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.FORMAT.value,
@@ -166,9 +151,6 @@ DISPLAY_VARIABLES: dict[
         display_name="Kodeverkets URI",
         description="Lenke (URI) til gyldige kodeverk (klassifikasjon eller kodeliste) i KLASS",
         url=True,
-        extra_kwargs={
-            "debounce": True,
-        },
     ),
     NewVariableIdentifiers.SENTINEL_VALUE_URI: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.SENTINEL_VALUE_URI.value,
@@ -176,9 +158,6 @@ DISPLAY_VARIABLES: dict[
         description="En lenke (URI) til en oversikt over 'spesialverdier' som inngår i variabelen.",
         url=True,
         presentation="url",
-        extra_kwargs={
-            "debounce": True,
-        },
     ),
     NewVariableIdentifiers.INVALID_VALUE_DESCRIPTION: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.INVALID_VALUE_DESCRIPTION.value,
@@ -192,9 +171,6 @@ DISPLAY_VARIABLES: dict[
         description="Unik SSB identifikator for variabelforekomsten i datasettet",
         obligatory=False,
         editable=False,
-        extra_kwargs={
-            "debounce": True,
-        },
     ),
     NewVariableIdentifiers.CONTAINS_DATA_FROM: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.CONTAINS_DATA_FROM.value,

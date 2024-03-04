@@ -9,6 +9,7 @@ from dataclasses import field
 from typing import TYPE_CHECKING
 from typing import Any
 
+import dash_bootstrap_components as dbc
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
 from dash import dcc
 
@@ -41,6 +42,15 @@ def input_kwargs_factory() -> dict[str, t.Any]:
     a dataclass field.
     """
     return INPUT_KWARGS
+
+
+def new_input_kwargs_factory() -> dict[str, t.Any]:
+    """Initialize the field extra_kwargs.
+
+    We aren't allowed to directly assign a mutable type like a dict to
+    a dataclass field.
+    """
+    return {}
 
 
 def dropdown_kwargs_factory() -> dict[str, t.Any]:
@@ -114,19 +124,18 @@ class DisplayNewVariablesMetadata(DisplayMetadata):
     Specific to variable fields.
     """
 
-    extra_kwargs: dict[str, Any] = field(default_factory=input_kwargs_factory)
+    extra_kwargs: dict[str, Any] = field(default_factory=new_input_kwargs_factory)
     component: type[Component] = ssb.Input
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
     presentation: str | None = "input"
 
     def render(self, variable_id: dict, language: SupportedLanguages) -> ssb.Input:
-        """Build Dropdown component with props."""
+        """Build Input  component with props."""
         self.language = language
         return ssb.Input(
             label=self.display_name,
             id=variable_id,
-            disabled=not self.editable,
-            # **self.extra_kwargs,
+            debounce=True,
         )
 
 
@@ -169,5 +178,23 @@ class DisplayNewVariablesMetadataDropdown(DisplayNewVariablesMetadata):
             header=self.display_name,
             id=variable_id,
             items=self.options_getter(SupportedLanguages(language)),
+            **self.extra_kwargs,
+        )
+
+
+@dataclass
+class DisplayNewVariablesMetadataCheckbox(DisplayNewVariablesMetadata):
+    """Controls for how a checkbox metadata field should be displayed."""
+
+    extra_kwargs: dict[str, Any] = field(default_factory=input_kwargs_factory)
+    value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
+
+    def render(self, variable_id: dict, language: SupportedLanguages) -> dbc.Checkbox:
+        """Build Dropdown component with props."""
+        self.language = language
+        return dbc.Checkbox(
+            label=self.display_name,
+            id=variable_id,
+            disabled=not self.editable,
             **self.extra_kwargs,
         )
