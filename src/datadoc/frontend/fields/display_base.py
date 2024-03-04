@@ -116,29 +116,6 @@ class DisplayVariablesMetadata(DisplayMetadata):
     presentation: str | None = "input"
 
 
-# New design for variables - one structure for all input components (dropdown, Input, checkobox and textArea)
-@dataclass
-class DisplayNewVariablesMetadata(DisplayMetadata):
-    """Controls for how a given metadata field should be displayed.
-
-    Specific to variable fields.
-    """
-
-    extra_kwargs: dict[str, Any] = field(default_factory=new_input_kwargs_factory)
-    component: type[Component] = ssb.Input
-    value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
-    presentation: str | None = "input"
-
-    def render(self, variable_id: dict, language: SupportedLanguages) -> ssb.Input:
-        """Build Input  component with props."""
-        self.language = language
-        return ssb.Input(
-            label=self.display_name,
-            id=variable_id,
-            debounce=True,
-        )
-
-
 @dataclass
 class DisplayDatasetMetadata(DisplayMetadata):
     """Controls for how a given metadata field should be displayed.
@@ -162,17 +139,41 @@ class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
     component: type[Component] = dcc.Dropdown
 
 
-# new variables dropdowns
+# New design for variables - Input,dropdown, checkbox - consider subclass hierarchy
+@dataclass
+class DisplayNewVariablesMetadata(DisplayMetadata):
+    """Controls for how a given metadata field should be displayed.
+
+    Specific to variable fields.
+    """
+
+    extra_kwargs: dict[str, Any] = field(default_factory=new_input_kwargs_factory)
+    component: type[Component] = ssb.Input
+    value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
+    presentation: str | None = "input"
+
+    def render(self, variable_id: dict, language: str) -> ssb.Input:
+        """Build Input  component with props."""
+        self.language = language
+        return ssb.Input(
+            label=self.display_name,
+            id=variable_id,
+            debounce=True,
+            type=self.presentation,
+            disabled=not self.editable,
+        )
+
+
 @dataclass
 class DisplayNewVariablesMetadataDropdown(DisplayNewVariablesMetadata):
-    """Include the possible options which a user may choose from."""
+    """Control how a Dropdown should be displayed."""
 
     # fmt: off
     options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
     # fmt: on
     extra_kwargs: dict[str, Any] = field(default_factory=dropdown_kwargs_factory)
 
-    def render(self, variable_id: dict, language: SupportedLanguages) -> ssb.Dropdown:
+    def render(self, variable_id: dict, language: str) -> ssb.Dropdown:
         """Build Dropdown component with props."""
         return ssb.Dropdown(
             header=self.display_name,
@@ -189,7 +190,7 @@ class DisplayNewVariablesMetadataCheckbox(DisplayNewVariablesMetadata):
     extra_kwargs: dict[str, Any] = field(default_factory=input_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
 
-    def render(self, variable_id: dict, language: SupportedLanguages) -> dbc.Checkbox:
+    def render(self, variable_id: dict, language: str) -> dbc.Checkbox:
         """Build Dropdown component with props."""
         self.language = language
         return dbc.Checkbox(

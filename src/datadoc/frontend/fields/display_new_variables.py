@@ -122,24 +122,28 @@ DISPLAY_VARIABLES: dict[
         display_name="Datakilde",
         description="Datakilde. Settes på datasettnivå, men kan overstyres på variabelforekomstnivå.",
         multiple_language_support=True,
+        presentation="text",
     ),
     NewVariableIdentifiers.POPULATION_DESCRIPTION: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.POPULATION_DESCRIPTION.value,
         display_name="Populasjonen",
         description="Populasjonen variabelen beskriver kan spesifiseres nærmere her. Settes på datasettnivå, men kan overstyres på variabelforekomstnivå.",
         multiple_language_support=True,
+        presentation="text",
     ),
     NewVariableIdentifiers.COMMENT: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.COMMENT.value,
         display_name="Kommentar",
         description="Ytterligere presiseringer av variabeldefinisjon",
         multiple_language_support=True,
+        presentation="text",
     ),
     NewVariableIdentifiers.MEASUREMENT_UNIT: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.MEASUREMENT_UNIT.value,
         display_name="Måleenhet",
         description="Måleenhet. Eksempel: NOK eller USD for valuta, KG eller TONN for vekt. Se også forslag til SSBs måletyper/måleenheter.",
         multiple_language_support=True,
+        presentation="text",
     ),
     NewVariableIdentifiers.FORMAT: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.FORMAT.value,
@@ -151,6 +155,7 @@ DISPLAY_VARIABLES: dict[
         display_name="Kodeverkets URI",
         description="Lenke (URI) til gyldige kodeverk (klassifikasjon eller kodeliste) i KLASS",
         url=True,
+        presentation="url",
     ),
     NewVariableIdentifiers.SENTINEL_VALUE_URI: DisplayNewVariablesMetadata(
         identifier=NewVariableIdentifiers.SENTINEL_VALUE_URI.value,

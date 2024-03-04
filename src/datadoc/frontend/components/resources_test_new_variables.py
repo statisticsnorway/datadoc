@@ -13,7 +13,6 @@ if TYPE_CHECKING:
     from datadoc.frontend.fields.display_new_variables import (
         DisplayNewVariablesMetadata,
     )
-from datadoc.enums import SupportedLanguages  # noqa: TCH001
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +28,7 @@ VARIABLES_METADATA_INPUT = "variables-metadata-input"
 def build_input_field_section(
     metadata_inputs: list[DisplayNewVariablesMetadata],
     variable_short_name: str,
-    language: SupportedLanguages,
+    language: str,
 ) -> dbc.Form:
     """Create input fields."""
     return dbc.Form(
@@ -54,7 +53,7 @@ def build_edit_section(
     metadata_inputs: list,
     title: str,
     variable_short_name: str,
-    language: SupportedLanguages,
+    language: str,
 ) -> html.Section:
     """Create input section."""
     return html.Section(
