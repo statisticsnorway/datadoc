@@ -13,7 +13,6 @@ from dash import MATCH
 from dash import Dash
 from dash import Input
 from dash import Output
-from dash import Patch
 from dash import State
 from dash import ctx
 from dash import no_update
@@ -32,8 +31,6 @@ from datadoc.frontend.callbacks.variables import (
     update_variable_table_dropdown_options_for_language,
 )
 from datadoc.frontend.callbacks.variables import update_variable_table_language
-from datadoc.frontend.components.builders import AlertTypes
-from datadoc.frontend.components.builders import build_ssb_alert
 from datadoc.frontend.components.dataset_tab import DATASET_METADATA_INPUT
 from datadoc.frontend.components.dataset_tab import build_dataset_metadata_accordion
 from datadoc.frontend.components.resources_test_new_variables import (
@@ -227,11 +224,27 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
 
     @app.callback(
         Output(
-            {"type": "variable-input-alerts", "variable_short_name": MATCH},
-            "children",
+            {
+                "type": VARIABLES_METADATA_INPUT,
+                "variable_short_name": MATCH,
+                "id": MATCH,
+            },
+            "error",
+        ),
+        Output(
+            {
+                "type": VARIABLES_METADATA_INPUT,
+                "variable_short_name": MATCH,
+                "id": MATCH,
+            },
+            "errorMessage",
         ),
         Input(
-            {"type": VARIABLES_METADATA_INPUT, "variable_short_name": MATCH, "id": ALL},
+            {
+                "type": VARIABLES_METADATA_INPUT,
+                "variable_short_name": MATCH,
+                "id": MATCH,
+            },
             "value",
         ),
         prevent_initial_call=True,
@@ -249,19 +262,7 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
             # Nothing to display to the user in this case.
             raise PreventUpdate
 
-        # Render a new alert on the page with the error message
-        alert_children = Patch()
-        alert_children.append(
-            build_ssb_alert(
-                AlertTypes.WARNING,
-                f"alert-{ctx.triggered_id['variable_short_name']}",
-                "Validering feilet",
-                f"alert-content-{ctx.triggered_id['variable_short_name']}",
-                message=message,
-                start_open=True,
-            ),
-        )
-        return alert_children
+        return True, message
 
     @app.callback(
         Output("dataset-accordion", "children"),
