@@ -48,7 +48,6 @@ class DataDocMetadata:
     ) -> None:
         """Read in a dataset if supplied, otherwise naively instantiate the class."""
         self._statistic_subject_mapping = statistic_subject_mapping
-        # self.dataset_path = dataset_path
 
         self.metadata_document: pathlib.Path | CloudPath | None = None
         self.container: model.MetadataContainer | None = None

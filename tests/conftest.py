@@ -27,14 +27,13 @@ from tests.backend.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
 )
 
-UNIT_TYPES_DIR = "unit_types"
-
-
 from .utils import TEST_EXISTING_METADATA_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_FILE_NAME
 from .utils import TEST_PARQUET_FILE_NAME
 from .utils import TEST_PARQUET_FILEPATH
 from .utils import TEST_RESOURCES_DIRECTORY
+
+UNIT_TYPES_DIR = "unit_types"
 
 if TYPE_CHECKING:
     from pytest_mock import MockerFixture

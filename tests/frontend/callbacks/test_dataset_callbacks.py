@@ -14,7 +14,6 @@ from datadoc_model import model
 from datadoc import enums
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
-from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.enums import DataSetState
 from datadoc.enums import LanguageStringsEnum
 from datadoc.enums import SupportedLanguages
