@@ -224,9 +224,9 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         """Create variable workspace with accordions for variables."""
         return [
             build_ssb_accordion(
-                variable,
-                {"type": "variables-accordion", "id": variable},
-                variable,
+                variable.short_name,
+                {"type": "variables-accordion", "id": variable.short_name},
+                variable.short_name,
                 children=[
                     build_edit_section(
                         OBLIGATORY_VARIABLES_METADATA,
@@ -242,7 +242,7 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
                     ),
                 ],
             )
-            for variable in list(state.metadata.variables_lookup.keys())
+            for variable in list(state.metadata.variables_lookup.values())
         ]
 
     @app.callback(

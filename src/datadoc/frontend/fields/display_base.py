@@ -20,6 +20,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from dash.development.base_component import Component
+    from datadoc_model import model
     from datadoc_model.model import LanguageStringType
     from pydantic import BaseModel
 
@@ -56,7 +57,7 @@ def new_input_kwargs_factory() -> dict[str, t.Any]:
 
 def get_standard_metadata(metadata: BaseModel, identifier: str) -> MetadataInputTypes:
     """Get a metadata value from the model."""
-    value = metadata.model_dump()[identifier]
+    value = getattr(metadata, identifier)
     if value is None:
         return None
     return str(value)
@@ -144,7 +145,12 @@ class DisplayNewVariablesMetadata(DisplayMetadata):
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
     type: str = "text"
 
-    def render(self, variable_id: dict, language: str) -> ssb.Input:
+    def render(
+        self,
+        variable_id: dict,
+        language: str,
+        variable: model.Variable,
+    ) -> ssb.Input:
         """Build Input  component with props."""
         self.language = language
         return ssb.Input(
@@ -153,6 +159,7 @@ class DisplayNewVariablesMetadata(DisplayMetadata):
             debounce=self.type != "date",
             type=self.type,
             disabled=not self.editable,
+            value=self.value_getter(variable, self.identifier),
         )
 
 
@@ -165,12 +172,18 @@ class DisplayNewVariablesMetadataDropdown(DisplayNewVariablesMetadata):
     # fmt: on
     extra_kwargs: dict[str, Any] = field(default_factory=new_input_kwargs_factory)
 
-    def render(self, variable_id: dict, language: str) -> ssb.Dropdown:
+    def render(
+        self,
+        variable_id: dict,
+        language: str,
+        variable: model.Variable,
+    ) -> ssb.Dropdown:
         """Build Dropdown component with props."""
         return ssb.Dropdown(
             header=self.display_name,
             id=variable_id,
             items=self.options_getter(SupportedLanguages(language)),
+            value=self.value_getter(variable, self.identifier),
         )
 
 
@@ -181,7 +194,12 @@ class DisplayNewVariablesMetadataCheckbox(DisplayNewVariablesMetadata):
     extra_kwargs: dict[str, Any] = field(default_factory=input_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
 
-    def render(self, variable_id: dict, language: str) -> dbc.Checkbox:
+    def render(
+        self,
+        variable_id: dict,
+        language: str,
+        variable: model.Variable,
+    ) -> dbc.Checkbox:
         """Build Dropdown component with props."""
         self.language = language
         return dbc.Checkbox(
@@ -190,4 +208,5 @@ class DisplayNewVariablesMetadataCheckbox(DisplayNewVariablesMetadata):
             disabled=not self.editable,
             label_class_name="ssb-checkbox checkbox-label",
             class_name="ssb-checkbox",
+            value=self.value_getter(variable, self.identifier),
         )
