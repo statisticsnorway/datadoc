@@ -79,7 +79,6 @@ class UnitTypes(GetExternalSource):
         try:
             classifications_dataframes = {}
             for i in self.supported_languages:
-
                 classifications_dataframes[i] = (
                     KlassClassification(
                         str(self.classification_id),
