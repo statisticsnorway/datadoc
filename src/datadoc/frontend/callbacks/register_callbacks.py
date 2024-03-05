@@ -16,7 +16,6 @@ from dash import Output
 from dash import State
 from dash import ctx
 from dash import no_update
-from dash.exceptions import PreventUpdate
 
 from datadoc import state
 from datadoc.enums import SupportedLanguages
@@ -36,9 +35,11 @@ from datadoc.frontend.components.dataset_tab import build_dataset_metadata_accor
 from datadoc.frontend.components.resources_test_new_variables import (
     VARIABLES_METADATA_INPUT,
 )
+from datadoc.frontend.components.resources_test_new_variables import build_edit_section
 from datadoc.frontend.components.resources_test_new_variables import build_ssb_accordion
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
-from datadoc.utils import get_display_values
+from datadoc.frontend.fields.display_new_variables import OBLIGATORY_VARIABLES_METADATA
+from datadoc.frontend.fields.display_new_variables import OPTIONAL_VARIABLES_METADATA
 
 if TYPE_CHECKING:
     import dash_bootstrap_components as dbc
@@ -188,6 +189,21 @@ def register_callbacks(app: Dash) -> None:
         """
         return open_dataset_handling(n_clicks, dataset_path)
 
+    @app.callback(
+        Output("dataset-accordion", "children"),
+        Input("open-button", "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def callback_clear_accordion_values(n_clicks: int) -> list[dbc.AccordionItem]:
+        """Recreate accordion items with unique IDs.
+
+        The purpose is to avoid browser caching and clear the values of all
+        components inside the dataset accordion when new file is opened
+        """
+        if n_clicks and n_clicks > 0:
+            return build_dataset_metadata_accordion(n_clicks)
+        return no_update
+
 
 def register_new_variables_tab_callbacks(app: Dash) -> None:
     """Define and register callbacks for the new variables tab.
@@ -200,27 +216,34 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
     @app.callback(
         Output("accordion-wrapper", "children"),
         Input("language-dropdown", "value"),
-        Input("open-button", "n_clicks"),
         prevent_initial_call=True,
     )
-    def callback_new_variables_list(value: str, n_clicks: int) -> list:  # noqa: ARG001
-        response = {}
-        respons_list: list = []
-        index = 0
-        variable_short_name = ""
-        if n_clicks and n_clicks > 0:
-            for v in state.metadata.meta.variables:
-                index += 1
-                response = get_display_values(v, state.current_metadata_language)
-                variable_short_name = response["short_name"]
-                respons_list.append(
-                    build_ssb_accordion(
-                        variable_short_name,
-                        {"type": "variables-accordion", "id": variable_short_name},
-                        variable_short_name,
+    def callback_populate_new_variables_workspace(
+        language: str,  # noqa: ARG001
+    ) -> list:
+        """Create variable workspace with accordions for variables."""
+        return [
+            build_ssb_accordion(
+                variable,
+                {"type": "variables-accordion", "id": variable},
+                variable,
+                children=[
+                    build_edit_section(
+                        OBLIGATORY_VARIABLES_METADATA,
+                        "Obligatorisk",
+                        variable,
+                        state.current_metadata_language.value,
                     ),
-                )
-        return respons_list
+                    build_edit_section(
+                        OPTIONAL_VARIABLES_METADATA,
+                        "Anbefalt",
+                        variable,
+                        state.current_metadata_language.value,
+                    ),
+                ],
+            )
+            for variable in list(state.metadata.variables_lookup.keys())
+        ]
 
     @app.callback(
         Output(
@@ -259,22 +282,7 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
             ctx.triggered_id["id"],
         )
         if not message:
-            # Nothing to display to the user in this case.
-            raise PreventUpdate
+            # No error to display.
+            return False, ""
 
         return True, message
-
-    @app.callback(
-        Output("dataset-accordion", "children"),
-        Input("open-button", "n_clicks"),
-        prevent_initial_call=True,
-    )
-    def callback_clear_accordion_values(n_clicks: int) -> list[dbc.AccordionItem]:
-        """Recreate accordion items with unique IDs.
-
-        The purpose is to avoid browser caching and clear the values of all
-        components inside the dataset accordion when new file is opened
-        """
-        if n_clicks and n_clicks > 0:
-            return build_dataset_metadata_accordion(n_clicks)
-        return no_update
