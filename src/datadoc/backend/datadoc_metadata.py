@@ -21,7 +21,6 @@ from datadoc.backend.model_backwards_compatibility import upgrade_metadata
 from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
 from datadoc.enums import DataSetStatus
-from datadoc.enums import VariableRole
 from datadoc.frontend.fields.display_dataset import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
 )
@@ -49,17 +48,15 @@ class DataDocMetadata:
     ) -> None:
         """Read in a dataset if supplied, otherwise naively instantiate the class."""
         self._statistic_subject_mapping = statistic_subject_mapping
-        self.dataset_path = dataset_path
+        # self.dataset_path = dataset_path
 
         self.metadata_document: pathlib.Path | CloudPath | None = None
         self.container: model.MetadataContainer | None = None
-        self.dataset: pathlib.Path | CloudPath | None = None
+        self.dataset_path: pathlib.Path | CloudPath | None = None
         self.short_name: str | None = None
-        self.meta: model.DatadocMetadata = model.DatadocMetadata(
-            percentage_complete=0,
-            dataset=model.Dataset(),
-            variables=[],
-        )
+        self.dataset = model.Dataset()
+        self.variables: list = []
+
         self.variables_lookup: dict[str, model.Variable] = {}
         if metadata_document_path:
             # In this case the user has specified an independent metadata document for editing
@@ -67,13 +64,13 @@ class DataDocMetadata:
             self.metadata_document = self._open_path(metadata_document_path)
             self.extract_metadata_from_existing_document(self.metadata_document)
         elif dataset_path:
-            self.dataset = self._open_path(dataset_path)
+            self.dataset_path = self._open_path(dataset_path)
             # The short_name is set as the dataset filename without file extension
-            self.short_name = self.dataset.stem
+            self.short_name = self.dataset_path.stem
             # Build the metadata document path based on the dataset path
             # Example: /path/to/dataset.parquet -> /path/to/dataset__DOC.json
-            self.metadata_document = self.dataset.parent / (
-                self.dataset.stem + METADATA_DOCUMENT_FILE_SUFFIX
+            self.metadata_document = self.dataset_path.parent / (
+                self.dataset_path.stem + METADATA_DOCUMENT_FILE_SUFFIX
             )
             self.extract_metadata_from_files()
 
@@ -97,19 +94,19 @@ class DataDocMetadata:
         """
         if self.metadata_document is not None and self.metadata_document.exists():
             self.extract_metadata_from_existing_document(self.metadata_document)
-        elif self.dataset is not None:
-            self.extract_metadata_from_dataset(self.dataset)
-            self.meta.dataset.id = uuid.uuid4()
+        elif self.dataset_path is not None:
+            self.extract_metadata_from_dataset(self.dataset_path)
+            self.dataset.id = uuid.uuid4()
             # Set default values for variables where appropriate
             v: model.Variable
-            for v in self.meta.variables:
+            for v in self.variables:
                 if v.variable_role is None:
-                    v.variable_role = VariableRole.MEASURE
+                    v.variable_role = model.VariableRole.MEASURE
                 if v.direct_person_identifying is None:
                     v.direct_person_identifying = False
-        if not self.meta.dataset.id:
-            self.meta.dataset.id = uuid.uuid4()
-        self.variables_lookup = {v.short_name: v for v in self.meta.variables}
+        if not self.dataset.id:
+            self.dataset.id = uuid.uuid4()
+        self.variables_lookup = {v.short_name: v for v in self.variables}
 
     def extract_metadata_from_existing_document(
         self,
@@ -135,9 +132,12 @@ class DataDocMetadata:
             datadoc_metadata = upgrade_metadata(
                 datadoc_metadata,
             )
-            self.meta = model.DatadocMetadata.model_validate_json(
+
+            meta = model.DatadocMetadata.model_validate_json(
                 json.dumps(datadoc_metadata),
             )
+            self.dataset = meta.dataset
+            self.variables = meta.variables
         except json.JSONDecodeError:
             logger.warning(
                 "Could not open existing metadata file %s. \
@@ -173,7 +173,7 @@ class DataDocMetadata:
             dapla_dataset_path_info.statistic_short_name,
         )
 
-        self.meta.dataset = model.Dataset(
+        self.dataset = model.Dataset(
             short_name=self.short_name,
             dataset_state=dapla_dataset_path_info.dataset_state,
             dataset_status=DataSetStatus.DRAFT,
@@ -183,7 +183,7 @@ class DataDocMetadata:
             version=dapla_dataset_path_info.dataset_version,
             contains_data_from=str(dapla_dataset_path_info.contains_data_from),
             contains_data_until=str(dapla_dataset_path_info.contains_data_until),
-            data_source_path=self.dataset,
+            data_source_path=self.dataset_path,
             metadata_created_by=user_info.get_user_info_for_current_platform().short_email,
             # TODO @mmwinther: Remove multiple_language_support once the model is updated.
             # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
@@ -193,7 +193,7 @@ class DataDocMetadata:
                 nn=subject_field,
             ),
         )
-        self.meta.variables = self.ds_schema.get_fields()
+        self.variables = self.ds_schema.get_fields()
 
     @staticmethod
     def get_assessment_by_state(state: DataSetState | None) -> Assessment | None:
@@ -216,17 +216,23 @@ class DataDocMetadata:
         """Write all currently known metadata to file."""
         timestamp: datetime = get_timestamp_now()
 
-        if self.meta.dataset.metadata_created_date is None:
-            self.meta.dataset.metadata_created_date = timestamp
-        self.meta.dataset.metadata_last_updated_date = timestamp
-        self.meta.dataset.metadata_last_updated_by = (
+        if self.dataset.metadata_created_date is None:
+            self.dataset.metadata_created_date = timestamp
+        self.dataset.metadata_last_updated_date = timestamp
+        self.dataset.metadata_last_updated_by = (
             user_info.get_user_info_for_current_platform().short_email
         )
-        self.meta.dataset.file_path = str(self.dataset)
+        self.dataset.file_path = str(self.dataset_path)
+
+        datadoc: model.DatadocMetadata = model.DatadocMetadata(
+            percentage_complete=self.percent_complete,
+            dataset=self.dataset,
+            variables=self.variables,
+        )
         if self.container:
-            self.container.datadoc = self.meta
+            self.container.datadoc = datadoc
         else:
-            self.container = model.MetadataContainer(datadoc=self.meta)
+            self.container = model.MetadataContainer(datadoc=datadoc)
         if self.metadata_document:
             self.metadata_document.write_text(self.container.model_dump_json(indent=4))
             logger.info("Saved metadata document %s", self.metadata_document)
@@ -246,11 +252,11 @@ class DataDocMetadata:
         num_set_fields = len(
             [
                 k
-                for k, v in self.meta.dataset.model_dump().items()
+                for k, v in self.dataset.model_dump().items()
                 if k in OBLIGATORY_DATASET_METADATA_IDENTIFIERS and v is not None
             ],
         )
-        for variable in self.meta.variables:
+        for variable in self.variables:
             num_all_fields += len(OBLIGATORY_VARIABLES_METADATA)
             num_set_fields += len(
                 [

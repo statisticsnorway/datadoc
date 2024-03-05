@@ -64,8 +64,8 @@ def get_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str:
 
 
 def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> str | None:
-    """Get a metadata value supportng multiple languages from the model."""
-    value: LanguageStringType = getattr(metadata, identifier)
+    """Get a metadata value supporting multiple languages from the model."""
+    value: LanguageStringType | None = getattr(metadata, identifier)
     if value is None:
         return value
     return str(getattr(value, state.current_metadata_language))

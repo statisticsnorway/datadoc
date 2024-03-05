@@ -59,7 +59,7 @@ def test_accept_dataset_metadata_input_valid_data(
     assert output[0] is False
     assert output[1] == ""
     assert (
-        getattr(state.metadata.meta.dataset, metadata_identifier.value)
+        getattr(state.metadata.dataset, metadata_identifier.value)
         == expected_model_value
     )
 
@@ -78,7 +78,7 @@ def test_update_dataset_metadata_language_strings(
     language_object: model.LanguageStringType,
 ):
     state.metadata = metadata
-    state.metadata.meta.dataset.name = language_object
+    state.metadata.dataset.name = language_object
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     output = update_dataset_metadata_language()
     assert english_name not in output
@@ -91,7 +91,7 @@ def test_update_dataset_metadata_language_strings(
 
 def test_update_dataset_metadata_language_enums():
     state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
-    state.metadata.meta.dataset.dataset_state = DataSetState.PROCESSED_DATA
+    state.metadata.dataset.dataset_state = DataSetState.PROCESSED_DATA
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     output = update_dataset_metadata_language()
     assert DataSetState.PROCESSED_DATA.language_strings.nb not in output

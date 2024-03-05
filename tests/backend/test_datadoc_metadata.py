@@ -49,7 +49,7 @@ DATADOC_METADATA_MODULE = "datadoc.backend.datadoc_metadata"
 def test_existing_metadata_file(
     metadata: DataDocMetadata,
 ):
-    assert metadata.meta.dataset.name.en == "successfully_read_existing_file"
+    assert metadata.dataset.name.en == "successfully_read_existing_file"  # type: ignore [union-attr]
 
 
 def test_metadata_document_percent_complete(metadata: DataDocMetadata):
@@ -61,7 +61,8 @@ def test_metadata_document_percent_complete(metadata: DataDocMetadata):
         dataset=dataset,
         variables=[variable_1, variable_2],
     )
-    metadata.meta = document
+    metadata.dataset = document.dataset
+    metadata.variables = document.variables
 
     assert metadata.percent_complete == 17  # noqa: PLR2004
 
@@ -73,10 +74,10 @@ def test_write_metadata_document(
     metadata.write_metadata_document()
     written_document = TEST_RESOURCES_DIRECTORY / TEST_EXISTING_METADATA_FILE_NAME
     assert Path.exists(written_document)
-    assert metadata.meta.dataset.metadata_created_date == dummy_timestamp
-    assert metadata.meta.dataset.metadata_created_by == PLACEHOLDER_EMAIL_ADDRESS
-    assert metadata.meta.dataset.metadata_last_updated_date == dummy_timestamp
-    assert metadata.meta.dataset.metadata_last_updated_by == PLACEHOLDER_EMAIL_ADDRESS
+    assert metadata.dataset.metadata_created_date == dummy_timestamp
+    assert metadata.dataset.metadata_created_by == PLACEHOLDER_EMAIL_ADDRESS
+    assert metadata.dataset.metadata_last_updated_date == dummy_timestamp
+    assert metadata.dataset.metadata_last_updated_by == PLACEHOLDER_EMAIL_ADDRESS
 
     with Path.open(written_document) as f:
         written_metadata = json.loads(f.read())
@@ -110,17 +111,17 @@ def test_write_metadata_document_existing_document(
     dummy_timestamp: datetime,
     metadata: DataDocMetadata,
 ):
-    original_created_date: datetime = metadata.meta.dataset.metadata_created_date
-    original_created_by = metadata.meta.dataset.metadata_created_by
+    original_created_date: datetime | None = metadata.dataset.metadata_created_date
+    original_created_by = metadata.dataset.metadata_created_by
     metadata.write_metadata_document()
-    assert metadata.meta.dataset.metadata_created_by == original_created_by
-    assert metadata.meta.dataset.metadata_created_date == original_created_date
-    assert metadata.meta.dataset.metadata_last_updated_by == PLACEHOLDER_EMAIL_ADDRESS
-    assert metadata.meta.dataset.metadata_last_updated_date == dummy_timestamp
+    assert metadata.dataset.metadata_created_by == original_created_by
+    assert metadata.dataset.metadata_created_date == original_created_date
+    assert metadata.dataset.metadata_last_updated_by == PLACEHOLDER_EMAIL_ADDRESS
+    assert metadata.dataset.metadata_last_updated_date == dummy_timestamp
 
 
 def test_metadata_id(metadata: DataDocMetadata):
-    assert isinstance(metadata.meta.dataset.id, UUID)
+    assert isinstance(metadata.dataset.id, UUID)
 
 
 @pytest.mark.parametrize(
@@ -134,11 +135,11 @@ def test_existing_metadata_none_id(
     with Path.open(Path(existing_metadata_file)) as f:
         pre_open_id: None = json.load(f)["datadoc"]["dataset"]["id"]
     assert pre_open_id is None
-    assert isinstance(metadata.meta.dataset.id, UUID)
+    assert isinstance(metadata.dataset.id, UUID)
     metadata.write_metadata_document()
     with Path.open(Path(existing_metadata_file)) as f:
         post_write_id = json.load(f)["datadoc"]["dataset"]["id"]
-    assert post_write_id == str(metadata.meta.dataset.id)
+    assert post_write_id == str(metadata.dataset.id)
 
 
 @pytest.mark.parametrize(
@@ -154,8 +155,8 @@ def test_existing_metadata_valid_id(
     with Path.open(Path(existing_metadata_file)) as f:
         pre_open_id = json.load(f)["datadoc"]["dataset"]["id"]
     assert pre_open_id is not None
-    assert isinstance(metadata.meta.dataset.id, UUID)
-    assert str(metadata.meta.dataset.id) == pre_open_id
+    assert isinstance(metadata.dataset.id, UUID)
+    assert str(metadata.dataset.id) == pre_open_id
     metadata.write_metadata_document()
     with Path.open(Path(existing_metadata_file)) as f:
         post_write_id = json.load(f)["datadoc"]["dataset"]["id"]
@@ -164,12 +165,12 @@ def test_existing_metadata_valid_id(
 
 def test_variable_role_default_value(metadata: DataDocMetadata):
     assert all(
-        v.variable_role == VariableRole.MEASURE.value for v in metadata.meta.variables
+        v.variable_role == VariableRole.MEASURE.value for v in metadata.variables
     )
 
 
 def test_direct_person_identifying_default_value(metadata: DataDocMetadata):
-    assert all(not v.direct_person_identifying for v in metadata.meta.variables)
+    assert all(not v.direct_person_identifying for v in metadata.variables)
 
 
 def test_save_file_path_metadata_field(
@@ -179,7 +180,7 @@ def test_save_file_path_metadata_field(
     metadata.write_metadata_document()
     with Path.open(Path(existing_metadata_file)) as f:
         saved_file_path = json.load(f)["datadoc"]["dataset"]["file_path"]
-    assert saved_file_path == str(metadata.dataset)
+    assert saved_file_path == str(metadata.dataset_path)
 
 
 def test_save_file_path_dataset_and_no_metadata(
@@ -188,7 +189,7 @@ def test_save_file_path_dataset_and_no_metadata(
     metadata.write_metadata_document()
     with Path.open(Path(TEST_RESOURCES_METADATA_DOCUMENT)) as f:
         saved_file_path = json.load(f)["datadoc"]["dataset"]["file_path"]
-    assert saved_file_path == str(metadata.dataset)
+    assert saved_file_path == str(metadata.dataset_path)
 
 
 @pytest.mark.parametrize(
@@ -208,8 +209,8 @@ def test_period_metadata_fields_saved(
         subject_mapping_fake_statistical_structure,
         str(generate_periodic_file),
     )
-    assert metadata.meta.dataset.contains_data_from == expected_from
-    assert metadata.meta.dataset.contains_data_until == expected_until
+    assert metadata.dataset.contains_data_from == expected_from
+    assert metadata.dataset.contains_data_until == expected_until
 
 
 @pytest.mark.parametrize(
@@ -276,7 +277,7 @@ def test_dataset_status_default_value(
         metadata_document_path,
     )
 
-    assert expected_type == datadoc_metadata.meta.dataset.dataset_status
+    assert expected_type == datadoc_metadata.dataset.dataset_status
 
 
 @pytest.mark.parametrize(
@@ -368,7 +369,7 @@ def test_dataset_assessment_default_value(
         dataset_path=dataset_path,
         metadata_document_path=metadata_document_path,
     )
-    assert expected_type == datadoc_metadata.meta.dataset.assessment
+    assert expected_type == datadoc_metadata.dataset.assessment
 
 
 @pytest.mark.parametrize(
@@ -392,4 +393,6 @@ def test_extract_subject_field_value_from_statistic_structure_xml(
     )
     # TODO @mmwinther: Remove multiple_language_support once the model is updated.
     # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
-    assert metadata.meta.dataset.subject_field.en == expected_subject_code
+    assert (
+        metadata.dataset.subject_field.en == expected_subject_code  # type: ignore [union-attr]
+    )

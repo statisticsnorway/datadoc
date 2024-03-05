@@ -97,13 +97,13 @@ def test_accept_variable_metadata_input_incorrect_data_type(
     active_cell: dict[str, MetadataInputTypes],
 ):
     state.metadata = metadata
-    previous_metadata = deepcopy(state.metadata.meta.variables)
+    previous_metadata = deepcopy(state.metadata.variables)
     output = accept_variable_metadata_input(DATA_INVALID, active_cell, DATA_ORIGINAL)
 
     assert output[0] == DATA_ORIGINAL
     assert output[1] is True
     assert "validation error for Variable" in output[2]
-    assert state.metadata.meta.variables == previous_metadata
+    assert state.metadata.variables == previous_metadata
 
 
 def test_find_existing_language_string_pre_existing_strings(
@@ -134,7 +134,7 @@ def test_update_variable_table_language(
 ):
     state.metadata = metadata
     test_variable = random.choice(  # noqa: S311 not for cryptographic purposes
-        [v.short_name for v in state.metadata.meta.variables],
+        [v.short_name for v in state.metadata.variables],
     )
     state.metadata.variables_lookup[test_variable].name = language_object
     output = update_variable_table_language(

@@ -51,7 +51,7 @@ class UnitType:
 class UnitTypes(GetExternalSource):
     """Class for retrieving classifications from Klass."""
 
-    def __init__(self, classification_id: int) -> None:
+    def __init__(self, classification_id: int | None) -> None:
         """Retrieves a list of classifications given a classification id.
 
         Initializes the classifications list and starts fetching the classifications.

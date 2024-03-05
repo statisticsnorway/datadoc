@@ -23,7 +23,7 @@ from datadoc.frontend.fields.display_variables import VariableIdentifiers
 from datadoc.utils import get_display_values
 
 if TYPE_CHECKING:
-    from datadoc_model import model
+    from datadoc_model.model import LanguageStringType
 
 logger = logging.getLogger(__name__)
 
@@ -77,9 +77,9 @@ def get_metadata_field(
 
 def handle_multi_language_metadata(
     metadata_field: str,
-    new_value: MetadataInputTypes,
+    new_value: MetadataInputTypes | LanguageStringType,
     updated_row_id: str,
-) -> MetadataInputTypes | model.LanguageStringType:
+) -> MetadataInputTypes | LanguageStringType:
     """Handle updates to fields which support multiple languages."""
     if new_value is None:
         # This edge case occurs when the user removes the text in an input field
@@ -114,7 +114,9 @@ def accept_variable_metadata_input(
 
     for row_index in range(len(data)):
         # Update all the variables for this column to ensure we read in the value
-        new_value: MetadataInputTypes = data[row_index][metadata_field]
+        new_value: MetadataInputTypes | LanguageStringType = data[row_index][
+            metadata_field
+        ]
         updated_row_id = data[row_index][VariableIdentifiers.SHORT_NAME.value]
 
         try:
@@ -204,7 +206,7 @@ def update_variable_table_language(
                 v,
                 state.current_metadata_language,
             )
-            for v in state.metadata.meta.variables
+            for v in state.metadata.variables
         ],
         False,  # Don't show validation error
         "",  # No validation explanation needed

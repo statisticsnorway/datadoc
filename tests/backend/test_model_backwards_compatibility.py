@@ -44,4 +44,4 @@ def test_backwards_compatibility(
         file_metadata = json.loads(f.read())
 
     # Just test a single value to make sure we have a working model
-    assert metadata.meta.dataset.name.en == file_metadata["dataset"]["name"]["en"]
+    assert metadata.dataset.name.en == file_metadata["dataset"]["name"]["en"]  # type: ignore [union-attr]
