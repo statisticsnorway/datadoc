@@ -55,23 +55,21 @@ class UnitTypes(GetExternalSource):
         Initializes the classifications list and starts fetching the classifications.
         """
         self.supported_languages = [
-            SupportedLanguages.NORSK_BOKMÅL,
-            SupportedLanguages.ENGLISH,
+            SupportedLanguages.NORSK_BOKMÅL.value,
+            SupportedLanguages.ENGLISH.value,
         ]
 
         self._classifications: list[UnitType] = []
 
         self.classification_id = classification_id
 
-        self.classifications_dataframes: (
-            dict[SupportedLanguages, pd.DataFrame] | None
-        ) = None
+        self.classifications_dataframes: dict[str, pd.DataFrame] | None = None
 
         super().__init__()
 
     def _fetch_data_from_external_source(
         self,
-    ) -> dict[SupportedLanguages, pd.DataFrame] | None:
+    ) -> dict[str, pd.DataFrame] | None:
         """Fetches the classifications from Klass by classification id.
 
         returns a pandas dataframe with the class data for the given classification id.
@@ -105,10 +103,12 @@ class UnitTypes(GetExternalSource):
         for i in range(len(dataframes[SupportedLanguages.NORSK_BOKMÅL])):
             titles = {}
             for j in languages:
+                print("H")
+                print("J: ", j)
                 if "name" in dataframes[j]:
-                    titles[str(j.value)] = dataframes[j].loc[:, "name"][i]
+                    titles[str(j)] = dataframes[j].loc[:, "name"][i]
                 else:
-                    titles[str(j.value)] = None
+                    titles[str(j)] = None
             list_of_titles.append(titles)
         return list_of_titles
 
