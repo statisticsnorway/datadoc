@@ -16,7 +16,6 @@ from dash import Output
 from dash import State
 from dash import ctx
 from dash import no_update
-from dash.exceptions import PreventUpdate
 
 from datadoc import state
 from datadoc.enums import SupportedLanguages
@@ -283,7 +282,7 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
             ctx.triggered_id["id"],
         )
         if not message:
-            # Nothing to display to the user in this case.
-            raise PreventUpdate
+            # No error to display.
+            return False, ""
 
         return True, message
