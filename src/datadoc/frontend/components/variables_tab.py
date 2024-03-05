@@ -26,7 +26,7 @@ def build_variables_tab() -> dbc.Tab:
                         # Populate fields with known values
                         data=[
                             get_display_values(v, state.current_metadata_language)
-                            for v in state.metadata.meta.variables
+                            for v in state.metadata.variables
                         ],
                         # Define columns based on the information in DISPLAY_VARIABLES
                         columns=[
