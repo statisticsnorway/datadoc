@@ -141,6 +141,7 @@ class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
 
 
 # New design for variables - Input , dropdown, checkbox
+# Language for Input and Checkbox is not used, but trigger error if not handled when render
 @dataclass
 class DisplayNewVariablesMetadata(DisplayMetadata):
     """Controls for how a given metadata field should be displayed.
