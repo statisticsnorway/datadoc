@@ -9,9 +9,9 @@ from datadoc.enums import SupportedLanguages
 
 if TYPE_CHECKING:
     import pandas as pd
+    from klass.classes.codes import KlassCodes
 
-
-from klass import KlassClassification  # type: ignore [attr-defined]
+from klass.classes.classification import KlassClassification
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,6 @@ class UnitType:
             return ""
 
 
-@dataclass
 class UnitTypes(GetExternalSource):
     """Class for retrieving classifications from Klass."""
 
@@ -73,7 +72,7 @@ class UnitTypes(GetExternalSource):
 
     def _fetch_data_from_external_source(
         self,
-    ) -> dict[SupportedLanguages, pd.DataFrame] | None:
+    ) -> KlassCodes | None:
         """Fetches the classifications from Klass by classification id.
 
         returns a pandas dataframe with the class data for the given classification id.

@@ -125,7 +125,7 @@ def test_read_dataframe(
     assert unit_types_fake_structure.classifications == expected
 
 
-def test_no_source_url():
-    unit_types = UnitTypes(None)
+def test_non_existent_code():
+    unit_types = UnitTypes(0)
     unit_types.wait_for_external_result()
     assert unit_types.classifications == []

@@ -2,18 +2,26 @@
 
 from __future__ import annotations
 
+import datetime
 import random
 from copy import deepcopy
 from typing import TYPE_CHECKING
+from typing import Any
+from uuid import UUID
 
 import pytest
 from datadoc_model import model
+from pydantic_core import Url
 
+from datadoc import enums
 from datadoc import state
 from datadoc.enums import DataType
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
+from datadoc.frontend.callbacks.variables import (
+    accept_variable_datatable_metadata_input,
+)
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import (
     update_variable_table_dropdown_options_for_language,
@@ -55,23 +63,31 @@ def active_cell() -> dict[str, MetadataInputTypes]:
     return {"row": 1, "column": 1, "column_id": "short_name", "row_id": None}
 
 
-def test_accept_variable_metadata_input_no_change_in_data(
+def test_accept_variable_table_metadata_input_no_change_in_data(
     metadata: DataDocMetadata,
     active_cell: dict[str, MetadataInputTypes],
 ):
     state.metadata = metadata
-    output = accept_variable_metadata_input(DATA_ORIGINAL, active_cell, DATA_ORIGINAL)
+    output = accept_variable_datatable_metadata_input(
+        DATA_ORIGINAL,
+        active_cell,
+        DATA_ORIGINAL,
+    )
     assert output[0] == DATA_ORIGINAL
     assert output[1] is False
     assert output[2] == ""
 
 
-def test_accept_variable_metadata_input_new_data(
+def test_accept_variable_table_metadata_input_new_data(
     metadata: DataDocMetadata,
     active_cell: dict[str, MetadataInputTypes],
 ):
     state.metadata = metadata
-    output = accept_variable_metadata_input(DATA_VALID, active_cell, DATA_ORIGINAL)
+    output = accept_variable_datatable_metadata_input(
+        DATA_VALID,
+        active_cell,
+        DATA_ORIGINAL,
+    )
 
     assert state.metadata.variables_lookup["pers_id"].variable_role == "IDENTIFIER"
     assert output[0] == DATA_VALID
@@ -79,12 +95,16 @@ def test_accept_variable_metadata_input_new_data(
     assert output[2] == ""
 
 
-def test_accept_variable_metadata_clear_string(
+def test_accept_variable_table_metadata_clear_string(
     metadata: DataDocMetadata,
     active_cell: dict[str, MetadataInputTypes],
 ):
     state.metadata = metadata
-    output = accept_variable_metadata_input(DATA_CLEAR_URI, active_cell, DATA_ORIGINAL)
+    output = accept_variable_datatable_metadata_input(
+        DATA_CLEAR_URI,
+        active_cell,
+        DATA_ORIGINAL,
+    )
 
     assert state.metadata.variables_lookup["pers_id"].definition_uri is None
     assert output[0] == DATA_CLEAR_URI
@@ -92,13 +112,17 @@ def test_accept_variable_metadata_clear_string(
     assert output[2] == ""
 
 
-def test_accept_variable_metadata_input_incorrect_data_type(
+def test_accept_variable_table_metadata_input_incorrect_data_type(
     metadata: DataDocMetadata,
     active_cell: dict[str, MetadataInputTypes],
 ):
     state.metadata = metadata
     previous_metadata = deepcopy(state.metadata.variables)
-    output = accept_variable_metadata_input(DATA_INVALID, active_cell, DATA_ORIGINAL)
+    output = accept_variable_datatable_metadata_input(
+        DATA_INVALID,
+        active_cell,
+        DATA_ORIGINAL,
+    )
 
     assert output[0] == DATA_ORIGINAL
     assert output[1] is True
@@ -160,7 +184,7 @@ def test_nonetype_value_for_language_string(
     state.metadata = metadata
     state.metadata.variables_lookup["pers_id"].name = language_object
     state.current_metadata_language = SupportedLanguages.NORSK_NYNORSK
-    accept_variable_metadata_input(DATA_NONETYPE, active_cell, DATA_ORIGINAL)
+    accept_variable_datatable_metadata_input(DATA_NONETYPE, active_cell, DATA_ORIGINAL)
 
     assert state.metadata.variables_lookup["pers_id"].name == language_object
 
@@ -183,3 +207,128 @@ def test_update_variable_table_dropdown_options_for_language():
     assert [d["label"] for d in options["data_type"]["options"]] == [
         i.get_value_for_language(SupportedLanguages.NORSK_BOKMÅL) for i in DataType
     ]
+
+
+@pytest.mark.parametrize(
+    ("metadata_field", "value", "expected_model_value"),
+    [
+        (
+            VariableIdentifiers.NAME,
+            "Variable name",
+            enums.LanguageStringType(nb="Variable name"),
+        ),
+        (
+            VariableIdentifiers.DATA_TYPE,
+            enums.DataType.STRING,
+            enums.DataType.STRING.value,
+        ),
+        (
+            VariableIdentifiers.VARIABLE_ROLE,
+            enums.VariableRole.MEASURE,
+            enums.VariableRole.MEASURE.value,
+        ),
+        (
+            VariableIdentifiers.DEFINITION_URI,
+            "https://www.example.com",
+            Url("https://www.example.com"),
+        ),
+        (
+            VariableIdentifiers.DIRECT_PERSON_IDENTIFYING,
+            True,
+            True,
+        ),
+        (
+            VariableIdentifiers.DATA_SOURCE,
+            "Atlantis",
+            enums.LanguageStringType(nb="Atlantis"),
+        ),
+        (
+            VariableIdentifiers.POPULATION_DESCRIPTION,
+            "Population description",
+            enums.LanguageStringType(nb="Population description"),
+        ),
+        (
+            VariableIdentifiers.COMMENT,
+            "Comment",
+            enums.LanguageStringType(nb="Comment"),
+        ),
+        (
+            VariableIdentifiers.TEMPORALITY_TYPE,
+            enums.TemporalityTypeType.ACCUMULATED,
+            enums.TemporalityTypeType.ACCUMULATED.value,
+        ),
+        (
+            VariableIdentifiers.MEASUREMENT_UNIT,
+            "Kilograms",
+            "Kilograms",
+        ),
+        (
+            VariableIdentifiers.FORMAT,
+            "Regex",
+            "Regex",
+        ),
+        (
+            VariableIdentifiers.CLASSIFICATION_URI,
+            "https://www.example.com",
+            Url("https://www.example.com"),
+        ),
+        (
+            VariableIdentifiers.SENTINEL_VALUE_URI,
+            "https://www.example.com",
+            Url("https://www.example.com"),
+        ),
+        (
+            VariableIdentifiers.INVALID_VALUE_DESCRIPTION,
+            "Invalid value",
+            enums.LanguageStringType(nb="Invalid value"),
+        ),
+        (
+            VariableIdentifiers.IDENTIFIER,
+            "2f72477a-f051-43ee-bf8b-0d8f47b5e0a7",
+            UUID("2f72477a-f051-43ee-bf8b-0d8f47b5e0a7"),
+        ),
+        (
+            VariableIdentifiers.CONTAINS_DATA_FROM,
+            "2024-02-28",
+            datetime.datetime(2024, 2, 28, 0, 0, tzinfo=datetime.timezone.utc),
+        ),
+        (
+            VariableIdentifiers.CONTAINS_DATA_UNTIL,
+            "2024-02-28",
+            datetime.datetime(2024, 2, 28, 0, 0, tzinfo=datetime.timezone.utc),
+        ),
+    ],
+)
+def test_accept_variable_metadata_input_valid(
+    metadata: DataDocMetadata,
+    metadata_field: VariableIdentifiers,
+    value: MetadataInputTypes,
+    expected_model_value: Any,  # noqa: ANN401
+):
+    state.metadata = metadata
+    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
+    assert (
+        accept_variable_metadata_input(
+            value,
+            metadata.variables[0].short_name,
+            metadata_field=metadata_field.value,
+        )
+        is None
+    )
+    assert (
+        getattr(state.metadata.variables[0], metadata_field.value)
+        == expected_model_value
+    )
+
+
+def test_accept_variable_metadata_input_invalid(
+    metadata: DataDocMetadata,
+):
+    state.metadata = metadata
+    message = accept_variable_metadata_input(
+        "not a url",
+        metadata.variables[0].short_name,
+        metadata_field=VariableIdentifiers.DEFINITION_URI.value,
+    )
+    assert message is not None
+    assert "validation error for Variable" in message

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ssb-datadoc"
-version = "0.5.1"
+version = "0.6.0"
 description = "Document dataset metadata. For use in Statistics Norway's metadata system."
 authors = ["Statistics Norway <stat-dev@ssb.no>"]
 license = "MIT"
@@ -31,7 +31,6 @@ dash-bootstrap-components = ">=1.1.0"
 pandas = ">=1.4.2"
 ssb-datadoc-model = "==4.2.0"
 dapla-toolbelt = ">=1.3.3"
-gcsfs = ">=2022.7.1"
 gunicorn = ">=21.2.0"
 flask-healthz = ">=0.0.3"
 arrow = ">=1.3.0"
@@ -106,7 +105,7 @@ exclude = ["docs/conf.py", "noxfile.py", "gunicorn.conf.py"]
 [[tool.mypy.overrides]]
 # Allow missing type hints in third-party libraries without type information.
 module = [
-    "dash",
+    "dash.*",
     "dash_bootstrap_components",
     "flask_healthz",
     "dapla",
