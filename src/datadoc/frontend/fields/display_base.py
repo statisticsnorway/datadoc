@@ -54,15 +54,6 @@ def new_input_kwargs_factory() -> dict[str, t.Any]:
     return {}
 
 
-def dropdown_kwargs_factory() -> dict[str, t.Any]:
-    """Initialize the field extra_kwargs.
-
-    We aren't allowed to directly assign a mutable type like a dict to
-    a dataclass field.
-    """
-    return {}
-
-
 def get_standard_metadata(metadata: BaseModel, identifier: str) -> MetadataInputTypes:
     """Get a metadata value from the model."""
     value = metadata.model_dump()[identifier]
@@ -136,7 +127,7 @@ class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
     # fmt: off
     options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
     # fmt: on
-    extra_kwargs: dict[str, Any] = field(default_factory=dropdown_kwargs_factory)
+    extra_kwargs: dict[str, Any] = field(default_factory=new_input_kwargs_factory)
     component: type[Component] = dcc.Dropdown
 
 
@@ -150,9 +141,8 @@ class DisplayNewVariablesMetadata(DisplayMetadata):
     """
 
     extra_kwargs: dict[str, Any] = field(default_factory=new_input_kwargs_factory)
-    component: type[Component] = ssb.Input
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
-    presentation: str | None = "input"
+    type: str = "text"
 
     def render(self, variable_id: dict, language: str) -> ssb.Input:
         """Build Input  component with props."""
@@ -160,10 +150,9 @@ class DisplayNewVariablesMetadata(DisplayMetadata):
         return ssb.Input(
             label=self.display_name,
             id=variable_id,
-            debounce=True,
-            type=self.presentation,
+            debounce=self.type != "date",
+            type=self.type,
             disabled=not self.editable,
-            **self.extra_kwargs,
         )
 
 
@@ -174,7 +163,7 @@ class DisplayNewVariablesMetadataDropdown(DisplayNewVariablesMetadata):
     # fmt: off
     options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
     # fmt: on
-    extra_kwargs: dict[str, Any] = field(default_factory=dropdown_kwargs_factory)
+    extra_kwargs: dict[str, Any] = field(default_factory=new_input_kwargs_factory)
 
     def render(self, variable_id: dict, language: str) -> ssb.Dropdown:
         """Build Dropdown component with props."""
@@ -182,7 +171,6 @@ class DisplayNewVariablesMetadataDropdown(DisplayNewVariablesMetadata):
             header=self.display_name,
             id=variable_id,
             items=self.options_getter(SupportedLanguages(language)),
-            **self.extra_kwargs,
         )
 
 
@@ -200,5 +188,6 @@ class DisplayNewVariablesMetadataCheckbox(DisplayNewVariablesMetadata):
             label=self.display_name,
             id=variable_id,
             disabled=not self.editable,
-            **self.extra_kwargs,
+            label_class_name="ssb-checkbox checkbox-label",
+            class_name="ssb-checkbox",
         )
