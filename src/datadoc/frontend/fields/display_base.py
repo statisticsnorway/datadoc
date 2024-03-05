@@ -57,15 +57,15 @@ def new_input_kwargs_factory() -> dict[str, t.Any]:
 
 def get_standard_metadata(metadata: BaseModel, identifier: str) -> MetadataInputTypes:
     """Get a metadata value from the model."""
-    value = getattr(metadata, identifier)
+    return getattr(metadata, identifier)
+
+
+def get_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str | None:
+    """Get a metadata value from the model and cast to string."""
+    value = get_standard_metadata(metadata, identifier)
     if value is None:
         return None
     return str(value)
-
-
-def get_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str:
-    """Get a metadata value from the model and cast to string."""
-    return str(get_standard_metadata(metadata, identifier))
 
 
 def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> str | None:
@@ -118,7 +118,7 @@ class DisplayDatasetMetadata(DisplayMetadata):
 
     extra_kwargs: dict[str, Any] = field(default_factory=input_kwargs_factory)
     component: type[Component] = dcc.Input
-    value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
+    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
 
 
 @dataclass
@@ -140,7 +140,7 @@ class DisplayNewVariablesMetadata(DisplayMetadata):
     """
 
     extra_kwargs: dict[str, Any] = field(default_factory=new_input_kwargs_factory)
-    value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
+    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
     type: str = "text"
 
     def render(
