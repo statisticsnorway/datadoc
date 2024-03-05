@@ -44,6 +44,7 @@ def input_kwargs_factory() -> dict[str, t.Any]:
     return INPUT_KWARGS
 
 
+# New empty kwargs for input new variables
 def new_input_kwargs_factory() -> dict[str, t.Any]:
     """Initialize the field extra_kwargs.
 
@@ -139,7 +140,7 @@ class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
     component: type[Component] = dcc.Dropdown
 
 
-# New design for variables - Input,dropdown, checkbox - consider subclass hierarchy
+# New design for variables - Input , dropdown, checkbox
 @dataclass
 class DisplayNewVariablesMetadata(DisplayMetadata):
     """Controls for how a given metadata field should be displayed.
@@ -161,6 +162,7 @@ class DisplayNewVariablesMetadata(DisplayMetadata):
             debounce=True,
             type=self.presentation,
             disabled=not self.editable,
+            **self.extra_kwargs,
         )
 
 
