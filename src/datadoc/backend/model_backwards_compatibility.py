@@ -82,7 +82,7 @@ def handle_version_1_0_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
         supplied_metadata["dataset"]["data_source"] = LanguageStringType(
             en=supplied_metadata["dataset"]["data_source"],
         )
-    supplied_metadata["document_version"] = "2.0.0"
+    supplied_metadata["document_version"] = "2.1.0"
 
     return supplied_metadata
 
@@ -118,7 +118,7 @@ BackwardsCompatibleVersion(
     handler=handle_version_1_0_0,
 )
 BackwardsCompatibleVersion(
-    version="2.0.0",
+    version="2.1.0",
     handler=handle_current_version,
 )
 

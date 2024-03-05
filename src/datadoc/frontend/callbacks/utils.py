@@ -16,9 +16,11 @@ from datadoc import enums
 from datadoc import state
 
 if TYPE_CHECKING:
+    import pathlib
     from enum import Enum
 
     import pydantic
+    from cloudpathlib import CloudPath
 
     from datadoc.enums import SupportedLanguages
 
@@ -85,9 +87,9 @@ def find_existing_language_string(
     return language_strings
 
 
-def get_dataset_path() -> str | None:
+def get_dataset_path() -> pathlib.Path | CloudPath | str | None:
     """Extract the path to the dataset from the potential sources."""
-    if state.metadata.dataset is not None:
+    if state.metadata.dataset_path is not None:
         return state.metadata.dataset_path
     path_from_env = config.get_datadoc_dataset_path()
     logger.info(
