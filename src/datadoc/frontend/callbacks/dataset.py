@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import traceback
+from typing import TYPE_CHECKING
 
 from pydantic import ValidationError
 
@@ -23,6 +24,9 @@ from datadoc.frontend.fields.display_dataset import MULTIPLE_LANGUAGE_DATASET_ME
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
 
+if TYPE_CHECKING:
+    from datadoc_model.model import LanguageStringType
+
 logger = logging.getLogger(__name__)
 
 VALIDATION_ERROR = "Validation error: "
@@ -40,7 +44,7 @@ def open_file(file_path: str | None = None) -> DataDocMetadata:
 
     dataset = file_path or get_dataset_path()
     logger.info("Opening dataset %s", dataset)
-    return DataDocMetadata(state.statistic_subject_mapping, dataset_path=dataset)
+    return DataDocMetadata(state.statistic_subject_mapping, dataset_path=str(dataset))
 
 
 def open_dataset_handling(
@@ -79,16 +83,16 @@ def process_keyword(value: str) -> list[str]:
 
 
 def process_special_cases(
-    value: MetadataInputTypes,
+    value: MetadataInputTypes | LanguageStringType,
     metadata_identifier: str,
-) -> MetadataInputTypes:
+) -> MetadataInputTypes | LanguageStringType:
     """Pre-process metadata where needed.
 
     Some types of metadata need processing before being saved
     to the model. Handle these cases here, other values are
     returned unchanged.
     """
-    updated_value: MetadataInputTypes
+    updated_value: MetadataInputTypes | LanguageStringType
     if metadata_identifier == DatasetIdentifiers.KEYWORD.value and isinstance(
         value,
         str,
@@ -98,7 +102,7 @@ def process_special_cases(
         updated_value, _ = parse_and_validate_dates(
             str(value),
             getattr(
-                state.metadata.meta.dataset,
+                state.metadata.dataset,
                 DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
             ),
         )
@@ -107,7 +111,7 @@ def process_special_cases(
     elif metadata_identifier == DatasetIdentifiers.CONTAINS_DATA_UNTIL.value:
         _, updated_value = parse_and_validate_dates(
             getattr(
-                state.metadata.meta.dataset,
+                state.metadata.dataset,
                 DatasetIdentifiers.CONTAINS_DATA_FROM.value,
             ),
             str(value),
@@ -121,7 +125,7 @@ def process_special_cases(
         str,
     ):
         updated_value = find_existing_language_string(
-            state.metadata.meta.dataset,
+            state.metadata.dataset,
             value,
             metadata_identifier,
         )
@@ -133,7 +137,7 @@ def process_special_cases(
 
 
 def accept_dataset_metadata_input(
-    value: MetadataInputTypes,
+    value: MetadataInputTypes | LanguageStringType,
     metadata_identifier: str,
 ) -> tuple[bool, str]:
     """Handle user inputs of dataset metadata values."""
@@ -146,7 +150,7 @@ def accept_dataset_metadata_input(
         value = process_special_cases(value, metadata_identifier)
         # Update the value in the model
         setattr(
-            state.metadata.meta.dataset,
+            state.metadata.dataset,
             metadata_identifier,
             value,
         )
@@ -172,7 +176,7 @@ def update_dataset_metadata_language() -> list[MetadataInputTypes]:
     This allows editing of strings in the chosen language.
     """
     return [
-        m.value_getter(state.metadata.meta.dataset, m.identifier)
+        m.value_getter(state.metadata.dataset, m.identifier)
         for m in DISPLAYED_DATASET_METADATA
     ]
 

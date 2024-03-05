@@ -209,7 +209,7 @@ class DatasetParserSas7Bdat(DatasetParser):
                     # If this is not correct, the user may fix it via the UI
                     name=LanguageStringType(
                         **{
-                            state.current_metadata_language: sas_reader.columns[  # type: ignore [attr-defined]
+                            state.current_metadata_language.value: sas_reader.columns[  # type: ignore [attr-defined]
                                 i
                             ].label,
                         },

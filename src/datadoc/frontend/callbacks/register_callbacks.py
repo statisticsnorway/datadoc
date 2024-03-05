@@ -74,8 +74,6 @@ def register_callbacks(app: Dash) -> None:
     def callback_save_metadata_file(n_clicks: int) -> bool:
         """Save the metadata document to disk."""
         if n_clicks and n_clicks > 0:
-            # Write the final completion percentage to the model
-            state.metadata.meta.percentage_complete = state.metadata.percent_complete
             state.metadata.write_metadata_document()
             return True
 

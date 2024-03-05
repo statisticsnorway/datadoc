@@ -11,7 +11,7 @@ from datadoc.backend.dapla_dataset_path_info import ISO_YEAR_MONTH
 from datadoc.backend.dapla_dataset_path_info import ISO_YEAR_MONTH_DAY
 from datadoc.backend.dapla_dataset_path_info import SSB_BIMESTER
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
-from datadoc.enums import DatasetState
+from datadoc.enums import DataSetState
 from tests.utils import TEST_BUCKET_PARQUET_FILEPATH_WITH_SHORTNAME
 from tests.utils import TEST_PARQUET_FILEPATH
 
@@ -149,18 +149,18 @@ def test_extract_period_info_no_period_info_in_path(data: str):
 @pytest.mark.parametrize(
     ("path_parts_to_insert", "expected_result"),
     [
-        ("kildedata", DatasetState.SOURCE_DATA),
-        ("inndata", DatasetState.INPUT_DATA),
-        ("roskildedata/klargjorte-data", DatasetState.PROCESSED_DATA),
-        ("klargjorte_data", DatasetState.PROCESSED_DATA),
-        ("klargjorte-data", DatasetState.PROCESSED_DATA),
-        ("statistikk", DatasetState.STATISTICS),
+        ("kildedata", DataSetState.SOURCE_DATA),
+        ("inndata", DataSetState.INPUT_DATA),
+        ("roskildedata/klargjorte-data", DataSetState.PROCESSED_DATA),
+        ("klargjorte_data", DataSetState.PROCESSED_DATA),
+        ("klargjorte-data", DataSetState.PROCESSED_DATA),
+        ("statistikk", DataSetState.STATISTICS),
         ("", None),
     ],
 )
 def test_get_dataset_state(
     full_dataset_state_path: pathlib.Path,
-    expected_result: DatasetState,
+    expected_result: DataSetState,
 ):
     actual_state = DaplaDatasetPathInfo(full_dataset_state_path).dataset_state
     assert actual_state == expected_result

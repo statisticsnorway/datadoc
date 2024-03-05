@@ -60,11 +60,10 @@ def test_update_global_language_state():
     "model_enum",
     [
         model.Assessment,
-        model.DatasetStatus,
-        model.DatasetState,
+        model.DataSetStatus,
+        model.DataSetState,
         model.DataType,
         model.VariableRole,
-        model.UnitType,
         model.TemporalityTypeType,
     ],
 )
@@ -86,8 +85,8 @@ def test_get_language_strings_enum_unknown():
     "enum",
     [
         enums.Assessment,
-        enums.DatasetState,
-        enums.DatasetStatus,
+        enums.DataSetState,
+        enums.DataSetStatus,
         enums.TemporalityTypeType,
         enums.DataType,
         enums.VariableRole,
