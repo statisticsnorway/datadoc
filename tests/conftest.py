@@ -246,6 +246,7 @@ def unit_types_fake_structure(
     return UnitTypes(100)
 
 
+@pytest.fixture()
 def copy_dataset_to_path(
     tmp_path: pathlib.Path,
     full_dataset_state_path: pathlib.Path,

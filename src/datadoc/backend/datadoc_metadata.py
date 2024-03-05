@@ -136,8 +136,11 @@ class DataDocMetadata:
             meta = model.DatadocMetadata.model_validate_json(
                 json.dumps(datadoc_metadata),
             )
-            self.dataset = meta.dataset
-            self.variables = meta.variables
+            if meta.dataset is not None:
+                self.dataset = meta.dataset
+            if meta.variables is not None:
+                self.variables = meta.variables
+
         except json.JSONDecodeError:
             logger.warning(
                 "Could not open existing metadata file %s. \

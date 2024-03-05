@@ -56,13 +56,13 @@ def file_path():
         ),
         (
             DatasetIdentifiers.DATASET_STATUS,
-            enums.DatasetStatus.INTERNAL,
-            enums.DatasetStatus.INTERNAL.value,
+            enums.DataSetStatus.INTERNAL,
+            enums.DataSetStatus.INTERNAL.value,
         ),
         (
             DatasetIdentifiers.DATASET_STATE,
-            enums.DatasetState.INPUT_DATA,
-            enums.DatasetState.INPUT_DATA.value,
+            enums.DataSetState.INPUT_DATA,
+            enums.DataSetState.INPUT_DATA.value,
         ),
         (
             DatasetIdentifiers.NAME,
@@ -94,11 +94,6 @@ def file_path():
             DatasetIdentifiers.VERSION_DESCRIPTION,
             "Version description",
             enums.LanguageStringType(nb="Version description"),
-        ),
-        (
-            DatasetIdentifiers.UNIT_TYPE,
-            enums.UnitType.ARBEIDSULYKKE,
-            enums.UnitType.ARBEIDSULYKKE.value,
         ),
         (
             DatasetIdentifiers.TEMPORALITY_TYPE,

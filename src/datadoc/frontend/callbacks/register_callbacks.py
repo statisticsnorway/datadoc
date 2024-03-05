@@ -73,8 +73,6 @@ def register_callbacks(app: Dash) -> None:
     def callback_save_metadata_file(n_clicks: int) -> bool:
         """Save the metadata document to disk."""
         if n_clicks and n_clicks > 0:
-            # Write the final completion percentage to the model
-            state.metadata.meta.percentage_complete = state.metadata.percent_complete
             state.metadata.write_metadata_document()
             return True
 
@@ -209,7 +207,7 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         index = 0
         variable_short_name = ""
         if n_clicks and n_clicks > 0:
-            for v in state.metadata.meta.variables:
+            for v in state.metadata.variables:
                 index += 1
                 response = get_display_values(v, state.current_metadata_language)
                 variable_short_name = response["short_name"]

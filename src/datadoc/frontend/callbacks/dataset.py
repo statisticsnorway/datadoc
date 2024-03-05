@@ -102,7 +102,7 @@ def process_special_cases(
         updated_value, _ = parse_and_validate_dates(
             str(value),
             getattr(
-                state.metadata.meta.dataset,
+                state.metadata.dataset,
                 DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
             ),
         )
@@ -111,7 +111,7 @@ def process_special_cases(
     elif metadata_identifier == DatasetIdentifiers.CONTAINS_DATA_UNTIL.value:
         _, updated_value = parse_and_validate_dates(
             getattr(
-                state.metadata.meta.dataset,
+                state.metadata.dataset,
                 DatasetIdentifiers.CONTAINS_DATA_FROM.value,
             ),
             str(value),
