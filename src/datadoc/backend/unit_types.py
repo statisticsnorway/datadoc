@@ -27,7 +27,7 @@ class UnitType:
         try:
             return self.titles[
                 (
-                    # Adjust to language codes in the StatisticSubjectMapping structure.
+                    # Adjust to language codes in the UnitTypes structure.
                     "nb"
                     if language
                     in [
@@ -106,9 +106,9 @@ class UnitTypes(GetExternalSource):
             titles = {}
             for j in languages:
                 if "name" in dataframes[j]:
-                    titles[str(j)] = dataframes[j].loc[:, "name"][i]
+                    titles[str(j.value)] = dataframes[j].loc[:, "name"][i]
                 else:
-                    titles[str(j)] = None
+                    titles[str(j.value)] = None
             list_of_titles.append(titles)
         return list_of_titles
 
@@ -136,7 +136,7 @@ class UnitTypes(GetExternalSource):
 
     def _get_classification_dataframe_if_loaded(self) -> bool:
         """Checks if the data from Klass is loaded, then gets the classifications from the dataframe."""
-        if self.check_if_external_data_is_loaded():
+        if not self._classifications:
             self.classifications_dataframes = self.retrieve_external_data()
             if self.classifications_dataframes is not None:
                 self._classifications = self._create_unit_types_from_dataframe(

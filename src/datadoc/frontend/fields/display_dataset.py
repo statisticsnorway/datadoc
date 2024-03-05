@@ -177,7 +177,7 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         identifier=DatasetIdentifiers.UNIT_TYPE.value,
         display_name="Enhetstype",
         description="Primær enhetstype for datafil, datatabell eller datasett. Se  Vi jobber med en avklaring av behov for flere enhetstyper her.",
-        multiple_language_support=True,
+        multiple_language_support=False,
         options_getter=get_unit_type_options,
     ),
     DatasetIdentifiers.TEMPORALITY_TYPE: DisplayDatasetMetadataDropdown(

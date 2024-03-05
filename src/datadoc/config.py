@@ -131,5 +131,5 @@ def get_oidc_token() -> str | None:
 
 
 def get_unit_code() -> int | None:
-    """Get the unit code for the correct classifications from the python klass package."""
+    """The code for the Unit Type code list in Klass."""
     return int(_get_config_item("DATADOC_UNIT_CODE") or 702)
