@@ -135,7 +135,6 @@ DISPLAY_VARIABLES: dict[
         identifier=NewVariableIdentifiers.MEASUREMENT_UNIT.value,
         display_name="Måleenhet",
         description="Måleenhet. Eksempel: NOK eller USD for valuta, KG eller TONN for vekt. Se også forslag til SSBs måletyper/måleenheter.",
-        multiple_language_support=True,
         type="text",
     ),
     NewVariableIdentifiers.FORMAT: DisplayNewVariablesMetadata(

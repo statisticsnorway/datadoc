@@ -240,7 +240,7 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
                     ),
                 ],
             )
-            for variable in list(state.metadata.variables_lookup.values())
+            for variable in list(state.metadata.variables)
         ]
 
     @app.callback(

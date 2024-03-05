@@ -132,8 +132,6 @@ class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
     component: type[Component] = dcc.Dropdown
 
 
-# New design for variables - Input , dropdown, checkbox
-# Language for Input and Checkbox is not used, but trigger error if not handled when render
 @dataclass
 class DisplayNewVariablesMetadata(DisplayMetadata):
     """Controls for how a given metadata field should be displayed.
@@ -148,18 +146,18 @@ class DisplayNewVariablesMetadata(DisplayMetadata):
     def render(
         self,
         variable_id: dict,
-        language: str,
+        language: str,  # noqa: ARG002
         variable: model.Variable,
     ) -> ssb.Input:
-        """Build Input  component with props."""
-        self.language = language
+        """Build Input component."""
+        value = self.value_getter(variable, self.identifier)
         return ssb.Input(
             label=self.display_name,
             id=variable_id,
             debounce=self.type != "date",
             type=self.type,
             disabled=not self.editable,
-            value=self.value_getter(variable, self.identifier),
+            value=value or "",
         )
 
 
@@ -178,12 +176,13 @@ class DisplayNewVariablesMetadataDropdown(DisplayNewVariablesMetadata):
         language: str,
         variable: model.Variable,
     ) -> ssb.Dropdown:
-        """Build Dropdown component with props."""
+        """Build Dropdown component."""
+        value = self.value_getter(variable, self.identifier)
         return ssb.Dropdown(
             header=self.display_name,
             id=variable_id,
             items=self.options_getter(SupportedLanguages(language)),
-            value=self.value_getter(variable, self.identifier),
+            value=value,
         )
 
 
@@ -197,16 +196,16 @@ class DisplayNewVariablesMetadataCheckbox(DisplayNewVariablesMetadata):
     def render(
         self,
         variable_id: dict,
-        language: str,
+        language: str,  # noqa: ARG002
         variable: model.Variable,
     ) -> dbc.Checkbox:
         """Build Dropdown component with props."""
-        self.language = language
+        value = self.value_getter(variable, self.identifier)
         return dbc.Checkbox(
             label=self.display_name,
             id=variable_id,
             disabled=not self.editable,
             label_class_name="ssb-checkbox checkbox-label",
             class_name="ssb-checkbox",
-            value=self.value_getter(variable, self.identifier),
+            value=value,
         )
