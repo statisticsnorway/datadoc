@@ -2,13 +2,19 @@
 
 from __future__ import annotations
 
+import logging
+from typing import TYPE_CHECKING
+
 import dash_bootstrap_components as dbc
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
 from dash import html
 
-from datadoc.frontend.fields.display_new_variables import OBLIGATORY_VARIABLES_METADATA
-from datadoc.frontend.fields.display_new_variables import OPTIONAL_VARIABLES_METADATA
-from datadoc.frontend.fields.display_new_variables import DisplayNewVariablesMetadata
+if TYPE_CHECKING:
+    from datadoc.frontend.fields.display_new_variables import (
+        DisplayNewVariablesMetadata,
+    )
+
+logger = logging.getLogger(__name__)
 
 info_section = (
     "Informasjon om hvordan jobbe i Datadoc, antall variabler i datasettet: osv.."
@@ -17,47 +23,23 @@ info_section = (
 VARIABLES_METADATA_INPUT = "variables-metadata-input"
 
 
+# section of Inputs: Input, checkbox or dropdown -
+# It is hard to separate between DisplayNewVariablesMetatdata and NewVariablesMetadataDropddown - with NewVariablesMetadataDropddown in type hint it's temporary solved
 def build_input_field_section(
     metadata_inputs: list[DisplayNewVariablesMetadata],
     variable_short_name: str,
+    language: str,
 ) -> dbc.Form:
     """Create input fields."""
     return dbc.Form(
         [
-            (
-                i.component(
-                    label=i.display_name,
-                    disabled=not i.editable,
-                    className="variables-input",
-                    id={
-                        "type": VARIABLES_METADATA_INPUT,
-                        "variable_short_name": variable_short_name,
-                        "id": i.identifier,
-                    },
-                    value="",
-                    type=i.presentation,
-                )
-                if i.component == ssb.Input
-                else (
-                    i.component(
-                        id={
-                            "type": VARIABLES_METADATA_INPUT,
-                            "variable_short_name": variable_short_name,
-                            "id": i.identifier,
-                        },
-                        **i.extra_kwargs,
-                    )
-                    if i.component == dbc.Checkbox
-                    else i.component(
-                        header=i.display_name,
-                        id={
-                            "type": VARIABLES_METADATA_INPUT,
-                            "variable_short_name": variable_short_name,
-                            "id": i.identifier,
-                        },
-                        **i.extra_kwargs,
-                    )
-                )
+            i.render(
+                {
+                    "type": VARIABLES_METADATA_INPUT,
+                    "variable_short_name": variable_short_name,
+                    "id": i.identifier,
+                },
+                language,
             )
             for i in metadata_inputs
         ],
@@ -66,25 +48,30 @@ def build_input_field_section(
     )
 
 
+# One section of inputs (either obligatory or recommended)
 def build_edit_section(
     metadata_inputs: list,
     title: str,
     variable_short_name: str,
+    language: str,
 ) -> html.Section:
     """Create input section."""
     return html.Section(
+        id={"type": "edit-section", "title": title},
         children=[
             ssb.Title(title, size=3, className="input-section-title"),
-            build_input_field_section(metadata_inputs, variable_short_name),
+            build_input_field_section(metadata_inputs, variable_short_name, language),
         ],
         className="input-section",
     )
 
 
+# Accordion for variable
 def build_ssb_accordion(
     header: str,
     key: dict,
     variable_short_name: str,
+    children: list,
 ) -> ssb.Accordion:
     """Build Accordion for one variable."""
     return ssb.Accordion(
@@ -98,15 +85,12 @@ def build_ssb_accordion(
                 },
                 className="alert-section",
             ),
-            build_edit_section(
-                OBLIGATORY_VARIABLES_METADATA,
-                "Obligatorisk",
-                variable_short_name,
-            ),
-            build_edit_section(
-                OPTIONAL_VARIABLES_METADATA,
-                "Anbefalt",
-                variable_short_name,
+            html.Section(
+                id={
+                    "type": "variable-inputs",
+                    "variable_short_name": variable_short_name,
+                },
+                children=children,
             ),
         ],
         className="variable",

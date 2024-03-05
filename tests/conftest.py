@@ -12,6 +12,7 @@ from datetime import timezone
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import pandas as pd
 import pytest
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
@@ -20,6 +21,7 @@ from datadoc_model import model
 from datadoc import state
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
+from datadoc.backend.unit_types import UnitTypes
 from datadoc.backend.user_info import TestUserInfo
 from tests.backend.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
@@ -30,6 +32,8 @@ from .utils import TEST_EXISTING_METADATA_FILE_NAME
 from .utils import TEST_PARQUET_FILE_NAME
 from .utils import TEST_PARQUET_FILEPATH
 from .utils import TEST_RESOURCES_DIRECTORY
+
+UNIT_TYPES_DIR = "unit_types"
 
 if TYPE_CHECKING:
     from pytest_mock import MockerFixture
@@ -185,6 +189,60 @@ def _mock_fetch_statistical_structure(
         "datadoc.backend.statistic_subject_mapping.StatisticSubjectMapping._fetch_data_from_external_source",
         functools.partial(fake_statistical_structure),
     )
+
+
+@pytest.fixture()
+def subject_mapping_http_exception(
+    requests_mock,
+    exception_to_raise,
+) -> StatisticSubjectMapping:
+    requests_mock.get(
+        "http://test.some.url.com",
+        exc=exception_to_raise,
+    )
+    return StatisticSubjectMapping("http://test.some.url.com")
+
+
+@pytest.fixture()
+def unit_types_csv_filepath_nb() -> pathlib.Path:
+    return TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "unit_types_nb.csv"
+
+
+@pytest.fixture()
+def unit_types_csv_filepath_nn() -> pathlib.Path:
+    return TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "unit_types_nn.csv"
+
+
+@pytest.fixture()
+def unit_types_csv_filepath_en() -> pathlib.Path:
+    return TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "unit_types_en.csv"
+
+
+@pytest.fixture()
+def _mock_fetch_dataframe(
+    mocker,
+    unit_types_csv_filepath_nb: pathlib.Path,
+    unit_types_csv_filepath_nn: pathlib.Path,
+    unit_types_csv_filepath_en: pathlib.Path,
+) -> None:
+    def fake_unit_types() -> dict[str, pd.DataFrame]:
+        return {
+            "nb": pd.read_csv(unit_types_csv_filepath_nb, converters={"code": str}),
+            "nn": pd.read_csv(unit_types_csv_filepath_nn, converters={"code": str}),
+            "en": pd.read_csv(unit_types_csv_filepath_en, converters={"code": str}),
+        }
+
+    mocker.patch(
+        "datadoc.backend.unit_types.UnitTypes._fetch_data_from_external_source",
+        functools.partial(fake_unit_types),
+    )
+
+
+@pytest.fixture()
+def unit_types_fake_structure(
+    _mock_fetch_dataframe,
+) -> UnitTypes:
+    return UnitTypes(100)
 
 
 @pytest.fixture()
