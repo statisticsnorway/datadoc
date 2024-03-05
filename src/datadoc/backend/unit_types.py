@@ -103,8 +103,6 @@ class UnitTypes(GetExternalSource):
         for i in range(len(dataframes[SupportedLanguages.NORSK_BOKMÅL])):
             titles = {}
             for j in languages:
-                print("H")
-                print("J: ", j)
                 if "name" in dataframes[j]:
                     titles[str(j)] = dataframes[j].loc[:, "name"][i]
                 else:
