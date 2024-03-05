@@ -3982,13 +3982,13 @@ sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
 name = "ssb-dash-components"
-version = "0.4.0"
+version = "0.4.1"
 description = "Dash Component library for SSB"
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "ssb_dash_components-0.4.0-py3-none-any.whl", hash = "sha256:dbc13ed8dca27990802782acde5ac5b8a611c6d2463bb713d21ed77cfc2f1abc"},
-    {file = "ssb_dash_components-0.4.0.tar.gz", hash = "sha256:4c29cbb057e8c68d6429cdcd1c82af7ec7a14a8641195e84d8c6d648df435717"},
+    {file = "ssb_dash_components-0.4.1-py3-none-any.whl", hash = "sha256:005149c1e3eba37fc4c2a2139d23d15d750c60bd3a9e135896a790eea3dae21a"},
+    {file = "ssb_dash_components-0.4.1.tar.gz", hash = "sha256:0d1416b6181cd1ee889ab90c13cf6c26e0d62244eeb4bb694d024a7bc5c11f40"},
 ]
 
 [package.dependencies]
