@@ -91,13 +91,13 @@ def existing_metadata_path() -> Path:
 
 
 @pytest.fixture()
-def existing_metadata_file(tmp_path: Path, existing_metadata_path: Path) -> str:
+def existing_metadata_file(tmp_path: Path, existing_metadata_path: Path) -> Path:
     # Setup by copying the file into the relevant directory
     shutil.copy(
         existing_metadata_path / TEST_EXISTING_METADATA_FILE_NAME,
         tmp_path / TEST_EXISTING_METADATA_FILE_NAME,
     )
-    return str(tmp_path / TEST_EXISTING_METADATA_FILE_NAME)
+    return tmp_path / TEST_EXISTING_METADATA_FILE_NAME
 
 
 @pytest.fixture(autouse=True)
