@@ -22,6 +22,7 @@ from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import change_language_dataset_metadata
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
+from datadoc.frontend.callbacks.new_variables import build_new_variables_workspace
 from datadoc.frontend.callbacks.variables import (
     accept_variable_datatable_metadata_input,
 )
@@ -35,11 +36,7 @@ from datadoc.frontend.components.dataset_tab import build_dataset_metadata_accor
 from datadoc.frontend.components.resources_test_new_variables import (
     VARIABLES_METADATA_INPUT,
 )
-from datadoc.frontend.components.resources_test_new_variables import build_edit_section
-from datadoc.frontend.components.resources_test_new_variables import build_ssb_accordion
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
-from datadoc.frontend.fields.display_new_variables import OBLIGATORY_VARIABLES_METADATA
-from datadoc.frontend.fields.display_new_variables import OPTIONAL_VARIABLES_METADATA
 
 if TYPE_CHECKING:
     import dash_bootstrap_components as dbc
@@ -222,28 +219,7 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         language: str,  # noqa: ARG001
     ) -> list:
         """Create variable workspace with accordions for variables."""
-        return [
-            build_ssb_accordion(
-                variable,
-                {"type": "variables-accordion", "id": variable},
-                variable,
-                children=[
-                    build_edit_section(
-                        OBLIGATORY_VARIABLES_METADATA,
-                        "Obligatorisk",
-                        variable,
-                        state.current_metadata_language.value,
-                    ),
-                    build_edit_section(
-                        OPTIONAL_VARIABLES_METADATA,
-                        "Anbefalt",
-                        variable,
-                        state.current_metadata_language.value,
-                    ),
-                ],
-            )
-            for variable in list(state.metadata.variables_lookup.keys())
-        ]
+        return build_new_variables_workspace()
 
     @app.callback(
         Output(
