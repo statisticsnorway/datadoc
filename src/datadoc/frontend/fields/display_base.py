@@ -188,7 +188,7 @@ class VariablesDropdownField(DisplayMetadata):
 
 
 @dataclass
-class DisplayNewVariablesMetadataCheckbox(VariablesInputField):
+class VariablesCheckboxField(DisplayMetadata):
     """Controls for how a checkbox metadata field should be displayed."""
 
     extra_kwargs: dict[str, Any] = field(default_factory=input_kwargs_factory)

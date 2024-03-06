@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 from datadoc import enums
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
-from datadoc.frontend.fields.display_base import DisplayNewVariablesMetadataCheckbox
+from datadoc.frontend.fields.display_base import VariablesCheckboxField
 from datadoc.frontend.fields.display_base import VariablesDropdownField
 from datadoc.frontend.fields.display_base import VariablesInputField
 from datadoc.frontend.fields.display_base import get_multi_language_metadata
@@ -104,7 +104,7 @@ DISPLAY_VARIABLES: dict[
         obligatory=True,
         type="url",
     ),
-    NewVariableIdentifiers.DIRECT_PERSON_IDENTIFYING: DisplayNewVariablesMetadataCheckbox(
+    NewVariableIdentifiers.DIRECT_PERSON_IDENTIFYING: VariablesCheckboxField(
         identifier=NewVariableIdentifiers.DIRECT_PERSON_IDENTIFYING.value,
         display_name="Direkte personidentifiserende informasjon",
         description="Direkte personidentifiserende informasjon (DPI)",
