@@ -16,6 +16,7 @@ obligatory_header = "Obligatorisk"
 reccomended_header = "Anbefalt"
 
 edit_sections = []
+empty_meta_data_input = []
 
 NORSK_BOKMÅL = "nb"
 NORSK_NYNORSK = "nn"
@@ -76,13 +77,13 @@ def test_build_ssb_accordion_header(build_test_variables):
         test_variable["edit_section_id"],
         edit_sections,
     )
-    assert accordion.header == "pers_id"
+    assert [accordion.header == test_header for test_header in build_test_variables]
 
 
 def test_build_edit_section():
     current_variable = variable_short_names[0]
     obligatory_edit_section = build_edit_section(
-        OBLIGATORY_VARIABLES_METADATA,
+        empty_meta_data_input,
         obligatory_header,
         current_variable,
         NORSK_BOKMÅL,
@@ -93,7 +94,7 @@ def test_build_edit_section():
 def test_build_edit_section_children():
     current_variable = variable_short_names[0]
     obligatory_edit_section = build_edit_section(
-        OBLIGATORY_VARIABLES_METADATA,
+        empty_meta_data_input,
         obligatory_header,
         current_variable,
         NORSK_BOKMÅL,
@@ -102,6 +103,7 @@ def test_build_edit_section_children():
     assert isinstance(obligatory_edit_section.children[1], dbc.Form)
 
 
+# Why function with empty list?
 def test_build_input_field_section():
     test_input_section = build_input_field_section(
         OBLIGATORY_VARIABLES_METADATA,
@@ -116,3 +118,4 @@ def test_build_input_field_section():
         )
         for i in test_input_section
     )
+    assert len(test_input_section.children) == len(OBLIGATORY_VARIABLES_METADATA)
