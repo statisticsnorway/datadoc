@@ -12,9 +12,7 @@ from dash import html
 if TYPE_CHECKING:
     from datadoc_model import model
 
-    from datadoc.frontend.fields.display_new_variables import (
-        DisplayNewVariablesMetadata,
-    )
+    from datadoc.frontend.fields.display_new_variables import VariablesInputField
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +24,7 @@ VARIABLES_METADATA_INPUT = "variables-metadata-input"
 
 
 def build_input_field_section(
-    metadata_inputs: list[DisplayNewVariablesMetadata],
+    metadata_inputs: list[VariablesInputField],
     variable: model.Variable,
     language: str,
 ) -> dbc.Form:

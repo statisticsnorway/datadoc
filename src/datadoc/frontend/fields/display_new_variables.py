@@ -9,9 +9,9 @@ from typing import TYPE_CHECKING
 
 from datadoc import enums
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
-from datadoc.frontend.fields.display_base import DisplayNewVariablesMetadata
 from datadoc.frontend.fields.display_base import DisplayNewVariablesMetadataCheckbox
 from datadoc.frontend.fields.display_base import DisplayNewVariablesMetadataDropdown
+from datadoc.frontend.fields.display_base import VariablesInputField
 from datadoc.frontend.fields.display_base import get_multi_language_metadata
 
 if TYPE_CHECKING:
@@ -59,16 +59,16 @@ class NewVariableIdentifiers(str, Enum):
 
 DISPLAY_VARIABLES: dict[
     NewVariableIdentifiers,
-    DisplayNewVariablesMetadata,
+    VariablesInputField,
 ] = {
-    NewVariableIdentifiers.SHORT_NAME: DisplayNewVariablesMetadata(
+    NewVariableIdentifiers.SHORT_NAME: VariablesInputField(
         identifier=NewVariableIdentifiers.SHORT_NAME.value,
         display_name="Kortnavn",
         description="Fysisk navn på variabelen i datasettet. Bør tilsvare anbefalt kortnavn.",
         obligatory=True,
         editable=False,
     ),
-    NewVariableIdentifiers.NAME: DisplayNewVariablesMetadata(
+    NewVariableIdentifiers.NAME: VariablesInputField(
         identifier=NewVariableIdentifiers.NAME.value,
         display_name="Navn",
         description="Variabelnavn kan arves fra VarDef, men kan også dokumenteres/endres her.",
@@ -96,7 +96,7 @@ DISPLAY_VARIABLES: dict[
             enums.VariableRole,
         ),
     ),
-    NewVariableIdentifiers.DEFINITION_URI: DisplayNewVariablesMetadata(
+    NewVariableIdentifiers.DEFINITION_URI: VariablesInputField(
         identifier=NewVariableIdentifiers.DEFINITION_URI.value,
         display_name="Definition URI",
         description="En lenke (URI) til variabelens definisjon i SSB (Vardok/VarDef)",
@@ -110,72 +110,72 @@ DISPLAY_VARIABLES: dict[
         description="Direkte personidentifiserende informasjon (DPI)",
         obligatory=True,
     ),
-    NewVariableIdentifiers.DATA_SOURCE: DisplayNewVariablesMetadata(
+    NewVariableIdentifiers.DATA_SOURCE: VariablesInputField(
         identifier=NewVariableIdentifiers.DATA_SOURCE.value,
         display_name="Datakilde",
         description="Datakilde. Settes på datasettnivå, men kan overstyres på variabelforekomstnivå.",
         multiple_language_support=True,
         type="text",
     ),
-    NewVariableIdentifiers.POPULATION_DESCRIPTION: DisplayNewVariablesMetadata(
+    NewVariableIdentifiers.POPULATION_DESCRIPTION: VariablesInputField(
         identifier=NewVariableIdentifiers.POPULATION_DESCRIPTION.value,
         display_name="Populasjonen",
         description="Populasjonen variabelen beskriver kan spesifiseres nærmere her. Settes på datasettnivå, men kan overstyres på variabelforekomstnivå.",
         multiple_language_support=True,
         type="text",
     ),
-    NewVariableIdentifiers.COMMENT: DisplayNewVariablesMetadata(
+    NewVariableIdentifiers.COMMENT: VariablesInputField(
         identifier=NewVariableIdentifiers.COMMENT.value,
         display_name="Kommentar",
         description="Ytterligere presiseringer av variabeldefinisjon",
         multiple_language_support=True,
         type="text",
     ),
-    NewVariableIdentifiers.MEASUREMENT_UNIT: DisplayNewVariablesMetadata(
+    NewVariableIdentifiers.MEASUREMENT_UNIT: VariablesInputField(
         identifier=NewVariableIdentifiers.MEASUREMENT_UNIT.value,
         display_name="Måleenhet",
         description="Måleenhet. Eksempel: NOK eller USD for valuta, KG eller TONN for vekt. Se også forslag til SSBs måletyper/måleenheter.",
         type="text",
     ),
-    NewVariableIdentifiers.FORMAT: DisplayNewVariablesMetadata(
+    NewVariableIdentifiers.FORMAT: VariablesInputField(
         identifier=NewVariableIdentifiers.FORMAT.value,
         display_name="Format",
         description="Verdienes format (fysisk format eller regulært uttrykk) i maskinlesbar form ifm validering. Dette kan benyttes som en ytterligere presisering av datatypen (dataType) i de tilfellene hvor dette er relevant. ",
     ),
-    NewVariableIdentifiers.CLASSIFICATION_URI: DisplayNewVariablesMetadata(
+    NewVariableIdentifiers.CLASSIFICATION_URI: VariablesInputField(
         identifier=NewVariableIdentifiers.CLASSIFICATION_URI.value,
         display_name="Kodeverkets URI",
         description="Lenke (URI) til gyldige kodeverk (klassifikasjon eller kodeliste) i KLASS",
         url=True,
         type="url",
     ),
-    NewVariableIdentifiers.SENTINEL_VALUE_URI: DisplayNewVariablesMetadata(
+    NewVariableIdentifiers.SENTINEL_VALUE_URI: VariablesInputField(
         identifier=NewVariableIdentifiers.SENTINEL_VALUE_URI.value,
         display_name="Spesialverdienes URI",
         description="En lenke (URI) til en oversikt over 'spesialverdier' som inngår i variabelen.",
         url=True,
         type="url",
     ),
-    NewVariableIdentifiers.INVALID_VALUE_DESCRIPTION: DisplayNewVariablesMetadata(
+    NewVariableIdentifiers.INVALID_VALUE_DESCRIPTION: VariablesInputField(
         identifier=NewVariableIdentifiers.INVALID_VALUE_DESCRIPTION.value,
         display_name="Ugyldige verdier",
         description="En beskrivelse av ugyldige verdier som inngår i variabelen dersom spesialverdiene ikke er tilstrekkelige eller ikke kan benyttes.",
         multiple_language_support=True,
     ),
-    NewVariableIdentifiers.IDENTIFIER: DisplayNewVariablesMetadata(
+    NewVariableIdentifiers.IDENTIFIER: VariablesInputField(
         identifier=NewVariableIdentifiers.IDENTIFIER.value,
         display_name="Unik ID",
         description="Unik SSB identifikator for variabelforekomsten i datasettet",
         obligatory=False,
         editable=False,
     ),
-    NewVariableIdentifiers.CONTAINS_DATA_FROM: DisplayNewVariablesMetadata(
+    NewVariableIdentifiers.CONTAINS_DATA_FROM: VariablesInputField(
         identifier=NewVariableIdentifiers.CONTAINS_DATA_FROM.value,
         display_name="Inneholder data f.o.m.",
         description="Variabelforekomsten i datasettet inneholder data fra og med denne dato.",
         type="date",
     ),
-    NewVariableIdentifiers.CONTAINS_DATA_UNTIL: DisplayNewVariablesMetadata(
+    NewVariableIdentifiers.CONTAINS_DATA_UNTIL: VariablesInputField(
         identifier=NewVariableIdentifiers.CONTAINS_DATA_UNTIL.value,
         display_name="Inneholder data t.o.m.",
         description="Variabelforekomsten i datasettet inneholder data til og med denne dato.",
@@ -202,7 +202,7 @@ OPTIONAL_VARIABLES_METADATA = [
 ]
 
 # Copied from dataset_tab - not in use - should we use this?
-DISPLAYED_VARIABLES_METADATA: list[DisplayNewVariablesMetadata] = (
+DISPLAYED_VARIABLES_METADATA: list[VariablesInputField] = (
     OBLIGATORY_VARIABLES_METADATA + OPTIONAL_VARIABLES_METADATA
 )
 

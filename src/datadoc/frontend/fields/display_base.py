@@ -133,7 +133,7 @@ class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
 
 
 @dataclass
-class DisplayNewVariablesMetadata(DisplayMetadata):
+class VariablesInputField(DisplayMetadata):
     """Controls for how a given metadata field should be displayed.
 
     Specific to variable fields.
@@ -157,12 +157,12 @@ class DisplayNewVariablesMetadata(DisplayMetadata):
             debounce=self.type != "date",
             type=self.type,
             disabled=not self.editable,
-            value=value or "",
+            value=value,
         )
 
 
 @dataclass
-class DisplayNewVariablesMetadataDropdown(DisplayNewVariablesMetadata):
+class DisplayNewVariablesMetadataDropdown(VariablesInputField):
     """Control how a Dropdown should be displayed."""
 
     # fmt: off
@@ -187,7 +187,7 @@ class DisplayNewVariablesMetadataDropdown(DisplayNewVariablesMetadata):
 
 
 @dataclass
-class DisplayNewVariablesMetadataCheckbox(DisplayNewVariablesMetadata):
+class DisplayNewVariablesMetadataCheckbox(VariablesInputField):
     """Controls for how a checkbox metadata field should be displayed."""
 
     extra_kwargs: dict[str, Any] = field(default_factory=input_kwargs_factory)
@@ -199,7 +199,7 @@ class DisplayNewVariablesMetadataCheckbox(DisplayNewVariablesMetadata):
         language: str,  # noqa: ARG002
         variable: model.Variable,
     ) -> dbc.Checkbox:
-        """Build Dropdown component with props."""
+        """Build Checkbox component."""
         value = self.value_getter(variable, self.identifier)
         return dbc.Checkbox(
             label=self.display_name,
