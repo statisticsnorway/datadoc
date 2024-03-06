@@ -162,13 +162,14 @@ class VariablesInputField(DisplayMetadata):
 
 
 @dataclass
-class DisplayNewVariablesMetadataDropdown(VariablesInputField):
+class VariablesDropdownField(DisplayMetadata):
     """Control how a Dropdown should be displayed."""
 
+    extra_kwargs: dict[str, Any] = field(default_factory=new_input_kwargs_factory)
+    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
     # fmt: off
     options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
     # fmt: on
-    extra_kwargs: dict[str, Any] = field(default_factory=new_input_kwargs_factory)
 
     def render(
         self,

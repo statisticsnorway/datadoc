@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 from datadoc import enums
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
 from datadoc.frontend.fields.display_base import DisplayNewVariablesMetadataCheckbox
-from datadoc.frontend.fields.display_base import DisplayNewVariablesMetadataDropdown
+from datadoc.frontend.fields.display_base import VariablesDropdownField
 from datadoc.frontend.fields.display_base import VariablesInputField
 from datadoc.frontend.fields.display_base import get_multi_language_metadata
 
@@ -76,7 +76,7 @@ DISPLAY_VARIABLES: dict[
         multiple_language_support=True,
         type="text",
     ),
-    NewVariableIdentifiers.DATA_TYPE: DisplayNewVariablesMetadataDropdown(
+    NewVariableIdentifiers.DATA_TYPE: VariablesDropdownField(
         identifier=NewVariableIdentifiers.DATA_TYPE.value,
         display_name="Datatype",
         description="Datatype",
@@ -86,7 +86,7 @@ DISPLAY_VARIABLES: dict[
             enums.DataType,
         ),
     ),
-    NewVariableIdentifiers.VARIABLE_ROLE: DisplayNewVariablesMetadataDropdown(
+    NewVariableIdentifiers.VARIABLE_ROLE: VariablesDropdownField(
         identifier=NewVariableIdentifiers.VARIABLE_ROLE.value,
         display_name="Variabelens rolle",
         description="Variabelens rolle i datasett",
