@@ -344,7 +344,7 @@ def test_extract_subject_field_value_from_statistic_structure_xml(
     )
     # TODO @mmwinther: Remove multiple_language_support once the model is updated.
     # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
-    assert metadata.dataset.subject_field.en == expected_subject_code
+    assert metadata.dataset.subject_field.en == expected_subject_code  # type: ignore [union-attr]
 
 
 @pytest.mark.parametrize(
@@ -359,7 +359,7 @@ def test_existing_pseudo_metadata_file(
     metadata.write_metadata_document()
     post_open_metadata = json.loads(existing_metadata_file.read_text())
 
-    assert len(metadata.meta.variables) == 8  # noqa: PLR2004
+    assert len(metadata.variables) == 8  # noqa: PLR2004
     assert (
         pre_open_metadata["pseudonymization"] == post_open_metadata["pseudonymization"]
     )

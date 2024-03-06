@@ -192,7 +192,7 @@ class DataDocMetadata:
             dapla_dataset_path_info.statistic_short_name,
         )
 
-        self.meta.dataset = model.Dataset(
+        self.dataset = model.Dataset(
             short_name=self.dataset_path.stem if self.dataset_path else None,
             dataset_state=dapla_dataset_path_info.dataset_state,
             dataset_status=DataSetStatus.DRAFT,
