@@ -8,6 +8,7 @@ import pathlib
 import uuid
 from typing import TYPE_CHECKING
 
+import pydantic
 from cloudpathlib import CloudPath
 from cloudpathlib import GSClient
 from cloudpathlib import GSPath
@@ -57,21 +58,20 @@ class DataDocMetadata:
         self.variables: list = []
 
         self.variables_lookup: dict[str, model.Variable] = {}
+
         if metadata_document_path:
             # In this case the user has specified an independent metadata document for editing
             # without a dataset.
             self.metadata_document = self._open_path(metadata_document_path)
-            self.extract_metadata_from_existing_document(self.metadata_document)
         elif dataset_path:
             self.dataset_path = self._open_path(dataset_path)
-            # The short_name is set as the dataset filename without file extension
-            self.short_name = self.dataset_path.stem
             # Build the metadata document path based on the dataset path
             # Example: /path/to/dataset.parquet -> /path/to/dataset__DOC.json
             self.metadata_document = self.dataset_path.parent / (
                 self.dataset_path.stem + METADATA_DOCUMENT_FILE_SUFFIX
             )
-            self.extract_metadata_from_files()
+
+        self.extract_metadata_from_files()
 
     @staticmethod
     def _open_path(path: str) -> pathlib.Path | CloudPath:
@@ -93,7 +93,12 @@ class DataDocMetadata:
         """
         if self.metadata_document is not None and self.metadata_document.exists():
             self.extract_metadata_from_existing_document(self.metadata_document)
-        elif self.dataset_path is not None:
+
+        if (
+            self.dataset_path is not None
+            and self.dataset == model.Dataset()
+            and len(self.variables) == 0
+        ):
             self.extract_metadata_from_dataset(self.dataset_path)
             self.dataset.id = uuid.uuid4()
             # Set default values for variables where appropriate
@@ -128,6 +133,11 @@ class DataDocMetadata:
             else:
                 datadoc_metadata = fresh_metadata
 
+            if datadoc_metadata is None:
+                # In this case we've read in a file with an empty "datadoc" structure.
+                # A typical example of this is a file produced from a pseudonymization process.
+                return
+
             datadoc_metadata = upgrade_metadata(
                 datadoc_metadata,
             )
@@ -157,7 +167,14 @@ class DataDocMetadata:
         The container provides a structure for different 'types' of metadata, such as 'datadoc', 'pseudonymization' etc.
         This method returns True if the metadata is in the container structure, False otherwise.
         """
-        return "datadoc" in metadata and "dataset" in metadata["datadoc"]
+        try:
+            model.MetadataContainer.model_validate_json(
+                json.dumps(metadata),
+            )
+        except pydantic.ValidationError:
+            return False
+        else:
+            return True
 
     def extract_metadata_from_dataset(
         self,
@@ -176,7 +193,7 @@ class DataDocMetadata:
         )
 
         self.dataset = model.Dataset(
-            short_name=self.short_name,
+            short_name=self.dataset_path.stem if self.dataset_path else None,
             dataset_state=dapla_dataset_path_info.dataset_state,
             dataset_status=DataSetStatus.DRAFT,
             assessment=self.get_assessment_by_state(
