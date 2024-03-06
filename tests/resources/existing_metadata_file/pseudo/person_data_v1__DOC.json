@@ -1,0 +1,22 @@
+{
+  "document_version": "0.0.1",
+  "datadoc": null,
+  "pseudonymization": {
+    "document_version": "0.1.0",
+    "pseudo_dataset": null,
+    "pseudo_variables": [
+      {
+        "short_name": "fnr",
+        "data_element_path": "fnr",
+        "data_element_pattern": "**/fnr",
+        "stable_identifier_type": null,
+        "stable_identifier_version": null,
+        "encryption_algorithm": "TINK-DAEAD",
+        "encryption_key_reference": "ssb-common-key-1",
+        "encryption_algorithm_parameters": [{ "keyId": "ssb-common-key-1" }],
+        "source_variable": null,
+        "source_variable_datatype": null
+      }
+    ]
+  }
+}

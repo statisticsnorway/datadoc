@@ -13,7 +13,7 @@ from typing import Literal
 
 import arrow
 
-from datadoc.enums import DatasetState
+from datadoc.enums import DataSetState
 from datadoc.enums import SupportedLanguages
 
 if TYPE_CHECKING:
@@ -336,7 +336,7 @@ class DaplaDatasetPathInfo:
 
     def _extract_norwegian_dataset_state_path_part(
         self,
-        dataset_state: DatasetState,
+        dataset_state: DataSetState,
     ) -> set:
         norwegian_dataset_state_path_part = dataset_state.get_value_for_language(
             SupportedLanguages.NORSK_BOKMÅL,
@@ -372,19 +372,19 @@ class DaplaDatasetPathInfo:
     @property
     def dataset_state(
         self,
-    ) -> DatasetState | None:
+    ) -> DataSetState | None:
         """Extract the dataset state from the path.
 
         Examples:
         >>> DaplaDatasetPathInfo('klargjorte_data/person_data_v1.parquet').dataset_state
-        <DatasetState.PROCESSED_DATA: 'PROCESSED_DATA'>
+        <DataSetState.PROCESSED_DATA: 'PROCESSED_DATA'>
         >>> DaplaDatasetPathInfo('utdata/min_statistikk/person_data_v1.parquet').dataset_state
-        <DatasetState.OUTPUT_DATA: 'OUTPUT_DATA'>
+        <DataSetState.OUTPUT_DATA: 'OUTPUT_DATA'>
         >>> DaplaDatasetPathInfo('my_special_data/person_data_v1.parquet').dataset_state
         None
         """
         dataset_path_parts = set(self.dataset_path.parts)
-        for s in DatasetState:
+        for s in DataSetState:
             # We assume that files are saved in the Norwegian language as specified by SSB.
             norwegian_dataset_state_path_part_variations = (
                 self._extract_norwegian_dataset_state_path_part(s)

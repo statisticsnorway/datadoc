@@ -128,3 +128,8 @@ def get_dapla_service() -> DaplaService | None:
 def get_oidc_token() -> str | None:
     """Get the JWT token from the environment."""
     return _get_config_item("OIDC_TOKEN")
+
+
+def get_unit_code() -> int | None:
+    """The code for the Unit Type code list in Klass."""
+    return int(_get_config_item("DATADOC_UNIT_CODE") or 702)
