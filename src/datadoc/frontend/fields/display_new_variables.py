@@ -59,7 +59,7 @@ class NewVariableIdentifiers(str, Enum):
 
 DISPLAY_VARIABLES: dict[
     NewVariableIdentifiers,
-    VariablesInputField,
+    VariablesInputField | VariablesDropdownField | VariablesCheckboxField,
 ] = {
     NewVariableIdentifiers.SHORT_NAME: VariablesInputField(
         identifier=NewVariableIdentifiers.SHORT_NAME.value,
@@ -202,9 +202,9 @@ OPTIONAL_VARIABLES_METADATA = [
 ]
 
 # Copied from dataset_tab - not in use - should we use this?
-DISPLAYED_VARIABLES_METADATA: list[VariablesInputField] = (
-    OBLIGATORY_VARIABLES_METADATA + OPTIONAL_VARIABLES_METADATA
-)
+DISPLAYED_VARIABLES_METADATA: list[
+    VariablesInputField | VariablesDropdownField | VariablesCheckboxField
+] = (OBLIGATORY_VARIABLES_METADATA + OPTIONAL_VARIABLES_METADATA)
 
 # Copied from dataset_tab - not in use - should we use this?
 OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS: list[str] = [
