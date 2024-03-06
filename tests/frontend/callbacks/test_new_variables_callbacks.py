@@ -48,6 +48,10 @@ def variable_accordion(build_variable):
     )
 
 
+def test_build_new_variables_workspace():
+    return None
+
+
 def test_callback_populate_accordion_workspace(build_variable):
     callback_input = ENGLISH
     output = build_ssb_accordion(
