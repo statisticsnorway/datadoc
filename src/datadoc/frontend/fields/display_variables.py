@@ -183,6 +183,10 @@ OBLIGATORY_VARIABLES_METADATA = [
     m for m in DISPLAY_VARIABLES.values() if m.obligatory and m.editable
 ]
 
+OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS = [
+    m.identifier for m in DISPLAY_VARIABLES.values() if m.obligatory and m.editable
+]
+
 OPTIONAL_VARIABLES_METADATA = [
     m for m in DISPLAY_VARIABLES.values() if not m.obligatory and m.editable
 ]
