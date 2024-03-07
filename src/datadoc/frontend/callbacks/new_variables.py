@@ -5,27 +5,27 @@ from datadoc.frontend.fields.display_new_variables import OBLIGATORY_VARIABLES_M
 from datadoc.frontend.fields.display_new_variables import OPTIONAL_VARIABLES_METADATA
 
 
-def build_new_variables_workspace() -> list:
+def build_new_variables_workspace(metadata_variables: list) -> list:
     """Build variable workspace with accordions for variables."""
     return [
         build_ssb_accordion(
-            variable,
-            {"type": "variables-accordion", "id": variable},
-            variable,
+            variable.short_name,
+            {"type": "variables-accordion", "id": variable.short_name},
+            variable.short_name,
             children=[
                 build_edit_section(
                     OBLIGATORY_VARIABLES_METADATA,
                     "Obligatorisk",
-                    variable,
+                    variable.short_name,
                     state.current_metadata_language.value,
                 ),
                 build_edit_section(
                     OPTIONAL_VARIABLES_METADATA,
                     "Anbefalt",
-                    variable,
+                    variable.short_name,
                     state.current_metadata_language.value,
                 ),
             ],
         )
-        for variable in list(state.metadata.variables_lookup.keys())
+        for variable in metadata_variables
     ]

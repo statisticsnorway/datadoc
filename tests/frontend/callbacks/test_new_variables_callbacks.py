@@ -103,31 +103,13 @@ def test_callback_populate_accordion_workspace_not_return_incorrect_component(
 def test_callback_function(metadata):
     state.metadata = metadata
     state.current_metadata_language = SupportedLanguages.NORSK_NYNORSK
-    state.metadata.variables = state.metadata.variables_lookup["pers_id"]
-    result = build_new_variables_workspace()
+    result = build_new_variables_workspace(state.metadata.variables)
     assert isinstance(result[0], ssb.Accordion)
 
 
 def test_callback_empty_language_raises_attribute_error(metadata):
     state.metadata = metadata
     state.current_metadata_language = ""
-    state.metadata.variables = state.metadata.variables_lookup["sykepenger"]
     with pytest.raises(AttributeError) as excinfo:
-        build_new_variables_workspace()
+        build_new_variables_workspace(state.metadata.variables)
     assert "'str' object has no attribute 'value" in str(excinfo.value)
-
-
-"""
-def callback_accept_variable_metadata_input(
-        value: MetadataInputTypes,  # noqa: ARG001 argument required by Dash
-    ) -> dbc.Alert:
-        message = accept_variable_metadata_input(
-            ctx.triggered[0]["value"],
-            ctx.triggered_id["variable_short_name"],
-            ctx.triggered_id["id"],
-        )
-        if not message:
-            # No error to display.
-            return False, ""
-        return True, message
-"""

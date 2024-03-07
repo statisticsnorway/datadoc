@@ -217,7 +217,7 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         language: str,  # noqa: ARG001
     ) -> list:
         """Create variable workspace with accordions for variables."""
-        return build_new_variables_workspace()
+        return build_new_variables_workspace(state.metadata.variables)
 
     @app.callback(
         Output(
