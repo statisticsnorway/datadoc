@@ -6,9 +6,16 @@ import re
 from dataclasses import dataclass
 from enum import Enum
 from enum import auto
+from typing import TYPE_CHECKING
 
 import dash_bootstrap_components as dbc
+import ssb_dash_components as ssb
 from dash import html
+
+if TYPE_CHECKING:
+    from datadoc_model import model
+
+    from datadoc.frontend.fields.display_variables import VariablesInputField
 
 
 class AlertTypes(Enum):
@@ -99,4 +106,82 @@ def build_ssb_button(text: str, icon_class: str, button_id: str) -> dbc.Button:
         ],
         class_name="ssb-btn primary-btn",
         id=button_id,
+    )
+
+
+info_section = (
+    "Informasjon om hvordan jobbe i Datadoc, antall variabler i datasettet: osv.."
+)
+
+VARIABLES_METADATA_INPUT = "variables-metadata-input"
+
+
+def build_input_field_section(
+    metadata_inputs: list[VariablesInputField],
+    variable: model.Variable,
+    language: str,
+) -> dbc.Form:
+    """Create input fields."""
+    return dbc.Form(
+        [
+            i.render(
+                {
+                    "type": VARIABLES_METADATA_INPUT,
+                    "variable_short_name": variable.short_name,
+                    "id": i.identifier,
+                },
+                language,
+                variable,
+            )
+            for i in metadata_inputs
+        ],
+        id=VARIABLES_METADATA_INPUT,
+        className="variables-input-group",
+    )
+
+
+def build_edit_section(
+    metadata_inputs: list,
+    title: str,
+    variable: model.Variable,
+    language: str,
+) -> html.Section:
+    """Create input section."""
+    return html.Section(
+        id={"type": "edit-section", "title": title},
+        children=[
+            ssb.Title(title, size=3, className="input-section-title"),
+            build_input_field_section(metadata_inputs, variable, language),
+        ],
+        className="input-section",
+    )
+
+
+def build_ssb_accordion(
+    header: str,
+    key: dict,
+    variable_short_name: str,
+    children: list,
+) -> ssb.Accordion:
+    """Build Accordion for one variable."""
+    return ssb.Accordion(
+        header=header,
+        id=key,
+        children=[
+            html.Section(
+                id={
+                    "type": "variable-input-alerts",
+                    "variable_short_name": variable_short_name,
+                },
+                className="alert-section",
+            ),
+            html.Section(
+                id={
+                    "type": "variable-inputs",
+                    "variable_short_name": variable_short_name,
+                },
+                children=children,
+            ),
+        ],
+        className="variable",
     )

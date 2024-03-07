@@ -107,6 +107,7 @@ exclude = ["docs/conf.py", "noxfile.py", "gunicorn.conf.py"]
 module = [
     "dash.*",
     "dash_bootstrap_components",
+    "ssb_dash_components",
     "flask_healthz",
     "dapla",
     "gcsfs",
