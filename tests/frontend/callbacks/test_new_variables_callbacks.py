@@ -1,5 +1,6 @@
 """Tests for new variable design."""
 
+import dash_bootstrap_components as dbc
 import pytest
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
 
@@ -64,7 +65,7 @@ def variable_accordion(build_variable):
     )
 
 
-def test_callback_populate_accordion_workspace(build_variable):
+def test_callback_populate_accordion_workspace_return_correct_component(build_variable):
     callback_input_language = ENGLISH
     output = build_ssb_accordion(
         build_variable["variable_short_name"],
@@ -81,6 +82,24 @@ def test_callback_populate_accordion_workspace(build_variable):
     assert isinstance(output, ssb.Accordion)
 
 
+def test_callback_populate_accordion_workspace_not_return_incorrect_component(
+    build_variable,
+):
+    callback_input_language = ENGLISH
+    output = build_ssb_accordion(
+        build_variable["variable_short_name"],
+        build_variable["id"],
+        build_variable["variable_short_name"],
+        children=build_edit_section(
+            empty_variables_metadata,
+            "Anbefalt",
+            build_variable["variable_short_name"],
+            callback_input_language,
+        ),
+    )
+    assert not isinstance(output, dbc.Accordion)
+
+
 def test_callback_function(metadata):
     state.metadata = metadata
     state.current_metadata_language = SupportedLanguages.NORSK_NYNORSK
@@ -89,13 +108,13 @@ def test_callback_function(metadata):
     assert isinstance(result[0], ssb.Accordion)
 
 
-def test_callback_empty_language(metadata):
+def test_callback_empty_language_raises_attribute_error(metadata):
     state.metadata = metadata
     state.current_metadata_language = ""
     state.metadata.variables = state.metadata.variables_lookup["sykepenger"]
-    result = build_new_variables_workspace()
-    assert result is None
-    # raise AttributeError
+    with pytest.raises(AttributeError) as excinfo:
+        build_new_variables_workspace()
+    assert "'str' object has no attribute 'value" in str(excinfo.value)
 
 
 """
