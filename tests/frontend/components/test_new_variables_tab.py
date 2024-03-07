@@ -51,7 +51,7 @@ def test_build_ssb_accordions(build_test_variables):
         for variable in build_test_variables
     ]
     assert accordions is not None
-    assert accordions[0].header == "pers_id"
+    assert accordions[0].header == build_test_variables[0]["header"]
     assert accordions[2].id == {
         "type": "variables-accordion",
         "id": accordions[2].header,
@@ -59,14 +59,16 @@ def test_build_ssb_accordions(build_test_variables):
 
 
 def test_build_ssb_accordion_is_correct_type(build_test_variables):
-    test_variable = build_test_variables[0]
-    accordion = build_ssb_accordion(
-        test_variable["header"],
-        test_variable["id"],
-        test_variable["edit_section_id"],
-        edit_sections,
-    )
-    assert isinstance(accordion, ssb.Accordion)
+    accordion = [
+        build_ssb_accordion(
+            test_variable["header"],
+            test_variable["id"],
+            test_variable["edit_section_id"],
+            edit_sections,
+        )
+        for test_variable in build_test_variables
+    ]
+    assert isinstance(accordion[0], ssb.Accordion)
 
 
 def test_build_ssb_accordion_header(build_test_variables):
@@ -119,3 +121,13 @@ def test_build_input_field_section():
         for i in test_input_section
     )
     assert len(test_input_section.children) == len(OBLIGATORY_VARIABLES_METADATA)
+
+
+def test_input_section_will_build_form_but_no_components_with_empty_metadata_list():
+    test_input_section = build_input_field_section(
+        empty_meta_data_input,
+        "pers_id",
+        NORSK_NYNORSK,
+    )
+    assert isinstance(test_input_section, dbc.Form)
+    assert test_input_section.children == []

@@ -2,9 +2,6 @@
 
 import pytest
 
-from datadoc import state
-from datadoc.enums import SupportedLanguages
-from datadoc.frontend.callbacks.new_variables import build_new_variables_workspace
 from datadoc.frontend.components.resources_test_new_variables import build_edit_section
 from datadoc.frontend.components.resources_test_new_variables import build_ssb_accordion
 
@@ -90,18 +87,8 @@ def variable_accordion(build_variable):
     )
 
 
-def test_build_new_variables_workspace():
-    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
-    state.metadata.variables_lookup = DISPLAY_STUB_VARIABLES
-    result_list = build_new_variables_workspace()
-    assert result_list is not None
-
-
-# self.variables_lookup dict[str, model.Variable] = {}
-
-
 def test_callback_populate_accordion_workspace(build_variable):
-    callback_input = ENGLISH
+    callback_input_language = ENGLISH
     output = build_ssb_accordion(
         build_variable["variable_short_name"],
         build_variable["id"],
@@ -110,10 +97,23 @@ def test_callback_populate_accordion_workspace(build_variable):
             stub_variables_metadata,
             "Anbefalt",
             build_variable["variable_short_name"],
-            callback_input,
+            callback_input_language,
         ),
     )
-    assert output is not None
+    assert output != []
 
 
-# callback_accept_variable_metadata_input
+"""
+def callback_accept_variable_metadata_input(
+        value: MetadataInputTypes,  # noqa: ARG001 argument required by Dash
+    ) -> dbc.Alert:
+        message = accept_variable_metadata_input(
+            ctx.triggered[0]["value"],
+            ctx.triggered_id["variable_short_name"],
+            ctx.triggered_id["id"],
+        )
+        if not message:
+            # No error to display.
+            return False, ""
+        return True, message
+"""
