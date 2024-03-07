@@ -1,7 +1,11 @@
 """Tests for new variable design."""
 
 import pytest
+import ssb_dash_components as ssb  # type: ignore[import-untyped]
 
+from datadoc import state
+from datadoc.enums import SupportedLanguages
+from datadoc.frontend.callbacks.new_variables import build_new_variables_workspace
 from datadoc.frontend.components.resources_test_new_variables import build_edit_section
 from datadoc.frontend.components.resources_test_new_variables import build_ssb_accordion
 
@@ -18,36 +22,9 @@ ENGLISH = "en"
 
 variable_short_names = ["pers_id", "tidspunkt", "sykepenger"]
 
-stub_variables_metadata = []
-
-# OBLIGATORY_VARIABLES_METADATA,
-# "Obligatorisk",
-# variable,
-# state.current_metadata_language.value
-
-# mock/stub state
-
-# state language callback_input = ENGLISH  state.current_metadata_language.value
-# state state.metadata.variables_lookup.keys()
-
-#   header: str,
-#   key: dict,
-#    variable_short_name: str,
-#  children list
-# stub build_ssb_accordion?
-
-DISPLAY_STUB_VARIABLES = {
-    "pers_id": {
-        "identifier": "short_name",
-        "display_name": "Kortnavn",
-        "description": "Fysisk navn på variabelen i datasettet. Bør tilsvare anbefalt kortnavn.",
-        "obligatory": True,
-        "editable": False,
-    },
-}
+empty_variables_metadata = []
 
 
-# class build variable
 @pytest.fixture()
 def build_variable():
     return {
@@ -94,13 +71,31 @@ def test_callback_populate_accordion_workspace(build_variable):
         build_variable["id"],
         build_variable["variable_short_name"],
         children=build_edit_section(
-            stub_variables_metadata,
+            empty_variables_metadata,
             "Anbefalt",
             build_variable["variable_short_name"],
             callback_input_language,
         ),
     )
     assert output != []
+    assert isinstance(output, ssb.Accordion)
+
+
+def test_callback_function(metadata):
+    state.metadata = metadata
+    state.current_metadata_language = SupportedLanguages.NORSK_NYNORSK
+    state.metadata.variables = state.metadata.variables_lookup["pers_id"]
+    result = build_new_variables_workspace()
+    assert isinstance(result[0], ssb.Accordion)
+
+
+def test_callback_empty_language(metadata):
+    state.metadata = metadata
+    state.current_metadata_language = ""
+    state.metadata.variables = state.metadata.variables_lookup["sykepenger"]
+    result = build_new_variables_workspace()
+    assert result is None
+    # raise AttributeError
 
 
 """
