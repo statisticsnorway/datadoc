@@ -30,7 +30,6 @@ class CodeListItem:
             try:
                 return self.titles[
                     (
-                        # Adjust to language codes in the unit_type codelist.
                         "nb"
                         if language
                         in [
