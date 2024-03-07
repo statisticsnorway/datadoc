@@ -49,7 +49,8 @@
 .variables-input-group{
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content:flex-start;
+    align-items: baseline;
     gap: 1rem;
     padding-top: 1rem;
 }
@@ -85,4 +86,13 @@
 .ssb-dropdown.variables-input{
     max-width: 800px;
     width: 100%;
+}
+
+.form-check.ssb-checkbox{
+    align-self: center;
+}
+
+
+.ssb-dropdown.dropdown-label {
+    margin-bottom: 8px;
 }
