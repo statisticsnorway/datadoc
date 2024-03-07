@@ -1,26 +1,26 @@
 import pytest
 
-from datadoc.backend.unit_types import UnitType
-from datadoc.backend.unit_types import UnitTypes
+from datadoc.backend.code_list import CodeList
+from datadoc.backend.code_list import CodeListItem
 from tests.utils import TEST_RESOURCES_DIRECTORY
 
-UNIT_TYPES_DIR = "unit_types"
+CODE_LIST_DIR = "code_list"
 
 
 @pytest.mark.parametrize(
     (
-        "unit_types_csv_filepath_nb",
-        "unit_types_csv_filepath_nn",
-        "unit_types_csv_filepath_en",
+        "code_list_csv_filepath_nb",
+        "code_list_csv_filepath_nn",
+        "code_list_csv_filepath_en",
         "expected",
     ),
     [
         (
-            TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "unit_types_nb.csv",
-            TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "unit_types_nn.csv",
-            TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "unit_types_en.csv",
+            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_nb.csv",
+            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_nn.csv",
+            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_en.csv",
             [
-                UnitType(
+                CodeListItem(
                     titles={
                         "nb": "Adresse",
                         "nn": "Adresse",
@@ -28,7 +28,7 @@ UNIT_TYPES_DIR = "unit_types"
                     },
                     unit_code="01",
                 ),
-                UnitType(
+                CodeListItem(
                     titles={
                         "nb": "Arbeidsulykke",
                         "nn": "Arbeidsulykke",
@@ -36,7 +36,7 @@ UNIT_TYPES_DIR = "unit_types"
                     },
                     unit_code="02",
                 ),
-                UnitType(
+                CodeListItem(
                     titles={
                         "nb": "Bolig",
                         "nn": "Bolig",
@@ -47,17 +47,17 @@ UNIT_TYPES_DIR = "unit_types"
             ],
         ),
         (
-            TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "empty.csv",
-            TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "empty.csv",
-            TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "empty.csv",
+            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "empty.csv",
+            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "empty.csv",
+            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "empty.csv",
             [],
         ),
         (
-            TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "unit_types_nb.csv",
-            TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "empty.csv",
-            TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "empty.csv",
+            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_nb.csv",
+            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "empty.csv",
+            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "empty.csv",
             [
-                UnitType(
+                CodeListItem(
                     titles={
                         "nb": "Adresse",
                         "nn": None,
@@ -65,7 +65,7 @@ UNIT_TYPES_DIR = "unit_types"
                     },
                     unit_code="01",
                 ),
-                UnitType(
+                CodeListItem(
                     titles={
                         "nb": "Arbeidsulykke",
                         "nn": None,
@@ -73,7 +73,7 @@ UNIT_TYPES_DIR = "unit_types"
                     },
                     unit_code="02",
                 ),
-                UnitType(
+                CodeListItem(
                     titles={
                         "nb": "Bolig",
                         "nn": None,
@@ -84,11 +84,11 @@ UNIT_TYPES_DIR = "unit_types"
             ],
         ),
         (
-            TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "no_code.csv",
-            TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "no_code.csv",
-            TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "no_code.csv",
+            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "no_code.csv",
+            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "no_code.csv",
+            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "no_code.csv",
             [
-                UnitType(
+                CodeListItem(
                     titles={
                         "nb": "Adresse",
                         "nn": "Adresse",
@@ -96,7 +96,7 @@ UNIT_TYPES_DIR = "unit_types"
                     },
                     unit_code=None,
                 ),
-                UnitType(
+                CodeListItem(
                     titles={
                         "nb": "Arbeidsulykke",
                         "nn": "Arbeidsulykke",
@@ -104,7 +104,7 @@ UNIT_TYPES_DIR = "unit_types"
                     },
                     unit_code=None,
                 ),
-                UnitType(
+                CodeListItem(
                     titles={
                         "nb": "Bolig",
                         "nn": "Bolig",
@@ -118,14 +118,14 @@ UNIT_TYPES_DIR = "unit_types"
 )
 @pytest.mark.usefixtures("_mock_fetch_dataframe")
 def test_read_dataframe(
-    unit_types_fake_structure: UnitTypes,
+    code_list_fake_structure: CodeList,
     expected: list[str],
 ):
-    unit_types_fake_structure.wait_for_external_result()
-    assert unit_types_fake_structure.classifications == expected
+    code_list_fake_structure.wait_for_external_result()
+    assert code_list_fake_structure.classifications == expected
 
 
 def test_non_existent_code():
-    unit_types = UnitTypes(0)
-    unit_types.wait_for_external_result()
-    assert unit_types.classifications == []
+    code_list = CodeList(0)
+    code_list.wait_for_external_result()
+    assert code_list.classifications == []

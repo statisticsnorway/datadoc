@@ -4,10 +4,10 @@ from datadoc import state
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.fields.display_dataset import get_statistical_subject_options
 from datadoc.frontend.fields.display_dataset import get_unit_type_options
+from tests.backend.test_code_list import CODE_LIST_DIR
 from tests.backend.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
 )
-from tests.backend.test_unit_types import UNIT_TYPES_DIR
 from tests.utils import TEST_RESOURCES_DIRECTORY
 
 
@@ -51,7 +51,7 @@ def test_get_statistical_subject_options(
     ("unit_types_csv_filepath_nb", "expected"),
     [
         (
-            TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "unit_types_nb.csv",
+            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "unit_types_nb.csv",
             [
                 {"label": "Adresse", "value": "01"},
                 {"label": "Arbeidsulykke", "value": "02"},

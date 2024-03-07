@@ -14,9 +14,9 @@ from flask_healthz import healthz
 
 from datadoc import config
 from datadoc import state
+from datadoc.backend.code_list import CodeList
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-from datadoc.backend.unit_types import UnitTypes
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.register_callbacks import register_callbacks
 from datadoc.frontend.callbacks.register_callbacks import (
@@ -139,8 +139,12 @@ def collect_data_from_external_sources() -> None:
         config.get_statistical_subject_source_url(),
     )
 
-    state.unit_types = UnitTypes(
+    state.unit_types = CodeList(
         config.get_unit_code(),
+    )
+
+    state.organisational_units = CodeList(
+        config.get_organisational_unit_code(),
     )
 
 

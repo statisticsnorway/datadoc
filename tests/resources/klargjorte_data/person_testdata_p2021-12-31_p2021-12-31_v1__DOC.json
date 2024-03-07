@@ -52,11 +52,7 @@
                 "nb": "Norge"
             },
             "id": "2f72477a-f051-43ee-bf8b-0d8f47b5e0a7",
-            "owner": {
-                "en": "",
-                "nn": "",
-                "nb": "Seksjon NNN"
-            },
+            "owner": "NNN",
             "file_path": null,
             "metadata_created_date": "2022-10-07T07:35:01Z",
             "metadata_created_by": "default_user@ssb.no",

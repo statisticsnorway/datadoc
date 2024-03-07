@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class UnitType:
-    """Data structure for the a unit type."""
+class CodeListItem:
+    """Data structure for the a code list item."""
 
     titles: dict[str, str]
     unit_code: str
@@ -25,28 +25,31 @@ class UnitType:
     def get_title(self, language: SupportedLanguages) -> str:
         """Get the title in the given language."""
         try:
-            return self.titles[
-                (
-                    # Adjust to language codes in the UnitTypes structure.
-                    "nb"
-                    if language
-                    in [
-                        SupportedLanguages.NORSK_BOKMÅL,
-                        SupportedLanguages.NORSK_NYNORSK,
-                    ]
-                    else "en"
-                )
-            ]
+            return self.titles[language]
         except KeyError:
-            logger.exception(
-                "Could not find title for subject %s  and language: %s",
-                self,
-                language.name,
-            )
-            return ""
+            try:
+                return self.titles[
+                    (
+                        # Adjust to language codes in the unit_type codelist.
+                        "nb"
+                        if language
+                        in [
+                            SupportedLanguages.NORSK_BOKMÅL,
+                            SupportedLanguages.NORSK_NYNORSK,
+                        ]
+                        else "en"
+                    )
+                ]
+            except KeyError:
+                logger.exception(
+                    "Could not find title for subject %s  and language: %s",
+                    self,
+                    language.name,
+                )
+                return ""
 
 
-class UnitTypes(GetExternalSource):
+class CodeList(GetExternalSource):
     """Class for retrieving classifications from Klass."""
 
     def __init__(self, classification_id: int | None) -> None:
@@ -58,13 +61,9 @@ class UnitTypes(GetExternalSource):
             SupportedLanguages.NORSK_BOKMÅL.value,
             SupportedLanguages.ENGLISH.value,
         ]
-
-        self._classifications: list[UnitType] = []
-
+        self._classifications: list[CodeListItem] = []
         self.classification_id = classification_id
-
         self.classifications_dataframes: dict[str, pd.DataFrame] | None = None
-
         super().__init__()
 
     def _fetch_data_from_external_source(
@@ -85,7 +84,6 @@ class UnitTypes(GetExternalSource):
                     .get_codes()
                     .data
                 )
-
         except Exception:
             logger.exception(
                 "Exception while getting classifications from Klass",
@@ -113,7 +111,7 @@ class UnitTypes(GetExternalSource):
     def _create_unit_types_from_dataframe(
         self,
         classifications_dataframes: dict[SupportedLanguages, pd.DataFrame],
-    ) -> list[UnitType]:
+    ) -> list[CodeListItem]:
         """Method that finds the name column in the dataframe, and returns all values in a list."""
         classification_names = self._extract_titles(classifications_dataframes)
         classification_codes: list
@@ -128,7 +126,7 @@ class UnitTypes(GetExternalSource):
         unit_types = []
         for a, b in zip(classification_names, classification_codes):
             unit_types.append(
-                UnitType(a, b),
+                CodeListItem(a, b),
             )
         return unit_types
 
@@ -151,7 +149,7 @@ class UnitTypes(GetExternalSource):
         return False
 
     @property
-    def classifications(self) -> list[UnitType]:
+    def classifications(self) -> list[CodeListItem]:
         """Getter for primary subjects."""
         self._get_classification_dataframe_if_loaded()
         logger.debug("Got %s classifications subjects", len(self._classifications))

@@ -4,9 +4,9 @@ from datadoc import state
 from datadoc.app import get_app
 
 
-def test_get_app(subject_mapping_fake_statistical_structure, unit_types_fake_structure):
+def test_get_app(subject_mapping_fake_statistical_structure, code_list_fake_structure):
     state.statistic_subject_mapping = subject_mapping_fake_statistical_structure
-    state.unit_types = unit_types_fake_structure
+    state.code_list = code_list_fake_structure
 
     app, _ = get_app()
     assert app.config["name"] == "Datadoc"

@@ -21,7 +21,6 @@ class GetExternalSource(ABC, Generic[T]):
         Initializes the future object.
         """
         self.future: concurrent.futures.Future[T | None] | None = None
-
         executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
         self.future = executor.submit(
             self._fetch_data_from_external_source,

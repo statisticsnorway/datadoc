@@ -66,6 +66,19 @@ def get_unit_type_options(
     ]
 
 
+def get_owner_options(
+    language: SupportedLanguages,
+) -> list[dict[str, str]]:
+    """Collect the owner options for the given language."""
+    return [
+        {
+            "label": f"{option.unit_code} - {option.get_title(language)}",
+            "value": option.unit_code,
+        }
+        for option in state.organisational_units.classifications
+    ]
+
+
 class DatasetIdentifiers(str, Enum):
     """As defined here: https://statistics-norway.atlassian.net/l/c/aoSfEWJU."""
 
@@ -225,13 +238,14 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         editable=False,
         value_getter=get_metadata_and_stringify,
     ),
-    DatasetIdentifiers.OWNER: DisplayDatasetMetadata(
+    DatasetIdentifiers.OWNER: DisplayDatasetMetadataDropdown(
         identifier=DatasetIdentifiers.OWNER.value,
         display_name="Eier",
         description="Maskingenerert seksjonstilhørighet til den som oppretter metadata om datasettet, men kan korrigeres manuelt",
         obligatory=True,
-        editable=False,
-        multiple_language_support=True,
+        editable=True,
+        multiple_language_support=False,
+        options_getter=get_owner_options,
     ),
     DatasetIdentifiers.FILE_PATH: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.FILE_PATH.value,
