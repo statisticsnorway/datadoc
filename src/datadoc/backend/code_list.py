@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class CodeListItem:
-    """Data structure for the a code list item."""
+    """Data structure for a code list item."""
 
     titles: dict[str, str]
     unit_code: str
