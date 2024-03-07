@@ -57,11 +57,11 @@
                 "nn": "",
                 "nb": "Seksjon NNN"
             },
-            "file_path": "tests/resources/klargjorte_data/person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+            "file_path": null,
             "metadata_created_date": "2022-10-07T07:35:01Z",
             "metadata_created_by": "default_user@ssb.no",
-            "metadata_last_updated_date": "2024-03-07T12:44:19.480305Z",
-            "metadata_last_updated_by": null,
+            "metadata_last_updated_date": "2024-01-08T15:49:17.489872Z",
+            "metadata_last_updated_by": "default_user@ssb.no",
             "contains_data_from": "2021-12-31",
             "contains_data_until": "2021-12-31"
         },
