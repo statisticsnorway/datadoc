@@ -173,7 +173,7 @@ def register_callbacks(app: Dash) -> None:
                 variable.short_name,
                 {
                     "type": "variables-accordion",
-                    "id": f"{variable.short_name}-{language}",
+                    "id": f"{variable.short_name}-{language}",  # Insert language into the ID to invalidate browser caches
                 },
                 variable.short_name,
                 children=[
