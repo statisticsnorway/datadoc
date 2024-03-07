@@ -34,8 +34,9 @@ MetadataInputTypes: TypeAlias = (
 
 def update_global_language_state(language: SupportedLanguages) -> None:
     """Update global language state."""
-    logger.debug("Updating language: %s", language.name)
-    state.current_metadata_language = language
+    if state.current_metadata_language != language:
+        logger.debug("Updating language: %s", language.name)
+        state.current_metadata_language = language
 
 
 def get_language_strings_enum(
