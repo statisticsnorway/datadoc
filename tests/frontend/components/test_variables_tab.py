@@ -6,13 +6,11 @@ import ssb_dash_components as ssb  # type: ignore[import-untyped]
 from dash import html
 from datadoc_model import model
 
-from datadoc.frontend.components.resources_test_new_variables import build_edit_section
-from datadoc.frontend.components.resources_test_new_variables import (
-    build_input_field_section,
-)
-from datadoc.frontend.components.resources_test_new_variables import build_ssb_accordion
-from datadoc.frontend.fields.display_new_variables import OBLIGATORY_VARIABLES_METADATA
-from datadoc.frontend.fields.display_new_variables import OPTIONAL_VARIABLES_METADATA
+from datadoc.frontend.components.builders import build_edit_section
+from datadoc.frontend.components.builders import build_input_field_section
+from datadoc.frontend.components.builders import build_ssb_accordion
+from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
+from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 
 # set-up
 empty_metadata_input = []
