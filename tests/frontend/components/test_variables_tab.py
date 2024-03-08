@@ -235,9 +235,12 @@ def test_build_ssb_accordion_return_correct_component_metadata_list_is_empty(
     expected,
 ):
     accordion = build_ssb_accordion(header, key, variable_short_name, children)
-    assert isinstance(
-        accordion,
-        expected,
+    assert (
+        isinstance(
+            accordion,
+            expected,
+        )
+        is True
     )
     assert accordion.id == key
 
@@ -254,9 +257,12 @@ def test_build_ssb_accordion_return_correct_component_metadata_input_list(
     expected,
 ):
     accordion = build_ssb_accordion(header, key, variable_short_name, children)
-    assert isinstance(
-        accordion,
-        expected,
+    assert (
+        isinstance(
+            accordion,
+            expected,
+        )
+        is True
     )
     assert accordion.id == key
 
