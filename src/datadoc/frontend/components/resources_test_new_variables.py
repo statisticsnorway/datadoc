@@ -92,5 +92,5 @@ def build_ssb_accordion(
                 children=children,
             ),
         ],
-        className="variable",
+        className="variable-accordion",
     )

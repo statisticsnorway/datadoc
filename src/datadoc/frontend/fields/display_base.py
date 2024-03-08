@@ -158,6 +158,7 @@ class VariablesInputField(DisplayMetadata):
             type=self.type,
             disabled=not self.editable,
             value=value,
+            className="variable-input",
         )
 
 
@@ -184,6 +185,7 @@ class VariablesDropdownField(DisplayMetadata):
             id=variable_id,
             items=self.options_getter(SupportedLanguages(language)),
             value=value,
+            className="variable-dropdown",
         )
 
 
@@ -207,6 +209,6 @@ class VariablesCheckboxField(DisplayMetadata):
             id=variable_id,
             disabled=not self.editable,
             label_class_name="ssb-checkbox checkbox-label",
-            class_name="ssb-checkbox",
+            class_name="variable-checkbox",
             value=value,
         )
