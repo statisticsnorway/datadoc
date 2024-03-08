@@ -235,12 +235,9 @@ def test_build_ssb_accordion_return_correct_component_metadata_list_is_empty(
     expected,
 ):
     accordion = build_ssb_accordion(header, key, variable_short_name, children)
-    assert (
-        isinstance(
-            accordion,
-            expected,
-        )
-        is True
+    assert isinstance(
+        accordion,
+        expected,
     )
     assert accordion.id == key
 
@@ -257,12 +254,9 @@ def test_build_ssb_accordion_return_correct_component_metadata_input_list(
     expected,
 ):
     accordion = build_ssb_accordion(header, key, variable_short_name, children)
-    assert (
-        isinstance(
-            accordion,
-            expected,
-        )
-        is True
+    assert isinstance(
+        accordion,
+        expected,
     )
     assert accordion.id == key
 
@@ -291,7 +285,7 @@ def test_build_ssb_accordion_children_return_correct_component(
             expected,
         )
         for i in ACCORDION_CHILDREN
-    ) is True
+    )
 
 
 @pytest.mark.parametrize(
@@ -345,7 +339,7 @@ def test_build_input_field_section(metadata_inputs, variable, language):
             (input_section.children[i], (ssb.Input, ssb.Dropdown, dbc.Checkbox)),
         )
         for i in enumerate(INPUT_FIELDS)
-    ) is True
+    )
 
 
 def test_build_input_field_section_no_input_return_empty_list():
