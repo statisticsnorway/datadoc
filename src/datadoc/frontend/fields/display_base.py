@@ -209,6 +209,6 @@ class VariablesCheckboxField(DisplayMetadata):
             id=variable_id,
             disabled=not self.editable,
             label_class_name="ssb-checkbox checkbox-label",
-            className="variable-checkbox",
+            class_name="variable-checkbox",
             value=value,
         )
