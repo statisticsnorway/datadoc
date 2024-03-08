@@ -25,6 +25,13 @@ ACCORDION_TYPE = "variables-accordion"
 ALERTS_TYPE = "variable-input-alerts"
 INPUT_TYPE = "variable-inputs"
 
+VARIABLE_SHORT_NAMES = [
+    "pers_id",
+    "sykepenger",
+    "ber_bruttoformue",
+    "hoveddiagnose",
+]
+
 ACCORDION_INPUTS_EMPTY_LIST = [
     (
         "pers_id",
@@ -199,6 +206,22 @@ INPUT_COMPONENTS = [
     ),
 ]
 
+INPUT_COMPONENTS_PROPS = [
+    (
+        OBLIGATORY_VARIABLES_METADATA,
+        model.Variable(short_name="hoveddiagnose"),
+    ),
+    (OPTIONAL_VARIABLES_METADATA, model.Variable(short_name="pers_id")),
+    (
+        OBLIGATORY_VARIABLES_METADATA,
+        model.Variable(short_name="ber_bruttoformue"),
+    ),
+    (
+        OPTIONAL_VARIABLES_METADATA,
+        model.Variable(short_name="sykepenger"),
+    ),
+]
+
 
 @pytest.mark.parametrize(
     ("header", "key", "variable_short_name", "children", "expected"),
@@ -306,23 +329,53 @@ def test_build_edit_section_empty_inputs():
     INPUT_FIELDS,
 )
 def test_build_input_field_section(metadata_inputs, variable, language):
-    test_input_section = build_input_field_section(
+    input_section = build_input_field_section(
         metadata_inputs,
         variable,
         language,
     )
     assert (
         isinstance(
-            (test_input_section.children[i], (ssb.Input, ssb.Dropdown, dbc.Checkbox)),
+            (input_section.children[i], (ssb.Input, ssb.Dropdown, dbc.Checkbox)),
         )
         for i in enumerate(INPUT_FIELDS)
     )
 
 
 def test_build_input_field_section_no_input_return_empty_list():
-    test_input_section = build_input_field_section(
+    input_section = build_input_field_section(
         empty_metadata_input,
         "",
         "",
     )
-    assert test_input_section.children == []
+    assert input_section.children == []
+
+
+def test_build_input_section_component_props():
+    input_section = build_input_field_section(
+        OBLIGATORY_VARIABLES_METADATA,
+        model.Variable(
+            short_name="alm_inntekt",
+            data_type="INTEGER",
+            variable_role="MEASURE",
+            definition_uri="https://hattemaker.com",
+            direct_person_identifying="false",
+            contains_data_from=2024 - 3 - 10,
+            contains_data_until=2024 - 5 - 12,
+        ),
+        NORSK_BOKMÅL,
+    )
+    input_example = input_section.children[0]
+    url_example = input_section.children[3]
+    dropdown_example = input_section.children[2]
+    assert input_section.id == "variables-metadata-input"
+    assert input_section.children[0].id == {
+        "type": "variables-metadata-input",
+        "variable_short_name": "alm_inntekt",
+        "id": "name",
+    }
+    assert input_example.debounce is True
+    assert input_example.disabled is False
+    assert input_example.label == "Navn"
+    assert url_example.value == "https://hattemaker.com/"
+    assert dropdown_example.header == "Variabelens rolle"
