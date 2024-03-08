@@ -278,6 +278,7 @@ def test_build_ssb_accordion_children_return_correct_component(
     children,
     expected,
 ):
+    # TODO(@tilen1976): replace constant expression  # noqa: TD003
     accordion = build_ssb_accordion(header, key, variable_short_name, children)
     assert (
         isinstance(
@@ -329,6 +330,7 @@ def test_build_edit_section_empty_inputs():
     INPUT_FIELDS,
 )
 def test_build_input_field_section(metadata_inputs, variable, language):
+    # TODO(@tilen1976): replace constant expression  # noqa: TD003
     input_section = build_input_field_section(
         metadata_inputs,
         variable,
@@ -352,6 +354,7 @@ def test_build_input_field_section_no_input_return_empty_list():
 
 
 def test_build_input_section_component_props():
+    # TODO(@tilen1976): refactor, improve, split up  # noqa: TD003
     input_section = build_input_field_section(
         OBLIGATORY_VARIABLES_METADATA,
         model.Variable(
