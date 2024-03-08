@@ -119,6 +119,11 @@ def file_path():
             "2f72477a-f051-43ee-bf8b-0d8f47b5e0a7",
             UUID("2f72477a-f051-43ee-bf8b-0d8f47b5e0a7"),
         ),
+        (
+            DatasetIdentifiers.OWNER,
+            "Seksjon for dataplattform",
+            "Seksjon for dataplattform",
+        ),
     ],
 )
 def test_accept_dataset_metadata_input_valid_data(

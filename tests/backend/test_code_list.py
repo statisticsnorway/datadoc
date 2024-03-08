@@ -26,7 +26,7 @@ CODE_LIST_DIR = "code_list"
                         "nn": "Adresse",
                         "en": "Adresse",
                     },
-                    unit_code="01",
+                    code="01",
                 ),
                 CodeListItem(
                     titles={
@@ -34,7 +34,7 @@ CODE_LIST_DIR = "code_list"
                         "nn": "Arbeidsulykke",
                         "en": "Arbeidsulykke",
                     },
-                    unit_code="02",
+                    code="02",
                 ),
                 CodeListItem(
                     titles={
@@ -42,7 +42,7 @@ CODE_LIST_DIR = "code_list"
                         "nn": "Bolig",
                         "en": "Bolig",
                     },
-                    unit_code="03",
+                    code="03",
                 ),
             ],
         ),
@@ -63,7 +63,7 @@ CODE_LIST_DIR = "code_list"
                         "nn": None,
                         "en": None,
                     },
-                    unit_code="01",
+                    code="01",
                 ),
                 CodeListItem(
                     titles={
@@ -71,7 +71,7 @@ CODE_LIST_DIR = "code_list"
                         "nn": None,
                         "en": None,
                     },
-                    unit_code="02",
+                    code="02",
                 ),
                 CodeListItem(
                     titles={
@@ -79,7 +79,7 @@ CODE_LIST_DIR = "code_list"
                         "nn": None,
                         "en": None,
                     },
-                    unit_code="03",
+                    code="03",
                 ),
             ],
         ),
@@ -94,7 +94,7 @@ CODE_LIST_DIR = "code_list"
                         "nn": "Adresse",
                         "en": "Adresse",
                     },
-                    unit_code=None,
+                    code=None,
                 ),
                 CodeListItem(
                     titles={
@@ -102,7 +102,7 @@ CODE_LIST_DIR = "code_list"
                         "nn": "Arbeidsulykke",
                         "en": "Arbeidsulykke",
                     },
-                    unit_code=None,
+                    code=None,
                 ),
                 CodeListItem(
                     titles={
@@ -110,7 +110,7 @@ CODE_LIST_DIR = "code_list"
                         "nn": "Bolig",
                         "en": "Bolig",
                     },
-                    unit_code=None,
+                    code=None,
                 ),
             ],
         ),

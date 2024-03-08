@@ -20,7 +20,7 @@ class CodeListItem:
     """Data structure for a code list item."""
 
     titles: dict[str, str]
-    unit_code: str
+    code: str
 
     def get_title(self, language: SupportedLanguages) -> str:
         """Get the title in the given language."""
@@ -107,7 +107,7 @@ class CodeList(GetExternalSource):
             list_of_titles.append(titles)
         return list_of_titles
 
-    def _create_unit_types_from_dataframe(
+    def _create_code_list_from_dataframe(
         self,
         classifications_dataframes: dict[SupportedLanguages, pd.DataFrame],
     ) -> list[CodeListItem]:
@@ -134,7 +134,7 @@ class CodeList(GetExternalSource):
         if not self._classifications:
             self.classifications_dataframes = self.retrieve_external_data()
             if self.classifications_dataframes is not None:
-                self._classifications = self._create_unit_types_from_dataframe(
+                self._classifications = self._create_code_list_from_dataframe(
                     self.classifications_dataframes,
                 )
                 logger.debug(

@@ -60,7 +60,7 @@ def get_unit_type_options(
     return [
         {
             "label": unit_type.get_title(language),
-            "value": unit_type.unit_code,
+            "value": unit_type.code,
         }
         for unit_type in state.unit_types.classifications
     ]
@@ -72,8 +72,8 @@ def get_owner_options(
     """Collect the owner options for the given language."""
     return [
         {
-            "label": f"{option.unit_code} - {option.get_title(language)}",
-            "value": option.unit_code,
+            "label": f"{option.code} - {option.get_title(language)}",
+            "value": option.code,
         }
         for option in state.organisational_units.classifications
     ]
