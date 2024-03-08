@@ -32,64 +32,41 @@ VARIABLE_SHORT_NAMES = [
     "hoveddiagnose",
 ]
 
-ACCORDION_INPUTS_EMPTY_LIST = [
-    (
-        "pers_id",
-        {"type": ACCORDION_TYPE, "id": "pers_id"},
-        "pers_id",
-        empty_metadata_input,
-        ssb.Accordion,
-    ),
-    (
-        "sykepenger",
-        {"type": ACCORDION_TYPE, "id": "sykepenger"},
-        "sykepenger",
-        empty_metadata_input,
-        ssb.Accordion,
-    ),
-    (
-        "ber_bruttoformue",
-        {"type": ACCORDION_TYPE, "id": "ber_bruttoformue"},
-        "ber_bruttoformue",
-        empty_metadata_input,
-        ssb.Accordion,
-    ),
-    (
-        "hoveddiagnose",
-        {"type": ACCORDION_TYPE, "id": "hoveddiagnose"},
-        "hoveddiagnose",
-        empty_metadata_input,
-        ssb.Accordion,
-    ),
-]
 
 ACCORDION_INPUTS = [
     (
         "pers_id",
         {"type": ACCORDION_TYPE, "id": "pers_id"},
         "pers_id",
-        obligatory_metadata_input,
+        empty_metadata_input,
         ssb.Accordion,
     ),
     (
         "sykepenger",
         {"type": ACCORDION_TYPE, "id": "sykepenger"},
         "sykepenger",
-        optional_metadata_input,
+        OPTIONAL_VARIABLES_METADATA,
         ssb.Accordion,
     ),
     (
         "ber_bruttoformue",
         {"type": ACCORDION_TYPE, "id": "ber_bruttoformue"},
         "ber_bruttoformue",
-        obligatory_metadata_input,
+        OBLIGATORY_VARIABLES_METADATA,
         ssb.Accordion,
     ),
     (
         "hoveddiagnose",
         {"type": ACCORDION_TYPE, "id": "hoveddiagnose"},
         "hoveddiagnose",
-        optional_metadata_input,
+        empty_metadata_input,
+        ssb.Accordion,
+    ),
+    (
+        "",
+        {"type": ACCORDION_TYPE, "id": ""},
+        "ber_bruttoformue",
+        OBLIGATORY_VARIABLES_METADATA,
         ssb.Accordion,
     ),
 ]
@@ -225,28 +202,9 @@ INPUT_COMPONENTS_PROPS = [
 
 @pytest.mark.parametrize(
     ("header", "key", "variable_short_name", "children", "expected"),
-    ACCORDION_INPUTS_EMPTY_LIST,
-)
-def test_build_ssb_accordion_return_correct_component_metadata_list_is_empty(
-    header,
-    key: dict,
-    variable_short_name,
-    children,
-    expected,
-):
-    accordion = build_ssb_accordion(header, key, variable_short_name, children)
-    assert isinstance(
-        accordion,
-        expected,
-    )
-    assert accordion.id == key
-
-
-@pytest.mark.parametrize(
-    ("header", "key", "variable_short_name", "children", "expected"),
     ACCORDION_INPUTS,
 )
-def test_build_ssb_accordion_return_correct_component_metadata_input_list(
+def test_build_ssb_accordion_return_correct_component(
     header,
     key,
     variable_short_name,
