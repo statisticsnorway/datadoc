@@ -290,6 +290,7 @@ def test_build_ssb_accordion_children_return_correct_component(
             accordion.children[i],
             expected,
         )
+        is True
         for i in ACCORDION_CHILDREN
     )
 
@@ -344,6 +345,7 @@ def test_build_input_field_section(metadata_inputs, variable, language):
         isinstance(
             (input_section.children[i], (ssb.Input, ssb.Dropdown, dbc.Checkbox)),
         )
+        is True
         for i in enumerate(INPUT_FIELDS)
     )
 
