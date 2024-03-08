@@ -244,6 +244,7 @@ def test_change_language_dataset_metadata_options_enums(
     language: SupportedLanguages,
 ):
     state.metadata = metadata
+    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     state.statistic_subject_mapping = subject_mapping_fake_statistical_structure
     state.unit_types = code_list_fake_structure
     state.organisational_units = code_list_fake_structure
