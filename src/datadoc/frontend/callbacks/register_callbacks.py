@@ -23,6 +23,7 @@ from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import change_language_dataset_metadata
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.new_variables import build_new_variables_workspace
+from datadoc.frontend.callbacks.utils import update_global_language_state
 from datadoc.frontend.callbacks.variables import (
     accept_variable_datatable_metadata_input,
 )
@@ -214,9 +215,11 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
         prevent_initial_call=True,
     )
     def callback_populate_new_variables_workspace(
-        language: str,  # noqa: ARG001
+        language: str,
     ) -> list:
         """Create variable workspace with accordions for variables."""
+        update_global_language_state(SupportedLanguages(language))
+        logger.info("Populating new variables workspace")
         return build_new_variables_workspace(state.metadata.variables)
 
     @app.callback(

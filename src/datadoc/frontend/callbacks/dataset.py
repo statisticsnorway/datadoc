@@ -44,7 +44,10 @@ def open_file(file_path: str | None = None) -> DataDocMetadata:
 
     dataset = file_path or get_dataset_path()
     logger.info("Opening dataset %s", dataset)
-    return DataDocMetadata(state.statistic_subject_mapping, dataset_path=str(dataset))
+    return DataDocMetadata(
+        state.statistic_subject_mapping,
+        dataset_path=str(dataset) if dataset else None,
+    )
 
 
 def open_dataset_handling(

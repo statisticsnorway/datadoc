@@ -223,6 +223,12 @@ def accept_variable_metadata_input(
 
     Returns an error message if an exception was raised, otherwise returns None.
     """
+    logger.debug(
+        "Updating %s, %s with %s",
+        metadata_field,
+        variable_short_name,
+        value,
+    )
     try:
         if metadata_field in MULTIPLE_LANGUAGE_VARIABLES_METADATA:
             new_value = handle_multi_language_metadata(

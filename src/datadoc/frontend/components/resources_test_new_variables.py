@@ -10,9 +10,9 @@ import ssb_dash_components as ssb  # type: ignore[import-untyped]
 from dash import html
 
 if TYPE_CHECKING:
-    from datadoc.frontend.fields.display_new_variables import (
-        DisplayNewVariablesMetadata,
-    )
+    from datadoc_model import model
+
+    from datadoc.frontend.fields.display_new_variables import VariablesInputField
 
 logger = logging.getLogger(__name__)
 
@@ -23,11 +23,9 @@ info_section = (
 VARIABLES_METADATA_INPUT = "variables-metadata-input"
 
 
-# section of Inputs: Input, checkbox or dropdown -
-# It is hard to separate between DisplayNewVariablesMetatdata and NewVariablesMetadataDropddown - with NewVariablesMetadataDropddown in type hint it's temporary solved
 def build_input_field_section(
-    metadata_inputs: list[DisplayNewVariablesMetadata],
-    variable_short_name: str,
+    metadata_inputs: list[VariablesInputField],
+    variable: model.Variable,
     language: str,
 ) -> dbc.Form:
     """Create input fields."""
@@ -36,10 +34,11 @@ def build_input_field_section(
             i.render(
                 {
                     "type": VARIABLES_METADATA_INPUT,
-                    "variable_short_name": variable_short_name,
+                    "variable_short_name": variable.short_name,
                     "id": i.identifier,
                 },
                 language,
+                variable,
             )
             for i in metadata_inputs
         ],
@@ -52,7 +51,7 @@ def build_input_field_section(
 def build_edit_section(
     metadata_inputs: list,
     title: str,
-    variable_short_name: str,
+    variable: model.Variable,
     language: str,
 ) -> html.Section:
     """Create input section."""
@@ -60,7 +59,7 @@ def build_edit_section(
         id={"type": "edit-section", "title": title},
         children=[
             ssb.Title(title, size=3, className="input-section-title"),
-            build_input_field_section(metadata_inputs, variable_short_name, language),
+            build_input_field_section(metadata_inputs, variable, language),
         ],
         className="input-section",
     )
