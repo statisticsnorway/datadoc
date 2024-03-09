@@ -6,11 +6,13 @@ import ssb_dash_components as ssb  # type: ignore[import-untyped]
 from dash import html
 from datadoc_model import model
 
+from datadoc.enums import SupportedLanguages
 from datadoc.frontend.components.builders import build_edit_section
 from datadoc.frontend.components.builders import build_input_field_section
 from datadoc.frontend.components.builders import build_ssb_accordion
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
+from datadoc.utils import get_display_values
 
 # set-up
 empty_metadata_input = []
@@ -311,12 +313,16 @@ def test_build_input_field_section_no_input_return_empty_list():
     assert input_section.children == []
 
 
-def test_build_input_section_component_props():
+def test_build_input_section_component_props(
+    # language_object model.LanguageStringType,
+):
     # TODO(@tilen1976): refactor, improve, split up  # noqa: TD003
+    # values get_display_values(variable, SupportedLanguages.NORSK_BOKMÅL)
     input_section = build_input_field_section(
         OBLIGATORY_VARIABLES_METADATA,
         model.Variable(
             short_name="alm_inntekt",
+            name=None,
             data_type="INTEGER",
             variable_role="MEASURE",
             definition_uri="https://hattemaker.com",
@@ -327,8 +333,10 @@ def test_build_input_section_component_props():
         NORSK_BOKMÅL,
     )
     input_example = input_section.children[0]
+    dropdown_example2 = input_section.children[1]
     url_example = input_section.children[3]
     dropdown_example = input_section.children[2]
+    checkbox_example = input_section.children[4]
     assert input_section.id == "variables-metadata-input"
     assert input_section.children[0].id == {
         "type": "variables-metadata-input",
@@ -338,5 +346,29 @@ def test_build_input_section_component_props():
     assert input_example.debounce is True
     assert input_example.disabled is False
     assert input_example.label == "Navn"
+    assert input_example.value is None
     assert url_example.value == "https://hattemaker.com/"
     assert dropdown_example.header == "Variabelens rolle"
+    assert dropdown_example.items == [
+        {"title": "IDENTIFIKATOR", "id": "IDENTIFIER"},
+        {"title": "MÅLEVARIABEL", "id": "MEASURE"},
+        {"id": "START_TIME", "title": "STARTTID"},
+        {"id": "STOP_TIME", "title": "STOPPTID"},
+        {"id": "ATTRIBUTE", "title": "ATTRIBUTT"},
+    ]
+    assert checkbox_example.value is False
+    assert dropdown_example2.value == "INTEGER"
+
+
+def test_with_values(language_object: model.LanguageStringType, bokmål_name: str):
+    variable = model.Variable(
+        short_name="pers_id",
+        name=language_object,
+        data_type="DATETIME",
+        direct_person_identifying=True,
+    )
+    values = get_display_values(variable, SupportedLanguages.NORSK_BOKMÅL)
+    assert values["name"] == bokmål_name
+    assert values["short_name"] == "pers_id"
+    assert variable.data_type == "DATETIME"
+    assert variable.direct_person_identifying is True
