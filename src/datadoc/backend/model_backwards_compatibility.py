@@ -63,12 +63,20 @@ def handle_current_version(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     return supplied_metadata
 
 
+def handle_version_2_1_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
+    """Handle breaking changes for v2.1.0.
+
+    Datatype changed from LanguageStringType to str for owner
+    """
+    data = supplied_metadata["dataset"]["owner"]
+    supplied_metadata["dataset"]["owner"] = str(data["nb"] or data["nn"] or data["en"])
+    supplied_metadata["document_version"] = "2.2.0"
+    return supplied_metadata
+
+
 def handle_version_1_0_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Handle breaking changes for v1.0.0."""
-    datetime_fields = [
-        ("metadata_created_date"),
-        ("metadata_last_updated_date"),
-    ]
+    datetime_fields = [("metadata_created_date"), ("metadata_last_updated_date")]
     for field in datetime_fields:
         if supplied_metadata["dataset"][field]:
             supplied_metadata["dataset"][field] = datetime.isoformat(
@@ -77,13 +85,11 @@ def handle_version_1_0_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
                 ),
                 timespec="seconds",
             )
-
     if isinstance(supplied_metadata["dataset"]["data_source"], str):
         supplied_metadata["dataset"]["data_source"] = LanguageStringType(
             en=supplied_metadata["dataset"]["data_source"],
         )
     supplied_metadata["document_version"] = "2.1.0"
-
     return supplied_metadata
 
 
@@ -102,7 +108,6 @@ def handle_version_0_1_1(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
         supplied_metadata["dataset"][new_key] = supplied_metadata["dataset"].pop(
             old_key,
         )
-
     # Replace empty strings with None, empty strings are not valid for LanguageStrings values
     supplied_metadata["dataset"] = {
         k: None if v == "" else v for k, v in supplied_metadata["dataset"].items()
@@ -113,14 +118,9 @@ def handle_version_0_1_1(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
 # Register all the supported versions and their handlers.
 # MUST be ordered from oldest to newest.
 BackwardsCompatibleVersion(version="0.1.1", handler=handle_version_0_1_1)
-BackwardsCompatibleVersion(
-    version="1.0.0",
-    handler=handle_version_1_0_0,
-)
-BackwardsCompatibleVersion(
-    version="2.1.0",
-    handler=handle_current_version,
-)
+BackwardsCompatibleVersion(version="1.0.0", handler=handle_version_1_0_0)
+BackwardsCompatibleVersion(version="2.1.0", handler=handle_version_2_1_0)
+BackwardsCompatibleVersion(version="2.2.0", handler=handle_current_version)
 
 
 def upgrade_metadata(fresh_metadata: dict[str, Any]) -> dict[str, Any]:
@@ -128,15 +128,12 @@ def upgrade_metadata(fresh_metadata: dict[str, Any]) -> dict[str, Any]:
     # Special case for current version, we expose the current_model_version parameter for test purposes
     supplied_version = fresh_metadata[VERSION_FIELD_NAME]
     start_running_handlers = False
-
     # Run all the handlers in order from the supplied version onwards
     for k, v in SUPPORTED_VERSIONS.items():
         if k == supplied_version:
             start_running_handlers = True
         if start_running_handlers:
             fresh_metadata = v.handler(fresh_metadata)
-
     if not start_running_handlers:
         raise UnknownModelVersionError(supplied_version)
-
     return fresh_metadata

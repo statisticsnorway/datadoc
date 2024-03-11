@@ -77,7 +77,7 @@ def test_metadata_document_percent_complete(metadata: DataDocMetadata):
     metadata.dataset = document.dataset  # type: ignore [assignment]
     metadata.variables = document.variables  # type: ignore [assignment]
 
-    assert metadata.percent_complete == 17  # noqa: PLR2004
+    assert metadata.percent_complete == 16  # noqa: PLR2004
 
 
 def test_write_metadata_document(
@@ -279,7 +279,6 @@ def test_dataset_status_default_value(
         subject_mapping_fake_statistical_structure,
         str(dataset_path),
     )
-
     assert datadoc_metadata.dataset.dataset_status == expected_type
 
 

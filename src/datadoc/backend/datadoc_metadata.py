@@ -8,7 +8,6 @@ import pathlib
 import uuid
 from typing import TYPE_CHECKING
 
-import pydantic
 from cloudpathlib import CloudPath
 from cloudpathlib import GSClient
 from cloudpathlib import GSPath
@@ -51,16 +50,13 @@ class DataDocMetadata:
     ) -> None:
         """Read in a dataset if supplied, otherwise naively instantiate the class."""
         self._statistic_subject_mapping = statistic_subject_mapping
-
         self.metadata_document: pathlib.Path | CloudPath | None = None
         self.container: model.MetadataContainer | None = None
         self.dataset_path: pathlib.Path | CloudPath | None = None
         self.short_name: str | None = None
         self.dataset = model.Dataset()
         self.variables: list = []
-
         self.variables_lookup: dict[str, model.Variable] = {}
-
         if metadata_document_path:
             # In this case the user has specified an independent metadata document for editing
             # without a dataset.
@@ -72,7 +68,6 @@ class DataDocMetadata:
             self.metadata_document = self.dataset_path.parent / (
                 self.dataset_path.stem + METADATA_DOCUMENT_FILE_SUFFIX
             )
-
         self.extract_metadata_from_files()
 
     @staticmethod
@@ -123,10 +118,7 @@ class DataDocMetadata:
         try:
             with document.open(mode="r", encoding="utf-8") as file:
                 fresh_metadata = json.load(file)
-            logger.info(
-                "Opened existing metadata file %s",
-                document,
-            )
+            logger.info("Opened existing metadata file %s", document)
             if self.is_metadata_in_container_structure(fresh_metadata):
                 self.container = model.MetadataContainer.model_validate_json(
                     json.dumps(fresh_metadata),
@@ -134,16 +126,13 @@ class DataDocMetadata:
                 datadoc_metadata = fresh_metadata["datadoc"]
             else:
                 datadoc_metadata = fresh_metadata
-
             if datadoc_metadata is None:
                 # In this case we've read in a file with an empty "datadoc" structure.
                 # A typical example of this is a file produced from a pseudonymization process.
                 return
-
             datadoc_metadata = upgrade_metadata(
                 datadoc_metadata,
             )
-
             meta = model.DatadocMetadata.model_validate_json(
                 json.dumps(datadoc_metadata),
             )
@@ -151,7 +140,6 @@ class DataDocMetadata:
                 self.dataset = meta.dataset
             if meta.variables is not None:
                 self.variables = meta.variables
-
         except json.JSONDecodeError:
             logger.warning(
                 "Could not open existing metadata file %s. \
@@ -169,14 +157,7 @@ class DataDocMetadata:
         The container provides a structure for different 'types' of metadata, such as 'datadoc', 'pseudonymization' etc.
         This method returns True if the metadata is in the container structure, False otherwise.
         """
-        try:
-            model.MetadataContainer.model_validate_json(
-                json.dumps(metadata),
-            )
-        except pydantic.ValidationError:
-            return False
-        else:
-            return True
+        return "datadoc" in metadata
 
     def extract_metadata_from_dataset(
         self,

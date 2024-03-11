@@ -4,10 +4,10 @@ from datadoc import state
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.fields.display_dataset import get_statistical_subject_options
 from datadoc.frontend.fields.display_dataset import get_unit_type_options
+from tests.backend.test_code_list import CODE_LIST_DIR
 from tests.backend.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
 )
-from tests.backend.test_unit_types import UNIT_TYPES_DIR
 from tests.utils import TEST_RESOURCES_DIRECTORY
 
 
@@ -48,10 +48,10 @@ def test_get_statistical_subject_options(
 
 
 @pytest.mark.parametrize(
-    ("unit_types_csv_filepath_nb", "expected"),
+    ("code_list_csv_filepath_nb", "expected"),
     [
         (
-            TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "unit_types_nb.csv",
+            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_nb.csv",
             [
                 {"label": "Adresse", "value": "01"},
                 {"label": "Arbeidsulykke", "value": "02"},
@@ -61,9 +61,9 @@ def test_get_statistical_subject_options(
     ],
 )
 def test_get_unit_type_options(
-    unit_types_fake_structure,
+    code_list_fake_structure,
     expected,
 ):
-    state.unit_types = unit_types_fake_structure
+    state.unit_types = code_list_fake_structure
     state.unit_types.wait_for_external_result()
     assert get_unit_type_options(SupportedLanguages.NORSK_BOKMÅL) == expected
