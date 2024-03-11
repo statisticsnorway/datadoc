@@ -16,7 +16,6 @@ from dash import dcc
 from datadoc import state
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
-from datadoc.frontend.components.builders import VARIABLES_METADATA_DATE_INPUT
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -30,6 +29,10 @@ if TYPE_CHECKING:
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 logger = logging.getLogger(__name__)
+
+
+VARIABLES_METADATA_INPUT = "variables-metadata-input"
+VARIABLES_METADATA_DATE_INPUT = "variables-metadata-date-input"
 
 # Must be changed if new design
 INPUT_KWARGS = {
@@ -248,3 +251,11 @@ class VariablesCheckboxField(DisplayMetadata):
             class_name="ssb-checkbox",
             value=value,
         )
+
+
+VariablesFieldTypes = (
+    VariablesInputField
+    | VariablesDropdownField
+    | VariablesCheckboxField
+    | VariablesPeriodField
+)

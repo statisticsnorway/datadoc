@@ -8,6 +8,7 @@ from enum import Enum
 from datadoc import enums
 from datadoc.frontend.fields.display_base import VariablesCheckboxField
 from datadoc.frontend.fields.display_base import VariablesDropdownField
+from datadoc.frontend.fields.display_base import VariablesFieldTypes
 from datadoc.frontend.fields.display_base import VariablesInputField
 from datadoc.frontend.fields.display_base import VariablesPeriodField
 from datadoc.frontend.fields.display_base import get_enum_options_for_language
@@ -39,10 +40,7 @@ class VariableIdentifiers(str, Enum):
 
 DISPLAY_VARIABLES: dict[
     VariableIdentifiers,
-    VariablesInputField
-    | VariablesDropdownField
-    | VariablesCheckboxField
-    | VariablesPeriodField,
+    VariablesFieldTypes,
 ] = {
     VariableIdentifiers.SHORT_NAME: VariablesInputField(
         identifier=VariableIdentifiers.SHORT_NAME.value,
