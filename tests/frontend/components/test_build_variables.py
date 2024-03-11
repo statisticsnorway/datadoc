@@ -1,6 +1,7 @@
 """Test new variables functions to build layout."""
 
 import pytest
+import ssb_dash_components as ssb  # type: ignore[import-untyped]
 
 from datadoc.frontend.components.builders import build_ssb_accordion
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
@@ -47,3 +48,4 @@ ACCORDION_TYPE = "variables-accordion"
 def test_build_ssb_accordion(accordion):
     assert accordion.id["type"] == ACCORDION_TYPE
     assert accordion.id["id"] == accordion.header
+    assert isinstance(accordion, ssb.Accordion)
