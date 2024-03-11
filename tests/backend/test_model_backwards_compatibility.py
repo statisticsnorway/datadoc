@@ -19,7 +19,7 @@ BACKWARDS_COMPATIBLE_VERSION_NAMES = [
 
 
 def test_existing_metadata_current_model_version():
-    current_model_version = "2.1.0"
+    current_model_version = "2.2.0"
     fresh_metadata = {"document_version": current_model_version}
     upgraded_metadata = upgrade_metadata(fresh_metadata)
     assert upgraded_metadata == fresh_metadata

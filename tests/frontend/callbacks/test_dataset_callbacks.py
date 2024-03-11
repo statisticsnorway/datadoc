@@ -27,8 +27,8 @@ from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from tests.utils import TEST_PARQUET_FILEPATH
 
 if TYPE_CHECKING:
+    from datadoc.backend.code_list import CodeList
     from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-    from datadoc.backend.unit_types import UnitTypes
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 DATASET_CALLBACKS_MODULE = "datadoc.frontend.callbacks.dataset"
@@ -122,7 +122,7 @@ def file_path():
         (
             DatasetIdentifiers.OWNER,
             "Seksjon for dataplattform",
-            enums.LanguageStringType(nb="Seksjon for dataplattform"),
+            "Seksjon for dataplattform",
         ),
     ],
 )
@@ -243,7 +243,7 @@ def test_update_dataset_metadata_language_enums():
 @pytest.mark.parametrize("language", list(SupportedLanguages))
 def test_change_language_dataset_metadata_options_enums(
     subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
-    unit_types_fake_structure: UnitTypes,
+    code_list_fake_structure: CodeList,
     metadata: DataDocMetadata,
     enum_for_options: LanguageStringsEnum,
     language: SupportedLanguages,
@@ -251,7 +251,8 @@ def test_change_language_dataset_metadata_options_enums(
     state.metadata = metadata
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     state.statistic_subject_mapping = subject_mapping_fake_statistical_structure
-    state.unit_types = unit_types_fake_structure
+    state.unit_types = code_list_fake_structure
+    state.organisational_units = code_list_fake_structure
     value = change_language_dataset_metadata(language)
 
     for options in cast(list[list[dict[str, str]]], value[0:-1]):

@@ -2,7 +2,7 @@
     "document_version": "0.0.1",
     "datadoc": {
         "percentage_complete": 97,
-        "document_version": "2.1.0",
+        "document_version": "2.2.0",
         "dataset": {
             "short_name": "person_testdata_p2021-12-31_p2021-12-31",
             "assessment": "PROTECTED",
@@ -52,11 +52,7 @@
                 "nb": "Norge"
             },
             "id": "2f72477a-f051-43ee-bf8b-0d8f47b5e0a7",
-            "owner": {
-                "en": "",
-                "nn": "",
-                "nb": "Seksjon NNN"
-            },
+            "owner": "722",
             "file_path": null,
             "metadata_created_date": "2022-10-07T07:35:01Z",
             "metadata_created_by": "default_user@ssb.no",
