@@ -1,4 +1,4 @@
-"""Test new variables functions to build layout."""
+"""Test function build_ssb_accordion."""
 
 import pytest
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
