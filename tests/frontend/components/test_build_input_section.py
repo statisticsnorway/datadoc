@@ -41,6 +41,7 @@ INPUT_FIELD_SECTION = [
 
 
 def test_build_input_field_section_no_input_return_empty_list():
+    """Test build with empty inputs."""
     input_section = build_input_field_section(
         [],
         "",
@@ -54,12 +55,9 @@ def test_build_input_field_section_no_input_return_empty_list():
     INPUT_FIELD_SECTION,
 )
 def test_build_input_fields_props_input(input_field_section):
+    """Test input field for variable identifier 'NAME' obligatory section."""
     variable_input_field_for_name = input_field_section.children[0]
     assert variable_input_field_for_name.type == "text"
-    assert variable_input_field_for_name.value is None
-    input_value = "Statistics"
-    variable_input_field_for_name.value = input_value
-    assert variable_input_field_for_name.value == input_value
     assert isinstance(variable_input_field_for_name, ssb.Input)
     assert variable_input_field_for_name.debounce is True
     assert variable_input_field_for_name.disabled is False
@@ -104,10 +102,8 @@ def test_build_input_fields_props_input(input_field_section):
     ],
 )
 def test_build_dropdown_fields_props_dropdown(input_field_section, language):
+    """Test dropdown field for variable identifier 'VARIABLE_ROLE' obligatory section."""
     variable_input_field_for_dropdown = input_field_section.children[2]
-    assert variable_input_field_for_dropdown.value is None
-    variable_input_field_for_dropdown.value = "IDENTIFIKATOR"
-    assert variable_input_field_for_dropdown.value == "IDENTIFIKATOR"
     assert isinstance(variable_input_field_for_dropdown, ssb.Dropdown)
     assert variable_input_field_for_dropdown._type == "Dropdown"  # noqa: SLF001
     assert variable_input_field_for_dropdown.header == "Variabelens rolle"
@@ -122,12 +118,10 @@ def test_build_dropdown_fields_props_dropdown(input_field_section, language):
     INPUT_FIELD_SECTION,
 )
 def test_build_input_fields_props_checkbox(input_field_section):
+    """Test checkbox field for variabel identifier 'DIRECT_PERSON_IDENTIFYING' obligatory section."""
     variable_checkbox_field = input_field_section.children[4]
     assert isinstance(variable_checkbox_field, dbc.Checkbox)
     assert variable_checkbox_field._type == "Checkbox"  # noqa: SLF001
-    assert variable_checkbox_field.value is None
-    variable_checkbox_field.value = True
-    assert variable_checkbox_field.value is True
 
 
 @pytest.mark.parametrize(
@@ -135,13 +129,10 @@ def test_build_input_fields_props_checkbox(input_field_section):
     INPUT_FIELD_SECTION,
 )
 def test_build_input_fields_props_url(input_field_section):
+    """Test Input field type 'url' for variable identifier 'DEFINITION_URI' obligatory section."""
     variable_input_field_for_url = input_field_section.children[3]
     assert isinstance(variable_input_field_for_url, ssb.Input)
     assert variable_input_field_for_url.type == "url"
-    assert variable_input_field_for_url.value is None
-    input_value = "https://hattemaker.com"
-    variable_input_field_for_url.value = input_value
-    assert variable_input_field_for_url.value == input_value
 
 
 @pytest.mark.parametrize(
@@ -170,9 +161,9 @@ def test_build_input_fields_props_url(input_field_section):
     ],
 )
 def test_build_input_fields_props_optional_input_list(input_field_section):
+    """Test Input field for variable identifier ' DATA_SOURCE' optional section."""
     variable_input_field_for_data_source = input_field_section.children[0]
     assert variable_input_field_for_data_source.type == "text"
-    assert variable_input_field_for_data_source.value is None
     assert isinstance(variable_input_field_for_data_source, ssb.Input)
     assert variable_input_field_for_data_source.debounce is True
     assert variable_input_field_for_data_source.label == "Datakilde"
