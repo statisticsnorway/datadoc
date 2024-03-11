@@ -30,6 +30,8 @@ def build_variables_tab() -> dbc.Tab:
                         ssb.Input(
                             label="Søk i variabler",
                             searchField=True,
+                            disabled=True,
+                            placeholder="Kommer...",
                             id="search-variables",
                             n_submit=0,
                             value="",
