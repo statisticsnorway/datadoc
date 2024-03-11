@@ -10,6 +10,7 @@ from datadoc.enums import SupportedLanguages
 from datadoc.frontend.components.builders import build_edit_section
 from datadoc.frontend.components.builders import build_input_field_section
 from datadoc.frontend.components.builders import build_ssb_accordion
+from datadoc.frontend.fields.display_base import VariablesInputField
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 from datadoc.utils import get_display_values
@@ -26,14 +27,6 @@ ENGLISH = "en"
 ACCORDION_TYPE = "variables-accordion"
 ALERTS_TYPE = "variable-input-alerts"
 INPUT_TYPE = "variable-inputs"
-
-VARIABLE_SHORT_NAMES = [
-    "pers_id",
-    "sykepenger",
-    "ber_bruttoformue",
-    "hoveddiagnose",
-]
-
 
 ACCORDION_INPUTS = [
     (
@@ -73,35 +66,34 @@ ACCORDION_INPUTS = [
     ),
 ]
 
-ACCORDION_CHILDREN = [
+accordion_obligatory_inputs = build_ssb_accordion(
+    "pers_id",
+    {"type": ACCORDION_TYPE, "id": "pers_id"},
+    "pers_id",
+    obligatory_metadata_input,
+)
+accordion_optional_inputs = build_ssb_accordion(
+    "sykepenger",
+    {"type": ACCORDION_TYPE, "id": "sykepenger"},
+    "sykepenger",
+    optional_metadata_input,
+)
+accordion_empty_inputs = build_ssb_accordion(
+    "hoveddiagnose",
+    {"type": ACCORDION_TYPE, "id": "hoveddiagnose"},
+    "hoveddiagnose",
+    empty_metadata_input,
+)
+# Change expected - is constant
+RETURN_CORRECT_COMPONENT = [
     (
-        "pers_id",
-        {"type": ACCORDION_TYPE, "id": "pers_id"},
-        "pers_id",
-        obligatory_metadata_input,
-        html.Section,
+        accordion_obligatory_inputs,
+        ssb.Accordion,
     ),
-    (
-        "sykepenger",
-        {"type": ACCORDION_TYPE, "id": "sykepenger"},
-        "sykepenger",
-        optional_metadata_input,
-        html.Section,
-    ),
-    (
-        "ber_bruttoformue",
-        {"type": ACCORDION_TYPE, "id": "ber_bruttoformue"},
-        "ber_bruttoformue",
-        obligatory_metadata_input,
-        html.Section,
-    ),
-    (
-        "hoveddiagnose",
-        {"type": ACCORDION_TYPE, "id": "hoveddiagnose"},
-        "hoveddiagnose",
-        optional_metadata_input,
-        html.Section,
-    ),
+    (accordion_obligatory_inputs.children[0], html.Section),
+    (accordion_optional_inputs, ssb.Accordion),
+    (accordion_optional_inputs.children[1], html.Section),
+    (accordion_empty_inputs, ssb.Accordion),
 ]
 
 ACCORDION_CHILDREN_ID = [
@@ -185,67 +177,33 @@ INPUT_COMPONENTS = [
     ),
 ]
 
-INPUT_COMPONENTS_PROPS = [
-    (
-        OBLIGATORY_VARIABLES_METADATA,
-        model.Variable(short_name="hoveddiagnose"),
-    ),
-    (OPTIONAL_VARIABLES_METADATA, model.Variable(short_name="pers_id")),
-    (
-        OBLIGATORY_VARIABLES_METADATA,
-        model.Variable(short_name="ber_bruttoformue"),
-    ),
-    (
-        OPTIONAL_VARIABLES_METADATA,
-        model.Variable(short_name="sykepenger"),
-    ),
-]
-
 
 @pytest.mark.parametrize(
     ("header", "key", "variable_short_name", "children", "expected"),
     ACCORDION_INPUTS,
 )
-def test_build_ssb_accordion_return_correct_component(
-    header,
-    key,
-    variable_short_name,
-    children,
-    expected,
-):
+def test_build_ssb_accordion_id(header, key, variable_short_name, children):
     accordion = build_ssb_accordion(header, key, variable_short_name, children)
-    assert isinstance(
-        accordion,
-        expected,
-    )
     assert accordion.id == key
 
 
 @pytest.mark.parametrize(
     (
-        "header",
-        "key",
-        "variable_short_name",
-        "children",
-        "expected",
+        "build",
+        "expected_component",
     ),
-    ACCORDION_CHILDREN,
+    RETURN_CORRECT_COMPONENT,
 )
-def test_build_ssb_accordion_children_return_correct_component(
-    header,
-    key,
-    variable_short_name,
-    children,
-    expected,
+def test_build_return_correct_component(
+    build,
+    expected_component,
 ):
-    # TODO(@tilen1976): replace constant expression  # noqa: TD003
-    accordion = build_ssb_accordion(header, key, variable_short_name, children)
     assert (
         isinstance(
-            accordion.children[i],
-            expected,
+            build,
+            expected_component,
         )
-        for i in ACCORDION_CHILDREN
+        for i in RETURN_CORRECT_COMPONENT
     )
 
 
@@ -273,6 +231,7 @@ def test_build_ssb_accordion_children_return_correct_id(
     ]
 
 
+# empty input don't crash
 def test_build_edit_section_empty_inputs():
     obligatory_edit_section = build_edit_section(
         empty_metadata_input,
@@ -283,25 +242,40 @@ def test_build_edit_section_empty_inputs():
     assert isinstance(obligatory_edit_section, html.Section)
     assert isinstance(obligatory_edit_section.children[0], ssb.Title)
     assert isinstance(obligatory_edit_section.children[1], dbc.Form)
+    title = obligatory_edit_section.children[0].children
+    form = obligatory_edit_section.children[1]
+    assert title == ""
+    assert form.children == []
 
 
 @pytest.mark.parametrize(
     ("metadata_inputs", "variable", "language"),
     INPUT_FIELDS,
 )
-def test_build_input_field_section(metadata_inputs, variable, language):
+def test_build_input_field_section_input_compåonent(
+    metadata_inputs,
+    variable,
+    language,
+):
     # TODO(@tilen1976): replace constant expression  # noqa: TD003
     input_section = build_input_field_section(
         metadata_inputs,
         variable,
         language,
     )
-    assert (
-        isinstance(
-            (input_section.children[i], (ssb.Input, ssb.Dropdown, dbc.Checkbox)),
-        )
-        for i in enumerate(INPUT_FIELDS)
+    # for input_field in input_section:
+    input_field_for_name = VariablesInputField(
+        input_section.children[0],
+        "Navn",
+        "Variabelnavn kan arves fra VarDef, men kan også dokumenteres/endres her.",
     )
+    assert input_field_for_name.type == "text"
+    name_is_input_field = input_section.children[0]
+    assert name_is_input_field.type == input_field_for_name.type
+    assert name_is_input_field.value is None
+    name_is_input_field.value = "Navnet"
+    assert name_is_input_field.value == "Navnet"
+    assert isinstance(input_section.children[0], ssb.Input)
 
 
 def test_build_input_field_section_no_input_return_empty_list():
