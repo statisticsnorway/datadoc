@@ -15,8 +15,6 @@ from dash import html
 if TYPE_CHECKING:
     from datadoc_model import model
 
-    from datadoc.frontend.fields.display_base import VariablesCheckboxField
-    from datadoc.frontend.fields.display_base import VariablesDropdownField
     from datadoc.frontend.fields.display_variables import VariablesInputField
 
 
@@ -119,9 +117,7 @@ VARIABLES_METADATA_INPUT = "variables-metadata-input"
 
 
 def build_input_field_section(
-    metadata_inputs: list[
-        VariablesInputField | VariablesDropdownField | VariablesCheckboxField
-    ],
+    metadata_inputs: list[VariablesInputField],
     variable: model.Variable,
     language: str,
 ) -> dbc.Form:
