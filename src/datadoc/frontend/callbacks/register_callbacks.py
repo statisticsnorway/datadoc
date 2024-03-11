@@ -29,6 +29,8 @@ from datadoc.frontend.components.builders import build_edit_section
 from datadoc.frontend.components.builders import build_ssb_accordion
 from datadoc.frontend.components.dataset_tab import DATASET_METADATA_INPUT
 from datadoc.frontend.components.dataset_tab import build_dataset_metadata_accordion
+from datadoc.frontend.components.variables_tab import ACCORDION_WRAPPER_ID
+from datadoc.frontend.components.variables_tab import VARIABLES_INFORMATION_ID
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
@@ -161,11 +163,21 @@ def register_callbacks(app: Dash) -> None:
         return no_update
 
     @app.callback(
-        Output("accordion-wrapper", "children"),
+        Output(VARIABLES_INFORMATION_ID, "children"),
         Input("language-dropdown", "value"),
         prevent_initial_call=True,
     )
-    def callback_populate_new_variables_workspace(
+    def callback_populate_variables_info_section(
+        language: str,  # noqa: ARG001 Dash requires arguments for all Inputs
+    ) -> str:
+        return f"Datasettet inneholder {len(state.metadata.variables)} variabler."
+
+    @app.callback(
+        Output(ACCORDION_WRAPPER_ID, "children"),
+        Input("language-dropdown", "value"),
+        prevent_initial_call=True,
+    )
+    def callback_populate_variables_workspace(
         language: str,
     ) -> list:
         """Create variable workspace with accordions for variables."""

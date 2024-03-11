@@ -110,11 +110,6 @@ def build_ssb_button(text: str, icon_class: str, button_id: str) -> dbc.Button:
     )
 
 
-info_section = (
-    "Informasjon om hvordan jobbe i Datadoc, antall variabler i datasettet: osv.."
-)
-
-
 def build_input_field_section(
     metadata_fields: list[VariablesFieldTypes],
     variable: model.Variable,
