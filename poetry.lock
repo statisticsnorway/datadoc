@@ -4139,13 +4139,13 @@ dash = ">=2.15.0"
 
 [[package]]
 name = "ssb-datadoc-model"
-version = "4.3.1"
+version = "4.3.2"
 description = "Data Model for use in Statistics Norway's Metadata system"
 optional = false
 python-versions = ">=3.10"
 files = [
-    {file = "ssb_datadoc_model-4.3.1-py3-none-any.whl", hash = "sha256:a1400bff45c27237acb87156d5cd695d0e12dd33b7c04746e336516dbfe00e61"},
-    {file = "ssb_datadoc_model-4.3.1.tar.gz", hash = "sha256:f6836dfe26a331229b317155a5eecd5e0479799097ffba25f136bb3947ab1771"},
+    {file = "ssb_datadoc_model-4.3.2-py3-none-any.whl", hash = "sha256:86b998ddb7b5e926896a6ce37c1d5ac5c80b512f5b0ccd6b821050a625a7b71c"},
+    {file = "ssb_datadoc_model-4.3.2.tar.gz", hash = "sha256:85566a5b5a24f40954d10e7ae4130c452941ce8362550d6fea27541775c981a7"},
 ]
 
 [package.dependencies]
@@ -4675,4 +4675,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "ed14a20f2c283622c84c08597e90f8fbbfb0484ac54480d4289e15959c3460e9"
+content-hash = "713694ade4a05085744e77aa840336b010bfcc5ad30944fd5474945cd7596ef4"
