@@ -20,7 +20,11 @@
         "subject_field": null,
         "spatial_coverage_description": null,
         "id": null,
-        "owner": null,
+        "owner": {
+            "en": "",
+            "nn": "",
+            "nb": "724"
+        },
         "data_source_path": "klargjorte_data/person_data_v1.parquet",
         "created_date": "2022-07-13T17:28:01.617657",
         "created_by": "default_user@ssb.no",

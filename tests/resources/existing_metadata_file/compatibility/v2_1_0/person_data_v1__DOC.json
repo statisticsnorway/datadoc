@@ -29,11 +29,7 @@
             },
             "version": "1",
             "version_description": null,
-            "unit_type": {
-                "en": "",
-                "nn": "",
-                "nb": "PERSON"
-            },
+            "unit_type": "PERSON",
             "temporality_type": "STATUS",
             "subject_field": {
                 "en": "",

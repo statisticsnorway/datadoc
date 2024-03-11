@@ -66,27 +66,17 @@ def handle_current_version(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
 def handle_version_2_1_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Handle breaking changes for v2.1.0.
 
-    Datatype changed from LanguageStringType to str for
-    - unit_type
-    - owner
-    TODO: PR ref here?
+    Datatype changed from LanguageStringType to str for owner
     """
-    dropdown_fields = ["unit_type", "owner"]
-    for field in dropdown_fields:
-        data = supplied_metadata["dataset"][field]
-        supplied_metadata["dataset"][field] = str(
-            data["nb"] or data["nn"] or data["en"],
-        )
+    data = supplied_metadata["dataset"]["owner"]
+    supplied_metadata["dataset"]["owner"] = str(data["nb"] or data["nn"] or data["en"])
     supplied_metadata["document_version"] = "2.2.0"
     return supplied_metadata
 
 
 def handle_version_1_0_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Handle breaking changes for v1.0.0."""
-    datetime_fields = [
-        ("metadata_created_date"),
-        ("metadata_last_updated_date"),
-    ]
+    datetime_fields = [("metadata_created_date"), ("metadata_last_updated_date")]
     for field in datetime_fields:
         if supplied_metadata["dataset"][field]:
             supplied_metadata["dataset"][field] = datetime.isoformat(
@@ -118,7 +108,6 @@ def handle_version_0_1_1(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
         supplied_metadata["dataset"][new_key] = supplied_metadata["dataset"].pop(
             old_key,
         )
-
     # Replace empty strings with None, empty strings are not valid for LanguageStrings values
     supplied_metadata["dataset"] = {
         k: None if v == "" else v for k, v in supplied_metadata["dataset"].items()
@@ -139,15 +128,12 @@ def upgrade_metadata(fresh_metadata: dict[str, Any]) -> dict[str, Any]:
     # Special case for current version, we expose the current_model_version parameter for test purposes
     supplied_version = fresh_metadata[VERSION_FIELD_NAME]
     start_running_handlers = False
-
     # Run all the handlers in order from the supplied version onwards
     for k, v in SUPPORTED_VERSIONS.items():
         if k == supplied_version:
             start_running_handlers = True
         if start_running_handlers:
             fresh_metadata = v.handler(fresh_metadata)
-
     if not start_running_handlers:
         raise UnknownModelVersionError(supplied_version)
-
     return fresh_metadata
