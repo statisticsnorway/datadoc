@@ -171,7 +171,7 @@ class VariablesInputField(DisplayMetadata):
 class VariablesPeriodField(DisplayMetadata):
     """Control how fields which define a time period are displayed.
 
-    These are a special case since two fields have a relationship to one another.
+    These are a special case since two fields have a relationship to one another.>
     """
 
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)

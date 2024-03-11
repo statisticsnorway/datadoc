@@ -70,22 +70,6 @@ def accept_variable_metadata_input(
                 value,
                 variable_short_name,
             )
-        elif value and metadata_field == VariableIdentifiers.CONTAINS_DATA_FROM.value:
-            new_value, _ = parse_and_validate_dates(
-                str(value),
-                getattr(
-                    state.metadata.variables_lookup[variable_short_name],
-                    VariableIdentifiers.CONTAINS_DATA_UNTIL.value,
-                ),
-            )
-        elif value and metadata_field == VariableIdentifiers.CONTAINS_DATA_UNTIL.value:
-            _, new_value = parse_and_validate_dates(
-                getattr(
-                    state.metadata.variables_lookup[variable_short_name],
-                    VariableIdentifiers.CONTAINS_DATA_FROM.value,
-                ),
-                str(value),
-            )
         elif value == "":
             # Allow clearing non-multiple-language text fields
             new_value = None
@@ -100,7 +84,7 @@ def accept_variable_metadata_input(
         )
     except (ValidationError, ValueError) as e:
         logger.exception(
-            "Could not validate %s, %s, %s:",
+            "Validation failed for %s, %s, %s:",
             metadata_field,
             variable_short_name,
             value,
@@ -132,6 +116,56 @@ def accept_variable_metadata_date_input(
         variable_short_name,
         variable_identifier,
     )
+
+    try:
+        (
+            parsed_contains_data_from,
+            parsed_contains_data_until,
+        ) = parse_and_validate_dates(
+            str(
+                contains_data_from
+                or state.metadata.variables_lookup[
+                    variable_short_name
+                ].contains_data_from,
+            ),
+            str(
+                contains_data_until
+                or state.metadata.variables_lookup[
+                    variable_short_name
+                ].contains_data_until,
+            ),
+        )
+
+        # Save both values to the model if they pass validation.
+        state.metadata.variables_lookup[
+            variable_short_name
+        ].contains_data_from = parsed_contains_data_from
+        state.metadata.variables_lookup[
+            variable_short_name
+        ].contains_data_until = parsed_contains_data_until
+    except (ValidationError, ValueError) as e:
+        logger.exception(
+            "Validation failed for %s, %s, %s: %s, %s: %s",
+            variable_identifier,
+            variable_short_name,
+            "contains_data_from",
+            contains_data_from,
+            "contains_data_until",
+            contains_data_until,
+        )
+        message = str(e)
+    else:
+        logger.debug(
+            "Successfully updated %s, %s, %s: %s, %s: %s",
+            variable_identifier,
+            variable_short_name,
+            "contains_data_from",
+            contains_data_from,
+            "contains_data_until",
+            contains_data_until,
+        )
+        message = None
+
     no_error = (False, "")
     if not message:
         # No error to display.

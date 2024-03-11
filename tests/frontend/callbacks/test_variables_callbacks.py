@@ -101,16 +101,6 @@ if TYPE_CHECKING:
             "2f72477a-f051-43ee-bf8b-0d8f47b5e0a7",
             UUID("2f72477a-f051-43ee-bf8b-0d8f47b5e0a7"),
         ),
-        (
-            VariableIdentifiers.CONTAINS_DATA_FROM,
-            "2024-02-28",
-            datetime.datetime(2024, 2, 28, 0, 0, tzinfo=datetime.timezone.utc),
-        ),
-        (
-            VariableIdentifiers.CONTAINS_DATA_UNTIL,
-            "2024-02-28",
-            datetime.datetime(2024, 2, 28, 0, 0, tzinfo=datetime.timezone.utc),
-        ),
     ],
 )
 def test_accept_variable_metadata_input_valid(
@@ -225,3 +215,11 @@ def test_accept_variable_metadata_date_input(
         )
         == expected_result
     )
+    if not expected_result[0]:
+        assert metadata.variables[0].contains_data_from == arrow.get(
+            contains_data_from,
+        ).to("utc")
+    if not expected_result[2]:
+        assert metadata.variables[0].contains_data_until == arrow.get(
+            contains_data_until,
+        ).to("utc")

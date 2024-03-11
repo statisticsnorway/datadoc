@@ -109,7 +109,7 @@ DATE_VALIDATION_MESSAGE = f"{VALIDATION_ERROR}contains_data_from must be the sam
 def parse_and_validate_dates(
     start_date: str | datetime.datetime | None,
     end_date: str | datetime.datetime | None,
-) -> tuple[datetime.date | None, datetime.date | None]:
+) -> tuple[datetime.datetime | None, datetime.datetime | None]:
     """Parse and validate the given dates.
 
      Validate that:
