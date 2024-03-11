@@ -10,14 +10,16 @@ from typing import TYPE_CHECKING
 from typing import Any
 
 import dash_bootstrap_components as dbc
-import ssb_dash_components as ssb  # type: ignore[import-untyped]
+import ssb_dash_components as ssb
 from dash import dcc
 
 from datadoc import state
 from datadoc.enums import SupportedLanguages
+from datadoc.frontend.callbacks.utils import get_language_strings_enum
 
 if TYPE_CHECKING:
     from collections.abc import Callable
+    from enum import Enum
 
     from dash.development.base_component import Component
     from datadoc_model import model
@@ -36,6 +38,20 @@ INPUT_KWARGS = {
 }
 
 
+def get_enum_options_for_language(
+    enum: Enum,
+    language: SupportedLanguages,
+) -> list[dict[str, str]]:
+    """Generate the list of options based on the currently chosen language."""
+    return [
+        {
+            "title": i.get_value_for_language(language),
+            "id": i.name,
+        }
+        for i in get_language_strings_enum(enum)  # type: ignore [attr-defined]
+    ]
+
+
 def input_kwargs_factory() -> dict[str, t.Any]:
     """Initialize the field extra_kwargs.
 
@@ -45,8 +61,7 @@ def input_kwargs_factory() -> dict[str, t.Any]:
     return INPUT_KWARGS
 
 
-# New empty kwargs for input new variables
-def new_input_kwargs_factory() -> dict[str, t.Any]:
+def empty_kwargs_factory() -> dict[str, t.Any]:
     """Initialize the field extra_kwargs.
 
     We aren't allowed to directly assign a mutable type like a dict to
@@ -99,17 +114,6 @@ class DisplayMetadata:
 
 
 @dataclass
-class DisplayVariablesMetadata(DisplayMetadata):
-    """Controls for how a given metadata field should be displayed.
-
-    Specific to variable fields.
-    """
-
-    options: dict[str, list[dict[str, str]]] | None = None
-    presentation: str | None = "input"
-
-
-@dataclass
 class DisplayDatasetMetadata(DisplayMetadata):
     """Controls for how a given metadata field should be displayed.
 
@@ -128,7 +132,7 @@ class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
     # fmt: off
     options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
     # fmt: on
-    extra_kwargs: dict[str, Any] = field(default_factory=new_input_kwargs_factory)
+    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     component: type[Component] = dcc.Dropdown
 
 
@@ -139,7 +143,7 @@ class VariablesInputField(DisplayMetadata):
     Specific to variable fields.
     """
 
-    extra_kwargs: dict[str, Any] = field(default_factory=new_input_kwargs_factory)
+    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
     type: str = "text"
 
@@ -166,7 +170,7 @@ class VariablesInputField(DisplayMetadata):
 class VariablesDropdownField(DisplayMetadata):
     """Control how a Dropdown should be displayed."""
 
-    extra_kwargs: dict[str, Any] = field(default_factory=new_input_kwargs_factory)
+    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
     # fmt: off
     options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
@@ -209,6 +213,6 @@ class VariablesCheckboxField(DisplayMetadata):
             id=variable_id,
             disabled=not self.editable,
             label_class_name="ssb-checkbox checkbox-label",
-            class_name="variable-checkbox",
+            class_name="ssb-checkbox",
             value=value,
         )

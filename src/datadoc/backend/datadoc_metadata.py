@@ -24,7 +24,9 @@ from datadoc.enums import DataSetStatus
 from datadoc.frontend.fields.display_dataset import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
 )
-from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
+from datadoc.frontend.fields.display_variables import (
+    OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
+)
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
 from datadoc.utils import calculate_percentage
 from datadoc.utils import get_timestamp_now
@@ -257,12 +259,12 @@ class DataDocMetadata:
             ],
         )
         for variable in self.variables:
-            num_all_fields += len(OBLIGATORY_VARIABLES_METADATA)
+            num_all_fields += len(OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS)
             num_set_fields += len(
                 [
                     k
                     for k, v in variable.model_dump().items()
-                    if k in OBLIGATORY_VARIABLES_METADATA and v is not None
+                    if k in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS and v is not None
                 ],
             )
         return calculate_percentage(num_set_fields, num_all_fields)

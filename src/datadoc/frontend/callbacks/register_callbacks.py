@@ -23,24 +23,15 @@ from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import change_language_dataset_metadata
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.utils import update_global_language_state
-from datadoc.frontend.callbacks.variables import (
-    accept_variable_datatable_metadata_input,
-)
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
-from datadoc.frontend.callbacks.variables import (
-    update_variable_table_dropdown_options_for_language,
-)
-from datadoc.frontend.callbacks.variables import update_variable_table_language
+from datadoc.frontend.components.builders import VARIABLES_METADATA_INPUT
+from datadoc.frontend.components.builders import build_edit_section
+from datadoc.frontend.components.builders import build_ssb_accordion
 from datadoc.frontend.components.dataset_tab import DATASET_METADATA_INPUT
 from datadoc.frontend.components.dataset_tab import build_dataset_metadata_accordion
-from datadoc.frontend.components.resources_test_new_variables import (
-    VARIABLES_METADATA_INPUT,
-)
-from datadoc.frontend.components.resources_test_new_variables import build_edit_section
-from datadoc.frontend.components.resources_test_new_variables import build_ssb_accordion
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
-from datadoc.frontend.fields.display_new_variables import OBLIGATORY_VARIABLES_METADATA
-from datadoc.frontend.fields.display_new_variables import OPTIONAL_VARIABLES_METADATA
+from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
+from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 
 if TYPE_CHECKING:
     import dash_bootstrap_components as dbc
@@ -57,7 +48,14 @@ def register_callbacks(app: Dash) -> None:
         Output("progress-bar", "value"),
         Output("progress-bar", "label"),
         Input({"type": DATASET_METADATA_INPUT, "id": ALL}, "value"),
-        Input("variables-table", "data"),
+        Input(
+            {
+                "type": VARIABLES_METADATA_INPUT,
+                "variable_short_name": ALL,
+                "id": ALL,
+            },
+            "value",
+        ),
     )
     def callback_update_progress(
         value: MetadataInputTypes,  # noqa: ARG001 argument required by Dash
@@ -123,50 +121,6 @@ def register_callbacks(app: Dash) -> None:
         )
 
     @app.callback(
-        Output("variables-table", "data"),
-        Output("variables-validation-error", "is_open"),
-        Output("variables-validation-explanation", "children"),
-        State("variables-table", "active_cell"),
-        Input("variables-table", "data"),
-        State("variables-table", "data_previous"),
-        Input("language-dropdown", "value"),
-        prevent_initial_call=True,
-    )
-    def callback_variable_table(
-        active_cell: dict,
-        data: list[dict],
-        data_previous: list[dict],
-        language: str,
-    ) -> tuple[list[dict], bool, str]:
-        """Update data in the variable table.
-
-        Triggered upon:
-        - New data enetered in the variable table.
-        - Change of language.
-
-        Will display an alert if validation fails.
-        """
-        if ctx.triggered_id == "language-dropdown":
-            return update_variable_table_language(SupportedLanguages(language))
-
-        return accept_variable_datatable_metadata_input(
-            data,
-            active_cell,
-            data_previous,
-        )
-
-    @app.callback(
-        Output("variables-table", "dropdown"),
-        Input("language-dropdown", "value"),
-    )
-    def callback_variable_table_dropdown_options(
-        language: str,
-    ) -> dict[str, dict[str, object]]:
-        """Update the options in variable table dropdowns when the language changes."""
-        language = SupportedLanguages(language)
-        return update_variable_table_dropdown_options_for_language(language)
-
-    @app.callback(
         Output("opened-dataset-success", "is_open"),
         Output("opened-dataset-error", "is_open"),
         Output("opened-dataset-error-explanation", "children"),
@@ -203,15 +157,6 @@ def register_callbacks(app: Dash) -> None:
             return build_dataset_metadata_accordion(n_clicks)
         return no_update
 
-
-def register_new_variables_tab_callbacks(app: Dash) -> None:
-    """Define and register callbacks for the new variables tab.
-
-    This may be included in the main register_callbacks function once it's
-    ready for production.
-    """
-    logger.info("Registering callbacks for the new variable tab for %s", app.title)
-
     @app.callback(
         Output("accordion-wrapper", "children"),
         Input("language-dropdown", "value"),
@@ -228,7 +173,7 @@ def register_new_variables_tab_callbacks(app: Dash) -> None:
                 variable.short_name,
                 {
                     "type": "variables-accordion",
-                    "id": f"{variable.short_name}-{language}",
+                    "id": f"{variable.short_name}-{language}",  # Insert language into the ID to invalidate browser caches
                 },
                 variable.short_name,
                 children=[
