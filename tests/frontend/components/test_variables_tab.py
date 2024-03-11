@@ -34,35 +34,30 @@ ACCORDION_INPUTS = [
         {"type": ACCORDION_TYPE, "id": "pers_id"},
         "pers_id",
         empty_metadata_input,
-        ssb.Accordion,
     ),
     (
         "sykepenger",
         {"type": ACCORDION_TYPE, "id": "sykepenger"},
         "sykepenger",
         OPTIONAL_VARIABLES_METADATA,
-        ssb.Accordion,
     ),
     (
         "ber_bruttoformue",
         {"type": ACCORDION_TYPE, "id": "ber_bruttoformue"},
         "ber_bruttoformue",
         OBLIGATORY_VARIABLES_METADATA,
-        ssb.Accordion,
     ),
     (
         "hoveddiagnose",
         {"type": ACCORDION_TYPE, "id": "hoveddiagnose"},
         "hoveddiagnose",
         empty_metadata_input,
-        ssb.Accordion,
     ),
     (
         "",
         {"type": ACCORDION_TYPE, "id": ""},
         "ber_bruttoformue",
         OBLIGATORY_VARIABLES_METADATA,
-        ssb.Accordion,
     ),
 ]
 
@@ -84,14 +79,19 @@ accordion_empty_inputs = build_ssb_accordion(
     "hoveddiagnose",
     empty_metadata_input,
 )
-# Change expected - is constant
+
 RETURN_CORRECT_COMPONENT = [
     (
         accordion_obligatory_inputs,
         ssb.Accordion,
     ),
     (accordion_obligatory_inputs.children[0], html.Section),
-    (accordion_optional_inputs, ssb.Accordion),
+    (accordion_obligatory_inputs.children[1].children[1], ssb.Dropdown),
+    (accordion_obligatory_inputs.children[1].children[0], ssb.Input),
+    (
+        accordion_optional_inputs,
+        ssb.Accordion,
+    ),
     (accordion_optional_inputs.children[1], html.Section),
     (accordion_empty_inputs, ssb.Accordion),
 ]
@@ -179,10 +179,10 @@ INPUT_COMPONENTS = [
 
 
 @pytest.mark.parametrize(
-    ("header", "key", "variable_short_name", "children", "expected"),
+    ("header", "key", "variable_short_name", "children"),
     ACCORDION_INPUTS,
 )
-def test_build_ssb_accordion_id(header, key, variable_short_name, children):
+def test_build_ssb_accordion(header, key, variable_short_name, children):
     accordion = build_ssb_accordion(header, key, variable_short_name, children)
     assert accordion.id == key
 
