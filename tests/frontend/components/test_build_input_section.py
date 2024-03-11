@@ -161,7 +161,7 @@ def test_build_input_fields_props_url(input_field_section):
     ],
 )
 def test_build_input_fields_props_optional_input_list(input_field_section):
-    """Test Input field for variable identifier ' DATA_SOURCE' optional section."""
+    """Test Input field for variable identifier 'DATA_SOURCE' optional section."""
     variable_input_field_for_data_source = input_field_section.children[0]
     assert variable_input_field_for_data_source.type == "text"
     assert isinstance(variable_input_field_for_data_source, ssb.Input)
