@@ -28,6 +28,7 @@ ACCORDION_TYPE = "variables-accordion"
 ALERTS_TYPE = "variable-input-alerts"
 INPUT_TYPE = "variable-inputs"
 
+# Different input lists
 ACCORDION_INPUTS = [
     (
         "pers_id",
@@ -61,39 +62,43 @@ ACCORDION_INPUTS = [
     ),
 ]
 
-accordion_obligatory_inputs = build_ssb_accordion(
+accordion_obligatory_input = build_ssb_accordion(
     "pers_id",
     {"type": ACCORDION_TYPE, "id": "pers_id"},
     "pers_id",
     obligatory_metadata_input,
 )
-accordion_optional_inputs = build_ssb_accordion(
+accordion_optional_input = build_ssb_accordion(
     "sykepenger",
     {"type": ACCORDION_TYPE, "id": "sykepenger"},
     "sykepenger",
     optional_metadata_input,
 )
-accordion_empty_inputs = build_ssb_accordion(
+accordion_empty_input = build_ssb_accordion(
     "hoveddiagnose",
     {"type": ACCORDION_TYPE, "id": "hoveddiagnose"},
     "hoveddiagnose",
     empty_metadata_input,
 )
+display_variable_datatype = accordion_obligatory_input.children[1].children[1]
+display_variable_name = accordion_obligatory_input.children[1].children[0]
+display_direct_person_identifying = accordion_obligatory_input.children[1].children[4]
 
 RETURN_CORRECT_COMPONENT = [
     (
-        accordion_obligatory_inputs,
+        accordion_obligatory_input,
         ssb.Accordion,
     ),
-    (accordion_obligatory_inputs.children[0], html.Section),
-    (accordion_obligatory_inputs.children[1].children[1], ssb.Dropdown),
-    (accordion_obligatory_inputs.children[1].children[0], ssb.Input),
+    (accordion_obligatory_input.children[0], html.Section),
+    (display_variable_datatype, ssb.Dropdown),
+    (display_variable_name, ssb.Input),
+    (display_direct_person_identifying, dbc.Checkbox),
     (
-        accordion_optional_inputs,
+        accordion_optional_input,
         ssb.Accordion,
     ),
-    (accordion_optional_inputs.children[1], html.Section),
-    (accordion_empty_inputs, ssb.Accordion),
+    (accordion_optional_input.children[1], html.Section),
+    (accordion_empty_input, ssb.Accordion),
 ]
 
 ACCORDION_CHILDREN_ID = [
@@ -203,10 +208,11 @@ def test_build_return_correct_component(
             build,
             expected_component,
         )
-        for i in RETURN_CORRECT_COMPONENT
+        for index in RETURN_CORRECT_COMPONENT
     )
 
 
+# remove?
 @pytest.mark.parametrize(
     (
         "header",
@@ -231,7 +237,7 @@ def test_build_ssb_accordion_children_return_correct_id(
     ]
 
 
-# empty input don't crash
+# empty input returns empty string/list
 def test_build_edit_section_empty_inputs():
     obligatory_edit_section = build_edit_section(
         empty_metadata_input,
@@ -248,11 +254,20 @@ def test_build_edit_section_empty_inputs():
     assert form.children == []
 
 
+def test_build_input_field_section_no_input_return_empty_list():
+    input_section = build_input_field_section(
+        empty_metadata_input,
+        "",
+        "",
+    )
+    assert input_section.children == []
+
+
 @pytest.mark.parametrize(
     ("metadata_inputs", "variable", "language"),
     INPUT_FIELDS,
 )
-def test_build_input_field_section_input_compåonent(
+def test_build_input_field_section_input_component(
     metadata_inputs,
     variable,
     language,
@@ -276,15 +291,6 @@ def test_build_input_field_section_input_compåonent(
     name_is_input_field.value = "Navnet"
     assert name_is_input_field.value == "Navnet"
     assert isinstance(input_section.children[0], ssb.Input)
-
-
-def test_build_input_field_section_no_input_return_empty_list():
-    input_section = build_input_field_section(
-        empty_metadata_input,
-        "",
-        "",
-    )
-    assert input_section.children == []
 
 
 def test_build_input_section_component_props(
@@ -331,6 +337,8 @@ def test_build_input_section_component_props(
         {"id": "ATTRIBUTE", "title": "ATTRIBUTT"},
     ]
     assert checkbox_example.value is False
+    checkbox_example.value = True
+    assert checkbox_example.value is True
     assert dropdown_example2.value == "INTEGER"
 
 
