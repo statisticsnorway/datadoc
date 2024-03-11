@@ -7,12 +7,14 @@ from typing import TYPE_CHECKING
 from typing import Any
 from uuid import UUID
 
+import arrow
 import pytest
 from pydantic_core import Url
 
 from datadoc import enums
 from datadoc import state
 from datadoc.enums import SupportedLanguages
+from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
 
@@ -144,3 +146,82 @@ def test_accept_variable_metadata_input_invalid(
     )
     assert message is not None
     assert "validation error for Variable" in message
+
+
+@pytest.mark.parametrize(
+    (
+        "variable_identifier",
+        "contains_data_from",
+        "contains_data_until",
+        "expected_result",
+    ),
+    [
+        (
+            VariableIdentifiers.CONTAINS_DATA_FROM.value,
+            "1950-01-01",
+            "2020-01-01",
+            (False, "", False, ""),
+        ),
+        (
+            VariableIdentifiers.CONTAINS_DATA_FROM.value,
+            "2020-01-01",
+            "1950-01-01",
+            (
+                True,
+                "Validation error: contains_data_from must be the same or earlier date than contains_data_until",
+                False,
+                "",
+            ),
+        ),
+        (
+            VariableIdentifiers.CONTAINS_DATA_UNTIL.value,
+            "1950-01-01",
+            "2020-01-01",
+            (False, "", False, ""),
+        ),
+        (
+            VariableIdentifiers.CONTAINS_DATA_UNTIL.value,
+            "2020-01-01",
+            "1950-01-01",
+            (
+                False,
+                "",
+                True,
+                "Validation error: contains_data_from must be the same or earlier date than contains_data_until",
+            ),
+        ),
+    ],
+)
+def test_accept_variable_metadata_date_input(
+    variable_identifier,
+    contains_data_from: str,
+    contains_data_until: str,
+    expected_result: tuple[bool, str, bool, str],
+    metadata: DataDocMetadata,
+):
+    state.metadata = metadata
+    chosen_short_name = metadata.variables[0].short_name
+    preset_identifier = (
+        VariableIdentifiers.CONTAINS_DATA_UNTIL.value
+        if variable_identifier == VariableIdentifiers.CONTAINS_DATA_FROM.value
+        else VariableIdentifiers.CONTAINS_DATA_FROM.value
+    )
+    preset_value = (
+        contains_data_until
+        if variable_identifier == VariableIdentifiers.CONTAINS_DATA_FROM.value
+        else contains_data_from
+    )
+    setattr(
+        state.metadata.variables_lookup[chosen_short_name],
+        preset_identifier,
+        arrow.get(preset_value).astimezone(tz=datetime.timezone.utc),
+    )
+    assert (
+        accept_variable_metadata_date_input(
+            VariableIdentifiers(variable_identifier),
+            chosen_short_name,
+            contains_data_from,
+            contains_data_until,
+        )
+        == expected_result
+    )

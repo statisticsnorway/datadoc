@@ -16,6 +16,7 @@ from dash import dcc
 from datadoc import state
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
+from datadoc.frontend.components.builders import VARIABLES_METADATA_DATE_INPUT
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -158,7 +159,38 @@ class VariablesInputField(DisplayMetadata):
         return ssb.Input(
             label=self.display_name,
             id=variable_id,
-            debounce=self.type != "date",
+            debounce=True,
+            type=self.type,
+            disabled=not self.editable,
+            value=value,
+            className="variable-input",
+        )
+
+
+@dataclass
+class VariablesPeriodField(DisplayMetadata):
+    """Control how fields which define a time period are displayed.
+
+    These are a special case since two fields have a relationship to one another.
+    """
+
+    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
+    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
+    type: str = "date"
+
+    def render(
+        self,
+        variable_id: dict,
+        language: str,  # noqa: ARG002
+        variable: model.Variable,
+    ) -> ssb.Input:
+        """Build Input date component."""
+        value = self.value_getter(variable, self.identifier)
+        variable_id["type"] = VARIABLES_METADATA_DATE_INPUT
+        return ssb.Input(
+            label=self.display_name,
+            id=variable_id,
+            debounce=False,
             type=self.type,
             disabled=not self.editable,
             value=value,

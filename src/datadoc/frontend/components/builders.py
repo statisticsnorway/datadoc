@@ -114,6 +114,7 @@ info_section = (
 )
 
 VARIABLES_METADATA_INPUT = "variables-metadata-input"
+VARIABLES_METADATA_DATE_INPUT = "variables-metadata-date-input"
 
 
 def build_input_field_section(
