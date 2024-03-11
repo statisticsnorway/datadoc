@@ -7,7 +7,9 @@ import ssb_dash_components as ssb
 from dash import html
 
 from datadoc.frontend.components.builders import build_ssb_styled_tab
-from datadoc.frontend.components.builders import info_section
+
+VARIABLES_INFORMATION_ID = "variables-information"
+ACCORDION_WRAPPER_ID = "accordion-wrapper"
 
 
 def build_variables_tab() -> dbc.Tab:
@@ -24,8 +26,7 @@ def build_variables_tab() -> dbc.Tab:
                             className="variables-title",
                         ),
                         ssb.Paragraph(
-                            info_section,
-                            id="variables-information",
+                            id=VARIABLES_INFORMATION_ID,
                         ),
                         ssb.Input(
                             label="Søk i variabler",
@@ -40,7 +41,7 @@ def build_variables_tab() -> dbc.Tab:
                     className="variables-header",
                 ),
                 html.Main(
-                    id="accordion-wrapper",
+                    id=ACCORDION_WRAPPER_ID,
                     className="main-content",
                 ),
             ],
