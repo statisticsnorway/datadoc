@@ -8,7 +8,9 @@ from enum import Enum
 from datadoc import enums
 from datadoc.frontend.fields.display_base import VariablesCheckboxField
 from datadoc.frontend.fields.display_base import VariablesDropdownField
+from datadoc.frontend.fields.display_base import VariablesFieldTypes
 from datadoc.frontend.fields.display_base import VariablesInputField
+from datadoc.frontend.fields.display_base import VariablesPeriodField
 from datadoc.frontend.fields.display_base import get_enum_options_for_language
 from datadoc.frontend.fields.display_base import get_multi_language_metadata
 
@@ -38,7 +40,7 @@ class VariableIdentifiers(str, Enum):
 
 DISPLAY_VARIABLES: dict[
     VariableIdentifiers,
-    VariablesInputField | VariablesDropdownField | VariablesCheckboxField,
+    VariablesFieldTypes,
 ] = {
     VariableIdentifiers.SHORT_NAME: VariablesInputField(
         identifier=VariableIdentifiers.SHORT_NAME.value,
@@ -154,20 +156,17 @@ DISPLAY_VARIABLES: dict[
         identifier=VariableIdentifiers.IDENTIFIER.value,
         display_name="Unik ID",
         description="Unik SSB identifikator for variabelforekomsten i datasettet",
-        obligatory=False,
         editable=False,
     ),
-    VariableIdentifiers.CONTAINS_DATA_FROM: VariablesInputField(
+    VariableIdentifiers.CONTAINS_DATA_FROM: VariablesPeriodField(
         identifier=VariableIdentifiers.CONTAINS_DATA_FROM.value,
         display_name="Inneholder data f.o.m.",
         description="Variabelforekomsten i datasettet inneholder data fra og med denne dato.",
-        type="date",
     ),
-    VariableIdentifiers.CONTAINS_DATA_UNTIL: VariablesInputField(
+    VariableIdentifiers.CONTAINS_DATA_UNTIL: VariablesPeriodField(
         identifier=VariableIdentifiers.CONTAINS_DATA_UNTIL.value,
         display_name="Inneholder data t.o.m.",
         description="Variabelforekomsten i datasettet inneholder data til og med denne dato.",
-        type="date",
     ),
 }
 

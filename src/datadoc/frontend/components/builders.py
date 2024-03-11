@@ -12,12 +12,11 @@ import dash_bootstrap_components as dbc
 import ssb_dash_components as ssb
 from dash import html
 
+from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
+from datadoc.frontend.fields.display_base import VariablesFieldTypes
+
 if TYPE_CHECKING:
     from datadoc_model import model
-
-    from datadoc.frontend.fields.display_variables import VariablesCheckboxField
-    from datadoc.frontend.fields.display_variables import VariablesDropdownField
-    from datadoc.frontend.fields.display_variables import VariablesInputField
 
 
 class AlertTypes(Enum):
@@ -111,13 +110,8 @@ def build_ssb_button(text: str, icon_class: str, button_id: str) -> dbc.Button:
     )
 
 
-VARIABLES_METADATA_INPUT = "variables-metadata-input"
-
-
 def build_input_field_section(
-    metadata_inputs: list[
-        VariablesInputField | VariablesDropdownField | VariablesCheckboxField
-    ],
+    metadata_fields: list[VariablesFieldTypes],
     variable: model.Variable,
     language: str,
 ) -> dbc.Form:
@@ -133,7 +127,7 @@ def build_input_field_section(
                 language,
                 variable,
             )
-            for i in metadata_inputs
+            for i in metadata_fields
         ],
         id=VARIABLES_METADATA_INPUT,
         className="variables-input-group",

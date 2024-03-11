@@ -30,6 +30,10 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
+VARIABLES_METADATA_INPUT = "variables-metadata-input"
+VARIABLES_METADATA_DATE_INPUT = "variables-metadata-date-input"
+
 # Must be changed if new design
 INPUT_KWARGS = {
     "debounce": True,
@@ -158,7 +162,38 @@ class VariablesInputField(DisplayMetadata):
         return ssb.Input(
             label=self.display_name,
             id=variable_id,
-            debounce=self.type != "date",
+            debounce=True,
+            type=self.type,
+            disabled=not self.editable,
+            value=value,
+            className="variable-input",
+        )
+
+
+@dataclass
+class VariablesPeriodField(DisplayMetadata):
+    """Control how fields which define a time period are displayed.
+
+    These are a special case since two fields have a relationship to one another.>
+    """
+
+    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
+    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
+    type: str = "date"
+
+    def render(
+        self,
+        variable_id: dict,
+        language: str,  # noqa: ARG002
+        variable: model.Variable,
+    ) -> ssb.Input:
+        """Build Input date component."""
+        value = self.value_getter(variable, self.identifier)
+        variable_id["type"] = VARIABLES_METADATA_DATE_INPUT
+        return ssb.Input(
+            label=self.display_name,
+            id=variable_id,
+            debounce=False,
             type=self.type,
             disabled=not self.editable,
             value=value,
@@ -216,3 +251,11 @@ class VariablesCheckboxField(DisplayMetadata):
             class_name="ssb-checkbox",
             value=value,
         )
+
+
+VariablesFieldTypes = (
+    VariablesInputField
+    | VariablesDropdownField
+    | VariablesCheckboxField
+    | VariablesPeriodField
+)
