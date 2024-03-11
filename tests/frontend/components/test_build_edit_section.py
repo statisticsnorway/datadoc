@@ -11,7 +11,6 @@ NORSK_NYNORSK = "nn"
 ENGLISH = "en"
 
 
-# empty input returns empty string/list
 @pytest.mark.parametrize(
     ("build_edit_section"),
     [
