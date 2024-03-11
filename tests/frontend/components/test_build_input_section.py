@@ -12,30 +12,26 @@ from datadoc.frontend.fields.display_base import get_enum_options_for_language
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 
-NORSK_BOKMÅL = "nb"
-NORSK_NYNORSK = "nn"
-ENGLISH = "en"
-
 INPUT_FIELD_SECTION = [
     build_input_field_section(
         OBLIGATORY_VARIABLES_METADATA,
         model.Variable(short_name="hoveddiagnose"),
-        NORSK_NYNORSK,
+        SupportedLanguages.NORSK_NYNORSK,
     ),
     build_input_field_section(
         OBLIGATORY_VARIABLES_METADATA,
         model.Variable(short_name="pers_id"),
-        NORSK_BOKMÅL,
+        SupportedLanguages.NORSK_BOKMÅL,
     ),
     build_input_field_section(
         OBLIGATORY_VARIABLES_METADATA,
         model.Variable(short_name="ber_bruttoformue"),
-        ENGLISH,
+        SupportedLanguages.ENGLISH,
     ),
     build_input_field_section(
         OBLIGATORY_VARIABLES_METADATA,
         model.Variable(short_name="sykepenger"),
-        NORSK_BOKMÅL,
+        SupportedLanguages.NORSK_BOKMÅL,
     ),
 ]
 
@@ -71,33 +67,33 @@ def test_build_input_fields_props_input(input_field_section):
             build_input_field_section(
                 OBLIGATORY_VARIABLES_METADATA,
                 model.Variable(short_name="hoveddiagnose"),
-                NORSK_NYNORSK,
+                SupportedLanguages.NORSK_NYNORSK,
             ),
-            NORSK_NYNORSK,
+            SupportedLanguages.NORSK_NYNORSK,
         ),
         (
             build_input_field_section(
                 OBLIGATORY_VARIABLES_METADATA,
                 model.Variable(short_name="pers_id"),
-                NORSK_BOKMÅL,
+                SupportedLanguages.NORSK_BOKMÅL,
             ),
-            NORSK_BOKMÅL,
+            SupportedLanguages.NORSK_BOKMÅL,
         ),
         (
             build_input_field_section(
                 OBLIGATORY_VARIABLES_METADATA,
                 model.Variable(short_name="ber_bruttoformue"),
-                ENGLISH,
+                SupportedLanguages.ENGLISH,
             ),
-            ENGLISH,
+            SupportedLanguages.ENGLISH,
         ),
         (
             build_input_field_section(
                 OBLIGATORY_VARIABLES_METADATA,
                 model.Variable(short_name="sykepenger"),
-                NORSK_BOKMÅL,
+                SupportedLanguages.NORSK_BOKMÅL,
             ),
-            NORSK_BOKMÅL,
+            SupportedLanguages.NORSK_BOKMÅL,
         ),
     ],
 )
@@ -141,22 +137,22 @@ def test_build_input_fields_props_url(input_field_section):
         build_input_field_section(
             OPTIONAL_VARIABLES_METADATA,
             model.Variable(short_name="hoveddiagnose"),
-            NORSK_NYNORSK,
+            SupportedLanguages.NORSK_NYNORSK,
         ),
         build_input_field_section(
             OPTIONAL_VARIABLES_METADATA,
             model.Variable(short_name="pers_id"),
-            NORSK_BOKMÅL,
+            SupportedLanguages.NORSK_BOKMÅL,
         ),
         build_input_field_section(
             OPTIONAL_VARIABLES_METADATA,
             model.Variable(short_name="ber_bruttoformue"),
-            ENGLISH,
+            SupportedLanguages.ENGLISH,
         ),
         build_input_field_section(
             OPTIONAL_VARIABLES_METADATA,
             model.Variable(short_name="sykepenger"),
-            NORSK_BOKMÅL,
+            SupportedLanguages.NORSK_BOKMÅL,
         ),
     ],
 )
