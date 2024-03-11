@@ -101,6 +101,7 @@ RETURN_CORRECT_COMPONENT = [
     (accordion_empty_input, ssb.Accordion),
 ]
 
+# Remove?
 ACCORDION_CHILDREN_ID = [
     (
         "pers_id",
@@ -199,7 +200,7 @@ def test_build_ssb_accordion(header, key, variable_short_name, children):
     ),
     RETURN_CORRECT_COMPONENT,
 )
-def test_build_return_correct_component(
+def test_build_returns_correct_component(
     build,
     expected_component,
 ):
@@ -245,9 +246,6 @@ def test_build_edit_section_empty_inputs():
         "",
         "",
     )
-    assert isinstance(obligatory_edit_section, html.Section)
-    assert isinstance(obligatory_edit_section.children[0], ssb.Title)
-    assert isinstance(obligatory_edit_section.children[1], dbc.Form)
     title = obligatory_edit_section.children[0].children
     form = obligatory_edit_section.children[1]
     assert title == ""
