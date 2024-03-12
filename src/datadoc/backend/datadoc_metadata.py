@@ -24,7 +24,9 @@ from datadoc.enums import DataSetStatus
 from datadoc.frontend.fields.display_dataset import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
 )
-from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
+from datadoc.frontend.fields.display_variables import (
+    OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
+)
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
 from datadoc.utils import calculate_percentage
 from datadoc.utils import get_timestamp_now
@@ -48,30 +50,25 @@ class DataDocMetadata:
     ) -> None:
         """Read in a dataset if supplied, otherwise naively instantiate the class."""
         self._statistic_subject_mapping = statistic_subject_mapping
-
         self.metadata_document: pathlib.Path | CloudPath | None = None
         self.container: model.MetadataContainer | None = None
         self.dataset_path: pathlib.Path | CloudPath | None = None
         self.short_name: str | None = None
         self.dataset = model.Dataset()
         self.variables: list = []
-
         self.variables_lookup: dict[str, model.Variable] = {}
         if metadata_document_path:
             # In this case the user has specified an independent metadata document for editing
             # without a dataset.
             self.metadata_document = self._open_path(metadata_document_path)
-            self.extract_metadata_from_existing_document(self.metadata_document)
         elif dataset_path:
             self.dataset_path = self._open_path(dataset_path)
-            # The short_name is set as the dataset filename without file extension
-            self.short_name = self.dataset_path.stem
             # Build the metadata document path based on the dataset path
             # Example: /path/to/dataset.parquet -> /path/to/dataset__DOC.json
             self.metadata_document = self.dataset_path.parent / (
                 self.dataset_path.stem + METADATA_DOCUMENT_FILE_SUFFIX
             )
-            self.extract_metadata_from_files()
+        self.extract_metadata_from_files()
 
     @staticmethod
     def _open_path(path: str) -> pathlib.Path | CloudPath:
@@ -93,7 +90,12 @@ class DataDocMetadata:
         """
         if self.metadata_document is not None and self.metadata_document.exists():
             self.extract_metadata_from_existing_document(self.metadata_document)
-        elif self.dataset_path is not None:
+
+        if (
+            self.dataset_path is not None
+            and self.dataset == model.Dataset()
+            and len(self.variables) == 0
+        ):
             self.extract_metadata_from_dataset(self.dataset_path)
             self.dataset.id = uuid.uuid4()
             # Set default values for variables where appropriate
@@ -116,10 +118,7 @@ class DataDocMetadata:
         try:
             with document.open(mode="r", encoding="utf-8") as file:
                 fresh_metadata = json.load(file)
-            logger.info(
-                "Opened existing metadata file %s",
-                document,
-            )
+            logger.info("Opened existing metadata file %s", document)
             if self.is_metadata_in_container_structure(fresh_metadata):
                 self.container = model.MetadataContainer.model_validate_json(
                     json.dumps(fresh_metadata),
@@ -127,11 +126,13 @@ class DataDocMetadata:
                 datadoc_metadata = fresh_metadata["datadoc"]
             else:
                 datadoc_metadata = fresh_metadata
-
+            if datadoc_metadata is None:
+                # In this case we've read in a file with an empty "datadoc" structure.
+                # A typical example of this is a file produced from a pseudonymization process.
+                return
             datadoc_metadata = upgrade_metadata(
                 datadoc_metadata,
             )
-
             meta = model.DatadocMetadata.model_validate_json(
                 json.dumps(datadoc_metadata),
             )
@@ -139,7 +140,6 @@ class DataDocMetadata:
                 self.dataset = meta.dataset
             if meta.variables is not None:
                 self.variables = meta.variables
-
         except json.JSONDecodeError:
             logger.warning(
                 "Could not open existing metadata file %s. \
@@ -157,7 +157,7 @@ class DataDocMetadata:
         The container provides a structure for different 'types' of metadata, such as 'datadoc', 'pseudonymization' etc.
         This method returns True if the metadata is in the container structure, False otherwise.
         """
-        return "datadoc" in metadata and "dataset" in metadata["datadoc"]
+        return "datadoc" in metadata
 
     def extract_metadata_from_dataset(
         self,
@@ -176,7 +176,7 @@ class DataDocMetadata:
         )
 
         self.dataset = model.Dataset(
-            short_name=self.short_name,
+            short_name=self.dataset_path.stem if self.dataset_path else None,
             dataset_state=dapla_dataset_path_info.dataset_state,
             dataset_status=DataSetStatus.DRAFT,
             assessment=self.get_assessment_by_state(
@@ -259,12 +259,12 @@ class DataDocMetadata:
             ],
         )
         for variable in self.variables:
-            num_all_fields += len(OBLIGATORY_VARIABLES_METADATA)
+            num_all_fields += len(OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS)
             num_set_fields += len(
                 [
                     k
                     for k, v in variable.model_dump().items()
-                    if k in OBLIGATORY_VARIABLES_METADATA and v is not None
+                    if k in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS and v is not None
                 ],
             )
         return calculate_percentage(num_set_fields, num_all_fields)

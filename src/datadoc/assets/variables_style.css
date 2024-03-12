@@ -41,22 +41,27 @@
     gap: 1rem;
 }
 
-.ssb-accordion.variable{
+.ssb-accordion.variable-accordion{
     border: 2px solid #62919A;
     padding: 0.5rem;
+}
+
+.ssb-accordion.variable-accordion > .accordion-body {
+    padding: 1rem;
 }
 
 .variables-input-group{
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: flex-start;
+    align-items: flex-start;
     gap: 1rem;
     padding-top: 1rem;
 }
 
-.input-section{
+/*.input-section{
     margin: 1rem;
-}
+}*/
 
 .alert-section{
     display: flex;
@@ -72,17 +77,16 @@
 
 }
 
-.ssb-input.variables-input{
-    max-width: 800px;
+.ssb-input.variable-input{
+    max-width: 500px;
     width: 100%;
 }
 
-.ssb-dropdown.variables-dropdown{
-    max-width: 800px;
-    width: 100%;
+.form-check.ssb-checkbox{
+    align-self: center;
 }
 
-.ssb-dropdown.variables-input{
-    max-width: 800px;
-    width: 100%;
+/*Target child selector (label) of variable-dropdown*/
+.ssb-dropdown.variable-dropdown > .dropdown-label{
+    margin-bottom: 0.6rem;
 }

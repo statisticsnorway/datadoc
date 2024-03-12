@@ -34,8 +34,9 @@ MetadataInputTypes: TypeAlias = (
 
 def update_global_language_state(language: SupportedLanguages) -> None:
     """Update global language state."""
-    logger.debug("Updating language: %s", language.name)
-    state.current_metadata_language = language
+    if state.current_metadata_language != language:
+        logger.debug("Updating language: %s", language.name)
+        state.current_metadata_language = language
 
 
 def get_language_strings_enum(
@@ -108,7 +109,7 @@ DATE_VALIDATION_MESSAGE = f"{VALIDATION_ERROR}contains_data_from must be the sam
 def parse_and_validate_dates(
     start_date: str | datetime.datetime | None,
     end_date: str | datetime.datetime | None,
-) -> tuple[datetime.date | None, datetime.date | None]:
+) -> tuple[datetime.datetime | None, datetime.datetime | None]:
     """Parse and validate the given dates.
 
      Validate that:

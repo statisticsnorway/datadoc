@@ -77,7 +77,7 @@ def test_metadata_document_percent_complete(metadata: DataDocMetadata):
     metadata.dataset = document.dataset  # type: ignore [assignment]
     metadata.variables = document.variables  # type: ignore [assignment]
 
-    assert metadata.percent_complete == 17  # noqa: PLR2004
+    assert metadata.percent_complete == 16  # noqa: PLR2004
 
 
 def test_write_metadata_document(
@@ -143,15 +143,15 @@ def test_metadata_id(metadata: DataDocMetadata):
     [TEST_EXISTING_METADATA_DIRECTORY / "invalid_id_field"],
 )
 def test_existing_metadata_none_id(
-    existing_metadata_file: str,
+    existing_metadata_file: Path,
     metadata: DataDocMetadata,
 ):
-    with Path.open(Path(existing_metadata_file)) as f:
+    with existing_metadata_file.open() as f:
         pre_open_id: None = json.load(f)["datadoc"]["dataset"]["id"]
     assert pre_open_id is None
     assert isinstance(metadata.dataset.id, UUID)
     metadata.write_metadata_document()
-    with Path.open(Path(existing_metadata_file)) as f:
+    with existing_metadata_file.open() as f:
         post_write_id = json.load(f)["datadoc"]["dataset"]["id"]
     assert post_write_id == str(metadata.dataset.id)
 
@@ -161,18 +161,18 @@ def test_existing_metadata_none_id(
     [TEST_EXISTING_METADATA_DIRECTORY / "valid_id_field"],
 )
 def test_existing_metadata_valid_id(
-    existing_metadata_file: str,
+    existing_metadata_file: Path,
     metadata: DataDocMetadata,
 ):
     pre_open_id = ""
     post_write_id = ""
-    with Path.open(Path(existing_metadata_file)) as f:
+    with existing_metadata_file.open() as f:
         pre_open_id = json.load(f)["datadoc"]["dataset"]["id"]
     assert pre_open_id is not None
     assert isinstance(metadata.dataset.id, UUID)
     assert str(metadata.dataset.id) == pre_open_id
     metadata.write_metadata_document()
-    with Path.open(Path(existing_metadata_file)) as f:
+    with existing_metadata_file.open() as f:
         post_write_id = json.load(f)["datadoc"]["dataset"]["id"]
     assert post_write_id == pre_open_id
 
@@ -188,11 +188,11 @@ def test_direct_person_identifying_default_value(metadata: DataDocMetadata):
 
 
 def test_save_file_path_metadata_field(
-    existing_metadata_file: str,
+    existing_metadata_file: Path,
     metadata: DataDocMetadata,
 ):
     metadata.write_metadata_document()
-    with Path.open(Path(existing_metadata_file)) as f:
+    with existing_metadata_file.open() as f:
         saved_file_path = json.load(f)["datadoc"]["dataset"]["file_path"]
     assert saved_file_path == str(metadata.dataset_path)
 
@@ -279,7 +279,6 @@ def test_dataset_status_default_value(
         subject_mapping_fake_statistical_structure,
         str(dataset_path),
     )
-
     assert datadoc_metadata.dataset.dataset_status == expected_type
 
 
@@ -345,3 +344,22 @@ def test_extract_subject_field_value_from_statistic_structure_xml(
     # TODO @mmwinther: Remove multiple_language_support once the model is updated.
     # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
     assert metadata.dataset.subject_field.en == expected_subject_code  # type: ignore [union-attr]
+
+
+@pytest.mark.parametrize(
+    "existing_metadata_path",
+    [TEST_EXISTING_METADATA_DIRECTORY / "pseudo"],
+)
+def test_existing_pseudo_metadata_file(
+    existing_metadata_file: Path,
+    metadata: DataDocMetadata,
+):
+    pre_open_metadata = json.loads(existing_metadata_file.read_text())
+    metadata.write_metadata_document()
+    post_open_metadata = json.loads(existing_metadata_file.read_text())
+
+    assert len(metadata.variables) == 8  # noqa: PLR2004
+    assert (
+        pre_open_metadata["pseudonymization"] == post_open_metadata["pseudonymization"]
+    )
+    assert post_open_metadata["datadoc"] is not None

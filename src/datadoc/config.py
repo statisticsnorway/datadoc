@@ -79,11 +79,6 @@ def get_dash_development_mode() -> bool:
     return _get_config_item("DATADOC_DASH_DEVELOPMENT_MODE") == "True"
 
 
-def get_toggle_new_variables_workspace() -> bool:
-    """Toggle on the new variables workspace."""
-    return _get_config_item("DATADOC_TOGGLE_NEW_VARIABLE_WORKSPACE") == "True"
-
-
 def get_jupyterhub_service_prefix() -> str | None:
     """Get the JupyterHub service prefix."""
     return _get_config_item("JUPYTERHUB_SERVICE_PREFIX")
@@ -133,3 +128,8 @@ def get_oidc_token() -> str | None:
 def get_unit_code() -> int | None:
     """The code for the Unit Type code list in Klass."""
     return int(_get_config_item("DATADOC_UNIT_CODE") or 702)
+
+
+def get_organisational_unit_code() -> int | None:
+    """The code for the organisational units code list in Klass."""
+    return int(_get_config_item("DATADOC_ORGANISATIONAL_UNIT_CODE") or 83)

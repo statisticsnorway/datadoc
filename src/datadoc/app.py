@@ -14,14 +14,11 @@ from flask_healthz import healthz
 
 from datadoc import config
 from datadoc import state
+from datadoc.backend.code_list import CodeList
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-from datadoc.backend.unit_types import UnitTypes
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.register_callbacks import register_callbacks
-from datadoc.frontend.callbacks.register_callbacks import (
-    register_new_variables_tab_callbacks,
-)
 from datadoc.frontend.components.alerts import dataset_validation_error
 from datadoc.frontend.components.alerts import opened_dataset_error
 from datadoc.frontend.components.alerts import opened_dataset_success
@@ -32,7 +29,6 @@ from datadoc.frontend.components.control_bars import build_language_dropdown
 from datadoc.frontend.components.control_bars import header
 from datadoc.frontend.components.control_bars import progress_bar
 from datadoc.frontend.components.dataset_tab import build_dataset_tab
-from datadoc.frontend.components.new_variables_tab import build_new_variables_tab
 from datadoc.frontend.components.variables_tab import build_variables_tab
 from datadoc.logging.logging_config import configure_logging
 from datadoc.utils import get_app_version
@@ -49,14 +45,6 @@ def build_app(app: type[Dash]) -> Dash:
         build_dataset_tab(),
         build_variables_tab(),
     ]
-
-    # TODO @mmwinther: Remove this when new variables workspace is ready for production.
-    # https://statistics-norway.atlassian.net/browse/DPMETA-14
-    if config.get_toggle_new_variables_workspace():
-        tabs_children.append(build_new_variables_tab())
-        logger.warning(
-            "New variables workspace is enabled, not yet ready for production!",
-        )
 
     app.layout = dbc.Container(
         style={"padding": "4px"},
@@ -84,11 +72,6 @@ def build_app(app: type[Dash]) -> Dash:
     )
 
     register_callbacks(app)
-
-    # TODO @mmwinther: Remove this when new variables workspace is ready for production.
-    # https://statistics-norway.atlassian.net/browse/DPMETA-14
-    if config.get_toggle_new_variables_workspace():
-        register_new_variables_tab_callbacks(app)
 
     return app
 
@@ -140,8 +123,12 @@ def collect_data_from_external_sources() -> None:
         config.get_statistical_subject_source_url(),
     )
 
-    state.unit_types = UnitTypes(
+    state.unit_types = CodeList(
         config.get_unit_code(),
+    )
+
+    state.organisational_units = CodeList(
+        config.get_organisational_unit_code(),
     )
 
 

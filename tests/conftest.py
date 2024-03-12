@@ -19,9 +19,9 @@ from bs4 import ResultSet
 from datadoc_model import model
 
 from datadoc import state
+from datadoc.backend.code_list import CodeList
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-from datadoc.backend.unit_types import UnitTypes
 from datadoc.backend.user_info import TestUserInfo
 from tests.backend.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
@@ -33,7 +33,7 @@ from .utils import TEST_PARQUET_FILE_NAME
 from .utils import TEST_PARQUET_FILEPATH
 from .utils import TEST_RESOURCES_DIRECTORY
 
-UNIT_TYPES_DIR = "unit_types"
+CODE_LIST_DIR = "code_list"
 
 if TYPE_CHECKING:
     from pytest_mock import MockerFixture
@@ -91,13 +91,13 @@ def existing_metadata_path() -> Path:
 
 
 @pytest.fixture()
-def existing_metadata_file(tmp_path: Path, existing_metadata_path: Path) -> str:
+def existing_metadata_file(tmp_path: Path, existing_metadata_path: Path) -> Path:
     # Setup by copying the file into the relevant directory
     shutil.copy(
         existing_metadata_path / TEST_EXISTING_METADATA_FILE_NAME,
         tmp_path / TEST_EXISTING_METADATA_FILE_NAME,
     )
-    return str(tmp_path / TEST_EXISTING_METADATA_FILE_NAME)
+    return tmp_path / TEST_EXISTING_METADATA_FILE_NAME
 
 
 @pytest.fixture(autouse=True)
@@ -204,45 +204,45 @@ def subject_mapping_http_exception(
 
 
 @pytest.fixture()
-def unit_types_csv_filepath_nb() -> pathlib.Path:
-    return TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "unit_types_nb.csv"
+def code_list_csv_filepath_nb() -> pathlib.Path:
+    return TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_nb.csv"
 
 
 @pytest.fixture()
-def unit_types_csv_filepath_nn() -> pathlib.Path:
-    return TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "unit_types_nn.csv"
+def code_list_csv_filepath_nn() -> pathlib.Path:
+    return TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_nn.csv"
 
 
 @pytest.fixture()
-def unit_types_csv_filepath_en() -> pathlib.Path:
-    return TEST_RESOURCES_DIRECTORY / UNIT_TYPES_DIR / "unit_types_en.csv"
+def code_list_csv_filepath_en() -> pathlib.Path:
+    return TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_en.csv"
 
 
 @pytest.fixture()
 def _mock_fetch_dataframe(
     mocker,
-    unit_types_csv_filepath_nb: pathlib.Path,
-    unit_types_csv_filepath_nn: pathlib.Path,
-    unit_types_csv_filepath_en: pathlib.Path,
+    code_list_csv_filepath_nb: pathlib.Path,
+    code_list_csv_filepath_nn: pathlib.Path,
+    code_list_csv_filepath_en: pathlib.Path,
 ) -> None:
-    def fake_unit_types() -> dict[str, pd.DataFrame]:
+    def fake_code_list() -> dict[str, pd.DataFrame]:
         return {
-            "nb": pd.read_csv(unit_types_csv_filepath_nb, converters={"code": str}),
-            "nn": pd.read_csv(unit_types_csv_filepath_nn, converters={"code": str}),
-            "en": pd.read_csv(unit_types_csv_filepath_en, converters={"code": str}),
+            "nb": pd.read_csv(code_list_csv_filepath_nb, converters={"code": str}),
+            "nn": pd.read_csv(code_list_csv_filepath_nn, converters={"code": str}),
+            "en": pd.read_csv(code_list_csv_filepath_en, converters={"code": str}),
         }
 
     mocker.patch(
-        "datadoc.backend.unit_types.UnitTypes._fetch_data_from_external_source",
-        functools.partial(fake_unit_types),
+        "datadoc.backend.code_list.CodeList._fetch_data_from_external_source",
+        functools.partial(fake_code_list),
     )
 
 
 @pytest.fixture()
-def unit_types_fake_structure(
+def code_list_fake_structure(
     _mock_fetch_dataframe,
-) -> UnitTypes:
-    return UnitTypes(100)
+) -> CodeList:
+    return CodeList(100)
 
 
 @pytest.fixture()

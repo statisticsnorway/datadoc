@@ -13,9 +13,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from datadoc.backend.code_list import CodeList
     from datadoc.backend.datadoc_metadata import DataDocMetadata
     from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-    from datadoc.backend.unit_types import UnitTypes
     from datadoc.enums import SupportedLanguages
 
 
@@ -26,4 +26,6 @@ current_metadata_language: SupportedLanguages
 
 statistic_subject_mapping: StatisticSubjectMapping
 
-unit_types: UnitTypes
+unit_types: CodeList
+
+organisational_units: CodeList
