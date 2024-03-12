@@ -2,12 +2,15 @@ name: Docker build
 
 on:
   release:
+    types: [published]
   push:
     branches:
-      - "master"
-  pull_request:
-    branches:
-      - "master"
+      - master
+    paths:
+      - "src/datadoc/**"
+      - "poetry.lock"
+      - "Dockerfile"
+      - ".github/workflows/docker-build.yml"
 
 env:
   REGISTRY: europe-north1-docker.pkg.dev/artifact-registry-5n/dapla-metadata-docker/datadoc

@@ -3,9 +3,16 @@ name: Tests
 on:
   push:
     branches:
-      - main
-      - master
-  pull_request:
+      - "**"
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "docs/**"
+      - "pyproject.toml"
+      - "poetry.lock"
+      - ".pre-commit-config.yaml"
+      - "noxfile.py"
+      - ".github/workflows/tests.yml"
 
 jobs:
   tests:
