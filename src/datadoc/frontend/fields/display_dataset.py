@@ -129,8 +129,8 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
     ),
     DatasetIdentifiers.DATASET_STATUS: DisplayDatasetMetadataDropdown(
         identifier=DatasetIdentifiers.DATASET_STATUS.value,
-        display_name="Livssyklus",
-        description="Livssyklus for datasettet",
+        display_name="Status",
+        description="Status for datasettet",
         options_getter=functools.partial(
             get_enum_options_for_language,
             enums.DataSetStatus,
