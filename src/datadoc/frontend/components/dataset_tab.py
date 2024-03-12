@@ -62,7 +62,7 @@ def build_dataset_metadata_accordion(n_clicks: int = 0) -> list[dbc.AccordionIte
         accordion_item_id=f"obligatory-metadata-accordion-item-{n_clicks}",
     )
     optional = build_dataset_metadata_accordion_item(
-        "Valgfritt",
+        "Anbefalt",
         OPTIONAL_DATASET_METADATA,
         accordion_item_id=f"optional-metadata-accordion-item-{n_clicks}",
     )
