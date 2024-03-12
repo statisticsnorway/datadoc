@@ -30,11 +30,12 @@ from datadoc.frontend.components.control_bars import header
 from datadoc.frontend.components.control_bars import progress_bar
 from datadoc.frontend.components.dataset_tab import build_dataset_tab
 from datadoc.frontend.components.variables_tab import build_variables_tab
+from datadoc.logging.logging_config import configure_logging
 from datadoc.utils import get_app_version
 from datadoc.utils import pick_random_port
 from datadoc.utils import running_in_notebook
 
-logging.basicConfig(level=config.get_log_level(), force=True)
+configure_logging()
 logger = logging.getLogger(__name__)
 
 
@@ -146,7 +147,9 @@ def main(dataset_path: str | None = None) -> None:
         )
     else:
         if dev_mode := config.get_dash_development_mode():
-            logger.warning("Starting in Development Mode. NOT SUITABLE FOR PRODUCTION.")
+            logger.warning(
+                "Starting in Development Mode. NOT SUITABLE FOR PRODUCTION.",
+            )
         app.run(debug=dev_mode, port=port)
 
 

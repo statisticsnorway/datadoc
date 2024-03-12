@@ -58,6 +58,7 @@ def open_dataset_handling(
     try:
         state.metadata = open_file(file_path)
     except FileNotFoundError:
+        logger.exception("File %s not found", str(file_path))
         return (
             False,
             True,
