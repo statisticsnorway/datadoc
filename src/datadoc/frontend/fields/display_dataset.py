@@ -130,7 +130,7 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
     DatasetIdentifiers.DATASET_STATUS: DisplayDatasetMetadataDropdown(
         identifier=DatasetIdentifiers.DATASET_STATUS.value,
         display_name="Status",
-        description="Status for datasettet",
+        description="Livssyklus for datasettet",
         options_getter=functools.partial(
             get_enum_options_for_language,
             enums.DataSetStatus,
@@ -148,7 +148,7 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
     ),
     DatasetIdentifiers.NAME: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.NAME.value,
-        display_name="Datasettnavn",
+        display_name="Navn",
         description="Datasettnavn",
         obligatory=True,
         multiple_language_support=True,
@@ -168,7 +168,7 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
     ),
     DatasetIdentifiers.POPULATION_DESCRIPTION: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.POPULATION_DESCRIPTION.value,
-        display_name="Populasjonsbeskrivelsen",
+        display_name="Populasjon",
         description="Populasjonen datasettet dekker. Populasjonsbeskrivelsen inkluderer enhetstype, geografisk dekningsområde og tidsperiode.",
         obligatory=True,
         multiple_language_support=True,
@@ -226,13 +226,13 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
     ),
     DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION.value,
-        display_name="Geografiskedekningsområde",
+        display_name="Geografisk dekningsområde",
         description="Beskrivelse av datasettets geografiske dekningsområde. Målet er på sikt at dette skal hentes fra Klass, men fritekst vil også kunne brukes.",
         multiple_language_support=True,
     ),
     DatasetIdentifiers.ID: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.ID.value,
-        display_name="Unik ID",
+        display_name="ID",
         description="Unik SSB-identifikator for datasettet (løpenummer)",
         obligatory=True,
         editable=False,

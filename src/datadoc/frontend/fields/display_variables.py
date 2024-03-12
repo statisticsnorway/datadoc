@@ -154,7 +154,7 @@ DISPLAY_VARIABLES: dict[
     ),
     VariableIdentifiers.IDENTIFIER: VariablesInputField(
         identifier=VariableIdentifiers.IDENTIFIER.value,
-        display_name="Unik ID",
+        display_name="ID",
         description="Unik SSB identifikator for variabelforekomsten i datasettet",
         editable=False,
     ),
