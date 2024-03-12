@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import pathlib
 import re
 from abc import ABC
@@ -20,6 +21,8 @@ if TYPE_CHECKING:
     import datetime
     import os
     from datetime import date
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -110,7 +113,7 @@ class SsbDateFormat(DateFormat):
     def get_floor(self, period_string: str) -> date | None:
         """Convert SSB format to date-string and return first date.
 
-        If not excisting SSB format, return None
+        If not existing SSB format, return None
 
         >>> SSB_BIMESTER.get_floor("2003B8")
         None
@@ -122,6 +125,7 @@ class SsbDateFormat(DateFormat):
             period = year + month
             return arrow.get(period, self.arrow_pattern).floor(self.timeframe).date()
         except KeyError:
+            logger.exception("Error while converting to SSB date format")
             return None
 
     def get_ceil(self, period_string: str) -> date | None:

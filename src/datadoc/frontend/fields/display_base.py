@@ -81,6 +81,7 @@ def get_comma_separated_string(metadata: BaseModel, identifier: str) -> str:
     try:
         return ", ".join(value)
     except TypeError:
+        logger.exception("Type error")
         return ""
 
 

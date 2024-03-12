@@ -2,12 +2,15 @@
 
 import datetime
 import importlib
+import logging
 from typing import Any
 
 from datadoc_model import model
 from pydantic import AnyUrl
 
 from datadoc.enums import SupportedLanguages
+
+logger = logging.getLogger(__name__)
 
 METADATA_DOCUMENT_FILE_SUFFIX = "__DOC.json"
 
