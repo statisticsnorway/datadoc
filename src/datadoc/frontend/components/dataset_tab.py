@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import dash_bootstrap_components as dbc
+import ssb_dash_components as ssb
 from dash import html
 
 from datadoc.frontend.components.builders import build_ssb_styled_tab
@@ -78,14 +79,19 @@ def build_dataset_tab() -> dbc.Tab:
     """Build the Dataset metadata tab."""
     return build_ssb_styled_tab(
         "Datasett",
-        dbc.Container(
+        html.Article(
             [
-                dbc.Row(html.H2("Datasett detaljer", className="ssb-title")),
-                dbc.Accordion(
-                    id="dataset-accordion",
-                    always_open=True,
-                    children=build_dataset_metadata_accordion(),
+                html.Header(
+                    [
+                        ssb.Title(
+                            "Datasett detaljer",
+                            size=2,
+                            className="dataset-title",
+                        ),
+                    ],
+                    className="dataset-header",
                 ),
             ],
+            className="page-wrapper",
         ),
     )
