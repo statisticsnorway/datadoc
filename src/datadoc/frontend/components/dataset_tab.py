@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     import dash_bootstrap_components as dbc
 
 DATASET_METADATA_INPUT = "dataset-metadata-input"
-SECTION_WRAPPER_ID = "section-wrapper"
+SECTION_WRAPPER_ID = "section-wrapper-id"
 
 
 def build_new_dataset_tab() -> dbc.Tab:
@@ -33,7 +33,7 @@ def build_new_dataset_tab() -> dbc.Tab:
                     className="dataset-header",
                 ),
                 html.Article(
-                    id="dataset-section-wrapper",
+                    id=SECTION_WRAPPER_ID,
                     className="main-content",
                 ),
             ],
