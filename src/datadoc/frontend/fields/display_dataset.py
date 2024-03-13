@@ -135,6 +135,7 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
             get_enum_options_for_language,
             enums.DataSetStatus,
         ),
+        obligatory=True,
     ),
     DatasetIdentifiers.DATASET_STATE: DisplayDatasetMetadataDropdown(
         identifier=DatasetIdentifiers.DATASET_STATE.value,
@@ -185,6 +186,7 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         display_name="Versjonsbeskrivelse",
         description="Årsak/grunnlag for denne versjonen av datasettet i form av beskrivende tekst.",
         multiple_language_support=True,
+        obligatory=True,
     ),
     DatasetIdentifiers.UNIT_TYPE: DisplayDatasetMetadataDropdown(
         identifier=DatasetIdentifiers.UNIT_TYPE.value,
@@ -192,6 +194,7 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
         description="Primær enhetstype for datafil, datatabell eller datasett. Se  Vi jobber med en avklaring av behov for flere enhetstyper her.",
         multiple_language_support=False,
         options_getter=get_unit_type_options,
+        obligatory=True,
     ),
     DatasetIdentifiers.TEMPORALITY_TYPE: DisplayDatasetMetadataDropdown(
         identifier=DatasetIdentifiers.TEMPORALITY_TYPE.value,
@@ -201,12 +204,14 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
             get_enum_options_for_language,
             enums.TemporalityTypeType,
         ),
+        obligatory=True,
     ),
     DatasetIdentifiers.DESCRIPTION: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.DESCRIPTION.value,
         display_name="Beskrivelse",
         description="Beskrivelse av datasettet",
         multiple_language_support=True,
+        obligatory=True,
     ),
     DatasetIdentifiers.SUBJECT_FIELD: DisplayDatasetMetadataDropdown(
         identifier=DatasetIdentifiers.SUBJECT_FIELD.value,
