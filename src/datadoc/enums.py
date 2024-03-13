@@ -84,8 +84,8 @@ class Assessment(LanguageStringsEnum):
     )
     PROTECTED = LanguageStringType(
         en=model.Assessment.PROTECTED.value,
-        nn="BESKYTTET",
-        nb="BESKYTTET",
+        nn="SKJERMET",
+        nb="SKJERMET",
     )
     OPEN = LanguageStringType(en=model.Assessment.OPEN.value, nn="ÅPEN", nb="ÅPEN")
 
