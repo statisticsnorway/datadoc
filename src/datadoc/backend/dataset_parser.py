@@ -12,14 +12,15 @@ from abc import ABC
 from abc import abstractmethod
 
 import pandas as pd
-import pyarrow.parquet as pq
 from datadoc_model.model import LanguageStringType
 from datadoc_model.model import Variable
+from pyarrow import parquet as pq
 
 from datadoc import state
 from datadoc.enums import DataType
 
 if t.TYPE_CHECKING:
+    import pyarrow as pa
     from cloudpathlib import CloudPath
 
 KNOWN_INTEGER_TYPES = (
@@ -169,13 +170,16 @@ class DatasetParserParquet(DatasetParser):
     def get_fields(self) -> list[Variable]:
         """Extract the fields from this dataset."""
         with self.dataset.open(mode="rb") as f:
-            data_table = pq.read_table(f)  # type: ignore [arg-type]
+            # Type stubs for pyarrow are incorrect see https://github.com/zen-xu/pyarrow-stubs/issues/4
+            schema: pa.Schema = pq.read_schema(f)  # type: ignore  # noqa: PGH003
         return [
             Variable(
-                short_name=data_field.name,
+                short_name=data_field.name.strip(),
                 data_type=self.transform_data_type(str(data_field.type)),
             )
-            for data_field in data_table.schema
+            for data_field in schema
+            if data_field.name
+            != "__index_level_0__"  # Index columns should not be documented
         ]
 
 
