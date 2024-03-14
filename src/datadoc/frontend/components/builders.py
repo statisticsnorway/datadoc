@@ -134,6 +134,17 @@ def build_input_field_section(
     )
 
 
+def build_dataset_input_field_section() -> dbc.Form:
+    """Create input fields for dataset."""
+    return dbc.Form(
+        [
+            ssb.Input(label="SSB input"),
+        ],
+        id="new-dataset-form",
+        className="dataset-input-group",
+    )
+
+
 def build_edit_section(
     metadata_inputs: list,
     title: str,
@@ -157,6 +168,7 @@ def build_dataset_edit_section(title: str) -> html.Section:
         id={"type": "dataset-edit-section", "title": title},
         children=[
             ssb.Title(title, size=3, className="input-section-title"),
+            build_dataset_input_field_section(),
         ],
         className="dataset-edit-section",
     )
