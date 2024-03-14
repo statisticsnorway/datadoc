@@ -25,9 +25,11 @@ from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.utils import update_global_language_state
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
+from datadoc.frontend.components.builders import build_dataset_edit_section
 from datadoc.frontend.components.builders import build_edit_section
 from datadoc.frontend.components.builders import build_ssb_accordion
 from datadoc.frontend.components.dataset_tab import DATASET_METADATA_INPUT
+from datadoc.frontend.components.dataset_tab import SECTION_WRAPPER_ID
 from datadoc.frontend.components.dataset_tab import build_dataset_metadata_accordion
 from datadoc.frontend.components.variables_tab import ACCORDION_WRAPPER_ID
 from datadoc.frontend.components.variables_tab import VARIABLES_INFORMATION_ID
@@ -207,6 +209,22 @@ def register_callbacks(app: Dash) -> None:
                 ],
             )
             for variable in list(state.metadata.variables)
+        ]
+
+    # Work in progress...
+    @app.callback(
+        Output(SECTION_WRAPPER_ID, "children"),
+        Input("language-dropdown", "value"),
+        prevent_initial_call=True,
+    )
+    def callback_populate_dataset_workspace(language: str) -> list:
+        """Create dataset workspace with sections."""
+        update_global_language_state(SupportedLanguages(language))
+        logger.info("Populating new dataset workspace")
+        return [
+            build_dataset_edit_section("Obligatorisk"),
+            build_dataset_edit_section("Anbefalt"),
+            build_dataset_edit_section("Maskingenerert"),
         ]
 
     @app.callback(
