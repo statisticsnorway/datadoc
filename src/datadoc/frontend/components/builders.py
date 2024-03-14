@@ -19,6 +19,8 @@ from datadoc.frontend.fields.display_base import VariablesFieldTypes
 if TYPE_CHECKING:
     from datadoc_model import model
 
+DATASET_METADATA_INPUT = "dataset-metadata-input"
+
 
 class AlertTypes(Enum):
     """Types of alerts."""
@@ -145,6 +147,7 @@ def build_dataset_input_field_section(
             i.render(
                 {
                     "type": "NEW_DATASET",
+                    # "type": DATASET_METADATA_INPUT,  # noqa: ERA001
                     "id": i.identifier,
                 },
                 language,
