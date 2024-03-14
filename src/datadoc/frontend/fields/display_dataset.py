@@ -52,7 +52,6 @@ def get_unit_type_options(
     ]
 
 
-# Maybe 'title' and 'id'?
 def get_owner_options(
     language: SupportedLanguages,
 ) -> list[dict[str, str]]:
