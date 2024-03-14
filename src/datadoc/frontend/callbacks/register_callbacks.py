@@ -34,6 +34,9 @@ from datadoc.frontend.components.variables_tab import VARIABLES_INFORMATION_ID
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
+from datadoc.frontend.fields.display_dataset import NON_EDITABLE_DATASET_METADATA
+from datadoc.frontend.fields.display_dataset import OBLIGATORY_EDITABLE_DATASET_METADATA
+from datadoc.frontend.fields.display_dataset import OPTIONAL_DATASET_METADATA
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
@@ -219,9 +222,21 @@ def register_callbacks(app: Dash) -> None:
         update_global_language_state(SupportedLanguages(language))
         logger.info("Populating new dataset workspace")
         return [
-            build_dataset_edit_section("Obligatorisk", language),
-            build_dataset_edit_section("Anbefalt", language),
-            build_dataset_edit_section("Maskingenerert", language),
+            build_dataset_edit_section(
+                "Obligatorisk",
+                OBLIGATORY_EDITABLE_DATASET_METADATA,
+                language,
+            ),
+            build_dataset_edit_section(
+                "Anbefalt",
+                OPTIONAL_DATASET_METADATA,
+                language,
+            ),
+            build_dataset_edit_section(
+                "Maskingenerert",
+                NON_EDITABLE_DATASET_METADATA,
+                language,
+            ),
         ]
 
     @app.callback(

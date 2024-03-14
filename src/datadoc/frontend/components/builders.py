@@ -13,8 +13,8 @@ import ssb_dash_components as ssb
 from dash import html
 
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
+from datadoc.frontend.fields.display_base import DatasetFieldTypes
 from datadoc.frontend.fields.display_base import VariablesFieldTypes
-from datadoc.frontend.fields.display_dataset import OBLIGATORY_EDITABLE_DATASET_METADATA
 
 if TYPE_CHECKING:
     from datadoc_model import model
@@ -135,7 +135,10 @@ def build_input_field_section(
     )
 
 
-def build_dataset_input_field_section(language: str) -> dbc.Form:
+def build_dataset_input_field_section(
+    metadata_fields: list[DatasetFieldTypes],
+    language: str,
+) -> dbc.Form:
     """Create input fields for dataset."""
     return dbc.Form(
         [
@@ -146,7 +149,8 @@ def build_dataset_input_field_section(language: str) -> dbc.Form:
                 },
                 language,
             )
-            for i in OBLIGATORY_EDITABLE_DATASET_METADATA
+            for i in metadata_fields
+            # for i in OBLIGATORY_EDITABLE_DATASET_METADATA
         ],
         id="new-dataset-form",
         className="dataset-input-group",
@@ -170,13 +174,17 @@ def build_edit_section(
     )
 
 
-def build_dataset_edit_section(title: str, language: str) -> html.Section:
+def build_dataset_edit_section(
+    title: str,
+    metadata_inputs: list,
+    language: str,
+) -> html.Section:
     """Create edit section for dataset."""
     return html.Section(
         id={"type": "dataset-edit-section", "title": title},
         children=[
             ssb.Title(title, size=3, className="input-section-title"),
-            build_dataset_input_field_section(language),
+            build_dataset_input_field_section(metadata_inputs, language),
         ],
         className="dataset-edit-section",
     )

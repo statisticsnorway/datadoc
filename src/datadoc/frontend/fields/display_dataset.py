@@ -31,8 +31,8 @@ def get_statistical_subject_options(
     """Collect the statistical subject options for the given language."""
     return [
         {
-            "label": f"{primary.get_title(language)} - {secondary.get_title(language)}",
-            "value": secondary.subject_code,
+            "title": f"{primary.get_title(language)} - {secondary.get_title(language)}",
+            "id": secondary.subject_code,
         }
         for primary in state.statistic_subject_mapping.primary_subjects
         for secondary in primary.secondary_subjects
@@ -45,8 +45,8 @@ def get_unit_type_options(
     """Collect the unit type options for the given language."""
     return [
         {
-            "label": unit_type.get_title(language),
-            "value": unit_type.code,
+            "title": unit_type.get_title(language),
+            "id": unit_type.code,
         }
         for unit_type in state.unit_types.classifications
     ]
@@ -59,8 +59,8 @@ def get_owner_options(
     """Collect the owner options for the given language."""
     return [
         {
-            "label": f"{option.code} - {option.get_title(language)}",
-            "value": option.code,
+            "title": f"{option.code} - {option.get_title(language)}",
+            "id": option.code,
         }
         for option in state.organisational_units.classifications
     ]
