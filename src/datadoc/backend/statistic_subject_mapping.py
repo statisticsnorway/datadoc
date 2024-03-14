@@ -141,8 +141,9 @@ class StatisticSubjectMapping(GetExternalSource):
     @property
     def primary_subjects(self) -> list[PrimarySubject]:
         """Getter for primary subjects."""
-        self._parse_xml_if_loaded()
-        logger.debug("Got %s primary subjects", len(self._primary_subjects))
+        if not self._primary_subjects:
+            self._parse_xml_if_loaded()
+            logger.debug("Got %s primary subjects", len(self._primary_subjects))
         return self._primary_subjects
 
     def _parse_xml_if_loaded(self) -> bool:
