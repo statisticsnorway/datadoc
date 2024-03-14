@@ -211,6 +211,7 @@ def register_callbacks(app: Dash) -> None:
             for variable in list(state.metadata.variables)
         ]
 
+    # Work in progress...
     @app.callback(
         Output(SECTION_WRAPPER_ID, "children"),
         Input("language-dropdown", "value"),
@@ -222,6 +223,8 @@ def register_callbacks(app: Dash) -> None:
         logger.info("Populating new dataset workspace")
         return [
             build_dataset_edit_section("Obligatorisk"),
+            build_dataset_edit_section("Anbefalt"),
+            build_dataset_edit_section("Maskingenerert"),
         ]
 
     @app.callback(
