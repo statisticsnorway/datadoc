@@ -11,6 +11,7 @@ from datadoc import enums
 from datadoc import state
 from datadoc.frontend.fields.display_base import INPUT_KWARGS
 from datadoc.frontend.fields.display_base import DatasetDropdownField
+from datadoc.frontend.fields.display_base import DatasetFieldTypes
 from datadoc.frontend.fields.display_base import DatasetInputField
 from datadoc.frontend.fields.display_base import DisplayDatasetMetadataDropdown
 from datadoc.frontend.fields.display_base import get_comma_separated_string
@@ -97,7 +98,7 @@ class DatasetIdentifiers(str, Enum):
 
 DISPLAY_DATASET: dict[
     DatasetIdentifiers,
-    DatasetDropdownField | DatasetInputField,
+    DatasetFieldTypes,
 ] = {
     DatasetIdentifiers.SHORT_NAME: DatasetInputField(
         identifier=DatasetIdentifiers.SHORT_NAME.value,

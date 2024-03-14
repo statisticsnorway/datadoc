@@ -317,3 +317,5 @@ VariablesFieldTypes = (
     | VariablesCheckboxField
     | VariablesPeriodField
 )
+
+DatasetFieldTypes = DatasetInputField | DatasetDropdownField
