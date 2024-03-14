@@ -316,7 +316,8 @@ MULTIPLE_LANGUAGE_DATASET_METADATA = [
 ]
 
 OBLIGATORY_EDITABLE_DATASET_METADATA = [
-    m for m in DISPLAY_DATASET.values() if m.obligatory and m.editable
+    # m for m in DISPLAY_DATASET.values() if m.obligatory and m.editable
+    DISPLAY_DATASET[DatasetIdentifiers.NAME],
 ]
 
 OPTIONAL_DATASET_METADATA = [

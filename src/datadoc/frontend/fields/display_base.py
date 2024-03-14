@@ -139,22 +139,22 @@ class DatasetInputField(DisplayMetadata):
 
     extra_kwargs: dict[str, Any] = field(default_factory=input_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
+    type: str = "text"
 
     def render(
         self,
         dataset_id: dict,
         language: str,  # noqa: ARG002
-        dataset: model.Dataset,
     ) -> ssb.Input:
         """Build input component."""
-        value = self.value_getter(dataset, self.identifier)
+        # value = self.value_getter(dataset, self.identifier)
         return ssb.Input(
             label=self.display_name,
             id=dataset_id,
             debounce=True,
             type=self.type,
             disabled=not self.editable,
-            value=value,
+            # value=value,
             className="variable-input",
         )
 

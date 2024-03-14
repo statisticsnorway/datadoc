@@ -14,6 +14,7 @@ from dash import html
 
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
 from datadoc.frontend.fields.display_base import VariablesFieldTypes
+from datadoc.frontend.fields.display_dataset import OBLIGATORY_EDITABLE_DATASET_METADATA
 
 if TYPE_CHECKING:
     from datadoc_model import model
@@ -134,11 +135,18 @@ def build_input_field_section(
     )
 
 
-def build_dataset_input_field_section() -> dbc.Form:
+def build_dataset_input_field_section(language: str) -> dbc.Form:
     """Create input fields for dataset."""
     return dbc.Form(
         [
-            ssb.Input(label="SSB input"),
+            i.render(
+                {
+                    "type": "NEW_DATASET",
+                    "id": i.identifier,
+                },
+                language,
+            )
+            for i in OBLIGATORY_EDITABLE_DATASET_METADATA
         ],
         id="new-dataset-form",
         className="dataset-input-group",
@@ -162,13 +170,13 @@ def build_edit_section(
     )
 
 
-def build_dataset_edit_section(title: str) -> html.Section:
+def build_dataset_edit_section(title: str, language: str) -> html.Section:
     """Create edit section for dataset."""
     return html.Section(
         id={"type": "dataset-edit-section", "title": title},
         children=[
             ssb.Title(title, size=3, className="input-section-title"),
-            build_dataset_input_field_section(),
+            build_dataset_input_field_section(language),
         ],
         className="dataset-edit-section",
     )
