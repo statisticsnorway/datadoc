@@ -77,7 +77,7 @@ def test_metadata_document_percent_complete(metadata: DataDocMetadata):
     metadata.dataset = document.dataset  # type: ignore [assignment]
     metadata.variables = document.variables  # type: ignore [assignment]
 
-    assert metadata.percent_complete == 16  # noqa: PLR2004
+    assert metadata.percent_complete == 12  # noqa: PLR2004
 
 
 def test_write_metadata_document(
