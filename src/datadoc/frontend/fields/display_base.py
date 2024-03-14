@@ -145,6 +145,7 @@ class DatasetInputField(DisplayMetadata):
         self,
         dataset_id: dict,
         language: str,  # noqa: ARG002
+        # dataset: model.Dataset,
     ) -> ssb.Input:
         """Build input component."""
         # value = self.value_getter(dataset, self.identifier)  # noqa: ERA001
@@ -173,15 +174,15 @@ class DatasetDropdownField(DisplayMetadata):
         self,
         variable_id: dict,
         language: str,
-        variable: model.Variable,
+        # variable: model.Variable,
     ) -> ssb.Dropdown:
         """Build Dropdown component."""
-        value = self.value_getter(variable, self.identifier)
+        # value = self.value_getter(variable, self.identifier)  # noqa: ERA001
         return ssb.Dropdown(
             header=self.display_name,
             id=variable_id,
             items=self.options_getter(SupportedLanguages(language)),
-            value=value,
+            # value=value,  # noqa: ERA001
             className="dataset-dropdown",
         )
 

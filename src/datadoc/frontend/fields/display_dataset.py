@@ -9,12 +9,12 @@ from typing import TYPE_CHECKING
 
 from datadoc import enums
 from datadoc import state
-from datadoc.frontend.callbacks.utils import get_language_strings_enum
 from datadoc.frontend.fields.display_base import INPUT_KWARGS
 from datadoc.frontend.fields.display_base import DatasetDropdownField
 from datadoc.frontend.fields.display_base import DatasetInputField
 from datadoc.frontend.fields.display_base import DisplayDatasetMetadataDropdown
 from datadoc.frontend.fields.display_base import get_comma_separated_string
+from datadoc.frontend.fields.display_base import get_enum_options_for_language
 from datadoc.frontend.fields.display_base import get_metadata_and_stringify
 from datadoc.frontend.fields.display_base import get_multi_language_metadata
 
@@ -22,20 +22,6 @@ if TYPE_CHECKING:
     from datadoc.enums import SupportedLanguages
 
 logger = logging.getLogger(__name__)
-
-
-def get_enum_options_for_language(
-    enum: Enum,
-    language: SupportedLanguages,
-) -> list[dict[str, str]]:
-    """Generate the list of options based on the currently chosen language."""
-    return [
-        {
-            "label": i.get_value_for_language(language),
-            "value": i.name,
-        }
-        for i in get_language_strings_enum(enum)  # type: ignore [attr-defined]
-    ]
 
 
 def get_statistical_subject_options(
@@ -314,8 +300,10 @@ MULTIPLE_LANGUAGE_DATASET_METADATA = [
 ]
 
 OBLIGATORY_EDITABLE_DATASET_METADATA = [
-    # m for m in DISPLAY_DATASET.values() if m.obligatory and m.editable
-    DISPLAY_DATASET[DatasetIdentifiers.NAME],
+    m
+    for m in DISPLAY_DATASET.values()
+    if m.obligatory and m.editable
+    # DISPLAY_DATASET[DatasetIdentifiers.NAME],  # noqa: ERA001
 ]
 
 OPTIONAL_DATASET_METADATA = [
