@@ -148,10 +148,9 @@ def register_callbacks(app: Dash) -> None:
         return open_dataset_handling(n_clicks, dataset_path)
 
     # @app.callback(
-    #     Output("dataset-accordion", "children"),
-    #     Input("open-button", "n_clicks"),
-    #     prevent_initial_call=True,
-    # )
+    #     Output("dataset-accordion", "children"),  # noqa: ERA001
+    #     Input("open-button", "n_clicks"),  # noqa: ERA001
+    #     prevent_initial_call=True,  # noqa: ERA001)
     # def callback_clear_accordion_values(n_clicks: int) -> list[dbc.AccordionItem]:
     #     """Recreate accordion items with unique IDs.
 
@@ -159,8 +158,8 @@ def register_callbacks(app: Dash) -> None:
     #     components inside the dataset accordion when new file is opened
     #     """
     #     if n_clicks and n_clicks > 0:
-    #         return build_dataset_metadata_accordion(n_clicks)
-    #     return no_update
+    #         return build_dataset_metadata_accordion(n_clicks)  # noqa: ERA001
+    #     return no_update  # noqa: ERA001
 
     @app.callback(
         Output(VARIABLES_INFORMATION_ID, "children"),
