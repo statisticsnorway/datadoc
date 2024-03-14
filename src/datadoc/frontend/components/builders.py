@@ -151,6 +151,17 @@ def build_edit_section(
     )
 
 
+def build_dataset_edit_section(title: str) -> html.Section:
+    """Create edit section for dataset."""
+    return html.Section(
+        id={"type": "dataset-edit-section", "title": title},
+        children=[
+            ssb.Title(title, size=3, className="input-section-title"),
+        ],
+        className="dataset-edit-section",
+    )
+
+
 def build_ssb_accordion(
     header: str,
     key: dict,
