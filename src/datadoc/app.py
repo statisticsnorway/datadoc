@@ -29,6 +29,7 @@ from datadoc.frontend.components.control_bars import build_language_dropdown
 from datadoc.frontend.components.control_bars import header
 from datadoc.frontend.components.control_bars import progress_bar
 from datadoc.frontend.components.dataset_tab import build_dataset_tab
+from datadoc.frontend.components.dataset_tab import build_new_dataset_tab
 from datadoc.frontend.components.variables_tab import build_variables_tab
 from datadoc.logging.logging_config import configure_logging
 from datadoc.utils import get_app_version
@@ -44,6 +45,7 @@ def build_app(app: type[Dash]) -> Dash:
     tabs_children = [
         build_dataset_tab(),
         build_variables_tab(),
+        build_new_dataset_tab(),
     ]
 
     app.layout = dbc.Container(

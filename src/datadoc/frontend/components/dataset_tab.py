@@ -96,7 +96,7 @@ def build_dataset_tab() -> dbc.Tab:
 def build_new_dataset_tab() -> dbc.Tab:
     """Build the Dataset metadata tab."""
     return build_ssb_styled_tab(
-        "Datasett",
+        "Ny Datasett",
         html.Article(
             [
                 html.Header(
