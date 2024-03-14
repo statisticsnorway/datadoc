@@ -13,6 +13,7 @@ from datadoc import enums
 from datadoc import state
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
 from datadoc.frontend.fields.display_base import INPUT_KWARGS
+from datadoc.frontend.fields.display_base import DatasetInputField
 from datadoc.frontend.fields.display_base import DisplayDatasetMetadata
 from datadoc.frontend.fields.display_base import DisplayDatasetMetadataDropdown
 from datadoc.frontend.fields.display_base import get_comma_separated_string
@@ -109,7 +110,10 @@ class DatasetIdentifiers(str, Enum):
     CONTAINS_DATA_UNTIL = "contains_data_until"
 
 
-DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
+DISPLAY_DATASET: dict[
+    DatasetIdentifiers,
+    DisplayDatasetMetadata | DatasetInputField,
+] = {
     DatasetIdentifiers.SHORT_NAME: DisplayDatasetMetadata(
         identifier=DatasetIdentifiers.SHORT_NAME.value,
         display_name="Kortnavn",
@@ -147,7 +151,7 @@ DISPLAY_DATASET: dict[DatasetIdentifiers, DisplayDatasetMetadata] = {
             enums.DataSetState,
         ),
     ),
-    DatasetIdentifiers.NAME: DisplayDatasetMetadata(
+    DatasetIdentifiers.NAME: DatasetInputField(
         identifier=DatasetIdentifiers.NAME.value,
         display_name="Navn",
         description="Datasettnavn",
