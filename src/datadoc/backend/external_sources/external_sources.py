@@ -21,10 +21,10 @@ class GetExternalSource(ABC, Generic[T]):
         Initializes the future object.
         """
         self.future: concurrent.futures.Future[T | None] | None = None
-        executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
-        self.future = executor.submit(
-            self._fetch_data_from_external_source,
-        )
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            self.future = executor.submit(
+                self._fetch_data_from_external_source,
+            )
 
     def wait_for_external_result(self) -> None:
         """Waits for the thread responsible for loading the external request to finish."""
