@@ -156,7 +156,7 @@ class DatasetInputField(DisplayMetadata):
             type=self.type,
             disabled=not self.editable,
             value=value,
-            className="variable-input",
+            className="dataset-input",
         )
 
 
@@ -286,7 +286,7 @@ class DatasetPeriodField(DisplayMetadata):
             type=self.type,
             disabled=not self.editable,
             value=value,
-            className="variable-input",
+            className="dataset-input",
         )
 
 
