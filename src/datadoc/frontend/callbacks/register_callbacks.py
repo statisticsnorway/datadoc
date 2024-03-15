@@ -226,16 +226,19 @@ def register_callbacks(app: Dash) -> None:
                 "Obligatorisk",
                 OBLIGATORY_EDITABLE_DATASET_METADATA,
                 language,
+                "obligatory",
             ),
             build_dataset_edit_section(
                 "Anbefalt",
                 OPTIONAL_DATASET_METADATA,
                 language,
+                "recommended",
             ),
             build_dataset_edit_section(
                 "Maskingenerert",
                 NON_EDITABLE_DATASET_METADATA,
                 language,
+                "machine-generated",
             ),
         ]
 
