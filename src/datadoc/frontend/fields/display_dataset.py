@@ -142,6 +142,7 @@ DISPLAY_DATASET: dict[
         description="Datasettnavn",
         obligatory=True,
         multiple_language_support=True,
+        value_getter=get_metadata_and_stringify,
     ),
     DatasetIdentifiers.DATA_SOURCE: DatasetInputField(
         identifier=DatasetIdentifiers.DATA_SOURCE.value,

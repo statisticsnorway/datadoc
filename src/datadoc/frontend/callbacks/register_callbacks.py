@@ -19,7 +19,6 @@ from dash import ctx
 from datadoc import state
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
-from datadoc.frontend.callbacks.dataset import change_language_dataset_metadata
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.utils import update_global_language_state
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
@@ -33,7 +32,6 @@ from datadoc.frontend.components.variables_tab import ACCORDION_WRAPPER_ID
 from datadoc.frontend.components.variables_tab import VARIABLES_INFORMATION_ID
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
-from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import NON_EDITABLE_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import OBLIGATORY_EDITABLE_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import OPTIONAL_DATASET_METADATA
@@ -85,29 +83,6 @@ def register_callbacks(app: Dash) -> None:
             return True
 
         return False
-
-    @app.callback(
-        *[
-            Output(
-                {
-                    "type": DATASET_METADATA_INPUT,
-                    "id": m.identifier,
-                },
-                "options",
-            )
-            for m in DISPLAYED_DROPDOWN_DATASET_METADATA
-        ],
-        Output(
-            {"type": DATASET_METADATA_INPUT, "id": ALL},
-            "value",
-        ),
-        Input("language-dropdown", "value"),
-    )
-    def callback_change_language_dataset_metadata(
-        language: str,
-    ) -> tuple[object, ...]:
-        """Update dataset metadata values upon change of language."""
-        return change_language_dataset_metadata(SupportedLanguages(language))
 
     @app.callback(
         Output("dataset-validation-error", "is_open"),
@@ -225,20 +200,23 @@ def register_callbacks(app: Dash) -> None:
             build_dataset_edit_section(
                 "Obligatorisk",
                 OBLIGATORY_EDITABLE_DATASET_METADATA,
-                language,
+                state.current_metadata_language,
                 "obligatory",
+                state.metadata.dataset,
             ),
             build_dataset_edit_section(
                 "Anbefalt",
                 OPTIONAL_DATASET_METADATA,
-                language,
+                state.current_metadata_language,
                 "recommended",
+                state.metadata.dataset,
             ),
             build_dataset_edit_section(
                 "Maskingenerert",
                 NON_EDITABLE_DATASET_METADATA,
-                language,
+                state.current_metadata_language,
                 "machine-generated",
+                state.metadata.dataset,
             ),
         ]
 

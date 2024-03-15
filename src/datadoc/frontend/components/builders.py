@@ -141,17 +141,18 @@ def build_dataset_input_field_section(
     metadata_fields: list[DatasetFieldTypes],
     language: str,
     section_id: str,
+    dataset: model.Dataset,
 ) -> dbc.Form:
     """Create input fields for dataset."""
     return dbc.Form(
         [
             i.render(
                 {
-                    "type": "NEW_DATASET",
-                    # "type": DATASET_METADATA_INPUT,  # noqa: ERA001
+                    "type": DATASET_METADATA_INPUT,
                     "id": i.identifier,
                 },
                 language,
+                dataset,
             )
             for i in metadata_fields
         ],
@@ -182,6 +183,7 @@ def build_dataset_edit_section(
     metadata_inputs: list,
     language: str,
     section_id: str,
+    dataset: model.Dataset,
 ) -> html.Section:
     """Create edit section for dataset."""
     return html.Section(
@@ -192,6 +194,7 @@ def build_dataset_edit_section(
                 metadata_inputs,
                 language,
                 section_id,
+                dataset,
             ),
         ],
         className="dataset-edit-section",

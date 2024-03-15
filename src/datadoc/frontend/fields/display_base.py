@@ -145,17 +145,17 @@ class DatasetInputField(DisplayMetadata):
         self,
         dataset_id: dict,
         language: str,  # noqa: ARG002
-        # dataset: model.Dataset,
+        dataset: model.Dataset,
     ) -> ssb.Input:
         """Build input component."""
-        # value = self.value_getter(dataset, self.identifier)  # noqa: ERA001
+        value = self.value_getter(dataset, self.identifier)
         return ssb.Input(
             label=self.display_name,
             id=dataset_id,
             debounce=True,
             type=self.type,
             disabled=not self.editable,
-            # value=value,  # noqa: ERA001
+            value=value,
             className="variable-input",
         )
 
@@ -174,15 +174,15 @@ class DatasetDropdownField(DisplayMetadata):
         self,
         variable_id: dict,
         language: str,
-        # variable: model.Variable,
+        dataset: model.Dataset,
     ) -> ssb.Dropdown:
         """Build Dropdown component."""
-        # value = self.value_getter(variable, self.identifier)  # noqa: ERA001
+        value = self.value_getter(dataset, self.identifier)
         return ssb.Dropdown(
             header=self.display_name,
             id=variable_id,
             items=self.options_getter(SupportedLanguages(language)),
-            # value=value,  # noqa: ERA001
+            value=value,
             className="dataset-dropdown",
         )
 
@@ -274,10 +274,10 @@ class DatasetPeriodField(DisplayMetadata):
         self,
         dataset_id: dict,
         language: str,  # noqa: ARG002
-        # variable: model.Variable,
+        dataset: model.Dataset,
     ) -> ssb.Input:
         """Build Input date component."""
-        # value = self.value_getter(variable, self.identifier)  # noqa: ERA001
+        value = self.value_getter(dataset, self.identifier)
         # variable_id["type"] = VARIABLES_METADATA_DATE_INPUT  # noqa: ERA001
         return ssb.Input(
             label=self.display_name,
@@ -285,7 +285,7 @@ class DatasetPeriodField(DisplayMetadata):
             debounce=False,
             type=self.type,
             disabled=not self.editable,
-            # value=value,  # noqa: ERA001
+            value=value,
             className="variable-input",
         )
 
