@@ -13,6 +13,7 @@ from datadoc.frontend.fields.display_base import INPUT_KWARGS
 from datadoc.frontend.fields.display_base import DatasetDropdownField
 from datadoc.frontend.fields.display_base import DatasetFieldTypes
 from datadoc.frontend.fields.display_base import DatasetInputField
+from datadoc.frontend.fields.display_base import DatasetPeriodField
 from datadoc.frontend.fields.display_base import DisplayDatasetMetadataDropdown
 from datadoc.frontend.fields.display_base import get_comma_separated_string
 from datadoc.frontend.fields.display_base import get_enum_options_for_language
@@ -277,14 +278,14 @@ DISPLAY_DATASET: dict[
         obligatory=True,
         editable=False,
     ),
-    DatasetIdentifiers.CONTAINS_DATA_FROM: DatasetInputField(
+    DatasetIdentifiers.CONTAINS_DATA_FROM: DatasetPeriodField(
         identifier=DatasetIdentifiers.CONTAINS_DATA_FROM.value,
         display_name="Inneholder data f.o.m.",
         description="ÅÅÅÅ-MM-DD",
         obligatory=True,
         editable=True,
     ),
-    DatasetIdentifiers.CONTAINS_DATA_UNTIL: DatasetInputField(
+    DatasetIdentifiers.CONTAINS_DATA_UNTIL: DatasetPeriodField(
         identifier=DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
         display_name="Inneholder data t.o.m.",
         description="ÅÅÅÅ-MM-DD",
@@ -316,7 +317,7 @@ NON_EDITABLE_DATASET_METADATA = [m for m in DISPLAY_DATASET.values() if not m.ed
 
 
 # The order of this list MUST match the order of display components, as defined in DatasetTab.py
-DISPLAYED_DATASET_METADATA: list[DatasetInputField | DatasetDropdownField] = (
+DISPLAYED_DATASET_METADATA: list[DatasetFieldTypes] = (
     OBLIGATORY_EDITABLE_DATASET_METADATA
     + OPTIONAL_DATASET_METADATA
     + NON_EDITABLE_DATASET_METADATA

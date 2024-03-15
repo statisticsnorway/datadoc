@@ -349,4 +349,4 @@ VariablesFieldTypes = (
     | VariablesPeriodField
 )
 
-DatasetFieldTypes = DatasetInputField | DatasetDropdownField
+DatasetFieldTypes = DatasetInputField | DatasetDropdownField | DatasetPeriodField
