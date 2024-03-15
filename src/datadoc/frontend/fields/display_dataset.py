@@ -154,6 +154,8 @@ DISPLAY_DATASET: dict[
         display_name="Register URI",
         description="Lenke (URI) til register i registeroversikt (oversikt over alle registre meldt Datatilsynet (oppdatering foretas av sikkerhetsrådgiver))",
         multiple_language_support=True,
+        url=True,
+        type="url",
     ),
     DatasetIdentifiers.POPULATION_DESCRIPTION: DatasetInputField(
         identifier=DatasetIdentifiers.POPULATION_DESCRIPTION.value,
