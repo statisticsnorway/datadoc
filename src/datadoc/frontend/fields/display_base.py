@@ -131,6 +131,63 @@ class DisplayDatasetMetadata(DisplayMetadata):
 
 
 @dataclass
+class DatasetInputField(DisplayMetadata):
+    """Controls for how a given metadata field should be displayed.
+
+    Specific to dataset fields.
+    """
+
+    extra_kwargs: dict[str, Any] = field(default_factory=input_kwargs_factory)
+    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
+    type: str = "text"
+
+    def render(
+        self,
+        dataset_id: dict,
+        language: str,  # noqa: ARG002
+        # dataset: model.Dataset,
+    ) -> ssb.Input:
+        """Build input component."""
+        # value = self.value_getter(dataset, self.identifier)  # noqa: ERA001
+        return ssb.Input(
+            label=self.display_name,
+            id=dataset_id,
+            debounce=True,
+            type=self.type,
+            disabled=not self.editable,
+            # value=value,  # noqa: ERA001
+            className="variable-input",
+        )
+
+
+@dataclass
+class DatasetDropdownField(DisplayMetadata):
+    """Control how a Dropdown should be displayed."""
+
+    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
+    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
+    # fmt: off
+    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
+    # fmt: on
+
+    def render(
+        self,
+        variable_id: dict,
+        language: str,
+        # variable: model.Variable,
+    ) -> ssb.Dropdown:
+        """Build Dropdown component."""
+        # value = self.value_getter(variable, self.identifier)  # noqa: ERA001
+        return ssb.Dropdown(
+            header=self.display_name,
+            id=variable_id,
+            items=self.options_getter(SupportedLanguages(language)),
+            # value=value,  # noqa: ERA001
+            className="dataset-dropdown",
+        )
+
+
+@dataclass
 class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
     """Include the possible options which a user may choose from."""
 
@@ -291,3 +348,5 @@ VariablesFieldTypes = (
     | VariablesCheckboxField
     | VariablesPeriodField
 )
+
+DatasetFieldTypes = DatasetInputField | DatasetDropdownField
