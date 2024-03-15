@@ -15,7 +15,6 @@ from dash import Input
 from dash import Output
 from dash import State
 from dash import ctx
-from dash import no_update
 
 from datadoc import state
 from datadoc.enums import SupportedLanguages
@@ -30,12 +29,14 @@ from datadoc.frontend.components.builders import build_edit_section
 from datadoc.frontend.components.builders import build_ssb_accordion
 from datadoc.frontend.components.dataset_tab import DATASET_METADATA_INPUT
 from datadoc.frontend.components.dataset_tab import SECTION_WRAPPER_ID
-from datadoc.frontend.components.dataset_tab import build_dataset_metadata_accordion
 from datadoc.frontend.components.variables_tab import ACCORDION_WRAPPER_ID
 from datadoc.frontend.components.variables_tab import VARIABLES_INFORMATION_ID
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
+from datadoc.frontend.fields.display_dataset import NON_EDITABLE_DATASET_METADATA
+from datadoc.frontend.fields.display_dataset import OBLIGATORY_EDITABLE_DATASET_METADATA
+from datadoc.frontend.fields.display_dataset import OPTIONAL_DATASET_METADATA
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
@@ -149,20 +150,19 @@ def register_callbacks(app: Dash) -> None:
         """
         return open_dataset_handling(n_clicks, dataset_path)
 
-    @app.callback(
-        Output("dataset-accordion", "children"),
-        Input("open-button", "n_clicks"),
-        prevent_initial_call=True,
-    )
-    def callback_clear_accordion_values(n_clicks: int) -> list[dbc.AccordionItem]:
-        """Recreate accordion items with unique IDs.
+    # @app.callback(
+    #     Output("dataset-accordion", "children"),  # noqa: ERA001
+    #     Input("open-button", "n_clicks"),  # noqa: ERA001
+    #     prevent_initial_call=True,  # noqa: ERA001)
+    # def callback_clear_accordion_values(n_clicks: int) -> list[dbc.AccordionItem]:
+    #     """Recreate accordion items with unique IDs.
 
-        The purpose is to avoid browser caching and clear the values of all
-        components inside the dataset accordion when new file is opened
-        """
-        if n_clicks and n_clicks > 0:
-            return build_dataset_metadata_accordion(n_clicks)
-        return no_update
+    #     The purpose is to avoid browser caching and clear the values of all
+    #     components inside the dataset accordion when new file is opened
+    #     """
+    #     if n_clicks and n_clicks > 0:
+    #         return build_dataset_metadata_accordion(n_clicks)  # noqa: ERA001
+    #     return no_update  # noqa: ERA001
 
     @app.callback(
         Output(VARIABLES_INFORMATION_ID, "children"),
@@ -222,9 +222,21 @@ def register_callbacks(app: Dash) -> None:
         update_global_language_state(SupportedLanguages(language))
         logger.info("Populating new dataset workspace")
         return [
-            build_dataset_edit_section("Obligatorisk"),
-            build_dataset_edit_section("Anbefalt"),
-            build_dataset_edit_section("Maskingenerert"),
+            build_dataset_edit_section(
+                "Obligatorisk",
+                OBLIGATORY_EDITABLE_DATASET_METADATA,
+                language,
+            ),
+            build_dataset_edit_section(
+                "Anbefalt",
+                OPTIONAL_DATASET_METADATA,
+                language,
+            ),
+            build_dataset_edit_section(
+                "Maskingenerert",
+                NON_EDITABLE_DATASET_METADATA,
+                language,
+            ),
         ]
 
     @app.callback(
