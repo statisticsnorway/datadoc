@@ -42,7 +42,6 @@ logger = logging.getLogger(__name__)
 def build_app(app: type[Dash]) -> Dash:
     """Define the layout, register callbacks."""
     tabs_children = [
-        # build_dataset_tab(),
         build_variables_tab(),
         build_new_dataset_tab(),
     ]
