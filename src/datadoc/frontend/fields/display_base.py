@@ -230,7 +230,7 @@ class VariablesInputField(DisplayMetadata):
 
 @dataclass
 class VariablesPeriodField(DisplayMetadata):
-    """Control how fields which define a time period are displayed.
+    """Control how fields which define a time period are displayed for variables.
 
     These are a special case since two fields have a relationship to one another.>
     """
@@ -255,6 +255,37 @@ class VariablesPeriodField(DisplayMetadata):
             type=self.type,
             disabled=not self.editable,
             value=value,
+            className="variable-input",
+        )
+
+
+@dataclass
+class DatasetPeriodField(DisplayMetadata):
+    """Control how fields which define a time period are displayed for Dataset.
+
+    These are a special case since two fields have a relationship to one another.>
+    """
+
+    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
+    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
+    type: str = "date"
+
+    def render(
+        self,
+        dataset_id: dict,
+        language: str,  # noqa: ARG002
+        # variable: model.Variable,
+    ) -> ssb.Input:
+        """Build Input date component."""
+        # value = self.value_getter(variable, self.identifier)  # noqa: ERA001
+        # variable_id["type"] = VARIABLES_METADATA_DATE_INPUT  # noqa: ERA001
+        return ssb.Input(
+            label=self.display_name,
+            id=dataset_id,
+            debounce=False,
+            type=self.type,
+            disabled=not self.editable,
+            # value=value,  # noqa: ERA001
             className="variable-input",
         )
 
@@ -318,4 +349,4 @@ VariablesFieldTypes = (
     | VariablesPeriodField
 )
 
-DatasetFieldTypes = DatasetInputField | DatasetDropdownField
+DatasetFieldTypes = DatasetInputField | DatasetDropdownField | DatasetPeriodField
