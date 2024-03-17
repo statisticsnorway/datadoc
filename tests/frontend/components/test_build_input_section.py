@@ -39,17 +39,15 @@ INPUT_FIELD_SECTION = [
 ]
 
 
-def test_build_input_field_section_no_input_return_empty_list():
-    """Test build with empty inputs."""
+def test_build_input_field_section_no_input():
+    """Assert build with empty inputs returns dash bootstrap Form component and empty children list."""
     input_section = build_input_field_section(
         [],
         "",
         "",
     )
     assert input_section.children == []
-
-
-# Form
+    assert isinstance(input_section, dbc.Form)
 
 
 @pytest.mark.parametrize(
@@ -57,7 +55,7 @@ def test_build_input_field_section_no_input_return_empty_list():
     INPUT_FIELD_SECTION,
 )
 def test_build_input_fields_input_components(input_field_section):
-    """Test input field for variable identifier 'NAME' obligatory section."""
+    """Assert input field for ."""
     desired_type = ssb.Input
     input_test_variable = list(
         filter(lambda x: isinstance(x, desired_type), TEST_VARIABLE),
@@ -75,7 +73,6 @@ def test_build_input_fields_input_components(input_field_section):
     )
 
 
-# debounce, disabled,label, value
 @pytest.mark.parametrize(
     ("input_field_section", "language"),
     [
@@ -113,7 +110,7 @@ def test_build_input_fields_input_components(input_field_section):
         ),
     ],
 )
-def test_build_dropdown_fields_dropdown_components(input_field_section, language):
+def test_build_input_fields_dropdown_components(input_field_section, language):
     """Test dropdown fields."""
     desired_type = ssb.Dropdown
     dropddown_test_variable = list(
@@ -144,7 +141,6 @@ def test_build_dropdown_fields_dropdown_components(input_field_section, language
     )
 
 
-# test one input, dropdown, checkbox, header,
 @pytest.mark.parametrize(
     ("input_field_section"),
     INPUT_FIELD_SECTION,
@@ -175,13 +171,15 @@ def test_build_input_fields_checkbox_components(input_field_section):
     ("input_field_section"),
     INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_props_url(input_field_section):
+def test_build_input_fields_type_url(input_field_section):
     """Test Input field type 'url' for variable identifier 'DEFINITION_URI' obligatory section."""
     variable_input_field_for_url = input_field_section.children[3]
     assert isinstance(variable_input_field_for_url, ssb.Input)
     assert variable_input_field_for_url.type == "url"
 
 
+# test one input, dropdown, checkbox, header,
+# debounce, disabled,label, value
 @pytest.mark.parametrize(
     ("input_field_section"),
     [
