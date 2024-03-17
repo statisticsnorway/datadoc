@@ -132,21 +132,6 @@ def test_build_input_fields_checkbox_components(input_field_section):
     ("input_field_section"),
     INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_type_url(input_field_section):
-    """Test Input field type 'url'."""
-    desired_type = ssb.Input
-    elements_of_input = list(
-        filter(lambda x: isinstance(x, desired_type), input_field_section.children),
-    )
-    for i in elements_of_input:
-        if i.type == "url":
-            assert (elements_of_input[i].url is True for i in elements_of_input)
-
-
-@pytest.mark.parametrize(
-    ("input_field_section"),
-    INPUT_FIELD_SECTION,
-)
 def test_build_input_fields_type_date(input_field_section):
     """Test Input field type 'url'."""
     desired_type = ssb.Input
@@ -229,6 +214,9 @@ def test_build_input_fields_props(input_field_section, language):
     elements_of_date = list(
         filter(lambda x: (x.type == "date"), elements_of_input),
     )
+    elements_of_url = list(
+        filter(lambda x: (x.type == "url"), variable_identifier_input),
+    )
     assert [
         field.items == variable_identifier_dropdown[i].options_getter(language)
         for i, field in enumerate(
@@ -259,3 +247,4 @@ def test_build_input_fields_props(input_field_section, language):
             variable_identifier_input_date,
         )
     ]
+    assert [elements_of_url[i].url is True for i, field in enumerate(elements_of_url)]
