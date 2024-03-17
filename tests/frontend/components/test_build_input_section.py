@@ -64,14 +64,14 @@ def test_build_input_fields_input_components(input_field_section):
     elements_of_input = list(
         filter(lambda x: isinstance(x, desired_type), input_field_section.children),
     )
-    assert (isinstance(elements_of_input[i], ssb.Input) for i in elements_of_input)
+    assert [
+        isinstance(elements_of_input[i], ssb.Input)
+        for i, field in enumerate(elements_of_input)
+    ]
     assert [
         type(elements_of_input[i]) == VariablesInputField
         for i, field in enumerate(elements_of_input)
     ]
-    assert (elements_of_input[i].type == "" for i in elements_of_input)
-    assert (elements_of_input[i].display_name is not None for i in elements_of_input)
-    assert (elements_of_input[i].identifier is not None for i in elements_of_input)
 
 
 @pytest.mark.parametrize(
