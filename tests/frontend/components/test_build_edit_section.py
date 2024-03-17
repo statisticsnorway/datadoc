@@ -9,6 +9,7 @@ from datadoc_model import model
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.components.builders import build_edit_section
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
+from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 
 
 @pytest.mark.parametrize(
@@ -33,8 +34,14 @@ def test_build_edit_section_return_correct_component(build_edit_section):
     [
         build_edit_section([], "", model.Variable(), ""),
         build_edit_section(
+            OPTIONAL_VARIABLES_METADATA,
+            "Anbefalt",
+            model.Variable(short_name="sivilstand"),
+            SupportedLanguages.NORSK_BOKMÅL,
+        ),
+        build_edit_section(
             OBLIGATORY_VARIABLES_METADATA,
-            "",
+            "Obligatorisk",
             model.Variable(short_name="sykepenger"),
             SupportedLanguages.NORSK_NYNORSK,
         ),
@@ -42,7 +49,7 @@ def test_build_edit_section_return_correct_component(build_edit_section):
 )
 def test_build_edit_section_children_return_correct_components(build_edit_section):
     """Assert method has a list of children which returns SSB dash component Title and dash bootstrap Form."""
-    title = build_edit_section.children[0].children
+    title = build_edit_section.children[0]
     form = build_edit_section.children[1]
     assert isinstance(title, ssb.Title)
     assert isinstance(form, dbc.Form)
