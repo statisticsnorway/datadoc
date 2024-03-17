@@ -214,7 +214,7 @@ def test_build_input_fields_props(input_field_section, language):
     elements_of_date = list(
         filter(lambda x: (x.type == "date"), elements_of_input),
     )
-    elements_of_url = list(
+    variable_identifier_url = list(
         filter(lambda x: (x.type == "url"), variable_identifier_input),
     )
     assert [
@@ -247,4 +247,7 @@ def test_build_input_fields_props(input_field_section, language):
             variable_identifier_input_date,
         )
     ]
-    assert [elements_of_url[i].url is True for i, field in enumerate(elements_of_url)]
+    assert [
+        variable_identifier_url[i].url is True
+        for i, field in enumerate(variable_identifier_url)
+    ]
