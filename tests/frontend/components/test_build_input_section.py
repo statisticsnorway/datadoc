@@ -58,46 +58,32 @@ def test_build_input_field_section_no_input():
 )
 def test_build_input_fields_input_components(input_field_section):
     """Assert fields input field for ."""
-    desired_type = ssb.Input
+    type_input = ssb.Input
     elements_of_input = list(
-        filter(lambda x: isinstance(x, desired_type), input_field_section.children),
+        filter(lambda x: isinstance(x, type_input), input_field_section.children),
     )
-    assert [
-        isinstance(elements_of_input[i], ssb.Input)
-        for i, field in enumerate(elements_of_input)
-    ]
-    assert [
-        type(elements_of_input[i]) == VariablesInputField
-        for i, field in enumerate(elements_of_input)
-    ]
-    assert [
-        elements_of_input[i].debounce is True
-        for i, field in enumerate(elements_of_input)
-    ]
-
-
-@pytest.mark.parametrize(
-    ("input_field_section"),
-    INPUT_FIELD_SECTION,
-)
-def test_build_input_fields_dropdown_components(input_field_section):
-    """Test dropdown fields for variabel identifiers."""
-    desired_type = ssb.Dropdown
-    elements_of_dropdown = list(
-        filter(lambda x: isinstance(x, desired_type), input_field_section.children),
+    elements_of_input_and_type_text_url = list(
+        filter(
+            lambda x: isinstance(x, type_input)
+            and x.type == "text"
+            or isinstance(x, type_input)
+            and x.type == "url",
+            input_field_section.children,
+        ),
     )
-    assert [
-        isinstance(elements_of_dropdown[i], desired_type)
-        for i, field in enumerate(elements_of_dropdown)
-    ]
-    assert [
-        isinstance(elements_of_dropdown[i], VariablesDropdownField)
-        for i, field in enumerate(elements_of_dropdown)
-    ]
-    assert [
-        elements_of_dropdown[i]._type == "Dropdown"  # noqa: SLF001
-        for i, field in enumerate(elements_of_dropdown)
-    ]
+    variable_identifier_input = list(
+        filter(lambda x: isinstance(x, VariablesInputField), VARIABLES_METADATA),
+    )
+    assert [isinstance(field, ssb.Input) for i, field in enumerate(elements_of_input)]
+    for item in elements_of_input_and_type_text_url:
+        assert item.debounce is True
+    assert all(
+        item1.label == item2.display_name
+        for item1, item2 in zip(
+            elements_of_input_and_type_text_url,
+            variable_identifier_input,
+        )
+    )
 
 
 @pytest.mark.parametrize(
@@ -106,26 +92,22 @@ def test_build_input_fields_dropdown_components(input_field_section):
 )
 def test_build_input_fields_checkbox_components(input_field_section):
     """Test checkbox fields for variabel identifiers."""
-    desired_type = dbc.Checkbox
+    type_checkbox = dbc.Checkbox
     elements_of_checkbox = list(
-        filter(lambda x: isinstance(x, desired_type), input_field_section.children),
+        filter(lambda x: isinstance(x, type_checkbox), input_field_section.children),
     )
-    assert [
-        isinstance(elements_of_checkbox[i], desired_type)
-        for i, field in enumerate(elements_of_checkbox)
-    ]
-    assert [
-        isinstance(elements_of_checkbox[i], VariablesCheckboxField)
-        for i, field in enumerate(elements_of_checkbox)
-    ]
-    assert [
-        elements_of_checkbox[i]._type == "Checkbox"  # noqa: SLF001
-        for i, field in enumerate(elements_of_checkbox)
-    ]
-    assert [
-        elements_of_checkbox[i].disabled is False
-        for i, field in enumerate(elements_of_checkbox)
-    ]
+    variable_identifier_checkbox = list(
+        filter(lambda x: isinstance(x, VariablesCheckboxField), VARIABLES_METADATA),
+    )
+    assert all(isinstance(item, type_checkbox) for item in elements_of_checkbox)
+    for item in elements_of_checkbox:
+        assert item._type == "Checkbox"  # noqa: SLF001
+    for item in elements_of_checkbox:
+        assert item.disabled is False
+    assert all(
+        item1.label == item2.display_name
+        for item1, item2 in zip(elements_of_checkbox, variable_identifier_checkbox)
+    )
 
 
 @pytest.mark.parametrize(
@@ -134,17 +116,42 @@ def test_build_input_fields_checkbox_components(input_field_section):
 )
 def test_build_input_fields_type_date(input_field_section):
     """Test Input field type 'url'."""
-    desired_type = ssb.Input
+    type_input = ssb.Input
     elements_of_input = list(
-        filter(lambda x: isinstance(x, desired_type), input_field_section.children),
+        filter(lambda x: isinstance(x, type_input), input_field_section.children),
     )
     elements_of_date = list(
         filter(lambda x: (x.type == "date"), elements_of_input),
     )
-    assert [
-        isinstance(elements_of_date[i], VariablesPeriodField)
-        for i, field in enumerate(elements_of_date)
-    ]
+    variable_identifier_date = list(
+        filter(lambda x: isinstance(x, VariablesPeriodField), VARIABLES_METADATA),
+    )
+    for item1, item2 in zip(elements_of_date, variable_identifier_date):
+        assert item1.label == item2.display_name
+    assert all(item.debounce is False for item in elements_of_date)
+
+
+@pytest.mark.parametrize(
+    ("input_field_section"),
+    INPUT_FIELD_SECTION,
+)
+def test_build_input_fields_type_url(input_field_section):
+    variable_identifier_input = list(
+        filter(lambda x: isinstance(x, VariablesInputField), VARIABLES_METADATA),
+    )
+    variable_identifier_url = list(
+        filter(lambda x: (x.type == "url"), variable_identifier_input),
+    )
+    elements_of_input_and_type_url = list(
+        filter(
+            lambda x: isinstance(x, ssb.Input) and x.type == "url",
+            input_field_section.children,
+        ),
+    )
+    assert all(item.url is True for item in variable_identifier_url)
+    assert all(item.debounce is True for item in elements_of_input_and_type_url)
+    for item1, item2 in zip(elements_of_input_and_type_url, variable_identifier_url):
+        assert item1.label == item2.display_name
 
 
 @pytest.mark.parametrize(
@@ -184,19 +191,8 @@ def test_build_input_fields_type_date(input_field_section):
         ),
     ],
 )
-def test_build_input_fields_props(input_field_section, language):
+def test_build_input_fields_dropdown_components(input_field_section, language):
     """Test props for variable identifiers fields."""
-    type_input = ssb.Input
-    elements_of_input = list(
-        filter(lambda x: isinstance(x, type_input), input_field_section.children),
-    )
-    variable_identifier_input = list(
-        filter(lambda x: isinstance(x, VariablesInputField), VARIABLES_METADATA),
-    )
-    variable_identifier_input_date = list(
-        filter(lambda x: isinstance(x, VariablesPeriodField), VARIABLES_METADATA),
-    )
-    variable_inputs = variable_identifier_input + variable_identifier_input_date
     type_dropdown = ssb.Dropdown
     elements_of_dropdown = list(
         filter(lambda x: isinstance(x, type_dropdown), input_field_section.children),
@@ -204,50 +200,10 @@ def test_build_input_fields_props(input_field_section, language):
     variable_identifier_dropdown = list(
         filter(lambda x: isinstance(x, VariablesDropdownField), VARIABLES_METADATA),
     )
-    type_checkbox = dbc.Checkbox
-    elements_of_checkbox = list(
-        filter(lambda x: isinstance(x, type_checkbox), input_field_section.children),
-    )
-    variable_identifier_checkbox = list(
-        filter(lambda x: isinstance(x, VariablesCheckboxField), VARIABLES_METADATA),
-    )
-    elements_of_date = list(
-        filter(lambda x: (x.type == "date"), elements_of_input),
-    )
-    variable_identifier_url = list(
-        filter(lambda x: (x.type == "url"), variable_identifier_input),
-    )
-    assert [
-        field.items == variable_identifier_dropdown[i].options_getter(language)
-        for i, field in enumerate(
-            elements_of_dropdown,
-        )
-    ]
-    assert [
-        elements_of_input[i].label == variable_inputs[i].display_name
-        for i, field in enumerate(
-            elements_of_input,
-        )
-    ]
-    assert [
-        elements_of_dropdown[i].header == variable_identifier_dropdown[i].display_name
-        for i, field in enumerate(
-            elements_of_dropdown,
-        )
-    ]
-    assert [
-        elements_of_checkbox[i].label == variable_identifier_checkbox[i].display_name
-        for i, field in enumerate(
-            elements_of_checkbox,
-        )
-    ]
-    assert [
-        elements_of_date[i].debounce is False
-        for i, field in enumerate(
-            variable_identifier_input_date,
-        )
-    ]
-    assert [
-        variable_identifier_url[i].url is True
-        for i, field in enumerate(variable_identifier_url)
-    ]
+    assert all(isinstance(item, type_dropdown) for item in elements_of_dropdown)
+    for item in elements_of_dropdown:
+        assert item._type == "Dropdown"  # noqa: SLF001
+    for item1, item2 in zip(elements_of_dropdown, variable_identifier_dropdown):
+        assert item1.header == item2.display_name
+    for item1, item2 in zip(elements_of_dropdown, variable_identifier_dropdown):
+        assert item1.items == item2.options_getter(language)
