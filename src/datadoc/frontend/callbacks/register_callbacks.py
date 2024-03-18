@@ -15,6 +15,7 @@ from dash import Input
 from dash import Output
 from dash import State
 from dash import ctx
+from dash import no_update
 
 from datadoc import state
 from datadoc.enums import SupportedLanguages
@@ -191,42 +192,46 @@ def register_callbacks(app: Dash) -> None:
     @app.callback(
         Output(SECTION_WRAPPER_ID, "children"),
         Input("language-dropdown", "value"),
+        Input("open-button", "n_clicks"),
         prevent_initial_call=True,
     )
     def callback_populate_dataset_workspace(
         language: str,
+        n_clicks: int,
     ) -> list:
         """Create dataset workspace with sections."""
         update_global_language_state(SupportedLanguages(language))
         logger.info("Populating new dataset workspace")
         dataset = state.metadata.dataset
         logger.info("Dataset workspace dataset: %s", dataset.short_name)
-        return [
-            build_dataset_edit_section(
-                "Obligatorisk",
-                OBLIGATORY_EDITABLE_DATASET_METADATA,
-                state.current_metadata_language,
-                "obligatory",
-                state.metadata.dataset,
-                {"type": "dataset-edit-section", "id": f"obligatory-{language}"},
-            ),
-            build_dataset_edit_section(
-                "Anbefalt",
-                OPTIONAL_DATASET_METADATA,
-                state.current_metadata_language,
-                "recommended",
-                state.metadata.dataset,
-                {"type": "dataset-edit-section", "id": f"recommended-{language}"},
-            ),
-            build_dataset_edit_section(
-                "Maskingenerert",
-                NON_EDITABLE_DATASET_METADATA,
-                state.current_metadata_language,
-                "machine-generated",
-                state.metadata.dataset,
-                {"type": "dataset-edit-section", "id": f"machine-{language}"},
-            ),
-        ]
+        if n_clicks:
+            return [
+                build_dataset_edit_section(
+                    "Obligatorisk",
+                    OBLIGATORY_EDITABLE_DATASET_METADATA,
+                    state.current_metadata_language,
+                    "obligatory",
+                    state.metadata.dataset,
+                    {"type": "dataset-edit-section", "id": f"obligatory-{language}"},
+                ),
+                build_dataset_edit_section(
+                    "Anbefalt",
+                    OPTIONAL_DATASET_METADATA,
+                    state.current_metadata_language,
+                    "recommended",
+                    state.metadata.dataset,
+                    {"type": "dataset-edit-section", "id": f"recommended-{language}"},
+                ),
+                build_dataset_edit_section(
+                    "Maskingenerert",
+                    NON_EDITABLE_DATASET_METADATA,
+                    state.current_metadata_language,
+                    "machine-generated",
+                    state.metadata.dataset,
+                    {"type": "dataset-edit-section", "id": f"machine-{language}"},
+                ),
+            ]
+        return no_update
 
     @app.callback(
         Output(
