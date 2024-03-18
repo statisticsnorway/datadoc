@@ -190,16 +190,14 @@ def register_callbacks(app: Dash) -> None:
     # Values are not displayed at once (must refresh page) - possible race condition?
     @app.callback(
         Output(SECTION_WRAPPER_ID, "children"),
-        Input("open-button", "n_clicks"),
-        State("language-dropdown", "value"),
+        Input("language-dropdown", "value"),
         prevent_initial_call=True,
     )
     def callback_populate_dataset_workspace(
-        n_clicks: int,  # noqa: ARG001
         language: str,
     ) -> list:
         """Create dataset workspace with sections."""
-        # update_global_language_state(SupportedLanguages(language))  # noqa: ERA001
+        update_global_language_state(SupportedLanguages(language))
         logger.info("Populating new dataset workspace")
         dataset = state.metadata.dataset
         logger.info("Dataset workspace dataset: %s", dataset.short_name)
