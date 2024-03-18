@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import concurrent
 import copy
 import functools
 import os
@@ -170,10 +171,16 @@ def subject_xml_file_path() -> pathlib.Path:
 
 
 @pytest.fixture()
+def thread_pool_executor() -> concurrent.futures.ThreadPoolExecutor:
+    return concurrent.futures.ThreadPoolExecutor(max_workers=12)
+
+
+@pytest.fixture()
 def subject_mapping_fake_statistical_structure(
     _mock_fetch_statistical_structure,
+    thread_pool_executor,
 ) -> StatisticSubjectMapping:
-    return StatisticSubjectMapping("placeholder")
+    return StatisticSubjectMapping(thread_pool_executor, "placeholder")
 
 
 @pytest.fixture()
@@ -195,12 +202,13 @@ def _mock_fetch_statistical_structure(
 def subject_mapping_http_exception(
     requests_mock,
     exception_to_raise,
+    thread_pool_executor,
 ) -> StatisticSubjectMapping:
     requests_mock.get(
         "http://test.some.url.com",
         exc=exception_to_raise,
     )
-    return StatisticSubjectMapping("http://test.some.url.com")
+    return StatisticSubjectMapping(thread_pool_executor, "http://test.some.url.com")
 
 
 @pytest.fixture()
@@ -239,10 +247,8 @@ def _mock_fetch_dataframe(
 
 
 @pytest.fixture()
-def code_list_fake_structure(
-    _mock_fetch_dataframe,
-) -> CodeList:
-    return CodeList(100)
+def code_list_fake_structure(_mock_fetch_dataframe, thread_pool_executor) -> CodeList:
+    return CodeList(thread_pool_executor, 100)
 
 
 @pytest.fixture()
