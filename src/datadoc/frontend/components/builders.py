@@ -187,7 +187,7 @@ def build_dataset_edit_section(
 ) -> html.Section:
     """Create edit section for dataset."""
     return html.Section(
-        id={"type": "dataset-edit-section", "id": section_id},
+        id={"type": "dataset-edit-section", "id": section_id + language},
         children=[
             ssb.Title(title, size=3, className="input-section-title"),
             build_dataset_input_field_section(
