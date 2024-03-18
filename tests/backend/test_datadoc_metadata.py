@@ -314,9 +314,13 @@ def test_dataset_status_default_value(
 def test_dataset_assessment_default_value(
     expected_type: Assessment | None,
     copy_dataset_to_path: Path,
+    thread_pool_executor,
 ):
     datadoc_metadata = DataDocMetadata(
-        statistic_subject_mapping=StatisticSubjectMapping(source_url=""),
+        statistic_subject_mapping=StatisticSubjectMapping(
+            thread_pool_executor,
+            source_url="",
+        ),
         dataset_path=str(copy_dataset_to_path),
     )
     assert datadoc_metadata.dataset.assessment == expected_type
