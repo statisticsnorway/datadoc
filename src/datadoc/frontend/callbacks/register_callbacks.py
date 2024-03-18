@@ -190,12 +190,16 @@ def register_callbacks(app: Dash) -> None:
     # Values are not displayed at once (must refresh page) - possible race condition?
     @app.callback(
         Output(SECTION_WRAPPER_ID, "children"),
-        Input("language-dropdown", "value"),
+        Input("open-button", "n_clicks"),
+        State("language-dropdown", "value"),
         prevent_initial_call=True,
     )
-    def callback_populate_dataset_workspace(language: str) -> list:
+    def callback_populate_dataset_workspace(
+        n_clicks: int,  # noqa: ARG001
+        language: str,
+    ) -> list:
         """Create dataset workspace with sections."""
-        update_global_language_state(SupportedLanguages(language))
+        # update_global_language_state(SupportedLanguages(language))  # noqa: ERA001
         logger.info("Populating new dataset workspace")
         dataset = state.metadata.dataset
         logger.info("Dataset workspace dataset: %s", dataset.short_name)
@@ -206,6 +210,7 @@ def register_callbacks(app: Dash) -> None:
                 state.current_metadata_language,
                 "obligatory",
                 state.metadata.dataset,
+                {"type": "dataset-edit-section", "id": f"obligatory-{language}"},
             ),
             build_dataset_edit_section(
                 "Anbefalt",
@@ -213,6 +218,7 @@ def register_callbacks(app: Dash) -> None:
                 state.current_metadata_language,
                 "recommended",
                 state.metadata.dataset,
+                {"type": "dataset-edit-section", "id": f"recommended-{language}"},
             ),
             build_dataset_edit_section(
                 "Maskingenerert",
@@ -220,6 +226,7 @@ def register_callbacks(app: Dash) -> None:
                 state.current_metadata_language,
                 "machine-generated",
                 state.metadata.dataset,
+                {"type": "dataset-edit-section", "id": f"machine-{language}"},
             ),
         ]
 

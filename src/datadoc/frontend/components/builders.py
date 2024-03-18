@@ -178,16 +178,17 @@ def build_edit_section(
     )
 
 
-def build_dataset_edit_section(
+def build_dataset_edit_section(  # noqa: PLR0913
     title: str,
     metadata_inputs: list,
     language: str,
     section_id: str,
     dataset: model.Dataset,
+    key: dict,
 ) -> html.Section:
     """Create edit section for dataset."""
     return html.Section(
-        id={"type": "dataset-edit-section", "id": section_id + language},
+        id=key,
         children=[
             ssb.Title(title, size=3, className="input-section-title"),
             build_dataset_input_field_section(
