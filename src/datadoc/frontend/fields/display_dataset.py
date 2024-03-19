@@ -321,6 +321,7 @@ DISPLAYED_DATASET_METADATA: list[DatasetFieldTypes] = (
     + NON_EDITABLE_DATASET_METADATA
 )
 
+# Remove in new design?
 DISPLAYED_DROPDOWN_DATASET_METADATA: list[DisplayDatasetMetadataDropdown] = [
     m
     for m in DISPLAYED_DATASET_METADATA

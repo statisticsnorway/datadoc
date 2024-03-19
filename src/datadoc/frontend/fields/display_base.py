@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 VARIABLES_METADATA_INPUT = "variables-metadata-input"
 VARIABLES_METADATA_DATE_INPUT = "variables-metadata-date-input"
 
-# Must be changed if new design
+# should be removed in new design
 INPUT_KWARGS = {
     "debounce": True,
     "style": {"width": "100%"},
@@ -56,6 +56,7 @@ def get_enum_options_for_language(
     ]
 
 
+# Remove in new design
 def input_kwargs_factory() -> dict[str, t.Any]:
     """Initialize the field extra_kwargs.
 
@@ -118,6 +119,7 @@ class DisplayMetadata:
     multiple_language_support: bool = False
 
 
+# Remove in new design?
 @dataclass
 class DisplayDatasetMetadata(DisplayMetadata):
     """Controls for how a given metadata field should be displayed.
@@ -128,6 +130,21 @@ class DisplayDatasetMetadata(DisplayMetadata):
     extra_kwargs: dict[str, Any] = field(default_factory=input_kwargs_factory)
     component: type[Component] = dcc.Input
     value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
+
+
+# Remove in new design?
+@dataclass
+class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
+    """Include the possible options which a user may choose from."""
+
+    # fmt: off
+    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
+    # fmt: on
+    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
+    component: type[Component] = dcc.Dropdown
+
+
+# New input fields for dataset
 
 
 @dataclass
@@ -188,14 +205,37 @@ class DatasetDropdownField(DisplayMetadata):
 
 
 @dataclass
-class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
-    """Include the possible options which a user may choose from."""
+class DatasetPeriodField(DisplayMetadata):
+    """Control how fields which define a time period are displayed for Dataset.
 
-    # fmt: off
-    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
-    # fmt: on
+    These are a special case since two fields have a relationship to one another.>
+    """
+
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
-    component: type[Component] = dcc.Dropdown
+    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
+    type: str = "date"
+
+    def render(
+        self,
+        dataset_id: dict,
+        language: str,  # noqa: ARG002
+        dataset: model.Dataset,
+    ) -> ssb.Input:
+        """Build Input date component."""
+        value = self.value_getter(dataset, self.identifier)
+        # variable_id["type"] = VARIABLES_METADATA_DATE_INPUT  # noqa: ERA001
+        return ssb.Input(
+            label=self.display_name,
+            id=dataset_id,
+            debounce=False,
+            type=self.type,
+            disabled=not self.editable,
+            value=value,
+            className="dataset-input",
+        )
+
+
+# New input fields for variables
 
 
 @dataclass
@@ -225,6 +265,33 @@ class VariablesInputField(DisplayMetadata):
             disabled=not self.editable,
             value=value,
             className="variable-input",
+        )
+
+
+@dataclass
+class VariablesDropdownField(DisplayMetadata):
+    """Control how a Dropdown should be displayed."""
+
+    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
+    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
+    # fmt: off
+    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
+    # fmt: on
+
+    def render(
+        self,
+        variable_id: dict,
+        language: str,
+        variable: model.Variable,
+    ) -> ssb.Dropdown:
+        """Build Dropdown component."""
+        value = self.value_getter(variable, self.identifier)
+        return ssb.Dropdown(
+            header=self.display_name,
+            id=variable_id,
+            items=self.options_getter(SupportedLanguages(language)),
+            value=value,
+            className="variable-dropdown",
         )
 
 
@@ -260,64 +327,6 @@ class VariablesPeriodField(DisplayMetadata):
 
 
 @dataclass
-class DatasetPeriodField(DisplayMetadata):
-    """Control how fields which define a time period are displayed for Dataset.
-
-    These are a special case since two fields have a relationship to one another.>
-    """
-
-    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
-    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
-    type: str = "date"
-
-    def render(
-        self,
-        dataset_id: dict,
-        language: str,  # noqa: ARG002
-        dataset: model.Dataset,
-    ) -> ssb.Input:
-        """Build Input date component."""
-        value = self.value_getter(dataset, self.identifier)
-        # variable_id["type"] = VARIABLES_METADATA_DATE_INPUT  # noqa: ERA001
-        return ssb.Input(
-            label=self.display_name,
-            id=dataset_id,
-            debounce=False,
-            type=self.type,
-            disabled=not self.editable,
-            value=value,
-            className="dataset-input",
-        )
-
-
-@dataclass
-class VariablesDropdownField(DisplayMetadata):
-    """Control how a Dropdown should be displayed."""
-
-    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
-    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
-    # fmt: off
-    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
-    # fmt: on
-
-    def render(
-        self,
-        variable_id: dict,
-        language: str,
-        variable: model.Variable,
-    ) -> ssb.Dropdown:
-        """Build Dropdown component."""
-        value = self.value_getter(variable, self.identifier)
-        return ssb.Dropdown(
-            header=self.display_name,
-            id=variable_id,
-            items=self.options_getter(SupportedLanguages(language)),
-            value=value,
-            className="variable-dropdown",
-        )
-
-
-@dataclass
 class VariablesCheckboxField(DisplayMetadata):
     """Controls for how a checkbox metadata field should be displayed."""
 
@@ -341,6 +350,8 @@ class VariablesCheckboxField(DisplayMetadata):
             value=value,
         )
 
+
+# Lists input types
 
 VariablesFieldTypes = (
     VariablesInputField
