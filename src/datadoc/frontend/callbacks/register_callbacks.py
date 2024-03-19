@@ -126,20 +126,6 @@ def register_callbacks(app: Dash) -> None:
         """
         return open_dataset_handling(n_clicks, dataset_path)
 
-    # @app.callback(
-    #     Output("dataset-accordion", "children"),  # noqa: ERA001
-    #     Input("open-button", "n_clicks"),  # noqa: ERA001
-    #     prevent_initial_call=True,  # noqa: ERA001)
-    # def callback_clear_accordion_values(n_clicks: int) -> list[dbc.AccordionItem]:
-    #     """Recreate accordion items with unique IDs.
-
-    #     The purpose is to avoid browser caching and clear the values of all
-    #     components inside the dataset accordion when new file is opened
-    #     """
-    #     if n_clicks and n_clicks > 0:
-    #         return build_dataset_metadata_accordion(n_clicks)  # noqa: ERA001
-    #     return no_update  # noqa: ERA001
-
     @app.callback(
         Output(VARIABLES_INFORMATION_ID, "children"),
         Input("language-dropdown", "value"),
@@ -187,8 +173,6 @@ def register_callbacks(app: Dash) -> None:
             for variable in list(state.metadata.variables)
         ]
 
-    # Work in progress...
-    # Values are not displayed at once (must refresh page) - possible race condition?
     @app.callback(
         Output(SECTION_WRAPPER_ID, "children"),
         Input("language-dropdown", "value"),
@@ -202,8 +186,6 @@ def register_callbacks(app: Dash) -> None:
         """Create dataset workspace with sections."""
         update_global_language_state(SupportedLanguages(language))
         logger.info("Populating new dataset workspace")
-        dataset = state.metadata.dataset
-        logger.info("Dataset workspace dataset: %s", dataset.short_name)
         if n_clicks:
             return [
                 build_dataset_edit_section(
