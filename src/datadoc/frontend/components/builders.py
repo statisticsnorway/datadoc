@@ -184,35 +184,10 @@ def build_ssb_accordion(
     )
 
 
-def build_dataset_input_field_section(
-    metadata_fields: list[DatasetFieldTypes],
-    language: str,
-    section_id: str,
-    dataset: model.Dataset,
-) -> dbc.Form:
-    """Create form with input fields for dataset workspace."""
-    return dbc.Form(
-        [
-            i.render(
-                {
-                    "type": DATASET_METADATA_INPUT,
-                    "id": i.identifier,
-                },
-                language,
-                dataset,
-            )
-            for i in metadata_fields
-        ],
-        id=f"{DATASET_METADATA_INPUT}-{section_id}",
-        className="dataset-input-group",
-    )
-
-
-def build_dataset_edit_section(  # noqa: PLR0913
+def build_dataset_edit_section(
     title: str,
-    metadata_inputs: list,
+    metadata_inputs: list[DatasetFieldTypes],
     language: str,
-    section_id: str,
     dataset: model.Dataset,
     key: dict,
 ) -> html.Section:
@@ -221,11 +196,20 @@ def build_dataset_edit_section(  # noqa: PLR0913
         id=key,
         children=[
             ssb.Title(title, size=3, className="input-section-title"),
-            build_dataset_input_field_section(
-                metadata_inputs,
-                language,
-                section_id,
-                dataset,
+            dbc.Form(
+                [
+                    i.render(
+                        {
+                            "type": DATASET_METADATA_INPUT,
+                            "id": i.identifier,
+                        },
+                        language,
+                        dataset,
+                    )
+                    for i in metadata_inputs
+                ],
+                id=f"{DATASET_METADATA_INPUT}-{title}",
+                className="dataset-input-group",
             ),
         ],
         className="dataset-edit-section",
