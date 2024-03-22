@@ -36,16 +36,16 @@ def test_build_edit_section_return_correct_component(
 
 
 @pytest.mark.parametrize(
-    ("build_edit_section"),
+    ("field_list", "title", "variable", "language"),
     [
-        build_edit_section([], "", model.Variable(), ""),
-        build_edit_section(
+        ([], "", model.Variable(), ""),
+        (
             OPTIONAL_VARIABLES_METADATA,
             "Anbefalt",
             model.Variable(short_name="sivilstand"),
             SupportedLanguages.NORSK_BOKMÅL,
         ),
-        build_edit_section(
+        (
             OBLIGATORY_VARIABLES_METADATA,
             "Obligatorisk",
             model.Variable(short_name="sykepenger"),
@@ -53,19 +53,25 @@ def test_build_edit_section_return_correct_component(
         ),
     ],
 )
-def test_build_edit_section_children_return_correct_components(build_edit_section):
+def test_build_edit_section_children_return_correct_components(
+    field_list,
+    title,
+    variable,
+    language,
+):
     """Assert method has a list of children which returns SSB dash component Title and dash bootstrap Form."""
-    title = build_edit_section.children[0]
-    form = build_edit_section.children[1]
+    edit_section = build_edit_section(field_list, title, variable, language)
+    title = edit_section.children[0]
+    form = edit_section.children[1]
     assert isinstance(title, ssb.Title)
     assert isinstance(form, dbc.Form)
 
 
 @pytest.mark.parametrize(
-    ("build_edit_section"),
+    ("field_list", "title", "variable", "language"),
     [
-        build_edit_section([], "", model.Variable(), ""),
-        build_edit_section(
+        ([], "", model.Variable(), ""),
+        (
             OBLIGATORY_VARIABLES_METADATA,
             "",
             model.Variable(short_name="sykepenger"),
@@ -73,10 +79,11 @@ def test_build_edit_section_children_return_correct_components(build_edit_sectio
         ),
     ],
 )
-def test_build_edit_section_has_correct_id(build_edit_section):
+def test_build_edit_section_has_correct_id(field_list, title, variable, language):
     """Assert dictionary id is build correctly with 'type' and 'title'.
 
     'title' is children of Title component (which is the same as the content/value of Title)
     """
-    title = build_edit_section.children[0].children
-    assert build_edit_section.id == {"type": "edit-section", "title": title}
+    edit_section = build_edit_section(field_list, title, variable, language)
+    title = edit_section.children[0].children
+    assert edit_section.id == {"type": "edit-section", "title": title}
