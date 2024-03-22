@@ -15,25 +15,24 @@ from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METAD
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 
 VARIABLES_METADATA = OBLIGATORY_VARIABLES_METADATA + OPTIONAL_VARIABLES_METADATA
-TEST_VARIABLE = model.Variable(short_name="sykepenger")
 
 INPUT_FIELD_SECTION = [
-    build_input_field_section(
+    (
         VARIABLES_METADATA,
         model.Variable(short_name="hoveddiagnose"),
         SupportedLanguages.NORSK_NYNORSK,
     ),
-    build_input_field_section(
+    (
         VARIABLES_METADATA,
         model.Variable(short_name="pers_id"),
         SupportedLanguages.NORSK_BOKMÅL,
     ),
-    build_input_field_section(
+    (
         VARIABLES_METADATA,
         model.Variable(short_name="ber_bruttoformue"),
         SupportedLanguages.ENGLISH,
     ),
-    build_input_field_section(
+    (
         VARIABLES_METADATA,
         model.Variable(short_name="sykepenger"),
         SupportedLanguages.NORSK_BOKMÅL,
@@ -53,20 +52,19 @@ def test_build_input_field_section_no_input():
 
 
 @pytest.mark.parametrize(
-    ("input_field_section"),
+    ("field_list", "variable", "language"),
     INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_input_components(input_field_section):
+def test_build_input_fields_input_components(field_list, variable, language):
     """Assert fields input field for ."""
+    input_section = build_input_field_section(field_list, variable, language)
     type_input = ssb.Input
     elements_of_input = [
-        element
-        for element in input_field_section.children
-        if isinstance(element, type_input)
+        element for element in input_section.children if isinstance(element, type_input)
     ]
     elements_of_input_and_type_text_url = [
         element
-        for element in input_field_section.children
+        for element in input_section.children
         if isinstance(element, type_input)
         and element.type == "text"
         or isinstance(element, type_input)
@@ -90,15 +88,16 @@ def test_build_input_fields_input_components(input_field_section):
 
 
 @pytest.mark.parametrize(
-    ("input_field_section"),
+    ("field_list", "variable", "language"),
     INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_checkbox_components(input_field_section):
+def test_build_input_fields_checkbox_components(field_list, variable, language):
     """Test checkbox fields for variabel identifiers."""
+    input_section = build_input_field_section(field_list, variable, language)
     type_checkbox = dbc.Checkbox
     elements_of_checkbox = [
         element
-        for element in input_field_section.children
+        for element in input_section.children
         if isinstance(element, type_checkbox)
     ]
     variable_identifier_checkbox = [
@@ -118,24 +117,21 @@ def test_build_input_fields_checkbox_components(input_field_section):
 
 
 @pytest.mark.parametrize(
-    ("input_field_section"),
+    ("field_list", "variable", "language"),
     INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_type_date(input_field_section):
+def test_build_input_fields_type_date(field_list, variable, language):
     """Test Input field type 'url'."""
+    input_section = build_input_field_section(field_list, variable, language)
     type_input = ssb.Input
     elements_of_input = [
-        element
-        for element in input_field_section.children
-        if isinstance(element, type_input)
+        element for element in input_section.children if isinstance(element, type_input)
     ]
     elements_of_date = [
         element for element in elements_of_input if element.type == "date"
     ]
     variable_identifier_date = [
-        element
-        for element in VARIABLES_METADATA
-        if isinstance(element, VariablesPeriodField)
+        element for element in field_list if isinstance(element, VariablesPeriodField)
     ]
     for item1, item2 in zip(elements_of_date, variable_identifier_date):
         assert item1.label == item2.display_name
@@ -143,21 +139,20 @@ def test_build_input_fields_type_date(input_field_section):
 
 
 @pytest.mark.parametrize(
-    ("input_field_section"),
+    ("field_list", "variable", "language"),
     INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_type_url(input_field_section):
+def test_build_input_fields_type_url(field_list, variable, language):
+    input_section = build_input_field_section(field_list, variable, language)
     variable_identifier_input = [
-        element
-        for element in VARIABLES_METADATA
-        if isinstance(element, VariablesInputField)
+        element for element in field_list if isinstance(element, VariablesInputField)
     ]
     variable_identifier_url = [
         element for element in variable_identifier_input if element.type == "url"
     ]
     elements_of_input_and_type_url = [
         element
-        for element in input_field_section.children
+        for element in input_section.children
         if isinstance(element, ssb.Input) and element.type == "url"
     ]
     assert all(item.url is True for item in variable_identifier_url)
@@ -167,54 +162,20 @@ def test_build_input_fields_type_url(input_field_section):
 
 
 @pytest.mark.parametrize(
-    ("input_field_section", "language"),
-    [
-        (
-            build_input_field_section(
-                VARIABLES_METADATA,
-                model.Variable(short_name="hoveddiagnose"),
-                SupportedLanguages.NORSK_NYNORSK,
-            ),
-            SupportedLanguages.NORSK_NYNORSK,
-        ),
-        (
-            build_input_field_section(
-                VARIABLES_METADATA,
-                model.Variable(short_name="pers_id"),
-                SupportedLanguages.NORSK_BOKMÅL,
-            ),
-            SupportedLanguages.NORSK_BOKMÅL,
-        ),
-        (
-            build_input_field_section(
-                VARIABLES_METADATA,
-                model.Variable(short_name="ber_bruttoformue"),
-                SupportedLanguages.ENGLISH,
-            ),
-            SupportedLanguages.ENGLISH,
-        ),
-        (
-            build_input_field_section(
-                VARIABLES_METADATA,
-                model.Variable(short_name="sykepenger"),
-                SupportedLanguages.NORSK_BOKMÅL,
-            ),
-            SupportedLanguages.NORSK_BOKMÅL,
-        ),
-    ],
+    ("field_list", "variable", "language"),
+    INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_dropdown_components(input_field_section, language):
+def test_build_input_fields_dropdown_components(field_list, variable, language):
     """Test props for variable identifiers fields."""
+    input_section = build_input_field_section(field_list, variable, language)
     type_dropdown = ssb.Dropdown
     elements_of_dropdown = [
         element
-        for element in input_field_section.children
+        for element in input_section.children
         if isinstance(element, type_dropdown)
     ]
     variable_identifier_dropdown = [
-        element
-        for element in VARIABLES_METADATA
-        if isinstance(element, VariablesDropdownField)
+        element for element in field_list if isinstance(element, VariablesDropdownField)
     ]
     assert all(isinstance(item, type_dropdown) for item in elements_of_dropdown)
     for item in elements_of_dropdown:

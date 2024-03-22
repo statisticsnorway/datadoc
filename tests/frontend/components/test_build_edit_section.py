@@ -13,10 +13,10 @@ from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADAT
 
 
 @pytest.mark.parametrize(
-    ("build_edit_section"),
+    ("field_list", "title", "variable", "language"),
     [
-        build_edit_section([], "", model.Variable(), ""),
-        build_edit_section(
+        ([], "", model.Variable(), ""),
+        (
             OBLIGATORY_VARIABLES_METADATA,
             "",
             model.Variable(short_name="pers_id"),
@@ -24,9 +24,15 @@ from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADAT
         ),
     ],
 )
-def test_build_edit_section_return_correct_component(build_edit_section):
+def test_build_edit_section_return_correct_component(
+    field_list,
+    title,
+    variable,
+    language,
+):
     """Assert method returns html section."""
-    assert isinstance(build_edit_section, html.Section)
+    edit_section = build_edit_section(field_list, title, variable, language)
+    assert isinstance(edit_section, html.Section)
 
 
 @pytest.mark.parametrize(
