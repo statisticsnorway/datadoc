@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
-import dash_bootstrap_components as dbc
+from typing import TYPE_CHECKING
+
 import ssb_dash_components as ssb
 from dash import html
 
 from datadoc.frontend.components.builders import build_ssb_styled_tab
+
+if TYPE_CHECKING:
+    import dash_bootstrap_components as dbc
 
 VARIABLES_INFORMATION_ID = "variables-information"
 ACCORDION_WRAPPER_ID = "accordion-wrapper"
@@ -16,7 +20,7 @@ def build_variables_tab() -> dbc.Tab:
     """Build the framework for the variables tab."""
     return build_ssb_styled_tab(
         "Variabler",
-        dbc.Container(
+        html.Article(
             [
                 html.Header(
                     [
@@ -41,11 +45,11 @@ def build_variables_tab() -> dbc.Tab:
                     ],
                     className="workspace-header",
                 ),
-                html.Main(
+                html.Article(
                     id=ACCORDION_WRAPPER_ID,
                     className="workspace-content",
                 ),
             ],
-            class_name="workspace-page-wrapper",
+            className="workspace-page-wrapper",
         ),
     )

@@ -54,7 +54,7 @@ ALERT_TYPES = {
 }
 
 
-def build_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:
+def build_ssb_styled_tab(label: str, content: html.Article) -> dbc.Tab:
     """Make a Dash Tab according to SSBs Design System."""
     return dbc.Tab(
         label=label,
