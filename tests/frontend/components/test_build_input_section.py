@@ -74,7 +74,7 @@ def test_build_input_fields_input_components(input_field_section):
     variable_identifier_input = list(
         filter(lambda x: isinstance(x, VariablesInputField), VARIABLES_METADATA),
     )
-    assert [isinstance(field, ssb.Input) for i, field in enumerate(elements_of_input)]
+    assert all(isinstance(field, ssb.Input) for field in elements_of_input)
     for item in elements_of_input_and_type_text_url:
         assert item.debounce is True
     assert all(
