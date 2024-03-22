@@ -56,7 +56,6 @@ def test_build_input_field_section_no_input():
     INPUT_FIELD_SECTION,
 )
 def test_build_input_fields_input_components(field_list, variable, language):
-    """Assert fields input field for ."""
     input_section = build_input_field_section(field_list, variable, language)
     type_input = ssb.Input
     elements_of_input = [
