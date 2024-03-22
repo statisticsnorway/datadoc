@@ -23,7 +23,7 @@ def build_variables_tab() -> dbc.Tab:
                         ssb.Title(
                             "Variabel detaljer",
                             size=2,
-                            className="variables-title",
+                            className="workspace-title",
                         ),
                         ssb.Paragraph(
                             id=VARIABLES_INFORMATION_ID,

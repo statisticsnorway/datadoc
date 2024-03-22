@@ -27,7 +27,7 @@ def build_dataset_tab() -> dbc.Tab:
                         ssb.Title(
                             "Datasett detaljer",
                             size=2,
-                            className="dataset-title",
+                            className="workspace-title",
                         ),
                     ],
                     className="dataset-header",
