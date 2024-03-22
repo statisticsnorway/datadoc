@@ -133,7 +133,7 @@ def build_input_field_section(
             for i in metadata_fields
         ],
         id=VARIABLES_METADATA_INPUT,
-        className="variables-input-group",
+        className="edit-section-form",
     )
 
 
@@ -147,10 +147,10 @@ def build_edit_section(
     return html.Section(
         id={"type": "edit-section", "title": title},
         children=[
-            ssb.Title(title, size=3, className="input-section-title"),
+            ssb.Title(title, size=3, className="edit-section-title"),
             build_input_field_section(metadata_inputs, variable, language),
         ],
-        className="input-section",
+        className="edit-section",
     )
 
 
@@ -180,7 +180,7 @@ def build_ssb_accordion(
                 children=children,
             ),
         ],
-        className="variable",
+        className="variable-accordion",
     )
 
 
@@ -195,7 +195,7 @@ def build_dataset_edit_section(
     return html.Section(
         id=key,
         children=[
-            ssb.Title(title, size=3, className="input-section-title"),
+            ssb.Title(title, size=3, className="edit-section-title"),
             dbc.Form(
                 [
                     i.render(
@@ -209,8 +209,8 @@ def build_dataset_edit_section(
                     for i in metadata_inputs
                 ],
                 id=f"{DATASET_METADATA_INPUT}-{title}",
-                className="dataset-input-group",
+                className="edit-section-form",
             ),
         ],
-        className="dataset-edit-section",
+        className="edit-section dataset-edit-section",
     )

@@ -27,6 +27,7 @@ def build_variables_tab() -> dbc.Tab:
                         ),
                         ssb.Paragraph(
                             id=VARIABLES_INFORMATION_ID,
+                            className="workspace-info-paragraph",
                         ),
                         ssb.Input(
                             label="Søk i variabler",
@@ -38,13 +39,13 @@ def build_variables_tab() -> dbc.Tab:
                             value="",
                         ),
                     ],
-                    className="variables-header",
+                    className="workspace-header",
                 ),
                 html.Main(
                     id=ACCORDION_WRAPPER_ID,
-                    className="main-content",
+                    className="workspace-content",
                 ),
             ],
-            class_name="page-wrapper",
+            class_name="workspace-page-wrapper",
         ),
     )
