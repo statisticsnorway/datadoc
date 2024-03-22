@@ -73,5 +73,4 @@ def test_build_edit_section_has_correct_id(build_edit_section):
     'title' is children of Title component (which is the same as the content/value of Title)
     """
     title = build_edit_section.children[0].children
-    edit_section_id = {"type": "edit-section", "title": title}
-    assert edit_section_id == build_edit_section.id
+    assert build_edit_section.id == {"type": "edit-section", "title": title}
