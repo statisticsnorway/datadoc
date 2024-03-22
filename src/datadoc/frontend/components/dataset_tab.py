@@ -16,10 +16,10 @@ DATASET_METADATA_INPUT = "dataset-metadata-input"
 SECTION_WRAPPER_ID = "section-wrapper-id"
 
 
-def build_new_dataset_tab() -> dbc.Tab:
+def build_dataset_tab() -> dbc.Tab:
     """Build the Dataset metadata tab."""
     return build_ssb_styled_tab(
-        "Ny Datasett",
+        "Datasett",
         html.Article(
             [
                 html.Header(

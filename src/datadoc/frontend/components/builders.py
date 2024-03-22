@@ -118,7 +118,7 @@ def build_input_field_section(
     variable: model.Variable,
     language: str,
 ) -> dbc.Form:
-    """Create input fields."""
+    """Create form with input fields for variable workspace."""
     return dbc.Form(
         [
             i.render(
@@ -137,36 +137,13 @@ def build_input_field_section(
     )
 
 
-def build_dataset_input_field_section(
-    metadata_fields: list[DatasetFieldTypes],
-    language: str,
-    section_id: str,
-) -> dbc.Form:
-    """Create input fields for dataset."""
-    return dbc.Form(
-        [
-            i.render(
-                {
-                    "type": "NEW_DATASET",
-                    # "type": DATASET_METADATA_INPUT,  # noqa: ERA001
-                    "id": i.identifier,
-                },
-                language,
-            )
-            for i in metadata_fields
-        ],
-        id=f"{DATASET_METADATA_INPUT}-{section_id}",
-        className="dataset-input-group",
-    )
-
-
 def build_edit_section(
     metadata_inputs: list,
     title: str,
     variable: model.Variable,
     language: str,
 ) -> html.Section:
-    """Create input section."""
+    """Create input section for variable workspace."""
     return html.Section(
         id={"type": "edit-section", "title": title},
         children=[
@@ -177,34 +154,13 @@ def build_edit_section(
     )
 
 
-def build_dataset_edit_section(
-    title: str,
-    metadata_inputs: list,
-    language: str,
-    section_id: str,
-) -> html.Section:
-    """Create edit section for dataset."""
-    return html.Section(
-        id={"type": "dataset-edit-section", "id": section_id},
-        children=[
-            ssb.Title(title, size=3, className="input-section-title"),
-            build_dataset_input_field_section(
-                metadata_inputs,
-                language,
-                section_id,
-            ),
-        ],
-        className="dataset-edit-section",
-    )
-
-
 def build_ssb_accordion(
     header: str,
     key: dict,
     variable_short_name: str,
     children: list,
 ) -> ssb.Accordion:
-    """Build Accordion for one variable."""
+    """Build Accordion for one variable in variable workspace."""
     return ssb.Accordion(
         header=header,
         id=key,
@@ -225,4 +181,36 @@ def build_ssb_accordion(
             ),
         ],
         className="variable",
+    )
+
+
+def build_dataset_edit_section(
+    title: str,
+    metadata_inputs: list[DatasetFieldTypes],
+    language: str,
+    dataset: model.Dataset,
+    key: dict,
+) -> html.Section:
+    """Create edit section for dataset workspace."""
+    return html.Section(
+        id=key,
+        children=[
+            ssb.Title(title, size=3, className="input-section-title"),
+            dbc.Form(
+                [
+                    i.render(
+                        {
+                            "type": DATASET_METADATA_INPUT,
+                            "id": i.identifier,
+                        },
+                        language,
+                        dataset,
+                    )
+                    for i in metadata_inputs
+                ],
+                id=f"{DATASET_METADATA_INPUT}-{title}",
+                className="dataset-input-group",
+            ),
+        ],
+        className="dataset-edit-section",
     )

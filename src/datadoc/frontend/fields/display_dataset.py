@@ -142,6 +142,7 @@ DISPLAY_DATASET: dict[
         description="Datasettnavn",
         obligatory=True,
         multiple_language_support=True,
+        value_getter=get_metadata_and_stringify,
     ),
     DatasetIdentifiers.DATA_SOURCE: DatasetInputField(
         identifier=DatasetIdentifiers.DATA_SOURCE.value,
@@ -303,10 +304,7 @@ MULTIPLE_LANGUAGE_DATASET_METADATA = [
 ]
 
 OBLIGATORY_EDITABLE_DATASET_METADATA = [
-    m
-    for m in DISPLAY_DATASET.values()
-    if m.obligatory and m.editable
-    # DISPLAY_DATASET[DatasetIdentifiers.NAME],  # noqa: ERA001
+    m for m in DISPLAY_DATASET.values() if m.obligatory and m.editable
 ]
 
 OPTIONAL_DATASET_METADATA = [

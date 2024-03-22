@@ -34,7 +34,6 @@ logger = logging.getLogger(__name__)
 VARIABLES_METADATA_INPUT = "variables-metadata-input"
 VARIABLES_METADATA_DATE_INPUT = "variables-metadata-date-input"
 
-# Must be changed if new design
 INPUT_KWARGS = {
     "debounce": True,
     "style": {"width": "100%"},
@@ -131,6 +130,17 @@ class DisplayDatasetMetadata(DisplayMetadata):
 
 
 @dataclass
+class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
+    """Include the possible options which a user may choose from."""
+
+    # fmt: off
+    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
+    # fmt: on
+    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
+    component: type[Component] = dcc.Dropdown
+
+
+@dataclass
 class DatasetInputField(DisplayMetadata):
     """Controls for how a given metadata field should be displayed.
 
@@ -145,18 +155,18 @@ class DatasetInputField(DisplayMetadata):
         self,
         dataset_id: dict,
         language: str,  # noqa: ARG002
-        # dataset: model.Dataset,
+        dataset: model.Dataset,
     ) -> ssb.Input:
         """Build input component."""
-        # value = self.value_getter(dataset, self.identifier)  # noqa: ERA001
+        value = self.value_getter(dataset, self.identifier)
         return ssb.Input(
             label=self.display_name,
             id=dataset_id,
             debounce=True,
             type=self.type,
             disabled=not self.editable,
-            # value=value,  # noqa: ERA001
-            className="variable-input",
+            value=value,
+            className="dataset-input",
         )
 
 
@@ -174,28 +184,48 @@ class DatasetDropdownField(DisplayMetadata):
         self,
         variable_id: dict,
         language: str,
-        # variable: model.Variable,
+        dataset: model.Dataset,
     ) -> ssb.Dropdown:
         """Build Dropdown component."""
-        # value = self.value_getter(variable, self.identifier)  # noqa: ERA001
+        value = self.value_getter(dataset, self.identifier)
         return ssb.Dropdown(
             header=self.display_name,
             id=variable_id,
             items=self.options_getter(SupportedLanguages(language)),
-            # value=value,  # noqa: ERA001
+            value=value,
             className="dataset-dropdown",
         )
 
 
 @dataclass
-class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
-    """Include the possible options which a user may choose from."""
+class DatasetPeriodField(DisplayMetadata):
+    """Control how fields which define a time period are displayed for Dataset.
 
-    # fmt: off
-    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
-    # fmt: on
+    These are a special case since two fields have a relationship to one another.>
+    """
+
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
-    component: type[Component] = dcc.Dropdown
+    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
+    type: str = "date"
+
+    def render(
+        self,
+        dataset_id: dict,
+        language: str,  # noqa: ARG002
+        dataset: model.Dataset,
+    ) -> ssb.Input:
+        """Build Input date component."""
+        value = self.value_getter(dataset, self.identifier)
+        # variable_id["type"] = VARIABLES_METADATA_DATE_INPUT  # noqa: ERA001
+        return ssb.Input(
+            label=self.display_name,
+            id=dataset_id,
+            debounce=False,
+            type=self.type,
+            disabled=not self.editable,
+            value=value,
+            className="dataset-input",
+        )
 
 
 @dataclass
@@ -229,6 +259,33 @@ class VariablesInputField(DisplayMetadata):
 
 
 @dataclass
+class VariablesDropdownField(DisplayMetadata):
+    """Control how a Dropdown should be displayed."""
+
+    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
+    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
+    # fmt: off
+    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
+    # fmt: on
+
+    def render(
+        self,
+        variable_id: dict,
+        language: str,
+        variable: model.Variable,
+    ) -> ssb.Dropdown:
+        """Build Dropdown component."""
+        value = self.value_getter(variable, self.identifier)
+        return ssb.Dropdown(
+            header=self.display_name,
+            id=variable_id,
+            items=self.options_getter(SupportedLanguages(language)),
+            value=value,
+            className="variable-dropdown",
+        )
+
+
+@dataclass
 class VariablesPeriodField(DisplayMetadata):
     """Control how fields which define a time period are displayed for variables.
 
@@ -256,64 +313,6 @@ class VariablesPeriodField(DisplayMetadata):
             disabled=not self.editable,
             value=value,
             className="variable-input",
-        )
-
-
-@dataclass
-class DatasetPeriodField(DisplayMetadata):
-    """Control how fields which define a time period are displayed for Dataset.
-
-    These are a special case since two fields have a relationship to one another.>
-    """
-
-    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
-    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
-    type: str = "date"
-
-    def render(
-        self,
-        dataset_id: dict,
-        language: str,  # noqa: ARG002
-        # variable: model.Variable,
-    ) -> ssb.Input:
-        """Build Input date component."""
-        # value = self.value_getter(variable, self.identifier)  # noqa: ERA001
-        # variable_id["type"] = VARIABLES_METADATA_DATE_INPUT  # noqa: ERA001
-        return ssb.Input(
-            label=self.display_name,
-            id=dataset_id,
-            debounce=False,
-            type=self.type,
-            disabled=not self.editable,
-            # value=value,  # noqa: ERA001
-            className="variable-input",
-        )
-
-
-@dataclass
-class VariablesDropdownField(DisplayMetadata):
-    """Control how a Dropdown should be displayed."""
-
-    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
-    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
-    # fmt: off
-    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
-    # fmt: on
-
-    def render(
-        self,
-        variable_id: dict,
-        language: str,
-        variable: model.Variable,
-    ) -> ssb.Dropdown:
-        """Build Dropdown component."""
-        value = self.value_getter(variable, self.identifier)
-        return ssb.Dropdown(
-            header=self.display_name,
-            id=variable_id,
-            items=self.options_getter(SupportedLanguages(language)),
-            value=value,
-            className="variable-dropdown",
         )
 
 

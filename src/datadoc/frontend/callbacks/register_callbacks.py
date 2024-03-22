@@ -15,11 +15,11 @@ from dash import Input
 from dash import Output
 from dash import State
 from dash import ctx
+from dash import no_update
 
 from datadoc import state
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
-from datadoc.frontend.callbacks.dataset import change_language_dataset_metadata
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.utils import update_global_language_state
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
@@ -33,7 +33,6 @@ from datadoc.frontend.components.variables_tab import ACCORDION_WRAPPER_ID
 from datadoc.frontend.components.variables_tab import VARIABLES_INFORMATION_ID
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
-from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import NON_EDITABLE_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import OBLIGATORY_EDITABLE_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import OPTIONAL_DATASET_METADATA
@@ -87,29 +86,6 @@ def register_callbacks(app: Dash) -> None:
         return False
 
     @app.callback(
-        *[
-            Output(
-                {
-                    "type": DATASET_METADATA_INPUT,
-                    "id": m.identifier,
-                },
-                "options",
-            )
-            for m in DISPLAYED_DROPDOWN_DATASET_METADATA
-        ],
-        Output(
-            {"type": DATASET_METADATA_INPUT, "id": ALL},
-            "value",
-        ),
-        Input("language-dropdown", "value"),
-    )
-    def callback_change_language_dataset_metadata(
-        language: str,
-    ) -> tuple[object, ...]:
-        """Update dataset metadata values upon change of language."""
-        return change_language_dataset_metadata(SupportedLanguages(language))
-
-    @app.callback(
         Output("dataset-validation-error", "is_open"),
         Output("dataset-validation-explanation", "children"),
         Input({"type": DATASET_METADATA_INPUT, "id": ALL}, "value"),
@@ -149,20 +125,6 @@ def register_callbacks(app: Dash) -> None:
         by a more formal mechanism.
         """
         return open_dataset_handling(n_clicks, dataset_path)
-
-    # @app.callback(
-    #     Output("dataset-accordion", "children"),  # noqa: ERA001
-    #     Input("open-button", "n_clicks"),  # noqa: ERA001
-    #     prevent_initial_call=True,  # noqa: ERA001)
-    # def callback_clear_accordion_values(n_clicks: int) -> list[dbc.AccordionItem]:
-    #     """Recreate accordion items with unique IDs.
-
-    #     The purpose is to avoid browser caching and clear the values of all
-    #     components inside the dataset accordion when new file is opened
-    #     """
-    #     if n_clicks and n_clicks > 0:
-    #         return build_dataset_metadata_accordion(n_clicks)  # noqa: ERA001
-    #     return no_update  # noqa: ERA001
 
     @app.callback(
         Output(VARIABLES_INFORMATION_ID, "children"),
@@ -211,36 +173,44 @@ def register_callbacks(app: Dash) -> None:
             for variable in list(state.metadata.variables)
         ]
 
-    # Work in progress...
     @app.callback(
         Output(SECTION_WRAPPER_ID, "children"),
         Input("language-dropdown", "value"),
+        Input("open-button", "n_clicks"),
         prevent_initial_call=True,
     )
-    def callback_populate_dataset_workspace(language: str) -> list:
+    def callback_populate_dataset_workspace(
+        language: str,
+        n_clicks: int,
+    ) -> list:
         """Create dataset workspace with sections."""
         update_global_language_state(SupportedLanguages(language))
         logger.info("Populating new dataset workspace")
-        return [
-            build_dataset_edit_section(
-                "Obligatorisk",
-                OBLIGATORY_EDITABLE_DATASET_METADATA,
-                language,
-                "obligatory",
-            ),
-            build_dataset_edit_section(
-                "Anbefalt",
-                OPTIONAL_DATASET_METADATA,
-                language,
-                "recommended",
-            ),
-            build_dataset_edit_section(
-                "Maskingenerert",
-                NON_EDITABLE_DATASET_METADATA,
-                language,
-                "machine-generated",
-            ),
-        ]
+        if n_clicks:
+            return [
+                build_dataset_edit_section(
+                    "Obligatorisk",
+                    OBLIGATORY_EDITABLE_DATASET_METADATA,
+                    state.current_metadata_language,
+                    state.metadata.dataset,
+                    {"type": "dataset-edit-section", "id": f"obligatory-{language}"},
+                ),
+                build_dataset_edit_section(
+                    "Anbefalt",
+                    OPTIONAL_DATASET_METADATA,
+                    state.current_metadata_language,
+                    state.metadata.dataset,
+                    {"type": "dataset-edit-section", "id": f"recommended-{language}"},
+                ),
+                build_dataset_edit_section(
+                    "Maskingenerert",
+                    NON_EDITABLE_DATASET_METADATA,
+                    state.current_metadata_language,
+                    state.metadata.dataset,
+                    {"type": "dataset-edit-section", "id": f"machine-{language}"},
+                ),
+            ]
+        return no_update
 
     @app.callback(
         Output(
