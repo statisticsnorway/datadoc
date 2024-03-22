@@ -34,7 +34,6 @@ logger = logging.getLogger(__name__)
 VARIABLES_METADATA_INPUT = "variables-metadata-input"
 VARIABLES_METADATA_DATE_INPUT = "variables-metadata-date-input"
 
-# should be removed in new design
 INPUT_KWARGS = {
     "debounce": True,
     "style": {"width": "100%"},
@@ -56,7 +55,6 @@ def get_enum_options_for_language(
     ]
 
 
-# Remove in new design
 def input_kwargs_factory() -> dict[str, t.Any]:
     """Initialize the field extra_kwargs.
 
@@ -119,7 +117,6 @@ class DisplayMetadata:
     multiple_language_support: bool = False
 
 
-# Remove in new design?
 @dataclass
 class DisplayDatasetMetadata(DisplayMetadata):
     """Controls for how a given metadata field should be displayed.
@@ -132,7 +129,6 @@ class DisplayDatasetMetadata(DisplayMetadata):
     value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
 
 
-# Remove in new design?
 @dataclass
 class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
     """Include the possible options which a user may choose from."""
@@ -142,9 +138,6 @@ class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
     # fmt: on
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     component: type[Component] = dcc.Dropdown
-
-
-# New input fields for dataset
 
 
 @dataclass
@@ -233,9 +226,6 @@ class DatasetPeriodField(DisplayMetadata):
             value=value,
             className="dataset-input",
         )
-
-
-# New input fields for variables
 
 
 @dataclass
@@ -350,8 +340,6 @@ class VariablesCheckboxField(DisplayMetadata):
             value=value,
         )
 
-
-# Lists input types
 
 VariablesFieldTypes = (
     VariablesInputField
