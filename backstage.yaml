@@ -4,7 +4,7 @@ metadata:
   name: datadoc
   title: Datadoc
   description: |
-    Document datasets in SSB
+    Create and edit documentation for datasets at Statistics Norway
   tags:
     - dapla
     - metadata
@@ -16,5 +16,6 @@ spec:
   type: service
   owner: dapla-metadata-developers
   lifecycle: experimental
-  dependsOn: dapla-beta
-  system: dapla-metadata
+  dependsOn:
+    - system:dapla-beta
+  system: datadoc
