@@ -17,5 +17,5 @@ spec:
   owner: dapla-metadata-developers
   lifecycle: experimental
   dependsOn:
-    - dapla-beta
+    - system:dapla-beta
   system: datadoc
