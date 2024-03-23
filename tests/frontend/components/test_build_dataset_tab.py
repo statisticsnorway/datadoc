@@ -245,6 +245,12 @@ def test_build_dataset_input_fields(title, field_types, language, dataset, key):
         element for element in dataset_form if isinstance(element, ssb.Dropdown)
     ]
     dataset = model.Dataset()
+    dataset_identifier_input = [
+        element
+        for element in OPTIONAL_DATASET_METADATA
+        if isinstance(element, DatasetInputField)
+    ]
+    assert dataset_identifier_input != []
     assert dataset.unit_type is None
     for item in inputs:
         assert isinstance(item, ssb.Input)
