@@ -147,7 +147,7 @@ def test_build_dataset_section(title, field_types, language, dataset, key):
             {},
         ),
         (
-            "New title",
+            "Lazy title",
             [
                 DatasetInputField(
                     identifier=DatasetIdentifiers.SHORT_NAME.value,
@@ -231,7 +231,7 @@ def test_build_dataset_section(title, field_types, language, dataset, key):
                 ),
             ],
             SupportedLanguages.NORSK_BOKMÅL,
-            model.Dataset(short_name="last_dataset"),
+            model.Dataset(short_name="nosy_dataset"),
             {},
         ),
     ],
