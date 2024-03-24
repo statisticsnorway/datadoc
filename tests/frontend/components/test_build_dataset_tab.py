@@ -8,6 +8,10 @@ from datadoc_model import model
 
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.components.builders import build_dataset_edit_section
+from datadoc.frontend.fields.display_base import DatasetDropdownField
+from datadoc.frontend.fields.display_base import DatasetFieldTypes
+from datadoc.frontend.fields.display_base import DatasetInputField
+from datadoc.frontend.fields.display_base import DatasetPeriodField
 from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET
 from datadoc.frontend.fields.display_dataset import NON_EDITABLE_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import OPTIONAL_DATASET_METADATA
@@ -25,7 +29,7 @@ OBLIGATORY_MINUS_ATYPICAL_DROPDOWNS = [
     and m.identifier != DatasetIdentifiers.OWNER.value
 ]
 
-INPUT_DATA = [
+INPUT_DATA_BUILD_DATASET_SECTION = [
     (
         "Obligatorisk",
         NON_EDITABLE_DATASET_METADATA,
@@ -80,9 +84,15 @@ INPUT_DATA = [
 
 @pytest.mark.parametrize(
     ("title", "field_types", "language", "dataset", "key"),
-    INPUT_DATA,
+    INPUT_DATA_BUILD_DATASET_SECTION,
 )
-def test_build_dataset_section(title, field_types, language, dataset, key):
+def test_build_dataset_section_is_html_section(
+    title,
+    field_types,
+    language,
+    dataset,
+    key,
+):
     edit_section = build_dataset_edit_section(
         title,
         field_types,
@@ -97,9 +107,9 @@ def test_build_dataset_section(title, field_types, language, dataset, key):
 
 @pytest.mark.parametrize(
     ("title", "field_types", "language", "dataset", "key"),
-    INPUT_DATA,
+    INPUT_DATA_BUILD_DATASET_SECTION,
 )
-def test_build_dataset_title(title, field_types, language, dataset, key):
+def test_build_dataset_has_title_component(title, field_types, language, dataset, key):
     edit_section = build_dataset_edit_section(
         title,
         field_types,
@@ -115,9 +125,9 @@ def test_build_dataset_title(title, field_types, language, dataset, key):
 
 @pytest.mark.parametrize(
     ("title", "field_types", "language", "dataset", "key"),
-    INPUT_DATA,
+    INPUT_DATA_BUILD_DATASET_SECTION,
 )
-def test_build_dataset_form(title, field_types, language, dataset, key):
+def test_build_dataset_is_form_component(title, field_types, language, dataset, key):
     edit_section = build_dataset_edit_section(
         title,
         field_types,
@@ -168,25 +178,162 @@ def test_build_dataset_form(title, field_types, language, dataset, key):
         ),
     ],
 )
-def test_build_dataset_input_fields_from_datasetidentifiers_class(
+def test_build_dataset_edit_section_renders_ssb_components(
     edit_section,
     expected_inputs,
     expected_dropdowns,
 ):
-    dataset_form = edit_section.children[1]
-    fields = dataset_form.children
-    inputs = [element for element in fields if isinstance(element, ssb.Input)]
-    dropdowns = [element for element in fields if isinstance(element, ssb.Dropdown)]
-    for item in inputs:
-        if item.type != "date":
-            assert item.debounce is True
-    for item in inputs:
+    fields = edit_section.children[1].children
+
+    input_components = [element for element in fields if isinstance(element, ssb.Input)]
+    dropdown_components = [
+        element for element in fields if isinstance(element, ssb.Dropdown)
+    ]
+    assert len(input_components) == expected_inputs
+    assert len(dropdown_components) == expected_dropdowns
+
+
+@pytest.mark.parametrize(
+    ("title", "field_types", "language", "dataset", "key"),
+    INPUT_DATA_BUILD_DATASET_SECTION,
+)
+def test_build_dataset_edit_section_input_component_props(
+    title,
+    field_types,
+    language,
+    dataset,
+    key,
+):
+    edit_section = build_dataset_edit_section(
+        title,
+        field_types,
+        language,
+        dataset,
+        key,
+    )
+    fields = edit_section.children[1].children
+    input_components = [element for element in fields if isinstance(element, ssb.Input)]
+    for item in input_components:
         assert item.type in ("text", "url", "date")
-    for item in inputs:
+    for item in input_components:
+        if item.type in ("text", "url"):
+            assert item.debounce is True
+    for item in input_components:
+        if item.type == "date":
+            assert item.debounce is False
+    for item in input_components:
         assert item.label != ""
-    for item in dropdowns:
-        assert item.items is not None
-    for item in dropdowns:
+
+
+@pytest.mark.parametrize(
+    ("title", "field_types", "language", "dataset", "key"),
+    INPUT_DATA_BUILD_DATASET_SECTION,
+)
+def test_build_dataset_edit_section_dropdown_component_props(
+    title,
+    field_types,
+    language,
+    dataset,
+    key,
+):
+    edit_section = build_dataset_edit_section(
+        title,
+        field_types,
+        language,
+        dataset,
+        key,
+    )
+    fields = edit_section.children[1].children
+    dropdown_components = [
+        element for element in fields if isinstance(element, ssb.Dropdown)
+    ]
+    for item in dropdown_components:
+        assert item.items != []
+    for item in dropdown_components:
         assert item.header != ""
-    assert len(inputs) == expected_inputs
-    assert len(dropdowns) == expected_dropdowns
+
+
+# Test data sorted by DatasetFieldTypes
+DATASET_INPUT_FIELD_LIST: list[DatasetFieldTypes] = [
+    m for m in DISPLAY_DATASET.values() if isinstance(m, DatasetInputField)
+]
+
+DATASET_INPUT_URL_FIELD_LIST: list[DatasetFieldTypes] = [
+    m
+    for m in DISPLAY_DATASET.values()
+    if isinstance(m, DatasetInputField) and m.type == "url"
+]
+
+DATASET_DATE_FIELD_LIST: list[DatasetFieldTypes] = [
+    m for m in DISPLAY_DATASET.values() if isinstance(m, DatasetPeriodField)
+]
+
+DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL: list[DatasetFieldTypes] = [
+    m
+    for m in DISPLAY_DATASET.values()
+    if isinstance(m, DatasetDropdownField)
+    and m.identifier != DatasetIdentifiers.UNIT_TYPE.value
+    and m.identifier != DatasetIdentifiers.KEYWORD.value
+    and m.identifier != DatasetIdentifiers.SUBJECT_FIELD.value
+    and m.identifier != DatasetIdentifiers.OWNER.value
+]
+
+
+@pytest.mark.parametrize(
+    ("edit_section", "expected_num", "expected_component"),
+    [
+        (
+            build_dataset_edit_section(
+                "",
+                DATASET_INPUT_FIELD_LIST,
+                SupportedLanguages.NORSK_BOKMÅL,
+                model.Dataset(short_name="input_dataset"),
+                {"type": "dataset-edit-section", "id": "-nb"},
+            ),
+            16,
+            ssb.Input,
+        ),
+        (
+            build_dataset_edit_section(
+                "",
+                DATASET_INPUT_URL_FIELD_LIST,
+                SupportedLanguages.NORSK_BOKMÅL,
+                model.Dataset(short_name="url_dataset"),
+                {"type": "dataset-edit-section", "id": "-nb"},
+            ),
+            1,
+            ssb.Input,
+        ),
+        (
+            build_dataset_edit_section(
+                "title",
+                DATASET_DATE_FIELD_LIST,
+                SupportedLanguages.NORSK_BOKMÅL,
+                model.Dataset(short_name="date_dataset"),
+                {"type": "dataset-edit-section", "id": "title-nb"},
+            ),
+            2,
+            ssb.Input,
+        ),
+        (
+            build_dataset_edit_section(
+                "dropdown",
+                DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL,
+                SupportedLanguages.ENGLISH,
+                model.Dataset(short_name="dropdown_dataset"),
+                {"type": "dataset-edit-section", "id": "dropdown-en"},
+            ),
+            4,
+            ssb.Dropdown,
+        ),
+    ],
+)
+def test_build_dataset_input_fields_from_datasetidentifiers(
+    edit_section,
+    expected_num,
+    expected_component,
+):
+    fields = edit_section.children[1].children
+    assert len(fields) == expected_num
+    for item in fields:
+        assert isinstance(item, expected_component)
