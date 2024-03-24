@@ -12,13 +12,14 @@ import dash_bootstrap_components as dbc
 import ssb_dash_components as ssb
 from dash import html
 
-from datadoc.frontend.components.dataset_tab import DATASET_METADATA_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
 from datadoc.frontend.fields.display_base import DatasetFieldTypes
 from datadoc.frontend.fields.display_base import VariablesFieldTypes
 
 if TYPE_CHECKING:
     from datadoc_model import model
+
+DATASET_METADATA_INPUT = "dataset-metadata-input"
 
 
 class AlertTypes(Enum):

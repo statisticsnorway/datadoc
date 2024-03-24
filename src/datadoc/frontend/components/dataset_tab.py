@@ -12,7 +12,6 @@ from datadoc.frontend.components.builders import build_ssb_styled_tab
 if TYPE_CHECKING:
     import dash_bootstrap_components as dbc
 
-DATASET_METADATA_INPUT = "dataset-metadata-input"
 SECTION_WRAPPER_ID = "section-wrapper-id"
 
 
