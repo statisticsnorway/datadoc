@@ -8,6 +8,8 @@ from datadoc.backend.external_sources.external_sources import GetExternalSource
 from datadoc.enums import SupportedLanguages
 
 if TYPE_CHECKING:
+    import concurrent
+
     import pandas as pd
 
 from klass.classes.classification import KlassClassification
@@ -51,7 +53,11 @@ class CodeListItem:
 class CodeList(GetExternalSource):
     """Class for retrieving classifications from Klass."""
 
-    def __init__(self, classification_id: int | None) -> None:
+    def __init__(
+        self,
+        executor: concurrent.futures.ThreadPoolExecutor,
+        classification_id: int | None,
+    ) -> None:
         """Retrieves a list of classifications given a classification id.
 
         Initializes the classifications list and starts fetching the classifications.
@@ -63,7 +69,7 @@ class CodeList(GetExternalSource):
         self._classifications: list[CodeListItem] = []
         self.classification_id = classification_id
         self.classifications_dataframes: dict[str, pd.DataFrame] | None = None
-        super().__init__()
+        super().__init__(executor)
 
     def _fetch_data_from_external_source(
         self,

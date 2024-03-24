@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 import bs4
 import requests
@@ -10,6 +11,9 @@ from bs4 import ResultSet
 
 from datadoc.backend.external_sources.external_sources import GetExternalSource
 from datadoc.enums import SupportedLanguages
+
+if TYPE_CHECKING:
+    import concurrent
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +66,11 @@ class PrimarySubject(Subject):
 class StatisticSubjectMapping(GetExternalSource):
     """Allow mapping between statistic short name and primary and secondary subject."""
 
-    def __init__(self, source_url: str | None) -> None:
+    def __init__(
+        self,
+        executor: concurrent.futures.ThreadPoolExecutor,
+        source_url: str | None,
+    ) -> None:
         """Retrieves the statistical structure document from the given URL.
 
         Initializes the mapping dicts. Based on the values in the statistical structure document.
@@ -73,7 +81,7 @@ class StatisticSubjectMapping(GetExternalSource):
 
         self._primary_subjects: list[PrimarySubject] = []
 
-        super().__init__()
+        super().__init__(executor)
 
     def get_secondary_subject(self, statistic_short_name: str | None) -> str | None:
         """Looks up the secondary subject for the given statistic short name in the mapping dict.

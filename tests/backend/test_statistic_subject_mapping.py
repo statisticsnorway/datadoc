@@ -8,8 +8,8 @@ from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from tests.utils import TEST_RESOURCES_DIRECTORY
 
 
-def test_no_source_url():
-    subject_mapping = StatisticSubjectMapping(None)
+def test_no_source_url(thread_pool_executor):
+    subject_mapping = StatisticSubjectMapping(thread_pool_executor, None)
     subject_mapping.wait_for_external_result()
     assert subject_mapping.primary_subjects == []
 
@@ -151,12 +151,13 @@ def test_get_secondary_subject(
 def subject_mapping_http_exception(
     requests_mock,
     exception_to_raise,
+    thread_pool_executor,
 ) -> StatisticSubjectMapping:
     requests_mock.get(
         "http://test.some.url.com",
         exc=exception_to_raise,
     )
-    return StatisticSubjectMapping("http://test.some.url.com")
+    return StatisticSubjectMapping(thread_pool_executor, "http://test.some.url.com")
 
 
 @pytest.mark.parametrize(

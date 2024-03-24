@@ -5,6 +5,7 @@ Members of this module should not be imported into any sub-modules, this will ca
 
 from __future__ import annotations
 
+import concurrent
 import logging
 from pathlib import Path
 
@@ -76,10 +77,13 @@ def build_app(app: type[Dash]) -> Dash:
     return app
 
 
-def get_app(dataset_path: str | None = None) -> tuple[Dash, int]:
+def get_app(
+    executor: concurrent.futures.ThreadPoolExecutor,
+    dataset_path: str | None = None,
+) -> tuple[Dash, int]:
     """Centralize all the ugliness around initializing the app."""
     logger.info("Datadoc version v%s", get_app_version())
-    collect_data_from_external_sources()
+    collect_data_from_external_sources(executor)
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     state.metadata = DataDocMetadata(
         state.statistic_subject_mapping,
@@ -114,43 +118,52 @@ def get_app(dataset_path: str | None = None) -> tuple[Dash, int]:
     return app, port
 
 
-def collect_data_from_external_sources() -> None:
+def collect_data_from_external_sources(
+    executor: concurrent.futures.ThreadPoolExecutor,
+) -> None:
     """Call classes and methods which collect data from external sources.
 
     Must be non-blocking to prevent delays in app startup.
     """
+    logger.debug("Start threads - Collecting data from external sources")
     state.statistic_subject_mapping = StatisticSubjectMapping(
+        executor,
         config.get_statistical_subject_source_url(),
     )
 
     state.unit_types = CodeList(
+        executor,
         config.get_unit_code(),
     )
 
     state.organisational_units = CodeList(
+        executor,
         config.get_organisational_unit_code(),
     )
+    logger.debug("Finished blocking - Collecting data from external sources")
 
 
 def main(dataset_path: str | None = None) -> None:
     """Entrypoint when running as a script."""
     if dataset_path:
         logger.info("Starting app with dataset_path = %s", dataset_path)
-    app, port = get_app(dataset_path)
-    if running_in_notebook():
-        logger.info("Running in notebook")
-        app.run(
-            jupyter_mode="tab",
-            jupyter_server_url=config.get_jupyterhub_http_referrer(),
-            jupyter_height=1000,
-            port=port,
-        )
-    else:
-        if dev_mode := config.get_dash_development_mode():
-            logger.warning(
-                "Starting in Development Mode. NOT SUITABLE FOR PRODUCTION.",
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=12) as executor:
+        app, port = get_app(executor, dataset_path)
+        if running_in_notebook():
+            logger.info("Running in notebook")
+            app.run(
+                jupyter_mode="tab",
+                jupyter_server_url=config.get_jupyterhub_http_referrer(),
+                jupyter_height=1000,
+                port=port,
             )
-        app.run(debug=dev_mode, port=port)
+        else:
+            if dev_mode := config.get_dash_development_mode():
+                logger.warning(
+                    "Starting in Development Mode. NOT SUITABLE FOR PRODUCTION.",
+                )
+            app.run(debug=dev_mode, port=port)
 
 
 if __name__ == "__main__":
