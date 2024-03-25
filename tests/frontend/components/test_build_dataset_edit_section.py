@@ -24,7 +24,6 @@ OBLIGATORY_MINUS_ATYPICAL_DROPDOWNS = [
     if m.obligatory
     and m.editable
     and m.identifier != DatasetIdentifiers.UNIT_TYPE.value
-    and m.identifier != DatasetIdentifiers.KEYWORD.value
     and m.identifier != DatasetIdentifiers.SUBJECT_FIELD.value
     and m.identifier != DatasetIdentifiers.OWNER.value
 ]
@@ -273,7 +272,6 @@ DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL: list[DatasetFieldTypes] = [
     for m in DISPLAY_DATASET.values()
     if isinstance(m, DatasetDropdownField)
     and m.identifier != DatasetIdentifiers.UNIT_TYPE.value
-    and m.identifier != DatasetIdentifiers.KEYWORD.value
     and m.identifier != DatasetIdentifiers.SUBJECT_FIELD.value
     and m.identifier != DatasetIdentifiers.OWNER.value
 ]
