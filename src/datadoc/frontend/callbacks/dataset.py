@@ -184,8 +184,8 @@ def change_language_dataset_metadata(
 
 def accept_dataset_metadata_date_input(
     dataset_identifier: DatasetIdentifiers,
-    contains_data_from: str,
-    contains_data_until: str,
+    contains_data_from: str | None,
+    contains_data_until: str | None,
 ) -> tuple[bool, str, bool, str]:
     """Validate and save date range inputs."""
     try:
@@ -216,7 +216,7 @@ def accept_dataset_metadata_date_input(
             "contains_data_until",
             contains_data_until,
         )
-        message = str(e)
+        message: str | None = str(e)
     else:
         logger.debug(
             "Successfully updated %s, %s, %s: %s, %s",

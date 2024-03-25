@@ -187,7 +187,7 @@ def test_accept_dataset_metadata_input_date_validation(
 ):
     state.metadata = metadata
     output = accept_dataset_metadata_date_input(
-        "CONTAINS_DATA_FROM",
+        DatasetIdentifiers.CONTAINS_DATA_UNTIL,
         start_date,
         end_date,
     )
