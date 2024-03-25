@@ -12,7 +12,6 @@ from datadoc.frontend.components.builders import build_ssb_styled_tab
 if TYPE_CHECKING:
     import dash_bootstrap_components as dbc
 
-DATASET_METADATA_INPUT = "dataset-metadata-input"
 SECTION_WRAPPER_ID = "section-wrapper-id"
 
 
@@ -27,16 +26,16 @@ def build_dataset_tab() -> dbc.Tab:
                         ssb.Title(
                             "Datasett detaljer",
                             size=2,
-                            className="dataset-title",
+                            className="workspace-title",
                         ),
                     ],
-                    className="dataset-header",
+                    className="workspace-header",
                 ),
                 html.Article(
                     id=SECTION_WRAPPER_ID,
-                    className="main-content",
+                    className="workspace-content",
                 ),
             ],
-            className="dataset-page-wrapper",
+            className="workspace-page-wrapper",
         ),
     )

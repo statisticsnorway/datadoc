@@ -125,7 +125,7 @@ def test_read_dataframe(
     assert code_list_fake_structure.classifications == expected
 
 
-def test_non_existent_code():
-    code_list = CodeList(0)
+def test_non_existent_code(thread_pool_executor):
+    code_list = CodeList(thread_pool_executor, 0)
     code_list.wait_for_external_result()
     assert code_list.classifications == []

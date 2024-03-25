@@ -88,10 +88,11 @@ To set up for local development run this command from the root of the repo.
 
 1. Create a file `src/datadoc/.env`
 1. Place the following lines in the file:
-```
-DATADOC_DASH_DEVELOPMENT_MODE=True
-DATADOC_LOG_LEVEL=debug
-```
+
+    ```env
+    DATADOC_DASH_DEVELOPMENT_MODE=True
+    DATADOC_LOG_LEVEL=debug
+    ```
 
 To see all configuration options, see `src/datadoc/config.py`
 
