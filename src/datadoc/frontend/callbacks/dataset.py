@@ -123,7 +123,7 @@ def process_special_cases(
 def accept_dataset_metadata_input(
     value: MetadataInputTypes | LanguageStringType,
     metadata_identifier: str,
-) -> tuple[bool, str]:
+) -> str | None:
     """Handle user inputs of dataset metadata values."""
     logger.debug(
         "Received updated value = %s for metadata_identifier = %s",
@@ -139,19 +139,19 @@ def accept_dataset_metadata_input(
             value,
         )
     except (ValidationError, ValueError) as e:
-        show_error = True
-        error_explanation = str(e)
-        logger.exception("Error while reading in value for %s", metadata_identifier)
-    else:
-        show_error = False
-        error_explanation = ""
-        logger.debug(
-            "Successfully updated value = %s for metadata_identifier = %s",
-            value,
+        logger.exception(
+            "Validation failed for %s %s:",
             metadata_identifier,
+            value,
         )
-
-    return show_error, error_explanation
+        return str(e)
+    else:
+        logger.debug(
+            "Successfully updated %s with %s",
+            metadata_identifier,
+            value,
+        )
+        return None
 
 
 def update_dataset_metadata_language() -> list[MetadataInputTypes]:

@@ -89,25 +89,6 @@ def register_callbacks(app: Dash) -> None:
         return False
 
     @app.callback(
-        Output("dataset-validation-error", "is_open"),
-        Output("dataset-validation-explanation", "children"),
-        Input({"type": DATASET_METADATA_INPUT, "id": ALL}, "value"),
-        prevent_initial_call=True,
-    )
-    def callback_accept_dataset_metadata_input(
-        value: MetadataInputTypes,  # noqa: ARG001 argument required by Dash
-    ) -> tuple[bool, str]:
-        """Save updated dataset metadata values.
-
-        Will display an alert if validation fails.
-        """
-        # Get the ID of the input that changed. This MUST match the attribute name defined in DataDocDataSet
-        return accept_dataset_metadata_input(
-            ctx.triggered[0]["value"],
-            ctx.triggered_id["id"],
-        )
-
-    @app.callback(
         Output("opened-dataset-success", "is_open"),
         Output("opened-dataset-error", "is_open"),
         Output("opened-dataset-error-explanation", "children"),
@@ -319,6 +300,44 @@ def register_callbacks(app: Dash) -> None:
             contains_data_from,
             contains_data_until,
         )
+
+    @app.callback(
+        Output(
+            {
+                "type": DATASET_METADATA_INPUT,
+                "id": MATCH,
+            },
+            "error",
+        ),
+        Output(
+            {
+                "type": DATASET_METADATA_INPUT,
+                "id": MATCH,
+            },
+            "errorMessage",
+        ),
+        Input(
+            {
+                "type": DATASET_METADATA_INPUT,
+                "id": MATCH,
+            },
+            "value",
+        ),
+        prevent_initial_call=True,
+    )
+    def callback_accept_dataset_metadata_input(
+        value: MetadataInputTypes,  # noqa: ARG001 argument required by Dash
+    ) -> dbc.Alert:
+        """Save updated variable metadata values."""
+        message = accept_dataset_metadata_input(
+            ctx.triggered[0]["value"],
+            ctx.triggered_id["id"],
+        )
+        if not message:
+            # No error to display.
+            return False, ""
+
+        return True, message
 
     @app.callback(
         Output(
