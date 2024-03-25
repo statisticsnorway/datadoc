@@ -19,6 +19,7 @@ from dash import no_update
 
 from datadoc import state
 from datadoc.enums import SupportedLanguages
+from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.utils import update_global_language_state
@@ -30,12 +31,14 @@ from datadoc.frontend.components.builders import build_ssb_accordion
 from datadoc.frontend.components.dataset_tab import SECTION_WRAPPER_ID
 from datadoc.frontend.components.variables_tab import ACCORDION_WRAPPER_ID
 from datadoc.frontend.components.variables_tab import VARIABLES_INFORMATION_ID
+from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import DATASET_METADATA_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
 from datadoc.frontend.fields.display_dataset import NON_EDITABLE_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import OBLIGATORY_EDITABLE_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import OPTIONAL_DATASET_METADATA
+from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
@@ -313,6 +316,62 @@ def register_callbacks(app: Dash) -> None:
         return accept_variable_metadata_date_input(
             VariableIdentifiers(ctx.triggered_id["id"]),
             ctx.triggered_id["variable_short_name"],
+            contains_data_from,
+            contains_data_until,
+        )
+
+    @app.callback(
+        Output(
+            {
+                "type": DATASET_METADATA_DATE_INPUT,
+                "id": DatasetIdentifiers.CONTAINS_DATA_FROM.value,
+            },
+            "error",
+        ),
+        Output(
+            {
+                "type": DATASET_METADATA_DATE_INPUT,
+                "id": DatasetIdentifiers.CONTAINS_DATA_FROM.value,
+            },
+            "errorMessage",
+        ),
+        Output(
+            {
+                "type": DATASET_METADATA_DATE_INPUT,
+                "id": DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
+            },
+            "error",
+        ),
+        Output(
+            {
+                "type": DATASET_METADATA_DATE_INPUT,
+                "id": DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
+            },
+            "errorMessage",
+        ),
+        Input(
+            {
+                "type": DATASET_METADATA_DATE_INPUT,
+                "id": DatasetIdentifiers.CONTAINS_DATA_FROM.value,
+            },
+            "value",
+        ),
+        Input(
+            {
+                "type": DATASET_METADATA_DATE_INPUT,
+                "id": DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
+            },
+            "value",
+        ),
+        prevent_initial_call=True,
+    )
+    def callback_accept_dataset_metadata_date_input(
+        contains_data_from: str,
+        contains_data_until: str,
+    ) -> dbc.Alert:
+        """Special case handling for date fields which have a relationship to one another."""
+        return accept_dataset_metadata_date_input(
+            DatasetIdentifiers(ctx.triggered_id["id"]),
             contains_data_from,
             contains_data_until,
         )

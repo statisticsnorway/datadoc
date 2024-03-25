@@ -34,6 +34,8 @@ DATASET_METADATA_INPUT = "dataset-metadata-input"
 
 VARIABLES_METADATA_INPUT = "variables-metadata-input"
 VARIABLES_METADATA_DATE_INPUT = "variables-metadata-date-input"
+DATASET_METADATA_DATE_INPUT = "dataset-metadata-date-input"
+
 
 INPUT_KWARGS = {
     "debounce": True,
@@ -217,7 +219,7 @@ class DatasetPeriodField(DisplayMetadata):
     ) -> ssb.Input:
         """Build Input date component."""
         value = self.value_getter(dataset, self.identifier)
-        # variable_id["type"] = VARIABLES_METADATA_DATE_INPUT  # noqa: ERA001
+        dataset_id["type"] = DATASET_METADATA_DATE_INPUT
         return ssb.Input(
             label=self.display_name,
             id=dataset_id,
