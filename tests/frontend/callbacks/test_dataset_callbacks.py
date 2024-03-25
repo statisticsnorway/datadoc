@@ -17,6 +17,7 @@ from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.enums import DataSetState
 from datadoc.enums import LanguageStringsEnum
 from datadoc.enums import SupportedLanguages
+from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import change_language_dataset_metadata
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
@@ -185,19 +186,17 @@ def test_accept_dataset_metadata_input_date_validation(
     expect_error: bool,  # noqa: FBT001
 ):
     state.metadata = metadata
-    accept_dataset_metadata_input(
+    output = accept_dataset_metadata_date_input(
+        "CONTAINS_DATA_FROM",
         start_date,
-        DatasetIdentifiers.CONTAINS_DATA_FROM.value,
-    )
-    output = accept_dataset_metadata_input(
         end_date,
-        DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
     )
-    assert output[0] is expect_error
+    assert output[2] is expect_error
     if expect_error:
-        assert "Validation error" in output[1]
+        assert "Validation error" in output[3]
     else:
         assert output[1] == ""
+        assert output[3] == ""
 
 
 def test_update_dataset_metadata_language_strings(

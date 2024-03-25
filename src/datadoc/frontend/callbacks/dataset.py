@@ -188,15 +188,6 @@ def accept_dataset_metadata_date_input(
     contains_data_until: str,
 ) -> tuple[bool, str, bool, str]:
     """Validate and save date range inputs."""
-    message = accept_dataset_metadata_input(
-        (
-            contains_data_from
-            if dataset_identifier == DatasetIdentifiers.CONTAINS_DATA_FROM
-            else contains_data_until
-        ),
-        dataset_identifier,
-    )
-
     try:
         (
             parsed_contains_data_from,
