@@ -167,7 +167,7 @@ class DatasetInputField(DisplayMetadata):
             type=self.type,
             disabled=not self.editable,
             value=value,
-            className="dataset-input",
+            className="input-component",
         )
 
 
@@ -194,7 +194,7 @@ class DatasetDropdownField(DisplayMetadata):
             id=variable_id,
             items=self.options_getter(SupportedLanguages(language)),
             value=value,
-            className="dataset-dropdown",
+            className="dropdown-component",
         )
 
 
@@ -225,7 +225,7 @@ class DatasetPeriodField(DisplayMetadata):
             type=self.type,
             disabled=not self.editable,
             value=value,
-            className="dataset-input",
+            className="input-component",
         )
 
 
@@ -255,7 +255,7 @@ class VariablesInputField(DisplayMetadata):
             type=self.type,
             disabled=not self.editable,
             value=value,
-            className="variable-input",
+            className="input-component",
         )
 
 
@@ -282,7 +282,7 @@ class VariablesDropdownField(DisplayMetadata):
             id=variable_id,
             items=self.options_getter(SupportedLanguages(language)),
             value=value,
-            className="variable-dropdown",
+            className="dropdown-component",
         )
 
 
@@ -313,7 +313,7 @@ class VariablesPeriodField(DisplayMetadata):
             type=self.type,
             disabled=not self.editable,
             value=value,
-            className="variable-input",
+            className="input-component",
         )
 
 

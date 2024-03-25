@@ -26,16 +26,16 @@ def build_dataset_tab() -> dbc.Tab:
                         ssb.Title(
                             "Datasett detaljer",
                             size=2,
-                            className="dataset-title",
+                            className="workspace-title",
                         ),
                     ],
-                    className="dataset-header",
+                    className="workspace-header",
                 ),
                 html.Article(
                     id=SECTION_WRAPPER_ID,
-                    className="main-content",
+                    className="workspace-content",
                 ),
             ],
-            className="dataset-page-wrapper",
+            className="workspace-page-wrapper",
         ),
     )
