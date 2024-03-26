@@ -20,8 +20,8 @@ header = ssb.Header(
 )
 
 progress_bar = dbc.CardBody(
-    style={"padding": "4px"},
     children=[dbc.Progress(id="progress-bar", color=COLORS["green_4"], value=40)],
+    className="progress-bar-wrapper",
 )
 
 
