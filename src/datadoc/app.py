@@ -53,12 +53,12 @@ def build_app(app: type[Dash]) -> Dash:
             html.Header(
                 [
                     header,
-                    progress_bar,
                 ],
-                className="header-bar",
+                className="header-wrapper",
             ),
             html.Main(
                 [
+                    progress_bar,
                     build_controls_bar(),
                     variables_validation_error,
                     dataset_validation_error,
@@ -71,7 +71,7 @@ def build_app(app: type[Dash]) -> Dash:
                         children=tabs_children,
                     ),
                 ],
-                className="main-content",
+                className="main-content-app",
             ),
             build_language_dropdown(),
         ],
