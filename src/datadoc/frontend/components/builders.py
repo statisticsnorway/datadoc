@@ -58,9 +58,8 @@ def build_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:
         # Replace all whitespace with dashes
         tab_id=re.sub(r"\s+", "-", label.lower()),
         label_class_name="ssb-tabs navigation-item",
-        label_style={"marginLeft": "10px", "marginRight": "10px"},
-        style={"padding": "4px"},
         children=content,
+        className="workspace-tab",
     )
 
 
@@ -92,21 +91,6 @@ def build_ssb_alert(  # noqa: PLR0913 not immediately obvious how to improve thi
             ),
         ],
         style={"width": "70%"},
-    )
-
-
-def build_ssb_button(text: str, icon_class: str, button_id: str) -> dbc.Button:
-    """Make a Dash Button according to SSBs Design System."""
-    return dbc.Button(
-        [
-            html.I(
-                className=icon_class,
-                style={"paddingRight": "10px"},
-            ),
-            f"   {text}",
-        ],
-        class_name="ssb-btn primary-btn",
-        id=button_id,
     )
 
 
