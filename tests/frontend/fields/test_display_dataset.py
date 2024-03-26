@@ -19,6 +19,7 @@ from tests.utils import TEST_RESOURCES_DIRECTORY
             / STATISTICAL_SUBJECT_STRUCTURE_DIR
             / "extract_secondary_subject.xml",
             [
+                {"label": "", "value": ""},
                 {"label": "aa norwegian - aa00 norwegian", "value": "aa00"},
                 {"label": "aa norwegian - aa01 norwegian", "value": "aa01"},
                 {"label": "ab norwegian - ab00 norwegian", "value": "ab00"},
@@ -30,6 +31,7 @@ from tests.utils import TEST_RESOURCES_DIRECTORY
             / STATISTICAL_SUBJECT_STRUCTURE_DIR
             / "missing_language.xml",
             [
+                {"label": "", "value": ""},
                 {"label": " - aa00 norwegian", "value": "aa00"},
                 {"label": " - aa01 norwegian", "value": "aa01"},
                 {"label": " - ab00 norwegian", "value": "ab00"},
@@ -53,6 +55,7 @@ def test_get_statistical_subject_options(
         (
             TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_nb.csv",
             [
+                {"label": "", "value": ""},
                 {"label": "Adresse", "value": "01"},
                 {"label": "Arbeidsulykke", "value": "02"},
                 {"label": "Bolig", "value": "03"},

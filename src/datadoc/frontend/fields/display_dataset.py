@@ -30,20 +30,22 @@ def get_enum_options_for_language(
     language: SupportedLanguages,
 ) -> list[dict[str, str]]:
     """Generate the list of options based on the currently chosen language."""
-    return [
+    dropdown_options = [
         {
             "label": i.get_value_for_language(language),
             "value": i.name,
         }
         for i in get_language_strings_enum(enum)  # type: ignore [attr-defined]
     ]
+    dropdown_options.insert(0, {"label": "", "value": ""})
+    return dropdown_options
 
 
 def get_statistical_subject_options(
     language: SupportedLanguages,
 ) -> list[dict[str, str]]:
-    """Collect the statistical subject options for the given language."""
-    return [
+    """Generate the list of options for statistical subject."""
+    dropdown_options = [
         {
             "label": f"{primary.get_title(language)} - {secondary.get_title(language)}",
             "value": secondary.subject_code,
@@ -51,32 +53,38 @@ def get_statistical_subject_options(
         for primary in state.statistic_subject_mapping.primary_subjects
         for secondary in primary.secondary_subjects
     ]
+    dropdown_options.insert(0, {"label": "", "value": ""})
+    return dropdown_options
 
 
 def get_unit_type_options(
     language: SupportedLanguages,
 ) -> list[dict[str, str]]:
     """Collect the unit type options for the given language."""
-    return [
+    dropdown_options = [
         {
             "label": unit_type.get_title(language),
             "value": unit_type.code,
         }
         for unit_type in state.unit_types.classifications
     ]
+    dropdown_options.insert(0, {"label": "", "value": ""})
+    return dropdown_options
 
 
 def get_owner_options(
     language: SupportedLanguages,
 ) -> list[dict[str, str]]:
     """Collect the owner options for the given language."""
-    return [
+    dropdown_options = [
         {
             "label": f"{option.code} - {option.get_title(language)}",
             "value": option.code,
         }
         for option in state.organisational_units.classifications
     ]
+    dropdown_options.insert(0, {"label": "", "value": ""})
+    return dropdown_options
 
 
 class DatasetIdentifiers(str, Enum):
