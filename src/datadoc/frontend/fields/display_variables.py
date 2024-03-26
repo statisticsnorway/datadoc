@@ -6,10 +6,10 @@ import functools
 from enum import Enum
 
 from datadoc import enums
+from datadoc.frontend.fields.display_base import MetadataDropdownField
+from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import VariablesCheckboxField
-from datadoc.frontend.fields.display_base import VariablesDropdownField
 from datadoc.frontend.fields.display_base import VariablesFieldTypes
-from datadoc.frontend.fields.display_base import VariablesInputField
 from datadoc.frontend.fields.display_base import VariablesPeriodField
 from datadoc.frontend.fields.display_base import get_enum_options_for_language
 from datadoc.frontend.fields.display_base import get_multi_language_metadata
@@ -42,14 +42,14 @@ DISPLAY_VARIABLES: dict[
     VariableIdentifiers,
     VariablesFieldTypes,
 ] = {
-    VariableIdentifiers.SHORT_NAME: VariablesInputField(
+    VariableIdentifiers.SHORT_NAME: MetadataInputField(
         identifier=VariableIdentifiers.SHORT_NAME.value,
         display_name="Kortnavn",
         description="Fysisk navn på variabelen i datasettet. Bør tilsvare anbefalt kortnavn.",
         obligatory=True,
         editable=False,
     ),
-    VariableIdentifiers.NAME: VariablesInputField(
+    VariableIdentifiers.NAME: MetadataInputField(
         identifier=VariableIdentifiers.NAME.value,
         display_name="Navn",
         description="Variabelnavn kan arves fra VarDef, men kan også dokumenteres/endres her.",
@@ -57,7 +57,7 @@ DISPLAY_VARIABLES: dict[
         multiple_language_support=True,
         type="text",
     ),
-    VariableIdentifiers.DATA_TYPE: VariablesDropdownField(
+    VariableIdentifiers.DATA_TYPE: MetadataDropdownField(
         identifier=VariableIdentifiers.DATA_TYPE.value,
         display_name="Datatype",
         description="Datatype",
@@ -67,7 +67,7 @@ DISPLAY_VARIABLES: dict[
             enums.DataType,
         ),
     ),
-    VariableIdentifiers.VARIABLE_ROLE: VariablesDropdownField(
+    VariableIdentifiers.VARIABLE_ROLE: MetadataDropdownField(
         identifier=VariableIdentifiers.VARIABLE_ROLE.value,
         display_name="Variabelens rolle",
         description="Variabelens rolle i datasett",
@@ -77,7 +77,7 @@ DISPLAY_VARIABLES: dict[
             enums.VariableRole,
         ),
     ),
-    VariableIdentifiers.DEFINITION_URI: VariablesInputField(
+    VariableIdentifiers.DEFINITION_URI: MetadataInputField(
         identifier=VariableIdentifiers.DEFINITION_URI.value,
         display_name="Definition URI",
         description="En lenke (URI) til variabelens definisjon i SSB (Vardok/VarDef)",
@@ -91,28 +91,28 @@ DISPLAY_VARIABLES: dict[
         description="Direkte personidentifiserende informasjon (DPI)",
         obligatory=True,
     ),
-    VariableIdentifiers.DATA_SOURCE: VariablesInputField(
+    VariableIdentifiers.DATA_SOURCE: MetadataInputField(
         identifier=VariableIdentifiers.DATA_SOURCE.value,
         display_name="Datakilde",
         description="Datakilde. Settes på datasettnivå, men kan overstyres på variabelforekomstnivå.",
         multiple_language_support=True,
         type="text",
     ),
-    VariableIdentifiers.POPULATION_DESCRIPTION: VariablesInputField(
+    VariableIdentifiers.POPULATION_DESCRIPTION: MetadataInputField(
         identifier=VariableIdentifiers.POPULATION_DESCRIPTION.value,
         display_name="Populasjonen",
         description="Populasjonen variabelen beskriver kan spesifiseres nærmere her. Settes på datasettnivå, men kan overstyres på variabelforekomstnivå.",
         multiple_language_support=True,
         type="text",
     ),
-    VariableIdentifiers.COMMENT: VariablesInputField(
+    VariableIdentifiers.COMMENT: MetadataInputField(
         identifier=VariableIdentifiers.COMMENT.value,
         display_name="Kommentar",
         description="Ytterligere presiseringer av variabeldefinisjon",
         multiple_language_support=True,
         type="text",
     ),
-    VariableIdentifiers.TEMPORALITY_TYPE: VariablesDropdownField(
+    VariableIdentifiers.TEMPORALITY_TYPE: MetadataDropdownField(
         identifier=VariableIdentifiers.TEMPORALITY_TYPE.value,
         display_name="Temporalitetstype",
         description="Temporalitetstype. Settes enten for variabelforekomst eller datasett. Se Temporalitet, hendelser og forløp.",
@@ -121,38 +121,38 @@ DISPLAY_VARIABLES: dict[
             enums.TemporalityTypeType,
         ),
     ),
-    VariableIdentifiers.MEASUREMENT_UNIT: VariablesInputField(
+    VariableIdentifiers.MEASUREMENT_UNIT: MetadataInputField(
         identifier=VariableIdentifiers.MEASUREMENT_UNIT.value,
         display_name="Måleenhet",
         description="Måleenhet. Eksempel: NOK eller USD for valuta, KG eller TONN for vekt. Se også forslag til SSBs måletyper/måleenheter.",
         type="text",
     ),
-    VariableIdentifiers.FORMAT: VariablesInputField(
+    VariableIdentifiers.FORMAT: MetadataInputField(
         identifier=VariableIdentifiers.FORMAT.value,
         display_name="Format",
         description="Verdienes format (fysisk format eller regulært uttrykk) i maskinlesbar form ifm validering. Dette kan benyttes som en ytterligere presisering av datatypen (dataType) i de tilfellene hvor dette er relevant. ",
     ),
-    VariableIdentifiers.CLASSIFICATION_URI: VariablesInputField(
+    VariableIdentifiers.CLASSIFICATION_URI: MetadataInputField(
         identifier=VariableIdentifiers.CLASSIFICATION_URI.value,
         display_name="Kodeverkets URI",
         description="Lenke (URI) til gyldige kodeverk (klassifikasjon eller kodeliste) i KLASS",
         url=True,
         type="url",
     ),
-    VariableIdentifiers.SENTINEL_VALUE_URI: VariablesInputField(
+    VariableIdentifiers.SENTINEL_VALUE_URI: MetadataInputField(
         identifier=VariableIdentifiers.SENTINEL_VALUE_URI.value,
         display_name="Spesialverdienes URI",
         description="En lenke (URI) til en oversikt over 'spesialverdier' som inngår i variabelen.",
         url=True,
         type="url",
     ),
-    VariableIdentifiers.INVALID_VALUE_DESCRIPTION: VariablesInputField(
+    VariableIdentifiers.INVALID_VALUE_DESCRIPTION: MetadataInputField(
         identifier=VariableIdentifiers.INVALID_VALUE_DESCRIPTION.value,
         display_name="Ugyldige verdier",
         description="En beskrivelse av ugyldige verdier som inngår i variabelen dersom spesialverdiene ikke er tilstrekkelige eller ikke kan benyttes.",
         multiple_language_support=True,
     ),
-    VariableIdentifiers.IDENTIFIER: VariablesInputField(
+    VariableIdentifiers.IDENTIFIER: MetadataInputField(
         identifier=VariableIdentifiers.IDENTIFIER.value,
         display_name="ID",
         description="Unik SSB identifikator for variabelforekomsten i datasettet",
