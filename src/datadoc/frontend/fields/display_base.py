@@ -163,13 +163,13 @@ class MetadataInputField(DisplayMetadata):
 
     type: str = "text"
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
-    value_getter: Callable[[model.BaseModel, str], Any] = get_metadata_and_stringify
+    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
 
     def render(
         self,
         component_id: dict,
         language: str,  # noqa: ARG002
-        metadata: model.Dataset | model.Variable,
+        metadata: BaseModel,
     ) -> ssb.Input:
         """Build component."""
         value = self.value_getter(metadata, self.identifier)
@@ -198,7 +198,7 @@ class MetadataDropdownField(DisplayMetadata):
         self,
         component_id: dict,
         language: str,
-        dataset: model.Dataset | model.Variable,
+        dataset: BaseModel,
     ) -> ssb.Dropdown:
         """Build Dropdown component."""
         value = self.value_getter(dataset, self.identifier)
