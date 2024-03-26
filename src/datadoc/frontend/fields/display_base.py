@@ -89,6 +89,20 @@ def get_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str | No
     return str(value)
 
 
+def get_date_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str | None:
+    """Get a metadata date value from the model.
+
+    Handle converting datetime format to date format string.
+    """
+    value = get_standard_metadata(metadata, identifier)
+    logger.info("Date registered: %s", value)
+    if isinstance(value, str):
+        convert_value = value[:10]
+        logger.info("Converted date: %s", convert_value)
+        return convert_value
+    return None
+
+
 def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> str | None:
     """Get a metadata value supporting multiple languages from the model."""
     value: LanguageStringType | None = getattr(metadata, identifier)
@@ -208,7 +222,7 @@ class DatasetPeriodField(DisplayMetadata):
     """
 
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
-    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
+    value_getter: Callable[[BaseModel, str], Any] = get_date_metadata_and_stringify
     type: str = "date"
 
     def render(
@@ -296,7 +310,7 @@ class VariablesPeriodField(DisplayMetadata):
     """
 
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
-    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
+    value_getter: Callable[[BaseModel, str], Any] = get_date_metadata_and_stringify
     type: str = "date"
 
     def render(
