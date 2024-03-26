@@ -11,6 +11,7 @@ from pathlib import Path
 
 import dash_bootstrap_components as dbc
 from dash import Dash
+from dash import html
 from flask_healthz import healthz
 
 from datadoc import config
@@ -47,29 +48,34 @@ def build_app(app: type[Dash]) -> Dash:
         build_variables_tab(),
     ]
 
-    app.layout = dbc.Container(
-        style={"padding": "4px"},
+    app.layout = html.Div(
         children=[
-            header,
-            progress_bar,
-            build_controls_bar(),
-            variables_validation_error,
-            dataset_validation_error,
-            opened_dataset_error,
-            saved_metadata_success,
-            opened_dataset_success,
-            dbc.CardBody(
-                style={"padding": "4px"},
-                children=[
+            html.Header(
+                [
+                    header,
+                    progress_bar,
+                ],
+                className="header-bar",
+            ),
+            html.Main(
+                [
+                    build_controls_bar(),
+                    variables_validation_error,
+                    dataset_validation_error,
+                    opened_dataset_error,
+                    saved_metadata_success,
+                    opened_dataset_success,
                     dbc.Tabs(
                         id="tabs",
                         class_name="ssb-tabs",
                         children=tabs_children,
                     ),
                 ],
+                className="main-content",
             ),
             build_language_dropdown(),
         ],
+        className="app-wrapper",
     )
 
     register_callbacks(app)
