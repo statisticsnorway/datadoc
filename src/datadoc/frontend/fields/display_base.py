@@ -169,7 +169,7 @@ class MetadataInputField(DisplayMetadata):
         self,
         component_id: dict,
         language: str,  # noqa: ARG002
-        metadata: model.BaseModel,
+        metadata: model.Dataset | model.Variable,
     ) -> ssb.Input:
         """Build component."""
         value = self.value_getter(metadata, self.identifier)
@@ -198,7 +198,7 @@ class MetadataDropdownField(DisplayMetadata):
         self,
         component_id: dict,
         language: str,
-        dataset: model.BaseModel,
+        dataset: model.Dataset | model.Variable,
     ) -> ssb.Dropdown:
         """Build Dropdown component."""
         value = self.value_getter(dataset, self.identifier)
