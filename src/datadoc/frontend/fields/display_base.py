@@ -158,27 +158,24 @@ class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
 
 
 @dataclass
-class DatasetInputField(DisplayMetadata):
-    """Controls for how a given metadata field should be displayed.
+class MetadataInputField(DisplayMetadata):
+    """Controls how a input field should be displayed."""
 
-    Specific to dataset fields.
-    """
-
-    extra_kwargs: dict[str, Any] = field(default_factory=input_kwargs_factory)
-    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
     type: str = "text"
+    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
+    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
 
     def render(
         self,
-        dataset_id: dict,
+        component_id: dict,
         language: str,  # noqa: ARG002
-        dataset: model.Dataset,
+        metadata: BaseModel,
     ) -> ssb.Input:
-        """Build input component."""
-        value = self.value_getter(dataset, self.identifier)
+        """Build component."""
+        value = self.value_getter(metadata, self.identifier)
         return ssb.Input(
             label=self.display_name,
-            id=dataset_id,
+            id=component_id,
             debounce=True,
             type=self.type,
             disabled=not self.editable,
@@ -188,7 +185,7 @@ class DatasetInputField(DisplayMetadata):
 
 
 @dataclass
-class DatasetDropdownField(DisplayMetadata):
+class MetadataDropdownField(DisplayMetadata):
     """Control how a Dropdown should be displayed."""
 
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
@@ -199,15 +196,15 @@ class DatasetDropdownField(DisplayMetadata):
 
     def render(
         self,
-        variable_id: dict,
+        component_id: dict,
         language: str,
-        dataset: model.Dataset,
+        dataset: BaseModel,
     ) -> ssb.Dropdown:
         """Build Dropdown component."""
         value = self.value_getter(dataset, self.identifier)
         return ssb.Dropdown(
             header=self.display_name,
-            id=variable_id,
+            id=component_id,
             items=self.options_getter(SupportedLanguages(language)),
             value=value,
             className="dropdown-component",
@@ -359,10 +356,10 @@ class VariablesCheckboxField(DisplayMetadata):
 
 
 VariablesFieldTypes = (
-    VariablesInputField
-    | VariablesDropdownField
+    MetadataInputField
+    | MetadataDropdownField
     | VariablesCheckboxField
     | VariablesPeriodField
 )
 
-DatasetFieldTypes = DatasetInputField | DatasetDropdownField | DatasetPeriodField
+DatasetFieldTypes = MetadataInputField | MetadataDropdownField | DatasetPeriodField

@@ -8,10 +8,10 @@ from datadoc_model import model
 
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.components.builders import build_dataset_edit_section
-from datadoc.frontend.fields.display_base import DatasetDropdownField
 from datadoc.frontend.fields.display_base import DatasetFieldTypes
-from datadoc.frontend.fields.display_base import DatasetInputField
 from datadoc.frontend.fields.display_base import DatasetPeriodField
+from datadoc.frontend.fields.display_base import MetadataDropdownField
+from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET
 from datadoc.frontend.fields.display_dataset import NON_EDITABLE_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import OPTIONAL_DATASET_METADATA
@@ -254,13 +254,13 @@ def test_build_dataset_edit_section_dropdown_component_props(
 
 # Test data sorted by DatasetFieldTypes
 DATASET_INPUT_FIELD_LIST: list[DatasetFieldTypes] = [
-    m for m in DISPLAY_DATASET.values() if isinstance(m, DatasetInputField)
+    m for m in DISPLAY_DATASET.values() if isinstance(m, MetadataInputField)
 ]
 
 DATASET_INPUT_URL_FIELD_LIST: list[DatasetFieldTypes] = [
     m
     for m in DISPLAY_DATASET.values()
-    if isinstance(m, DatasetInputField) and m.type == "url"
+    if isinstance(m, MetadataInputField) and m.type == "url"
 ]
 
 DATASET_DATE_FIELD_LIST: list[DatasetFieldTypes] = [
@@ -270,7 +270,7 @@ DATASET_DATE_FIELD_LIST: list[DatasetFieldTypes] = [
 DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL: list[DatasetFieldTypes] = [
     m
     for m in DISPLAY_DATASET.values()
-    if isinstance(m, DatasetDropdownField)
+    if isinstance(m, MetadataDropdownField)
     and m.identifier != DatasetIdentifiers.UNIT_TYPE.value
     and m.identifier != DatasetIdentifiers.SUBJECT_FIELD.value
     and m.identifier != DatasetIdentifiers.OWNER.value
