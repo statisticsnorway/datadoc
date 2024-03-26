@@ -69,6 +69,7 @@ def build_controls_bar() -> html.Section:
     return html.Section(
         [
             ssb.Input(
+                label="Filsti",
                 value=get_dataset_path(),
                 className="file-path-input",
                 id="dataset-path-input",
