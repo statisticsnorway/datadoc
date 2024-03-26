@@ -1,0 +1,17 @@
+.ssb-header-wrapper.datadoc-header {
+    border-bottom: 1px solid #C3DCDC;
+    padding: 0;
+    height: 80px;
+    margin: 0;
+
+}
+
+.ssb-title.main-title {
+    color: #274247;
+    padding: 0;
+    border-bottom: 0;
+    font-family: 'Roboto Condensed', sans-serif !important;
+    font-stretch: condensed;
+    font-weight: bold;
+    font-size: 2rem;
+}

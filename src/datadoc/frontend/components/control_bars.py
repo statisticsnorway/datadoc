@@ -14,13 +14,9 @@ from datadoc.utils import get_app_version
 
 COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
-header = dbc.CardBody(
-    dbc.Row(
-        children=[
-            html.H1("DataDoc", className="ssb-title", style={"color": "white"}),
-        ],
-    ),
-    style={"backgroundColor": COLORS["green_4"]},
+header = ssb.Header(
+    [ssb.Title("DataDoc", size=1, id="main-title", className="main-title")],
+    className="datadoc-header",
 )
 
 progress_bar = dbc.CardBody(
