@@ -228,6 +228,7 @@ class DatasetPeriodField(DisplayMetadata):
     These are a special case since two fields have a relationship to one another.>
     """
 
+    id_type: str = ""
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_date_metadata_and_stringify
     type: str = "date"
@@ -240,7 +241,7 @@ class DatasetPeriodField(DisplayMetadata):
     ) -> ssb.Input:
         """Build Input date component."""
         value = self.value_getter(dataset, self.identifier)
-        dataset_id["type"] = DATASET_METADATA_DATE_INPUT
+        dataset_id["type"] = self.id_type
         return ssb.Input(
             label=self.display_name,
             id=dataset_id,
@@ -316,6 +317,7 @@ class VariablesPeriodField(DisplayMetadata):
     These are a special case since two fields have a relationship to one another.>
     """
 
+    id_type: str = ""
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_date_metadata_and_stringify
     type: str = "date"
@@ -328,7 +330,7 @@ class VariablesPeriodField(DisplayMetadata):
     ) -> ssb.Input:
         """Build Input date component."""
         value = self.value_getter(variable, self.identifier)
-        variable_id["type"] = VARIABLES_METADATA_DATE_INPUT
+        variable_id["type"] = self.id_type
         return ssb.Input(
             label=self.display_name,
             id=variable_id,

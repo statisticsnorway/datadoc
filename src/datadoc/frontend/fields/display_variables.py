@@ -6,6 +6,7 @@ import functools
 from enum import Enum
 
 from datadoc import enums
+from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import VariablesCheckboxField
@@ -162,11 +163,13 @@ DISPLAY_VARIABLES: dict[
         identifier=VariableIdentifiers.CONTAINS_DATA_FROM.value,
         display_name="Inneholder data f.o.m.",
         description="Variabelforekomsten i datasettet inneholder data fra og med denne dato.",
+        id_type=VARIABLES_METADATA_DATE_INPUT,
     ),
     VariableIdentifiers.CONTAINS_DATA_UNTIL: VariablesPeriodField(
         identifier=VariableIdentifiers.CONTAINS_DATA_UNTIL.value,
         display_name="Inneholder data t.o.m.",
         description="Variabelforekomsten i datasettet inneholder data til og med denne dato.",
+        id_type=VARIABLES_METADATA_DATE_INPUT,
     ),
 }
 
