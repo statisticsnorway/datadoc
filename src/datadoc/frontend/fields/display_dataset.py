@@ -170,7 +170,7 @@ DISPLAY_DATASET: dict[
         identifier=DatasetIdentifiers.VERSION.value,
         display_name="Versjon",
         description="Versjon",
-        extra_kwargs=dict(type="number", **INPUT_KWARGS),
+        extra_kwargs=dict(type="number", min=1, **INPUT_KWARGS),
         obligatory=True,
     ),
     DatasetIdentifiers.VERSION_DESCRIPTION: MetadataInputField(
