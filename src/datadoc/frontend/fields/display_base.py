@@ -47,13 +47,15 @@ def get_enum_options_for_language(
     language: SupportedLanguages,
 ) -> list[dict[str, str]]:
     """Generate the list of options based on the currently chosen language."""
-    return [
+    dropdown_options = [
         {
             "title": i.get_value_for_language(language),
             "id": i.name,
         }
         for i in get_language_strings_enum(enum)  # type: ignore [attr-defined]
     ]
+    dropdown_options.insert(0, {"title": "", "id": ""})
+    return dropdown_options
 
 
 def input_kwargs_factory() -> dict[str, t.Any]:

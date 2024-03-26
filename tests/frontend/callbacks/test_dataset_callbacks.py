@@ -260,15 +260,15 @@ def test_change_language_dataset_metadata_options_enums(
 
         member_names = {m.name for m in enum_for_options}  # type: ignore [attr-defined]
         values = [i for d in options for i in d.values()]
-
+        test_without_empty_option = options[1:]
         if member_names.intersection(values):
-            assert {d["label"] for d in options} == {
+            assert {d["label"] for d in test_without_empty_option} == {
                 e.get_value_for_language(
                     language,
                 )
                 for e in enum_for_options  # type: ignore [attr-defined]
             }
-            assert {d["value"] for d in options} == {e.name for e in enum_for_options}  # type: ignore [attr-defined]
+            assert {d["value"] for d in test_without_empty_option} == {e.name for e in enum_for_options}  # type: ignore [attr-defined]
 
 
 @patch(f"{DATASET_CALLBACKS_MODULE}.open_file")
