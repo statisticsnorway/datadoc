@@ -19,7 +19,7 @@ def configure_logging(config: dict[str, Any] | None = None) -> None:
                     "datefmt": "%Y-%m-%d %H:%M:%S",
                 },
                 "json": {
-                    "()": "datadoc.logging.json_formatter.DatadocJSONFormatter",
+                    "()": "datadoc.logging_configuration.json_formatter.DatadocJSONFormatter",
                     "fmt_keys": {
                         "level": "levelname",
                         "message": "message",

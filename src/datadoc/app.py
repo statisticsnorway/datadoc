@@ -31,7 +31,7 @@ from datadoc.frontend.components.control_bars import header
 from datadoc.frontend.components.control_bars import progress_bar
 from datadoc.frontend.components.dataset_tab import build_dataset_tab
 from datadoc.frontend.components.variables_tab import build_variables_tab
-from datadoc.logging.logging_config import configure_logging
+from datadoc.logging_configuration.logging_config import configure_logging
 from datadoc.utils import get_app_version
 from datadoc.utils import pick_random_port
 from datadoc.utils import running_in_notebook
