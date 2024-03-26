@@ -57,7 +57,7 @@ def build_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:
         label=label,
         # Replace all whitespace with dashes
         tab_id=re.sub(r"\s+", "-", label.lower()),
-        label_class_name="ssb-tabs navigation-item",
+        label_class_name="ssb-tabs navigation-item workspace-tab-label",
         children=content,
         className="workspace-tab",
     )
