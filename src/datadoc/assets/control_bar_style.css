@@ -1,0 +1,11 @@
+.control-bar-section{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.ssb-input.file-path-input{
+    max-width: 800px;
+    width: 100%;
+}
