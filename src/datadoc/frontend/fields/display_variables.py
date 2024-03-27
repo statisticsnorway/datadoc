@@ -6,11 +6,12 @@ import functools
 from enum import Enum
 
 from datadoc import enums
+from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
+from datadoc.frontend.fields.display_base import MetadataPeriodField
 from datadoc.frontend.fields.display_base import VariablesCheckboxField
 from datadoc.frontend.fields.display_base import VariablesFieldTypes
-from datadoc.frontend.fields.display_base import VariablesPeriodField
 from datadoc.frontend.fields.display_base import get_enum_options_for_language
 from datadoc.frontend.fields.display_base import get_multi_language_metadata
 
@@ -158,15 +159,17 @@ DISPLAY_VARIABLES: dict[
         description="Unik SSB identifikator for variabelforekomsten i datasettet",
         editable=False,
     ),
-    VariableIdentifiers.CONTAINS_DATA_FROM: VariablesPeriodField(
+    VariableIdentifiers.CONTAINS_DATA_FROM: MetadataPeriodField(
         identifier=VariableIdentifiers.CONTAINS_DATA_FROM.value,
         display_name="Inneholder data f.o.m.",
         description="Variabelforekomsten i datasettet inneholder data fra og med denne dato.",
+        id_type=VARIABLES_METADATA_DATE_INPUT,
     ),
-    VariableIdentifiers.CONTAINS_DATA_UNTIL: VariablesPeriodField(
+    VariableIdentifiers.CONTAINS_DATA_UNTIL: MetadataPeriodField(
         identifier=VariableIdentifiers.CONTAINS_DATA_UNTIL.value,
         display_name="Inneholder data t.o.m.",
         description="Variabelforekomsten i datasettet inneholder data til og med denne dato.",
+        id_type=VARIABLES_METADATA_DATE_INPUT,
     ),
 }
 

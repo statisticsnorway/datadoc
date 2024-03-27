@@ -222,28 +222,29 @@ class MetadataDropdownField(DisplayMetadata):
 
 
 @dataclass
-class DatasetPeriodField(DisplayMetadata):
+class MetadataPeriodField(DisplayMetadata):
     """Control how fields which define a time period are displayed for Dataset.
 
     These are a special case since two fields have a relationship to one another.>
     """
 
+    id_type: str = ""
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_date_metadata_and_stringify
     type: str = "date"
 
     def render(
         self,
-        dataset_id: dict,
+        component_id: dict,
         language: str,  # noqa: ARG002
-        dataset: model.Dataset,
+        dataset: BaseModel,
     ) -> ssb.Input:
         """Build Input date component."""
         value = self.value_getter(dataset, self.identifier)
-        dataset_id["type"] = DATASET_METADATA_DATE_INPUT
+        component_id["type"] = self.id_type
         return ssb.Input(
             label=self.display_name,
-            id=dataset_id,
+            id=component_id,
             debounce=False,
             type=self.type,
             disabled=not self.editable,
@@ -310,37 +311,6 @@ class VariablesDropdownField(DisplayMetadata):
 
 
 @dataclass
-class VariablesPeriodField(DisplayMetadata):
-    """Control how fields which define a time period are displayed for variables.
-
-    These are a special case since two fields have a relationship to one another.>
-    """
-
-    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
-    value_getter: Callable[[BaseModel, str], Any] = get_date_metadata_and_stringify
-    type: str = "date"
-
-    def render(
-        self,
-        variable_id: dict,
-        language: str,  # noqa: ARG002
-        variable: model.Variable,
-    ) -> ssb.Input:
-        """Build Input date component."""
-        value = self.value_getter(variable, self.identifier)
-        variable_id["type"] = VARIABLES_METADATA_DATE_INPUT
-        return ssb.Input(
-            label=self.display_name,
-            id=variable_id,
-            debounce=False,
-            type=self.type,
-            disabled=not self.editable,
-            value=value,
-            className="input-component",
-        )
-
-
-@dataclass
 class VariablesCheckboxField(DisplayMetadata):
     """Controls for how a checkbox metadata field should be displayed."""
 
@@ -369,7 +339,7 @@ VariablesFieldTypes = (
     MetadataInputField
     | MetadataDropdownField
     | VariablesCheckboxField
-    | VariablesPeriodField
+    | MetadataPeriodField
 )
 
-DatasetFieldTypes = MetadataInputField | MetadataDropdownField | DatasetPeriodField
+DatasetFieldTypes = MetadataInputField | MetadataDropdownField | MetadataPeriodField
