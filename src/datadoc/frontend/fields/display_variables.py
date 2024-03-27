@@ -11,7 +11,7 @@ from datadoc.frontend.fields.display_base import MetadataCheckboxField
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
-from datadoc.frontend.fields.display_base import VariablesFieldTypes
+from datadoc.frontend.fields.display_base import MetdataFieldTypes
 from datadoc.frontend.fields.display_base import get_enum_options_for_language
 from datadoc.frontend.fields.display_base import get_multi_language_metadata
 
@@ -41,7 +41,7 @@ class VariableIdentifiers(str, Enum):
 
 DISPLAY_VARIABLES: dict[
     VariableIdentifiers,
-    VariablesFieldTypes,
+    MetdataFieldTypes,
 ] = {
     VariableIdentifiers.SHORT_NAME: MetadataInputField(
         identifier=VariableIdentifiers.SHORT_NAME.value,

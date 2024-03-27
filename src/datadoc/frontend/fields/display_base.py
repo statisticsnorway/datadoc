@@ -239,7 +239,7 @@ class MetadataCheckboxField(DisplayMetadata):
         )
 
 
-VariablesFieldTypes = (
+MetdataFieldTypes = (
     MetadataInputField
     | MetadataDropdownField
     | MetadataCheckboxField
