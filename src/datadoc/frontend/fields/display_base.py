@@ -129,29 +129,6 @@ class DisplayMetadata:
 
 
 @dataclass
-class DisplayDatasetMetadata(DisplayMetadata):
-    """Controls for how a given metadata field should be displayed.
-
-    Specific to dataset fields.
-    """
-
-    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
-    component: type[Component] = dcc.Input
-    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
-
-
-@dataclass
-class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
-    """Include the possible options which a user may choose from."""
-
-    # fmt: off
-    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
-    # fmt: on
-    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
-    component: type[Component] = dcc.Dropdown
-
-
-@dataclass
 class MetadataInputField(DisplayMetadata):
     """Controls how a input field should be displayed."""
 
@@ -270,3 +247,26 @@ VariablesFieldTypes = (
 )
 
 DatasetFieldTypes = MetadataInputField | MetadataDropdownField | MetadataPeriodField
+
+
+@dataclass
+class DisplayDatasetMetadata(DisplayMetadata):
+    """Controls for how a given metadata field should be displayed.
+
+    Specific to dataset fields.
+    """
+
+    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
+    component: type[Component] = dcc.Input
+    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
+
+
+@dataclass
+class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
+    """Include the possible options which a user may choose from."""
+
+    # fmt: off
+    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
+    # fmt: on
+    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
+    component: type[Component] = dcc.Dropdown
