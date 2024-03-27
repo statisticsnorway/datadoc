@@ -215,7 +215,7 @@ class MetadataPeriodField(DisplayMetadata):
 
 
 @dataclass
-class VariablesCheckboxField(DisplayMetadata):
+class MetadataCheckboxField(DisplayMetadata):
     """Controls for how a checkbox metadata field should be displayed."""
 
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
@@ -242,7 +242,7 @@ class VariablesCheckboxField(DisplayMetadata):
 VariablesFieldTypes = (
     MetadataInputField
     | MetadataDropdownField
-    | VariablesCheckboxField
+    | MetadataCheckboxField
     | MetadataPeriodField
 )
 
