@@ -55,6 +55,9 @@ def open_dataset_handling(
     file_path: str,
 ) -> tuple[bool, bool, str, str]:
     """Handle errors and other logic around opening a dataset file."""
+    if file_path:
+        file_path = file_path.strip()
+
     try:
         state.metadata = open_file(file_path)
     except FileNotFoundError:
