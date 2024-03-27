@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import re
 import typing as t
 from dataclasses import dataclass
 from dataclasses import field
@@ -79,12 +80,21 @@ def get_date_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str
     Handle converting datetime format to date format string.
     """
     value = get_standard_metadata(metadata, identifier)
+    if value is None:
+        return ""
     logger.info("Date registered: %s", value)
-    if isinstance(value, str):
-        convert_value = value[:10]
-        logger.info("Converted date: %s", convert_value)
-        return convert_value
-    return None
+    date = str(value)
+    # Pattern for datetime without T, with space - used for variables
+    pattern = r"\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}"
+    if re.match(pattern, date):
+        convert_date_to_iso = date.replace(" ", "T")
+        logger.info("Date converted to iso format: %s", convert_date_to_iso)
+        convert_date_format = convert_date_to_iso[:10]
+        logger.info("Display date: %s", convert_date_format)
+        return convert_date_format
+    convert_value = date[:10]
+    logger.info("Display date: %s", convert_value)
+    return convert_value
 
 
 def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> str | None:
@@ -196,59 +206,29 @@ class MetadataDropdownField(DisplayMetadata):
 
 
 @dataclass
-class DatasetPeriodField(DisplayMetadata):
+class MetadataPeriodField(DisplayMetadata):
     """Control how fields which define a time period are displayed for Dataset.
 
     These are a special case since two fields have a relationship to one another.>
     """
 
+    id_type: str = ""
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_date_metadata_and_stringify
     type: str = "date"
 
     def render(
         self,
-        dataset_id: dict,
+        component_id: dict,
         language: str,  # noqa: ARG002
-        dataset: model.Dataset,
+        dataset: BaseModel,
     ) -> ssb.Input:
         """Build Input date component."""
         value = self.value_getter(dataset, self.identifier)
-        dataset_id["type"] = DATASET_METADATA_DATE_INPUT
+        component_id["type"] = self.id_type
         return ssb.Input(
             label=self.display_name,
-            id=dataset_id,
-            debounce=False,
-            type=self.type,
-            disabled=not self.editable,
-            value=value,
-            className="input-component",
-        )
-
-
-@dataclass
-class VariablesPeriodField(DisplayMetadata):
-    """Control how fields which define a time period are displayed for variables.
-
-    These are a special case since two fields have a relationship to one another.>
-    """
-
-    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
-    value_getter: Callable[[BaseModel, str], Any] = get_date_metadata_and_stringify
-    type: str = "date"
-
-    def render(
-        self,
-        variable_id: dict,
-        language: str,  # noqa: ARG002
-        variable: model.Variable,
-    ) -> ssb.Input:
-        """Build Input date component."""
-        value = self.value_getter(variable, self.identifier)
-        variable_id["type"] = VARIABLES_METADATA_DATE_INPUT
-        return ssb.Input(
-            label=self.display_name,
-            id=variable_id,
+            id=component_id,
             debounce=False,
             type=self.type,
             disabled=not self.editable,
@@ -286,7 +266,7 @@ VariablesFieldTypes = (
     MetadataInputField
     | MetadataDropdownField
     | VariablesCheckboxField
-    | VariablesPeriodField
+    | MetadataPeriodField
 )
 
-DatasetFieldTypes = MetadataInputField | MetadataDropdownField | DatasetPeriodField
+DatasetFieldTypes = MetadataInputField | MetadataDropdownField | MetadataPeriodField
