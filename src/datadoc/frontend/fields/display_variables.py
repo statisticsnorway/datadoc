@@ -7,11 +7,11 @@ from enum import Enum
 
 from datadoc import enums
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
+from datadoc.frontend.fields.display_base import MetadataCheckboxField
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
-from datadoc.frontend.fields.display_base import VariablesCheckboxField
-from datadoc.frontend.fields.display_base import VariablesFieldTypes
+from datadoc.frontend.fields.display_base import MetdataFieldTypes
 from datadoc.frontend.fields.display_base import get_enum_options_for_language
 from datadoc.frontend.fields.display_base import get_multi_language_metadata
 
@@ -41,7 +41,7 @@ class VariableIdentifiers(str, Enum):
 
 DISPLAY_VARIABLES: dict[
     VariableIdentifiers,
-    VariablesFieldTypes,
+    MetdataFieldTypes,
 ] = {
     VariableIdentifiers.SHORT_NAME: MetadataInputField(
         identifier=VariableIdentifiers.SHORT_NAME.value,
@@ -86,7 +86,7 @@ DISPLAY_VARIABLES: dict[
         obligatory=True,
         type="url",
     ),
-    VariableIdentifiers.DIRECT_PERSON_IDENTIFYING: VariablesCheckboxField(
+    VariableIdentifiers.DIRECT_PERSON_IDENTIFYING: MetadataCheckboxField(
         identifier=VariableIdentifiers.DIRECT_PERSON_IDENTIFYING.value,
         display_name="Direkte personidentifiserende informasjon",
         description="Direkte personidentifiserende informasjon (DPI)",

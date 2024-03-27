@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING
 from datadoc import enums
 from datadoc import state
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
-from datadoc.frontend.fields.display_base import INPUT_KWARGS
 from datadoc.frontend.fields.display_base import DatasetFieldTypes
 from datadoc.frontend.fields.display_base import DisplayDatasetMetadataDropdown
 from datadoc.frontend.fields.display_base import MetadataDropdownField
@@ -171,7 +170,7 @@ DISPLAY_DATASET: dict[
         identifier=DatasetIdentifiers.VERSION.value,
         display_name="Versjon",
         description="Versjon",
-        extra_kwargs=dict(type="number", min=1, **INPUT_KWARGS),
+        extra_kwargs={"type": "number", "min": 1},
         obligatory=True,
     ),
     DatasetIdentifiers.VERSION_DESCRIPTION: MetadataInputField(
