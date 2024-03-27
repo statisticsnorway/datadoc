@@ -139,7 +139,7 @@ class MetadataInputField(DisplayMetadata):
     def render(
         self,
         component_id: dict,
-        language: str,  # noqa: ARG002
+        language: str,  # noqa: ARG002 Required by Dash
         metadata: BaseModel,
     ) -> ssb.Input:
         """Build component."""
@@ -197,7 +197,7 @@ class MetadataPeriodField(DisplayMetadata):
     def render(
         self,
         component_id: dict,
-        language: str,  # noqa: ARG002
+        language: str,  # noqa: ARG002 Required by Dash
         dataset: BaseModel,
     ) -> ssb.Input:
         """Build Input date component."""
@@ -224,7 +224,7 @@ class MetadataCheckboxField(DisplayMetadata):
     def render(
         self,
         variable_id: dict,
-        language: str,  # noqa: ARG002
+        language: str,  # noqa: ARG002 Required by Dash
         variable: model.Variable,
     ) -> dbc.Checkbox:
         """Build Checkbox component."""
