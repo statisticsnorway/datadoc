@@ -1,11 +1,10 @@
 .app-wrapper{
-
-        max-width: 1920px;
-        width: 100%;
-        margin: 0 auto;
+    width: 100%;
+    margin: 1rem 0;
 }
 
-.main-content{
+.main-content-app{
+    max-width: 1400px;
     width: 100%;
-    margin: 1rem;
+    margin: 3rem;
 }
