@@ -29,8 +29,8 @@ logger = logging.getLogger(__name__)
 def get_statistical_subject_options(
     language: SupportedLanguages,
 ) -> list[dict[str, str]]:
-    """Collect the statistical subject options for the given language."""
-    return [
+    """Generate the list of options for statistical subject."""
+    dropdown_options = [
         {
             "title": f"{primary.get_title(language)} - {secondary.get_title(language)}",
             "id": secondary.subject_code,
@@ -38,32 +38,38 @@ def get_statistical_subject_options(
         for primary in state.statistic_subject_mapping.primary_subjects
         for secondary in primary.secondary_subjects
     ]
+    dropdown_options.insert(0, {"title": "", "id": ""})
+    return dropdown_options
 
 
 def get_unit_type_options(
     language: SupportedLanguages,
 ) -> list[dict[str, str]]:
     """Collect the unit type options for the given language."""
-    return [
+    dropdown_options = [
         {
             "title": unit_type.get_title(language),
             "id": unit_type.code,
         }
         for unit_type in state.unit_types.classifications
     ]
+    dropdown_options.insert(0, {"title": "", "id": ""})
+    return dropdown_options
 
 
 def get_owner_options(
     language: SupportedLanguages,
 ) -> list[dict[str, str]]:
     """Collect the owner options for the given language."""
-    return [
+    dropdown_options = [
         {
             "title": f"{option.code} - {option.get_title(language)}",
             "id": option.code,
         }
         for option in state.organisational_units.classifications
     ]
+    dropdown_options.insert(0, {"title": "", "id": ""})
+    return dropdown_options
 
 
 class DatasetIdentifiers(str, Enum):

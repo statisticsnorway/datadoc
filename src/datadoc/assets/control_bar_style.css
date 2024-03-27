@@ -1,0 +1,20 @@
+.control-bar-section{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem 0;
+    align-items: center;
+}
+
+.ssb-input.file-path-input{
+    max-width: 1100px;
+    width: 100%;
+}
+
+.ssb-btn.secondary-btn.file-open-button,.ssb-btn.secondary-btn.file-save-button{
+    margin-top: 0.5rem;
+}
+
+.progress-bar-wrapper{
+    padding: 0;
+}

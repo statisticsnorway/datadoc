@@ -91,6 +91,8 @@ def accept_variable_metadata_input(
         )
         return str(e)
     else:
+        if value == "":
+            value = None
         logger.debug(
             "Successfully updated %s, %s with %s",
             metadata_field,
