@@ -15,7 +15,7 @@ from dash import html
 from datadoc.frontend.fields.display_base import DATASET_METADATA_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
 from datadoc.frontend.fields.display_base import DatasetFieldTypes
-from datadoc.frontend.fields.display_base import VariablesFieldTypes
+from datadoc.frontend.fields.display_base import MetdataFieldTypes
 
 if TYPE_CHECKING:
     from datadoc_model import model
@@ -113,7 +113,7 @@ def build_ssb_button(text: str, icon_class: str, button_id: str) -> dbc.Button:
 
 
 def build_input_field_section(
-    metadata_fields: list[VariablesFieldTypes],
+    metadata_fields: list[MetdataFieldTypes],
     variable: model.Variable,
     language: str,
 ) -> dbc.Form:
