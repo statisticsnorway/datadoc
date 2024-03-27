@@ -12,10 +12,10 @@ from datadoc import state
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import INPUT_KWARGS
 from datadoc.frontend.fields.display_base import DatasetFieldTypes
-from datadoc.frontend.fields.display_base import DatasetPeriodField
 from datadoc.frontend.fields.display_base import DisplayDatasetMetadataDropdown
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
+from datadoc.frontend.fields.display_base import MetadataPeriodField
 from datadoc.frontend.fields.display_base import get_comma_separated_string
 from datadoc.frontend.fields.display_base import get_enum_options_for_language
 from datadoc.frontend.fields.display_base import get_metadata_and_stringify
@@ -280,7 +280,7 @@ DISPLAY_DATASET: dict[
         obligatory=True,
         editable=False,
     ),
-    DatasetIdentifiers.CONTAINS_DATA_FROM: DatasetPeriodField(
+    DatasetIdentifiers.CONTAINS_DATA_FROM: MetadataPeriodField(
         identifier=DatasetIdentifiers.CONTAINS_DATA_FROM.value,
         display_name="Inneholder data f.o.m.",
         description="ÅÅÅÅ-MM-DD",
@@ -288,7 +288,7 @@ DISPLAY_DATASET: dict[
         editable=True,
         id_type=DATASET_METADATA_DATE_INPUT,
     ),
-    DatasetIdentifiers.CONTAINS_DATA_UNTIL: DatasetPeriodField(
+    DatasetIdentifiers.CONTAINS_DATA_UNTIL: MetadataPeriodField(
         identifier=DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
         display_name="Inneholder data t.o.m.",
         description="ÅÅÅÅ-MM-DD",
