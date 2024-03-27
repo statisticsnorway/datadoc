@@ -19,21 +19,26 @@ from dash import no_update
 
 from datadoc import state
 from datadoc.enums import SupportedLanguages
+from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
-from datadoc.frontend.callbacks.dataset import change_language_dataset_metadata
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.utils import update_global_language_state
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
+from datadoc.frontend.components.builders import build_dataset_edit_section
 from datadoc.frontend.components.builders import build_edit_section
 from datadoc.frontend.components.builders import build_ssb_accordion
-from datadoc.frontend.components.dataset_tab import DATASET_METADATA_INPUT
-from datadoc.frontend.components.dataset_tab import build_dataset_metadata_accordion
+from datadoc.frontend.components.dataset_tab import SECTION_WRAPPER_ID
 from datadoc.frontend.components.variables_tab import ACCORDION_WRAPPER_ID
 from datadoc.frontend.components.variables_tab import VARIABLES_INFORMATION_ID
+from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
+from datadoc.frontend.fields.display_base import DATASET_METADATA_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
-from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
+from datadoc.frontend.fields.display_dataset import NON_EDITABLE_DATASET_METADATA
+from datadoc.frontend.fields.display_dataset import OBLIGATORY_EDITABLE_DATASET_METADATA
+from datadoc.frontend.fields.display_dataset import OPTIONAL_DATASET_METADATA
+from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
@@ -84,29 +89,6 @@ def register_callbacks(app: Dash) -> None:
         return False
 
     @app.callback(
-        *[
-            Output(
-                {
-                    "type": DATASET_METADATA_INPUT,
-                    "id": m.identifier,
-                },
-                "options",
-            )
-            for m in DISPLAYED_DROPDOWN_DATASET_METADATA
-        ],
-        Output(
-            {"type": DATASET_METADATA_INPUT, "id": ALL},
-            "value",
-        ),
-        Input("language-dropdown", "value"),
-    )
-    def callback_change_language_dataset_metadata(
-        language: str,
-    ) -> tuple[object, ...]:
-        """Update dataset metadata values upon change of language."""
-        return change_language_dataset_metadata(SupportedLanguages(language))
-
-    @app.callback(
         Output("dataset-validation-error", "is_open"),
         Output("dataset-validation-explanation", "children"),
         Input({"type": DATASET_METADATA_INPUT, "id": ALL}, "value"),
@@ -146,21 +128,6 @@ def register_callbacks(app: Dash) -> None:
         by a more formal mechanism.
         """
         return open_dataset_handling(n_clicks, dataset_path)
-
-    @app.callback(
-        Output("dataset-accordion", "children"),
-        Input("open-button", "n_clicks"),
-        prevent_initial_call=True,
-    )
-    def callback_clear_accordion_values(n_clicks: int) -> list[dbc.AccordionItem]:
-        """Recreate accordion items with unique IDs.
-
-        The purpose is to avoid browser caching and clear the values of all
-        components inside the dataset accordion when new file is opened
-        """
-        if n_clicks and n_clicks > 0:
-            return build_dataset_metadata_accordion(n_clicks)
-        return no_update
 
     @app.callback(
         Output(VARIABLES_INFORMATION_ID, "children"),
@@ -208,6 +175,45 @@ def register_callbacks(app: Dash) -> None:
             )
             for variable in list(state.metadata.variables)
         ]
+
+    @app.callback(
+        Output(SECTION_WRAPPER_ID, "children"),
+        Input("language-dropdown", "value"),
+        Input("open-button", "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def callback_populate_dataset_workspace(
+        language: str,
+        n_clicks: int,
+    ) -> list:
+        """Create dataset workspace with sections."""
+        update_global_language_state(SupportedLanguages(language))
+        logger.info("Populating new dataset workspace")
+        if n_clicks:
+            return [
+                build_dataset_edit_section(
+                    "Obligatorisk",
+                    OBLIGATORY_EDITABLE_DATASET_METADATA,
+                    state.current_metadata_language,
+                    state.metadata.dataset,
+                    {"type": "dataset-edit-section", "id": f"obligatory-{language}"},
+                ),
+                build_dataset_edit_section(
+                    "Anbefalt",
+                    OPTIONAL_DATASET_METADATA,
+                    state.current_metadata_language,
+                    state.metadata.dataset,
+                    {"type": "dataset-edit-section", "id": f"recommended-{language}"},
+                ),
+                build_dataset_edit_section(
+                    "Maskingenerert",
+                    NON_EDITABLE_DATASET_METADATA,
+                    state.current_metadata_language,
+                    state.metadata.dataset,
+                    {"type": "dataset-edit-section", "id": f"machine-{language}"},
+                ),
+            ]
+        return no_update
 
     @app.callback(
         Output(
@@ -310,6 +316,62 @@ def register_callbacks(app: Dash) -> None:
         return accept_variable_metadata_date_input(
             VariableIdentifiers(ctx.triggered_id["id"]),
             ctx.triggered_id["variable_short_name"],
+            contains_data_from,
+            contains_data_until,
+        )
+
+    @app.callback(
+        Output(
+            {
+                "type": DATASET_METADATA_DATE_INPUT,
+                "id": DatasetIdentifiers.CONTAINS_DATA_FROM.value,
+            },
+            "error",
+        ),
+        Output(
+            {
+                "type": DATASET_METADATA_DATE_INPUT,
+                "id": DatasetIdentifiers.CONTAINS_DATA_FROM.value,
+            },
+            "errorMessage",
+        ),
+        Output(
+            {
+                "type": DATASET_METADATA_DATE_INPUT,
+                "id": DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
+            },
+            "error",
+        ),
+        Output(
+            {
+                "type": DATASET_METADATA_DATE_INPUT,
+                "id": DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
+            },
+            "errorMessage",
+        ),
+        Input(
+            {
+                "type": DATASET_METADATA_DATE_INPUT,
+                "id": DatasetIdentifiers.CONTAINS_DATA_FROM.value,
+            },
+            "value",
+        ),
+        Input(
+            {
+                "type": DATASET_METADATA_DATE_INPUT,
+                "id": DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
+            },
+            "value",
+        ),
+        prevent_initial_call=True,
+    )
+    def callback_accept_dataset_metadata_date_input(
+        contains_data_from: str,
+        contains_data_until: str,
+    ) -> dbc.Alert:
+        """Special case handling for date fields which have a relationship to one another."""
+        return accept_dataset_metadata_date_input(
+            DatasetIdentifiers(ctx.triggered_id["id"]),
             contains_data_from,
             contains_data_until,
         )
