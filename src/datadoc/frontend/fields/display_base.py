@@ -37,13 +37,6 @@ VARIABLES_METADATA_DATE_INPUT = "variables-metadata-date-input"
 DATASET_METADATA_DATE_INPUT = "dataset-metadata-date-input"
 
 
-INPUT_KWARGS = {
-    "debounce": True,
-    "style": {"width": "100%"},
-    "className": "ssb-input",
-}
-
-
 def get_enum_options_for_language(
     enum: Enum,
     language: SupportedLanguages,
@@ -56,15 +49,6 @@ def get_enum_options_for_language(
         }
         for i in get_language_strings_enum(enum)  # type: ignore [attr-defined]
     ]
-
-
-def input_kwargs_factory() -> dict[str, t.Any]:
-    """Initialize the field extra_kwargs.
-
-    We aren't allowed to directly assign a mutable type like a dict to
-    a dataclass field.
-    """
-    return INPUT_KWARGS
 
 
 def empty_kwargs_factory() -> dict[str, t.Any]:
@@ -141,7 +125,7 @@ class DisplayDatasetMetadata(DisplayMetadata):
     Specific to dataset fields.
     """
 
-    extra_kwargs: dict[str, Any] = field(default_factory=input_kwargs_factory)
+    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     component: type[Component] = dcc.Input
     value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
 
@@ -277,7 +261,7 @@ class VariablesPeriodField(DisplayMetadata):
 class VariablesCheckboxField(DisplayMetadata):
     """Controls for how a checkbox metadata field should be displayed."""
 
-    extra_kwargs: dict[str, Any] = field(default_factory=input_kwargs_factory)
+    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
 
     def render(
