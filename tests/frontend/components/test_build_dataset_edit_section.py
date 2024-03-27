@@ -9,9 +9,9 @@ from datadoc_model import model
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.components.builders import build_dataset_edit_section
 from datadoc.frontend.fields.display_base import DatasetFieldTypes
-from datadoc.frontend.fields.display_base import DatasetPeriodField
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
+from datadoc.frontend.fields.display_base import MetadataPeriodField
 from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET
 from datadoc.frontend.fields.display_dataset import NON_EDITABLE_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import OPTIONAL_DATASET_METADATA
@@ -264,7 +264,7 @@ DATASET_INPUT_URL_FIELD_LIST: list[DatasetFieldTypes] = [
 ]
 
 DATASET_DATE_FIELD_LIST: list[DatasetFieldTypes] = [
-    m for m in DISPLAY_DATASET.values() if isinstance(m, DatasetPeriodField)
+    m for m in DISPLAY_DATASET.values() if isinstance(m, MetadataPeriodField)
 ]
 
 DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL: list[DatasetFieldTypes] = [
