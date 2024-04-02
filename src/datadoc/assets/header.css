@@ -1,0 +1,13 @@
+.ssb-header-wrapper.datadoc-header {
+    border-bottom: 1px solid #C3DCDC;
+    padding: 0;
+    height: 80px;
+    margin: 0;
+
+}
+
+.ssb-title.main-title {
+    color: #274247;
+    padding: 0;
+    margin-left: 1rem;
+}

@@ -55,6 +55,9 @@ def open_dataset_handling(
     file_path: str,
 ) -> tuple[bool, bool, str, str]:
     """Handle errors and other logic around opening a dataset file."""
+    if file_path:
+        file_path = file_path.strip()
+
     try:
         state.metadata = open_file(file_path)
     except FileNotFoundError:
@@ -102,26 +105,6 @@ def process_special_cases(
         str,
     ):
         updated_value = process_keyword(value)
-    elif metadata_identifier == DatasetIdentifiers.CONTAINS_DATA_FROM.value:
-        updated_value, _ = parse_and_validate_dates(
-            str(value),
-            getattr(
-                state.metadata.dataset,
-                DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
-            ),
-        )
-        if updated_value:
-            updated_value = updated_value.isoformat()
-    elif metadata_identifier == DatasetIdentifiers.CONTAINS_DATA_UNTIL.value:
-        _, updated_value = parse_and_validate_dates(
-            getattr(
-                state.metadata.dataset,
-                DatasetIdentifiers.CONTAINS_DATA_FROM.value,
-            ),
-            str(value),
-        )
-        if updated_value:
-            updated_value = updated_value.isoformat()
     elif metadata_identifier == DatasetIdentifiers.VERSION.value:
         updated_value = str(value)
     elif metadata_identifier in MULTIPLE_LANGUAGE_DATASET_METADATA and isinstance(
@@ -199,4 +182,63 @@ def change_language_dataset_metadata(
     return (
         *(e.options_getter(language) for e in DISPLAYED_DROPDOWN_DATASET_METADATA),
         update_dataset_metadata_language(),
+    )
+
+
+def accept_dataset_metadata_date_input(
+    dataset_identifier: DatasetIdentifiers,
+    contains_data_from: str | None,
+    contains_data_until: str | None,
+) -> tuple[bool, str, bool, str]:
+    """Validate and save date range inputs."""
+    try:
+        (
+            parsed_contains_data_from,
+            parsed_contains_data_until,
+        ) = parse_and_validate_dates(
+            str(contains_data_from),
+            str(contains_data_until),
+        )
+
+        if parsed_contains_data_from:
+            state.metadata.dataset.contains_data_from = (
+                parsed_contains_data_from.isoformat()
+            )
+
+        if parsed_contains_data_until:
+            state.metadata.dataset.contains_data_until = (
+                parsed_contains_data_until.isoformat()
+            )
+
+    except (ValidationError, ValueError) as e:
+        logger.exception(
+            "Validation failed for %s, %s, %s: %s, %s",
+            dataset_identifier,
+            "contains_data_from",
+            contains_data_from,
+            "contains_data_until",
+            contains_data_until,
+        )
+        message: str | None = str(e)
+    else:
+        logger.debug(
+            "Successfully updated %s, %s, %s: %s, %s",
+            dataset_identifier,
+            "contains_data_from",
+            contains_data_from,
+            "contains_data_until",
+            contains_data_until,
+        )
+        message = None
+
+    no_error = (False, "")
+    if not message:
+        # No error to display.
+        return no_error + no_error
+
+    error = (True, message)
+    return (
+        error + no_error
+        if dataset_identifier == DatasetIdentifiers.CONTAINS_DATA_FROM
+        else no_error + error
     )

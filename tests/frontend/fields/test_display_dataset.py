@@ -19,10 +19,11 @@ from tests.utils import TEST_RESOURCES_DIRECTORY
             / STATISTICAL_SUBJECT_STRUCTURE_DIR
             / "extract_secondary_subject.xml",
             [
-                {"label": "aa norwegian - aa00 norwegian", "value": "aa00"},
-                {"label": "aa norwegian - aa01 norwegian", "value": "aa01"},
-                {"label": "ab norwegian - ab00 norwegian", "value": "ab00"},
-                {"label": "ab norwegian - ab01 norwegian", "value": "ab01"},
+                {"title": "", "id": ""},
+                {"title": "aa norwegian - aa00 norwegian", "id": "aa00"},
+                {"title": "aa norwegian - aa01 norwegian", "id": "aa01"},
+                {"title": "ab norwegian - ab00 norwegian", "id": "ab00"},
+                {"title": "ab norwegian - ab01 norwegian", "id": "ab01"},
             ],
         ),
         (
@@ -30,10 +31,11 @@ from tests.utils import TEST_RESOURCES_DIRECTORY
             / STATISTICAL_SUBJECT_STRUCTURE_DIR
             / "missing_language.xml",
             [
-                {"label": " - aa00 norwegian", "value": "aa00"},
-                {"label": " - aa01 norwegian", "value": "aa01"},
-                {"label": " - ab00 norwegian", "value": "ab00"},
-                {"label": " - ", "value": "ab01"},
+                {"title": "", "id": ""},
+                {"title": " - aa00 norwegian", "id": "aa00"},
+                {"title": " - aa01 norwegian", "id": "aa01"},
+                {"title": " - ab00 norwegian", "id": "ab00"},
+                {"title": " - ", "id": "ab01"},
             ],
         ),
     ],
@@ -53,9 +55,10 @@ def test_get_statistical_subject_options(
         (
             TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_nb.csv",
             [
-                {"label": "Adresse", "value": "01"},
-                {"label": "Arbeidsulykke", "value": "02"},
-                {"label": "Bolig", "value": "03"},
+                {"title": "", "id": ""},
+                {"title": "Adresse", "id": "01"},
+                {"title": "Arbeidsulykke", "id": "02"},
+                {"title": "Bolig", "id": "03"},
             ],
         ),
     ],

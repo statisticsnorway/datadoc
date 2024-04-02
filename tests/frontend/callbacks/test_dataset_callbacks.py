@@ -17,6 +17,7 @@ from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.enums import DataSetState
 from datadoc.enums import LanguageStringsEnum
 from datadoc.enums import SupportedLanguages
+from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import change_language_dataset_metadata
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
@@ -185,19 +186,17 @@ def test_accept_dataset_metadata_input_date_validation(
     expect_error: bool,  # noqa: FBT001
 ):
     state.metadata = metadata
-    accept_dataset_metadata_input(
+    output = accept_dataset_metadata_date_input(
+        DatasetIdentifiers.CONTAINS_DATA_UNTIL,
         start_date,
-        DatasetIdentifiers.CONTAINS_DATA_FROM.value,
-    )
-    output = accept_dataset_metadata_input(
         end_date,
-        DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
     )
-    assert output[0] is expect_error
+    assert output[2] is expect_error
     if expect_error:
-        assert "Validation error" in output[1]
+        assert "Validation error" in output[3]
     else:
         assert output[1] == ""
+        assert output[3] == ""
 
 
 def test_update_dataset_metadata_language_strings(
@@ -260,15 +259,15 @@ def test_change_language_dataset_metadata_options_enums(
 
         member_names = {m.name for m in enum_for_options}  # type: ignore [attr-defined]
         values = [i for d in options for i in d.values()]
-
+        test_without_empty_option = options[1:]
         if member_names.intersection(values):
-            assert {d["label"] for d in options} == {
+            assert {d["label"] for d in test_without_empty_option} == {
                 e.get_value_for_language(
                     language,
                 )
                 for e in enum_for_options  # type: ignore [attr-defined]
             }
-            assert {d["value"] for d in options} == {e.name for e in enum_for_options}  # type: ignore [attr-defined]
+            assert {d["value"] for d in test_without_empty_option} == {e.name for e in enum_for_options}  # type: ignore [attr-defined]
 
 
 @patch(f"{DATASET_CALLBACKS_MODULE}.open_file")

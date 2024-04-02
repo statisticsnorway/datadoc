@@ -12,7 +12,9 @@ import dash_bootstrap_components as dbc
 import ssb_dash_components as ssb
 from dash import html
 
+from datadoc.frontend.fields.display_base import DATASET_METADATA_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
+from datadoc.frontend.fields.display_base import DatasetFieldTypes
 from datadoc.frontend.fields.display_base import VariablesFieldTypes
 
 if TYPE_CHECKING:
@@ -51,16 +53,15 @@ ALERT_TYPES = {
 }
 
 
-def build_ssb_styled_tab(label: str, content: dbc.Container) -> dbc.Tab:
+def build_ssb_styled_tab(label: str, content: html.Article) -> dbc.Tab:
     """Make a Dash Tab according to SSBs Design System."""
     return dbc.Tab(
         label=label,
         # Replace all whitespace with dashes
         tab_id=re.sub(r"\s+", "-", label.lower()),
-        label_class_name="ssb-tabs navigation-item",
-        label_style={"marginLeft": "10px", "marginRight": "10px"},
-        style={"padding": "4px"},
+        label_class_name="ssb-tabs navigation-item workspace-tab-label",
         children=content,
+        className="workspace-tab",
     )
 
 
@@ -95,27 +96,12 @@ def build_ssb_alert(  # noqa: PLR0913 not immediately obvious how to improve thi
     )
 
 
-def build_ssb_button(text: str, icon_class: str, button_id: str) -> dbc.Button:
-    """Make a Dash Button according to SSBs Design System."""
-    return dbc.Button(
-        [
-            html.I(
-                className=icon_class,
-                style={"paddingRight": "10px"},
-            ),
-            f"   {text}",
-        ],
-        class_name="ssb-btn primary-btn",
-        id=button_id,
-    )
-
-
 def build_input_field_section(
     metadata_fields: list[VariablesFieldTypes],
     variable: model.Variable,
     language: str,
 ) -> dbc.Form:
-    """Create input fields."""
+    """Create form with input fields for variable workspace."""
     return dbc.Form(
         [
             i.render(
@@ -130,7 +116,7 @@ def build_input_field_section(
             for i in metadata_fields
         ],
         id=VARIABLES_METADATA_INPUT,
-        className="variables-input-group",
+        className="edit-section-form",
     )
 
 
@@ -140,14 +126,14 @@ def build_edit_section(
     variable: model.Variable,
     language: str,
 ) -> html.Section:
-    """Create input section."""
+    """Create input section for variable workspace."""
     return html.Section(
         id={"type": "edit-section", "title": title},
         children=[
-            ssb.Title(title, size=3, className="input-section-title"),
+            ssb.Title(title, size=3, className="edit-section-title"),
             build_input_field_section(metadata_inputs, variable, language),
         ],
-        className="input-section",
+        className="edit-section",
     )
 
 
@@ -157,7 +143,7 @@ def build_ssb_accordion(
     variable_short_name: str,
     children: list,
 ) -> ssb.Accordion:
-    """Build Accordion for one variable."""
+    """Build Accordion for one variable in variable workspace."""
     return ssb.Accordion(
         header=header,
         id=key,
@@ -177,5 +163,37 @@ def build_ssb_accordion(
                 children=children,
             ),
         ],
-        className="variable",
+        className="variable-accordion",
+    )
+
+
+def build_dataset_edit_section(
+    title: str,
+    metadata_inputs: list[DatasetFieldTypes],
+    language: str,
+    dataset: model.Dataset,
+    key: dict,
+) -> html.Section:
+    """Create edit section for dataset workspace."""
+    return html.Section(
+        id=key,
+        children=[
+            ssb.Title(title, size=3, className="edit-section-title"),
+            dbc.Form(
+                [
+                    i.render(
+                        {
+                            "type": DATASET_METADATA_INPUT,
+                            "id": i.identifier,
+                        },
+                        language,
+                        dataset,
+                    )
+                    for i in metadata_inputs
+                ],
+                id=f"{DATASET_METADATA_INPUT}-{title}",
+                className="edit-section-form",
+            ),
+        ],
+        className="edit-section dataset-edit-section",
     )

@@ -1,0 +1,10 @@
+.app-wrapper{
+    width: 100%;
+    margin: 1rem 0;
+}
+
+.main-content-app{
+    max-width: 1400px;
+    width: 100%;
+    margin: 3rem;
+}
