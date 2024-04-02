@@ -7,10 +7,10 @@ from datadoc_model import model
 
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.components.builders import build_input_field_section
-from datadoc.frontend.fields.display_base import VariablesCheckboxField
-from datadoc.frontend.fields.display_base import VariablesDropdownField
-from datadoc.frontend.fields.display_base import VariablesInputField
-from datadoc.frontend.fields.display_base import VariablesPeriodField
+from datadoc.frontend.fields.display_base import MetadataCheckboxField
+from datadoc.frontend.fields.display_base import MetadataDropdownField
+from datadoc.frontend.fields.display_base import MetadataInputField
+from datadoc.frontend.fields.display_base import MetadataPeriodField
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 
@@ -72,7 +72,7 @@ def test_build_input_fields_input_components(field_list, variable, language):
     variable_identifier_input = [
         element
         for element in VARIABLES_METADATA
-        if isinstance(element, VariablesInputField)
+        if isinstance(element, MetadataInputField)
     ]
     assert all(isinstance(field, ssb.Input) for field in elements_of_input)
     for item in elements_of_input_and_type_text_url:
@@ -102,7 +102,7 @@ def test_build_input_fields_checkbox_components(field_list, variable, language):
     variable_identifier_checkbox = [
         element
         for element in VARIABLES_METADATA
-        if isinstance(element, VariablesCheckboxField)
+        if isinstance(element, MetadataCheckboxField)
     ]
     assert all(isinstance(item, type_checkbox) for item in elements_of_checkbox)
     for item in elements_of_checkbox:
@@ -130,7 +130,7 @@ def test_build_input_fields_type_date(field_list, variable, language):
         element for element in elements_of_input if element.type == "date"
     ]
     variable_identifier_date = [
-        element for element in field_list if isinstance(element, VariablesPeriodField)
+        element for element in field_list if isinstance(element, MetadataPeriodField)
     ]
     for item1, item2 in zip(elements_of_date, variable_identifier_date):
         assert item1.label == item2.display_name
@@ -144,7 +144,7 @@ def test_build_input_fields_type_date(field_list, variable, language):
 def test_build_input_fields_type_url(field_list, variable, language):
     input_section = build_input_field_section(field_list, variable, language)
     variable_identifier_input = [
-        element for element in field_list if isinstance(element, VariablesInputField)
+        element for element in field_list if isinstance(element, MetadataInputField)
     ]
     variable_identifier_url = [
         element for element in variable_identifier_input if element.type == "url"
@@ -174,7 +174,7 @@ def test_build_input_fields_dropdown_components(field_list, variable, language):
         if isinstance(element, type_dropdown)
     ]
     variable_identifier_dropdown = [
-        element for element in field_list if isinstance(element, VariablesDropdownField)
+        element for element in field_list if isinstance(element, MetadataDropdownField)
     ]
     assert all(isinstance(item, type_dropdown) for item in elements_of_dropdown)
     for item in elements_of_dropdown:
