@@ -73,7 +73,12 @@ def build_app(app: type[Dash]) -> Dash:
                 ],
                 className="main-content-app",
             ),
-            build_language_dropdown(),
+            html.Footer(
+                [
+                    build_language_dropdown(),
+                ],
+                className="language-footer",
+            ),
         ],
         className="app-wrapper",
     )
