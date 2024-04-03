@@ -46,6 +46,7 @@
     flex-wrap: wrap;
     gap: 2rem;
     padding-top: 1rem;
+    align-items: flex-end;
 }
 
 .alert-section{
@@ -79,9 +80,4 @@
 
 .form-check{
     padding-left: 0;
-}
-
-/*Target child selector (label) of variable-dropdown*/
-.ssb-dropdown.variable-dropdown > .dropdown-label{
-    margin-bottom: 0.6rem;
 }

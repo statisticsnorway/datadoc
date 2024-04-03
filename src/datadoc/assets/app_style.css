@@ -4,7 +4,9 @@
 }
 
 .main-content-app{
-    max-width: 1400px;
-    width: 100%;
-    margin: 3rem;
+    margin: 1.5rem 12.25rem;
+}
+
+.language-footer{
+    margin: 1.5rem 12.25rem;
 }
