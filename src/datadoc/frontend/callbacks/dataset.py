@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 from pydantic import ValidationError
 
 from datadoc import state
+from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.enums import (
     SupportedLanguages,  # noqa: TCH001 import is needed for docs build
@@ -53,11 +54,10 @@ def open_file(file_path: str | None = None) -> DataDocMetadata:
 def open_dataset_handling(
     n_clicks: int,
     file_path: str,
-) -> tuple[bool, bool, str, str]:
+) -> tuple[bool, bool, bool, str, str]:
     """Handle errors and other logic around opening a dataset file."""
     if file_path:
         file_path = file_path.strip()
-
     try:
         state.metadata = open_file(file_path)
     except FileNotFoundError:
@@ -65,6 +65,7 @@ def open_dataset_handling(
         return (
             False,
             True,
+            False,
             f"Filen '{file_path}' finnes ikke.",
             state.current_metadata_language.value,
         )
@@ -72,13 +73,26 @@ def open_dataset_handling(
         return (
             False,
             True,
+            False,
             "\n".join(traceback.format_exception_only(type(e), e)),
             state.current_metadata_language.value,
         )
-    if n_clicks and n_clicks > 0:
-        return True, False, "", state.current_metadata_language.value
 
-    return False, False, "", state.current_metadata_language.value
+    # opened-dataset-success
+    if n_clicks and n_clicks > 0:
+        dapla_dataset_path_info = DaplaDatasetPathInfo(file_path)
+        if not dapla_dataset_path_info.path_complies_with_naming_standard():
+            return (
+                False,
+                False,
+                True,
+                "",
+                state.current_metadata_language.value,
+            )
+        return True, False, False, "", state.current_metadata_language.value
+
+    # no message
+    return False, False, False, "", state.current_metadata_language.value
 
 
 def process_keyword(value: str) -> list[str]:

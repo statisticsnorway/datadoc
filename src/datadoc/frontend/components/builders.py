@@ -26,6 +26,7 @@ class AlertTypes(Enum):
 
     SUCCESS = auto()
     WARNING = auto()
+    ERROR = auto()
 
 
 @dataclass
@@ -42,9 +43,13 @@ class AlertType:
 
 
 ALERT_TYPES = {
+    AlertTypes.ERROR: AlertType(
+        alert_class_name="ssb-dialog error",
+        color="danger",
+    ),
     AlertTypes.WARNING: AlertType(
         alert_class_name="ssb-dialog warning",
-        color="danger",
+        color="warning",
     ),
     AlertTypes.SUCCESS: AlertType(
         alert_class_name="ssb-dialog",

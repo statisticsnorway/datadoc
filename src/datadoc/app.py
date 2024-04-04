@@ -22,6 +22,7 @@ from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.register_callbacks import register_callbacks
 from datadoc.frontend.components.alerts import dataset_validation_error
+from datadoc.frontend.components.alerts import naming_convention_warning
 from datadoc.frontend.components.alerts import opened_dataset_error
 from datadoc.frontend.components.alerts import opened_dataset_success
 from datadoc.frontend.components.alerts import saved_metadata_success
@@ -65,6 +66,7 @@ def build_app(app: type[Dash]) -> Dash:
                     opened_dataset_error,
                     saved_metadata_success,
                     opened_dataset_success,
+                    naming_convention_warning,
                     dbc.Tabs(
                         id="tabs",
                         class_name="ssb-tabs",

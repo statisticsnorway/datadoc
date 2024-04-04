@@ -6,21 +6,21 @@ from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_ssb_alert
 
 dataset_validation_error = build_ssb_alert(
-    AlertTypes.WARNING,
+    AlertTypes.ERROR,
     "dataset-validation-error",
     "Validering feilet",
     "dataset-validation-explanation",
 )
 
 variables_validation_error = build_ssb_alert(
-    AlertTypes.WARNING,
+    AlertTypes.ERROR,
     "variables-validation-error",
     "Validering feilet",
     "variables-validation-explanation",
 )
 
 opened_dataset_error = build_ssb_alert(
-    AlertTypes.WARNING,
+    AlertTypes.ERROR,
     "opened-dataset-error",
     "Kunne ikke åpne datasettet",
     "opened-dataset-error-explanation",
@@ -38,4 +38,11 @@ opened_dataset_success = build_ssb_alert(
     "opened-dataset-success",
     "Åpnet datasett",
     "opened-dataset-success-explanation",
+)
+
+naming_convention_warning = build_ssb_alert(
+    AlertTypes.WARNING,
+    "opened-dataset_warning",
+    "Filen følger ikke navnestandard",
+    "opened-dataset-warning-explanation",
 )
