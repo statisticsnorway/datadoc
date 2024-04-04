@@ -83,7 +83,7 @@ def open_dataset_handling(
         dapla_dataset_path_info = DaplaDatasetPathInfo(file_path)
         if not dapla_dataset_path_info.path_complies_with_naming_standard():
             return (
-                False,
+                True,
                 False,
                 True,
                 "",
