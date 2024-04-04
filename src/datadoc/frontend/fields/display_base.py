@@ -152,6 +152,7 @@ class MetadataInputField(DisplayMetadata):
             debounce=True,
             type=self.type,
             disabled=not self.editable,
+            glossary=ssb.Glossary(explanation=self.description),
             value=value,
             className="input-component",
         )
@@ -213,6 +214,8 @@ class MetadataPeriodField(DisplayMetadata):
             disabled=not self.editable,
             value=value,
             className="input-component",
+            showDescriptionText=True,
+            description=self.description,
         )
 
 
