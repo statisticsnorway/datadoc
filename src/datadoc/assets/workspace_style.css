@@ -69,6 +69,11 @@
     width: 100%;
 }
 
+.ssb-input.input-component > .input-label, .ssb-dropdown.dropdown-component > .dropdown-label{
+    font-size: 15px;
+    font-weight: 505;
+
+}
 .ssb-dropdown.dropdown-component {
     max-width: 500px;
     width: 100%;
@@ -96,7 +101,7 @@
 .ssb-glossary.datadoc-glossary > .glossary-popup::after{
     left: -5%;
     margin-left: -10px;
-    top: 80px;
+    top: 120px;
     transform: rotateX(-90deg);
     -webkit-transform: rotate(-90deg);
 }
