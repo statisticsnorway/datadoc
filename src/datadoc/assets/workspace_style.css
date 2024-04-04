@@ -81,3 +81,31 @@
 .form-check{
     padding-left: 0;
 }
+
+.ssb-glossary.datadoc-glossary > .glossary-popup {
+    left: 72%;
+    top: -135px;
+    margin-left: -140px;
+}
+
+.ssb-glossary.datadoc-glossary > .glossary-popup .content-box{
+    height: 160px;
+    width:320px;
+    padding: 1.2rem;
+}
+.ssb-glossary.datadoc-glossary > .glossary-popup::after{
+    left: -5%;
+    margin-left: -10px;
+    top: 80px;
+    transform: rotateX(-90deg);
+    -webkit-transform: rotate(-90deg);
+}
+
+.ssb-glossary.datadoc-glossary > .glossary-popup.open > .content-box > .glossary-closing{
+    margin-top: 1.8rem;
+}
+
+.ssb-glossary.datadoc-glossary > .glossary-button > .glossary-logo{
+    width: 16px;
+    height: 16px;
+}

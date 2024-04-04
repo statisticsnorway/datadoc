@@ -152,7 +152,10 @@ class MetadataInputField(DisplayMetadata):
             debounce=True,
             type=self.type,
             disabled=not self.editable,
-            glossary=ssb.Glossary(explanation=self.description),
+            glossary=ssb.Glossary(
+                explanation=self.description,
+                className="datadoc-glossary",
+            ),
             value=value,
             className="input-component",
         )
