@@ -450,3 +450,15 @@ class DaplaDatasetPathInfo:
                 if i in dataset_path_parts and dataset_path_parts.index(i) != 0:
                     return dataset_path_parts[dataset_path_parts.index(i) - 1]
         return None
+
+    def path_complies_with_naming_standard(self) -> bool:
+        """Checks if path is valid according to SSB standard."""
+        if (
+            self.dataset_state
+            and self.statistic_short_name
+            and self.contains_data_from
+            and self.contains_data_until
+            and self.dataset_version
+        ):
+            return True
+        return False

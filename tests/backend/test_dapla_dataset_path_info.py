@@ -279,3 +279,29 @@ def test_date_format_correct_end_date(date_format, period, expected):
 )
 def test_extract_shortname_in_path(data: str, expected: str):
     assert DaplaDatasetPathInfo(data).statistic_short_name == expected
+
+
+@pytest.mark.parametrize(
+    ("data"),
+    [
+        "gs://ssb-staging-dapla-felles-data-delt/person_data_p2022_v1.parquet",
+        "gs://ssb-staging-dapla-felles-data-delt/datadoc/person_data_v1.parquet",
+        "gs://ssb-staging-dapla-felles-data-delt/datadoc/person_data_p2021_v3.parquet",
+        "gs://ssb-staging-dapla-felles-data-delt/datadoc/utdata/person_data_v1.parquet",
+        "gs://ssb-staging-dapla-felles-data-delt/datadoc/utdata/person_data_p2021.parquet",
+    ],
+)
+def test_path_complies_with_naming_standard_invalid_input(data: str):
+    assert DaplaDatasetPathInfo(data).path_complies_with_naming_standard() is False
+
+
+@pytest.mark.parametrize(
+    ("data"),
+    [
+        "gs://ssb-staging-dapla-felles-data-delt/datadoc/utdata/person_data_p2021_v2.parquet",
+        "gs://ssb-staging-dapla-felles-data-delt/datadoc/utdata/person_data_p2021_p2022_v2.parquet",
+        "gs://ssb-staging-dapla-felles-data-delt/datadoc/utdata/undermappe/person_data_p2021_v2.parquet",
+    ],
+)
+def test_path_complies_with_naming_standard_valid_input(data: str):
+    assert DaplaDatasetPathInfo(data).path_complies_with_naming_standard() is True
