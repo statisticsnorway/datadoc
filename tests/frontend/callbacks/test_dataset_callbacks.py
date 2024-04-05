@@ -45,6 +45,11 @@ def file_path():
     return "valid/path/to/file.json"
 
 
+@pytest.fixture()
+def file_path_without_dates():
+    return "valid/path/to/person_data_v1.parquet"
+
+
 @pytest.mark.parametrize(
     ("metadata_identifier", "provided_value", "expected_model_value"),
     [
@@ -278,13 +283,13 @@ def test_open_dataset_handling_normal(
 ):
     state.current_metadata_language = SupportedLanguages.ENGLISH
 
-    opened, show_error, error_msg, language = open_dataset_handling(
+    opened, show_error, naming_standard, error_msg, language = open_dataset_handling(
         n_clicks_1,
         file_path,
     )
-
     assert opened
     assert not show_error
+    assert naming_standard
     assert error_msg == ""
     assert language == "en"
 
@@ -298,12 +303,13 @@ def test_open_dataset_handling_file_not_found(
     state.current_metadata_language = SupportedLanguages.ENGLISH
     open_file_mock.side_effect = FileNotFoundError()
 
-    opened, show_error, error_msg, language = open_dataset_handling(
+    opened, show_error, naming_standard, error_msg, language = open_dataset_handling(
         n_clicks_1,
         file_path,
     )
     assert not opened
     assert show_error
+    assert not naming_standard
     assert error_msg.startswith(f"Filen '{file_path}' finnes ikke.")
     assert language == "en"
 
@@ -317,12 +323,13 @@ def test_open_dataset_handling_general_exception(
     state.current_metadata_language = SupportedLanguages.ENGLISH
     open_file_mock.side_effect = ValueError()
 
-    opened, show_error, error_msg, language = open_dataset_handling(
+    opened, show_error, naming_standard, error_msg, language = open_dataset_handling(
         n_clicks_1,
         file_path,
     )
     assert not opened
     assert show_error
+    assert not naming_standard
     assert error_msg.startswith("ValueError")
     assert language == "en"
 
@@ -333,10 +340,31 @@ def test_open_dataset_handling_no_click(
     file_path: str,
 ):
     state.current_metadata_language = SupportedLanguages.ENGLISH
-    opened, show_error, error_msg, language = open_dataset_handling(0, file_path)
-
+    opened, show_error, naming_standard, error_msg, language = open_dataset_handling(
+        0,
+        file_path,
+    )
     assert not opened
     assert not show_error
+    assert not naming_standard
+    assert error_msg == ""
+    assert language == "en"
+
+
+@patch(f"{DATASET_CALLBACKS_MODULE}.open_file")
+def test_open_dataset_handling_naming_standard(
+    open_file_mock: Mock,  # noqa: ARG001
+    n_clicks_1: int,
+    file_path_without_dates: str,
+):
+    state.current_metadata_language = SupportedLanguages.ENGLISH
+    opened, show_error, naming_standard, error_msg, language = open_dataset_handling(
+        n_clicks_1,
+        file_path_without_dates,
+    )
+    assert opened is True
+    assert not show_error
+    assert naming_standard
     assert error_msg == ""
     assert language == "en"
 

@@ -110,6 +110,7 @@ def register_callbacks(app: Dash) -> None:
     @app.callback(
         Output("opened-dataset-success", "is_open"),
         Output("opened-dataset-error", "is_open"),
+        Output("opened-dataset_warning", "is_open"),
         Output("opened-dataset-error-explanation", "children"),
         Output("language-dropdown", "value"),  # Used to force reload of metadata
         Input("open-button", "n_clicks"),
@@ -118,7 +119,7 @@ def register_callbacks(app: Dash) -> None:
     def callback_open_dataset(
         n_clicks: int,
         dataset_path: str,
-    ) -> tuple[bool, bool, str, str]:
+    ) -> tuple[bool, bool, bool, str, str]:
         """Open a dataset.
 
         Shows an alert on success or failure.
