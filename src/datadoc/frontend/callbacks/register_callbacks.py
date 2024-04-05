@@ -119,7 +119,7 @@ def register_callbacks(app: Dash) -> None:
     def callback_open_dataset(
         n_clicks: int,
         dataset_path: str,
-    ) -> tuple[bool, bool, str, str]:
+    ) -> tuple[bool, bool, bool, str, str]:
         """Open a dataset.
 
         Shows an alert on success or failure.
