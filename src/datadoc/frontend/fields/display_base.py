@@ -217,8 +217,6 @@ class MetadataPeriodField(DisplayMetadata):
             disabled=not self.editable,
             value=value,
             className="input-component",
-            showDescriptionText=True,
-            description=self.description,
         )
 
 
