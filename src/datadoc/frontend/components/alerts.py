@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datadoc.config import get_dapla_manual_naming_standard_url
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_ssb_alert
 
@@ -43,6 +44,7 @@ opened_dataset_success = build_ssb_alert(
 naming_convention_warning = build_ssb_alert(
     AlertTypes.WARNING,
     "opened-dataset_warning",
-    "Filen følger ikke navnestandard",
+    "Filen følger ikke navnestandard. Vennlist se",
     "opened-dataset-warning-explanation",
+    link=get_dapla_manual_naming_standard_url(),
 )

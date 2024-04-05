@@ -80,13 +80,7 @@ def open_dataset_handling(
     if n_clicks and n_clicks > 0:
         dapla_dataset_path_info = DaplaDatasetPathInfo(file_path)
         if not dapla_dataset_path_info.path_complies_with_naming_standard():
-            return (
-                True,
-                False,
-                True,
-                "",
-                state.current_metadata_language.value,
-            )
+            return (True, False, True, "", state.current_metadata_language.value)
         return True, False, False, "", state.current_metadata_language.value
     # no message
     return False, False, False, "", state.current_metadata_language.value
