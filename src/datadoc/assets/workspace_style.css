@@ -113,4 +113,6 @@
 .ssb-glossary.datadoc-glossary > .glossary-button > .glossary-logo{
     width: 16px;
     height: 16px;
+label.form-check-label{
+    padding-left: 0.5rem;
 }

@@ -25,9 +25,8 @@ from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.utils import update_global_language_state
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
+from datadoc.frontend.callbacks.variables import populate_variables_workspace
 from datadoc.frontend.components.builders import build_dataset_edit_section
-from datadoc.frontend.components.builders import build_edit_section
-from datadoc.frontend.components.builders import build_ssb_accordion
 from datadoc.frontend.components.dataset_tab import SECTION_WRAPPER_ID
 from datadoc.frontend.components.variables_tab import ACCORDION_WRAPPER_ID
 from datadoc.frontend.components.variables_tab import VARIABLES_INFORMATION_ID
@@ -39,8 +38,6 @@ from datadoc.frontend.fields.display_dataset import NON_EDITABLE_DATASET_METADAT
 from datadoc.frontend.fields.display_dataset import OBLIGATORY_EDITABLE_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import OPTIONAL_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
-from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
-from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
 
 if TYPE_CHECKING:
@@ -110,6 +107,7 @@ def register_callbacks(app: Dash) -> None:
     @app.callback(
         Output("opened-dataset-success", "is_open"),
         Output("opened-dataset-error", "is_open"),
+        Output("opened-dataset_warning", "is_open"),
         Output("opened-dataset-error-explanation", "children"),
         Output("language-dropdown", "value"),  # Used to force reload of metadata
         Input("open-button", "n_clicks"),
@@ -118,7 +116,7 @@ def register_callbacks(app: Dash) -> None:
     def callback_open_dataset(
         n_clicks: int,
         dataset_path: str,
-    ) -> tuple[bool, bool, str, str]:
+    ) -> tuple[bool, bool, bool, str, str]:
         """Open a dataset.
 
         Shows an alert on success or failure.
@@ -142,39 +140,24 @@ def register_callbacks(app: Dash) -> None:
     @app.callback(
         Output(ACCORDION_WRAPPER_ID, "children"),
         Input("language-dropdown", "value"),
+        Input("search-variables", "value"),
         prevent_initial_call=True,
     )
     def callback_populate_variables_workspace(
         language: str,
+        search_query: str,
     ) -> list:
-        """Create variable workspace with accordions for variables."""
+        """Create variable workspace with accordions for variables.
+
+        Allows for filtering which variables are displayed via the search box.
+        """
         update_global_language_state(SupportedLanguages(language))
-        logger.info("Populating new variables workspace")
-        return [
-            build_ssb_accordion(
-                variable.short_name,
-                {
-                    "type": "variables-accordion",
-                    "id": f"{variable.short_name}-{language}",  # Insert language into the ID to invalidate browser caches
-                },
-                variable.short_name,
-                children=[
-                    build_edit_section(
-                        OBLIGATORY_VARIABLES_METADATA,
-                        "Obligatorisk",
-                        variable,
-                        state.current_metadata_language.value,
-                    ),
-                    build_edit_section(
-                        OPTIONAL_VARIABLES_METADATA,
-                        "Anbefalt",
-                        variable,
-                        state.current_metadata_language.value,
-                    ),
-                ],
-            )
-            for variable in list(state.metadata.variables)
-        ]
+        logger.debug("Populating variables workspace. Search query: %s", search_query)
+        return populate_variables_workspace(
+            state.metadata.variables,
+            state.current_metadata_language,
+            search_query,
+        )
 
     @app.callback(
         Output(SECTION_WRAPPER_ID, "children"),
@@ -188,7 +171,7 @@ def register_callbacks(app: Dash) -> None:
     ) -> list:
         """Create dataset workspace with sections."""
         update_global_language_state(SupportedLanguages(language))
-        logger.info("Populating new dataset workspace")
+        logger.debug("Populating dataset workspace")
         if n_clicks:
             return [
                 build_dataset_edit_section(

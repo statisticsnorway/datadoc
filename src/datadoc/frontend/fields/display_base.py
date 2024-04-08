@@ -10,7 +10,6 @@ from dataclasses import field
 from typing import TYPE_CHECKING
 from typing import Any
 
-import dash_bootstrap_components as dbc
 import ssb_dash_components as ssb
 from dash import dcc
 
@@ -232,16 +231,16 @@ class MetadataCheckboxField(DisplayMetadata):
         variable_id: dict,
         language: str,  # noqa: ARG002 Required by Dash
         variable: model.Variable,
-    ) -> dbc.Checkbox:
+    ) -> ssb.Checkbox:
         """Build Checkbox component."""
         value = self.value_getter(variable, self.identifier)
-        return dbc.Checkbox(
+        return ssb.Checkbox(
             label=self.display_name,
             id=variable_id,
             disabled=not self.editable,
-            label_class_name="ssb-checkbox checkbox-label",
-            class_name="ssb-checkbox",
             value=value,
+            showDescription=True,
+            description=self.description,
         )
 
 

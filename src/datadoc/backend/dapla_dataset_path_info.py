@@ -292,6 +292,42 @@ class DaplaDatasetPathInfo:
         self._period_strings = self._extract_period_strings(self.dataset_name_sections)
 
     @staticmethod
+    def _get_period_string_indices(dataset_name_sections: list[str]) -> list[int]:
+        """Get all the indices at which period strings are found.
+
+        Examples:
+        >>> DaplaDatasetPathInfo._get_period_string_indices(['kommune', 'p2022', 'v1'])
+        [1]
+
+        >>> DaplaDatasetPathInfo._get_period_string_indices(['kommune', 'p2022-01', 'p2023-06', 'v1'])
+        [1, 2]
+
+        >>> DaplaDatasetPathInfo._get_period_string_indices(['kommune', 'p1990Q1', 'v1'])
+        [1]
+
+        >>> DaplaDatasetPathInfo._get_period_string_indices(['varehandel','v1'])
+        []
+        """
+
+        def insert_p(regex: str) -> str:
+            r"""Insert a p as the second character.
+
+            Examples:
+            >>> insert_p(r"^\d{4}[H]\d{1}$")
+            '^p\d{4}[H]\d{1}$'
+            """
+            return regex[:1] + "p" + regex[1:]
+
+        return [
+            i
+            for i, x in enumerate(dataset_name_sections)
+            if any(
+                re.match(insert_p(date_format.regex_pattern), x)
+                for date_format in SUPPORTED_DATE_FORMATS
+            )
+        ]
+
+    @staticmethod
     def _extract_period_strings(dataset_name_sections: list[str]) -> list[str]:
         """Extract period strings from dataset name sections.
 
@@ -309,26 +345,14 @@ class DaplaDatasetPathInfo:
         >>> DaplaDatasetPathInfo._extract_period_strings(['p1990Q1', 'kommune', 'v1'])
         ['1990Q1']
 
-        >>> DaplaDatasetPathInfo._extract_period_strings(['varehandel','v1']) # No date will return empty string
+        >>> DaplaDatasetPathInfo._extract_period_strings(['varehandel','v1'])
         []
 
         """
-
-        def insert_p(regex: str) -> str:
-            r"""Insert a p as the second character.
-
-            Examples:
-            >>> insert_p(r"^\d{4}[H]\d{1}$")
-            '^p\d{4}[H]\d{1}$'
-            """
-            return regex[:1] + "p" + regex[1:]
-
         return [
-            x[1:]
-            for x in dataset_name_sections
-            if any(
-                re.match(insert_p(date_format.regex_pattern), x)
-                for date_format in SUPPORTED_DATE_FORMATS
+            dataset_name_sections[i][1:]
+            for i in DaplaDatasetPathInfo._get_period_string_indices(
+                dataset_name_sections,
             )
         ]
 
@@ -346,6 +370,38 @@ class DaplaDatasetPathInfo:
             SupportedLanguages.NORSK_BOKMÅL,
         ).lower()
         return {norwegian_dataset_state_path_part.replace(" ", x) for x in ["-", "_"]}
+
+    @property
+    def dataset_short_name(
+        self,
+    ) -> str | None:
+        """Extract the dataset short name from the filepath.
+
+        The dataset short name is defined as the first section of the stem, up to the period information,
+        or the version information if no period information is present.
+
+        Examples:
+        >>> DaplaDatasetPathInfo('prosjekt/befolkning/klargjorte_data/person_data_v1.parquet').dataset_short_name
+        person_data
+        >>> DaplaDatasetPathInfo('befolkning/inndata/sykepenger_p2022Q1_p2022Q2_v23.parquet').dataset_short_name
+        sykepenger
+        >>> DaplaDatasetPathInfo('my_data/simple_dataset_name.parquet').dataset_short_name
+        simple_dataset_name
+        """
+        if self.contains_data_from or self.contains_data_until:
+            short_name_sections = self.dataset_name_sections[
+                : min(
+                    DaplaDatasetPathInfo._get_period_string_indices(
+                        self.dataset_name_sections,
+                    ),
+                )
+            ]
+        elif self.dataset_version:
+            short_name_sections = self.dataset_name_sections[:-1]
+        else:
+            short_name_sections = self.dataset_name_sections
+
+        return "_".join(short_name_sections)
 
     @property
     def contains_data_from(self) -> datetime.date | None:

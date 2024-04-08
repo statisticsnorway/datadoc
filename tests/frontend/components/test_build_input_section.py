@@ -5,161 +5,181 @@ import pytest
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
 from datadoc_model import model
 
-from datadoc import enums
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.components.builders import build_input_field_section
-from datadoc.frontend.fields.display_base import get_enum_options_for_language
+from datadoc.frontend.fields.display_base import MetadataCheckboxField
+from datadoc.frontend.fields.display_base import MetadataDropdownField
+from datadoc.frontend.fields.display_base import MetadataInputField
+from datadoc.frontend.fields.display_base import MetadataPeriodField
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 
+VARIABLES_METADATA = OBLIGATORY_VARIABLES_METADATA + OPTIONAL_VARIABLES_METADATA
+
 INPUT_FIELD_SECTION = [
-    build_input_field_section(
-        OBLIGATORY_VARIABLES_METADATA,
+    (
+        VARIABLES_METADATA,
         model.Variable(short_name="hoveddiagnose"),
         SupportedLanguages.NORSK_NYNORSK,
     ),
-    build_input_field_section(
-        OBLIGATORY_VARIABLES_METADATA,
+    (
+        VARIABLES_METADATA,
         model.Variable(short_name="pers_id"),
         SupportedLanguages.NORSK_BOKMÅL,
     ),
-    build_input_field_section(
-        OBLIGATORY_VARIABLES_METADATA,
+    (
+        VARIABLES_METADATA,
         model.Variable(short_name="ber_bruttoformue"),
         SupportedLanguages.ENGLISH,
     ),
-    build_input_field_section(
-        OBLIGATORY_VARIABLES_METADATA,
+    (
+        VARIABLES_METADATA,
         model.Variable(short_name="sykepenger"),
         SupportedLanguages.NORSK_BOKMÅL,
     ),
 ]
 
 
-def test_build_input_field_section_no_input_return_empty_list():
-    """Test build with empty inputs."""
+def test_build_input_field_section_no_input():
+    """Assert build with empty inputs returns dash bootstrap Form component and empty children list."""
     input_section = build_input_field_section(
         [],
         "",
         "",
     )
     assert input_section.children == []
+    assert isinstance(input_section, dbc.Form)
 
 
 @pytest.mark.parametrize(
-    ("input_field_section"),
+    ("field_list", "variable", "language"),
     INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_props_input(input_field_section):
-    """Test input field for variable identifier 'NAME' obligatory section."""
-    variable_input_field_for_name = input_field_section.children[0]
-    assert variable_input_field_for_name.type == "text"
-    assert isinstance(variable_input_field_for_name, ssb.Input)
-    assert variable_input_field_for_name.debounce is True
-    assert variable_input_field_for_name.disabled is False
-    assert variable_input_field_for_name.label == "Navn"
-
-
-@pytest.mark.parametrize(
-    ("input_field_section", "language"),
-    [
-        (
-            build_input_field_section(
-                OBLIGATORY_VARIABLES_METADATA,
-                model.Variable(short_name="hoveddiagnose"),
-                SupportedLanguages.NORSK_NYNORSK,
-            ),
-            SupportedLanguages.NORSK_NYNORSK,
-        ),
-        (
-            build_input_field_section(
-                OBLIGATORY_VARIABLES_METADATA,
-                model.Variable(short_name="pers_id"),
-                SupportedLanguages.NORSK_BOKMÅL,
-            ),
-            SupportedLanguages.NORSK_BOKMÅL,
-        ),
-        (
-            build_input_field_section(
-                OBLIGATORY_VARIABLES_METADATA,
-                model.Variable(short_name="ber_bruttoformue"),
-                SupportedLanguages.ENGLISH,
-            ),
-            SupportedLanguages.ENGLISH,
-        ),
-        (
-            build_input_field_section(
-                OBLIGATORY_VARIABLES_METADATA,
-                model.Variable(short_name="sykepenger"),
-                SupportedLanguages.NORSK_BOKMÅL,
-            ),
-            SupportedLanguages.NORSK_BOKMÅL,
-        ),
-    ],
-)
-def test_build_dropdown_fields_props_dropdown(input_field_section, language):
-    """Test dropdown field for variable identifier 'VARIABLE_ROLE' obligatory section."""
-    variable_input_field_for_dropdown = input_field_section.children[2]
-    assert isinstance(variable_input_field_for_dropdown, ssb.Dropdown)
-    assert variable_input_field_for_dropdown._type == "Dropdown"  # noqa: SLF001
-    assert variable_input_field_for_dropdown.header == "Variabelens rolle"
-    assert variable_input_field_for_dropdown.items == get_enum_options_for_language(
-        enums.VariableRole,
-        SupportedLanguages(language),
+def test_build_input_fields_input_components(field_list, variable, language):
+    input_section = build_input_field_section(field_list, variable, language)
+    type_input = ssb.Input
+    elements_of_input = [
+        element for element in input_section.children if isinstance(element, type_input)
+    ]
+    elements_of_input_and_type_text_url = [
+        element
+        for element in input_section.children
+        if isinstance(element, type_input)
+        and element.type == "text"
+        or isinstance(element, type_input)
+        and element.type == "url"
+    ]
+    variable_identifier_input = [
+        element
+        for element in VARIABLES_METADATA
+        if isinstance(element, MetadataInputField)
+    ]
+    assert all(isinstance(field, ssb.Input) for field in elements_of_input)
+    for item in elements_of_input_and_type_text_url:
+        assert item.debounce is True
+    assert all(
+        item1.label == item2.display_name
+        for item1, item2 in zip(
+            elements_of_input_and_type_text_url,
+            variable_identifier_input,
+        )
     )
 
 
 @pytest.mark.parametrize(
-    ("input_field_section"),
+    ("field_list", "variable", "language"),
     INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_props_checkbox(input_field_section):
-    """Test checkbox field for variabel identifier 'DIRECT_PERSON_IDENTIFYING' obligatory section."""
-    variable_checkbox_field = input_field_section.children[4]
-    assert isinstance(variable_checkbox_field, dbc.Checkbox)
-    assert variable_checkbox_field._type == "Checkbox"  # noqa: SLF001
+def test_build_input_fields_checkbox_components(field_list, variable, language):
+    """Test checkbox fields for variabel identifiers."""
+    input_section = build_input_field_section(field_list, variable, language)
+    type_checkbox = ssb.Checkbox
+    elements_of_checkbox = [
+        element
+        for element in input_section.children
+        if isinstance(element, type_checkbox)
+    ]
+    variable_identifier_checkbox = [
+        element
+        for element in VARIABLES_METADATA
+        if isinstance(element, MetadataCheckboxField)
+    ]
+    assert all(isinstance(item, type_checkbox) for item in elements_of_checkbox)
+    for item in elements_of_checkbox:
+        assert item._type == "Checkbox"  # noqa: SLF001
+    for item in elements_of_checkbox:
+        assert item.disabled is False
+    assert all(
+        item1.label == item2.display_name
+        for item1, item2 in zip(elements_of_checkbox, variable_identifier_checkbox)
+    )
 
 
 @pytest.mark.parametrize(
-    ("input_field_section"),
+    ("field_list", "variable", "language"),
     INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_props_url(input_field_section):
-    """Test Input field type 'url' for variable identifier 'DEFINITION_URI' obligatory section."""
-    variable_input_field_for_url = input_field_section.children[3]
-    assert isinstance(variable_input_field_for_url, ssb.Input)
-    assert variable_input_field_for_url.type == "url"
+def test_build_input_fields_type_date(field_list, variable, language):
+    """Test Input field type 'url'."""
+    input_section = build_input_field_section(field_list, variable, language)
+    type_input = ssb.Input
+    elements_of_input = [
+        element for element in input_section.children if isinstance(element, type_input)
+    ]
+    elements_of_date = [
+        element for element in elements_of_input if element.type == "date"
+    ]
+    variable_identifier_date = [
+        element for element in field_list if isinstance(element, MetadataPeriodField)
+    ]
+    for item1, item2 in zip(elements_of_date, variable_identifier_date):
+        assert item1.label == item2.display_name
+    assert all(item.debounce is False for item in elements_of_date)
 
 
 @pytest.mark.parametrize(
-    ("input_field_section"),
-    [
-        build_input_field_section(
-            OPTIONAL_VARIABLES_METADATA,
-            model.Variable(short_name="hoveddiagnose"),
-            SupportedLanguages.NORSK_NYNORSK,
-        ),
-        build_input_field_section(
-            OPTIONAL_VARIABLES_METADATA,
-            model.Variable(short_name="pers_id"),
-            SupportedLanguages.NORSK_BOKMÅL,
-        ),
-        build_input_field_section(
-            OPTIONAL_VARIABLES_METADATA,
-            model.Variable(short_name="ber_bruttoformue"),
-            SupportedLanguages.ENGLISH,
-        ),
-        build_input_field_section(
-            OPTIONAL_VARIABLES_METADATA,
-            model.Variable(short_name="sykepenger"),
-            SupportedLanguages.NORSK_BOKMÅL,
-        ),
-    ],
+    ("field_list", "variable", "language"),
+    INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_props_optional_input_list(input_field_section):
-    """Test Input field for variable identifier 'DATA_SOURCE' optional section."""
-    variable_input_field_for_data_source = input_field_section.children[0]
-    assert variable_input_field_for_data_source.type == "text"
-    assert isinstance(variable_input_field_for_data_source, ssb.Input)
-    assert variable_input_field_for_data_source.debounce is True
-    assert variable_input_field_for_data_source.label == "Datakilde"
+def test_build_input_fields_type_url(field_list, variable, language):
+    input_section = build_input_field_section(field_list, variable, language)
+    variable_identifier_input = [
+        element for element in field_list if isinstance(element, MetadataInputField)
+    ]
+    variable_identifier_url = [
+        element for element in variable_identifier_input if element.type == "url"
+    ]
+    elements_of_input_and_type_url = [
+        element
+        for element in input_section.children
+        if isinstance(element, ssb.Input) and element.type == "url"
+    ]
+    assert all(item.url is True for item in variable_identifier_url)
+    assert all(item.debounce is True for item in elements_of_input_and_type_url)
+    for item1, item2 in zip(elements_of_input_and_type_url, variable_identifier_url):
+        assert item1.label == item2.display_name
+
+
+@pytest.mark.parametrize(
+    ("field_list", "variable", "language"),
+    INPUT_FIELD_SECTION,
+)
+def test_build_input_fields_dropdown_components(field_list, variable, language):
+    """Test props for variable identifiers fields."""
+    input_section = build_input_field_section(field_list, variable, language)
+    type_dropdown = ssb.Dropdown
+    elements_of_dropdown = [
+        element
+        for element in input_section.children
+        if isinstance(element, type_dropdown)
+    ]
+    variable_identifier_dropdown = [
+        element for element in field_list if isinstance(element, MetadataDropdownField)
+    ]
+    assert all(isinstance(item, type_dropdown) for item in elements_of_dropdown)
+    for item in elements_of_dropdown:
+        assert item._type == "Dropdown"  # noqa: SLF001
+    for item1, item2 in zip(elements_of_dropdown, variable_identifier_dropdown):
+        assert item1.header == item2.display_name
+    for item1, item2 in zip(elements_of_dropdown, variable_identifier_dropdown):
+        assert item1.items == item2.options_getter(language)
