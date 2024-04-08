@@ -177,6 +177,10 @@ def test_existing_metadata_valid_id(
     assert post_write_id == pre_open_id
 
 
+def test_dataset_short_name(metadata: DataDocMetadata):
+    assert metadata.dataset.short_name == "person_data"
+
+
 def test_variable_role_default_value(metadata: DataDocMetadata):
     assert all(
         v.variable_role == VariableRole.MEASURE.value for v in metadata.variables

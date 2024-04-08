@@ -53,7 +53,6 @@ class DataDocMetadata:
         self.metadata_document: pathlib.Path | CloudPath | None = None
         self.container: model.MetadataContainer | None = None
         self.dataset_path: pathlib.Path | CloudPath | None = None
-        self.short_name: str | None = None
         self.dataset = model.Dataset()
         self.variables: list = []
         self.variables_lookup: dict[str, model.Variable] = {}
@@ -176,7 +175,7 @@ class DataDocMetadata:
         )
 
         self.dataset = model.Dataset(
-            short_name=self.dataset_path.stem if self.dataset_path else None,
+            short_name=dapla_dataset_path_info.dataset_short_name,
             dataset_state=dapla_dataset_path_info.dataset_state,
             dataset_status=DataSetStatus.DRAFT,
             assessment=self.get_assessment_by_state(
