@@ -256,6 +256,7 @@ DISPLAY_DATASET: dict[
         description="Filstien inneholder datasettets navn og stien til hvor det er lagret.",
         obligatory=True,
         editable=False,
+        value_getter=get_metadata_and_stringify,
     ),
     DatasetIdentifiers.METADATA_CREATED_DATE: MetadataInputField(
         identifier=DatasetIdentifiers.METADATA_CREATED_DATE.value,
