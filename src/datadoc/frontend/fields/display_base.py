@@ -151,6 +151,7 @@ class MetadataInputField(DisplayMetadata):
             id=component_id,
             debounce=True,
             type=self.type,
+            readOnly=not self.editable,
             disabled=not self.editable,
             value=value,
             className="input-component",
