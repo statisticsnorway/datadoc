@@ -184,7 +184,7 @@ class DataDocMetadata:
             version=dapla_dataset_path_info.dataset_version,
             contains_data_from=str(dapla_dataset_path_info.contains_data_from),
             contains_data_until=str(dapla_dataset_path_info.contains_data_until),
-            data_source_path=self.dataset_path,
+            file_path=str(self.dataset_path),
             metadata_created_by=user_info.get_user_info_for_current_platform().short_email,
             # TODO @mmwinther: Remove multiple_language_support once the model is updated.
             # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
