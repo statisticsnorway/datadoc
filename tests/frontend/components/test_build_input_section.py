@@ -93,7 +93,7 @@ def test_build_input_fields_input_components(field_list, variable, language):
 def test_build_input_fields_checkbox_components(field_list, variable, language):
     """Test checkbox fields for variabel identifiers."""
     input_section = build_input_field_section(field_list, variable, language)
-    type_checkbox = dbc.Checkbox
+    type_checkbox = ssb.Checkbox
     elements_of_checkbox = [
         element
         for element in input_section.children
