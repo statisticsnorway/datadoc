@@ -1227,12 +1227,12 @@ files = [
 google-auth = ">=2.14.1,<3.0.dev0"
 googleapis-common-protos = ">=1.56.2,<2.0.dev0"
 grpcio = [
-    {version = ">=1.49.1,<2.0dev", optional = true, markers = "python_version >= \"3.11\" and extra == \"grpc\""},
     {version = ">=1.33.2,<2.0dev", optional = true, markers = "python_version < \"3.11\" and extra == \"grpc\""},
+    {version = ">=1.49.1,<2.0dev", optional = true, markers = "python_version >= \"3.11\" and extra == \"grpc\""},
 ]
 grpcio-status = [
-    {version = ">=1.49.1,<2.0.dev0", optional = true, markers = "python_version >= \"3.11\" and extra == \"grpc\""},
     {version = ">=1.33.2,<2.0.dev0", optional = true, markers = "python_version < \"3.11\" and extra == \"grpc\""},
+    {version = ">=1.49.1,<2.0.dev0", optional = true, markers = "python_version >= \"3.11\" and extra == \"grpc\""},
 ]
 proto-plus = ">=1.22.3,<2.0.0dev"
 protobuf = ">=3.19.5,<3.20.0 || >3.20.0,<3.20.1 || >3.20.1,<4.21.0 || >4.21.0,<4.21.1 || >4.21.1,<4.21.2 || >4.21.2,<4.21.3 || >4.21.3,<4.21.4 || >4.21.4,<4.21.5 || >4.21.5,<5.0.0.dev0"
@@ -1320,8 +1320,8 @@ grpc-google-iam-v1 = ">=0.12.4,<1.0.0dev"
 grpcio = ">=1.51.3,<2.0dev"
 grpcio-status = ">=1.33.2"
 proto-plus = [
-    {version = ">=1.22.2,<2.0.0dev", markers = "python_version >= \"3.11\""},
     {version = ">=1.22.0,<2.0.0dev", markers = "python_version < \"3.11\""},
+    {version = ">=1.22.2,<2.0.0dev", markers = "python_version >= \"3.11\""},
 ]
 protobuf = ">=3.19.5,<3.20.0 || >3.20.0,<3.20.1 || >3.20.1,<4.21.0 || >4.21.0,<4.21.1 || >4.21.1,<4.21.2 || >4.21.2,<4.21.3 || >4.21.3,<4.21.4 || >4.21.4,<4.21.5 || >4.21.5,<5.0.0dev"
 
@@ -2677,9 +2677,9 @@ files = [
 [package.dependencies]
 lxml = {version = ">=4.9.2", optional = true, markers = "extra == \"xml\""}
 numpy = [
+    {version = ">=1.22.4,<2", markers = "python_version < \"3.11\""},
     {version = ">=1.23.2,<2", markers = "python_version == \"3.11\""},
     {version = ">=1.26.0,<2", markers = "python_version >= \"3.12\""},
-    {version = ">=1.22.4,<2", markers = "python_version < \"3.11\""},
 ]
 odfpy = {version = ">=1.4.1", optional = true, markers = "extra == \"excel\""}
 openpyxl = {version = ">=3.1.0", optional = true, markers = "extra == \"excel\""}
@@ -4204,13 +4204,13 @@ sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
 name = "ssb-dash-components"
-version = "0.5.6"
+version = "0.6.0"
 description = "Dash Component library for SSB"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "ssb_dash_components-0.5.6-py3-none-any.whl", hash = "sha256:dcdf6f163eb36069a184b480b8dfbc13f6926b9d19a2a32e08e1fa0051c289f3"},
-    {file = "ssb_dash_components-0.5.6.tar.gz", hash = "sha256:3669368f7edbc7ff6e54abcc7a3ba8f7d6a78093d119c797bce274fb38df7e85"},
+    {file = "ssb_dash_components-0.6.0-py3-none-any.whl", hash = "sha256:b924f20679f185147b105ff84bfdec8f15dd5691d49ddf087885179e661a6810"},
+    {file = "ssb_dash_components-0.6.0.tar.gz", hash = "sha256:0963136b92b4e556a596852f04b757216caf183998c4f4ddde812221a23cec0d"},
 ]
 
 [package.dependencies]
