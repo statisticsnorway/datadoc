@@ -16,6 +16,7 @@ from datadoc import state
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
+from datadoc.frontend.callbacks.variables import populate_variables_workspace
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
 
 if TYPE_CHECKING:
@@ -223,3 +224,24 @@ def test_accept_variable_metadata_date_input(
         assert metadata.variables[0].contains_data_until == arrow.get(
             contains_data_until,
         ).to("utc")
+
+
+@pytest.mark.parametrize(
+    ("search_query", "expected_length"),
+    [("", 8), ("a", 4), ("pers_id", 1)],
+)
+def test_populate_variables_workspace_filter_variables(
+    search_query: str,
+    expected_length: int,
+    metadata: DataDocMetadata,
+):
+    assert (
+        len(
+            populate_variables_workspace(
+                metadata.variables,
+                SupportedLanguages.NORSK_BOKMÅL,
+                search_query,
+            ),
+        )
+        == expected_length
+    )

@@ -11,15 +11,59 @@ from datadoc import state
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
+from datadoc.frontend.components.builders import build_edit_section
+from datadoc.frontend.components.builders import build_ssb_accordion
 from datadoc.frontend.fields.display_variables import (
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,
 )
+from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
+from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
 
 if TYPE_CHECKING:
+    from datadoc_model import model
     from datadoc_model.model import LanguageStringType
 
+    from datadoc.enums import SupportedLanguages
+
 logger = logging.getLogger(__name__)
+
+
+def populate_variables_workspace(
+    variables: list[model.Variable],
+    language: SupportedLanguages,
+    search_query: str,
+) -> list:
+    """Create variable workspace with accordions for variables.
+
+    Allows for filtering which variables are displayed via the search box.
+    """
+    return [
+        build_ssb_accordion(
+            variable.short_name or "",
+            {
+                "type": "variables-accordion",
+                "id": f"{variable.short_name}-{language.value}",  # Insert language into the ID to invalidate browser caches
+            },
+            variable.short_name or "",
+            children=[
+                build_edit_section(
+                    OBLIGATORY_VARIABLES_METADATA,
+                    "Obligatorisk",
+                    variable,
+                    language.value,
+                ),
+                build_edit_section(
+                    OPTIONAL_VARIABLES_METADATA,
+                    "Anbefalt",
+                    variable,
+                    language.value,
+                ),
+            ],
+        )
+        for variable in variables
+        if search_query in (variable.short_name or "")
+    ]
 
 
 def handle_multi_language_metadata(
