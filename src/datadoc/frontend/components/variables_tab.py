@@ -37,7 +37,7 @@ def build_variables_tab() -> dbc.Tab:
                             label="Søk i variabler",
                             searchField=True,
                             disabled=False,
-                            placeholder="Variabel kortnavn",
+                            placeholder="Variabel kortnavn...",
                             id="search-variables",
                             n_submit=0,
                             value="",
