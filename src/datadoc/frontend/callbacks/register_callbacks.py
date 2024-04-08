@@ -143,14 +143,19 @@ def register_callbacks(app: Dash) -> None:
     @app.callback(
         Output(ACCORDION_WRAPPER_ID, "children"),
         Input("language-dropdown", "value"),
+        Input("search-variables", "value"),
         prevent_initial_call=True,
     )
     def callback_populate_variables_workspace(
         language: str,
+        search_query: str,
     ) -> list:
-        """Create variable workspace with accordions for variables."""
+        """Create variable workspace with accordions for variables.
+
+        Allows for filtering which variables are displayed via the search box.
+        """
         update_global_language_state(SupportedLanguages(language))
-        logger.info("Populating new variables workspace")
+        logger.debug("Populating variables workspace. Search query: %s", search_query)
         return [
             build_ssb_accordion(
                 variable.short_name,
@@ -175,6 +180,7 @@ def register_callbacks(app: Dash) -> None:
                 ],
             )
             for variable in list(state.metadata.variables)
+            if search_query in variable.short_name
         ]
 
     @app.callback(
@@ -189,7 +195,7 @@ def register_callbacks(app: Dash) -> None:
     ) -> list:
         """Create dataset workspace with sections."""
         update_global_language_state(SupportedLanguages(language))
-        logger.info("Populating new dataset workspace")
+        logger.debug("Populating dataset workspace")
         if n_clicks:
             return [
                 build_dataset_edit_section(
