@@ -81,3 +81,7 @@
 .form-check{
     padding-left: 0;
 }
+
+label.form-check-label{
+    padding-left: 0.5rem;
+}
