@@ -133,6 +133,7 @@ class DisplayMetadata:
 class MetadataInputField(DisplayMetadata):
     """Controls how a input field should be displayed."""
 
+    show_description: bool = True
     type: str = "text"
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
@@ -151,10 +152,8 @@ class MetadataInputField(DisplayMetadata):
             debounce=True,
             type=self.type,
             disabled=not self.editable,
-            glossary=ssb.Glossary(
-                explanation=self.description,
-                className="datadoc-glossary",
-            ),
+            showDescription=self.show_description,
+            description=self.description,
             value=value,
             className="input-component",
         )
