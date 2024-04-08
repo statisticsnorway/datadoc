@@ -193,6 +193,7 @@ class MetadataPeriodField(DisplayMetadata):
     These are a special case since two fields have a relationship to one another.>
     """
 
+    show_description: bool = True
     id_type: str = ""
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_date_metadata_and_stringify
@@ -213,6 +214,8 @@ class MetadataPeriodField(DisplayMetadata):
             debounce=False,
             type=self.type,
             disabled=not self.editable,
+            showDescription=self.show_description,
+            description=self.description,
             value=value,
             className="input-component",
         )

@@ -69,12 +69,17 @@
     width: 100%;
 }
 
-.ssb-input.input-component > .input-label, .ssb-dropdown.dropdown-component > .dropdown-label{
+.ssb-input.input-component > .glossary-text-wrap > label.input-label, .ssb-dropdown.dropdown-component > .dropdown-label{
     font-size: 15px;
     font-weight: 505;
 
 }
 .ssb-dropdown.dropdown-component {
+    max-width: 500px;
+    width: 100%;
+}
+
+.dropdown-wrapper{
     max-width: 500px;
     width: 100%;
 }
@@ -86,19 +91,13 @@
 .form-check{
     padding-left: 0;
 }
-
-.ssb-glossary.datadoc-glossary > .glossary-popup {
-    left: 72%;
-    top: -135px;
-    margin-left: -140px;
-}
-
-.ssb-glossary.datadoc-glossary > .glossary-popup .content-box{
+.ssb-input.input-component > span > .ssb-glossary.info-glossary > .glossary-popup.open > .content-box {
     height: 160px;
     width:320px;
     padding: 1.2rem;
 }
-.ssb-glossary.datadoc-glossary > .glossary-popup::after{
+
+.ssb-input.input-component > span > .ssb-glossary.info-glossary > .glossary-popup::after {
     left: -5%;
     margin-left: -10px;
     top: 120px;
@@ -106,7 +105,19 @@
     -webkit-transform: rotate(-90deg);
 }
 
-.ssb-glossary.datadoc-glossary > .glossary-popup.open > .content-box > .glossary-closing{
+.ssb-input.input-component > span > .ssb-glossary.info-glossary > .glossary-popup {
+    left: 72%;
+    top: -135px;
+    margin-left: -140px;
+}
+
+.ssb-input.input-component > .ssb-glossary.info-glossary > .glossary-popup {
+    left: 72%;
+    top: -135px;
+    margin-left: -140px;
+}
+
+.ssb-glossary.datadoc-glossary > .glossary-popup .content-box > .glossary-closing{
     margin-top: 1.8rem;
 }
 
