@@ -213,7 +213,7 @@ def test_build_dataset_edit_section_input_component_props(
     fields = edit_section.children[1].children
     input_components = [element for element in fields if isinstance(element, ssb.Input)]
     for item in input_components:
-        assert item.type in ("text", "url", "date")
+        assert item.type in ("text", "url", "date", "number")
     for item in input_components:
         if item.type in ("text", "url"):
             assert item.debounce is True
