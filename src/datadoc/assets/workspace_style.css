@@ -35,9 +35,6 @@
     flex-direction: column;
     gap: 1rem;
     width: 100%;
-}
-
-.edit-section.dataset-edit-section{
     padding: 1rem;
 }
 
