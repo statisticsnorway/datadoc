@@ -89,6 +89,10 @@
     padding-left: 0;
 }
 
+label.form-check-label{
+    padding-left: 0.5rem;
+}
+
 .ssb-input.input-component > span > .ssb-glossary.info-glossary > .glossary-popup {
     margin-left: 20px;
     left: unset;
@@ -107,8 +111,4 @@
 
 .ssb-glossary.datadoc-glossary > .glossary-popup .content-box > .glossary-closing{
     margin-top: 1.8rem;
-}
-
-label.form-check-label{
-    padding-left: 0.5rem;
 }
