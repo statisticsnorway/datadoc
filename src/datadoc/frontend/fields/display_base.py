@@ -4,14 +4,13 @@ from __future__ import annotations
 
 import logging
 import re
-import typing as t
+from abc import ABC
+from abc import abstractmethod
 from dataclasses import dataclass
-from dataclasses import field
 from typing import TYPE_CHECKING
 from typing import Any
 
 import ssb_dash_components as ssb
-from dash import dcc
 
 from datadoc import state
 from datadoc.enums import SupportedLanguages
@@ -22,7 +21,6 @@ if TYPE_CHECKING:
     from enum import Enum
 
     from dash.development.base_component import Component
-    from datadoc_model import model
     from datadoc_model.model import LanguageStringType
     from pydantic import BaseModel
 
@@ -51,15 +49,6 @@ def get_enum_options_for_language(
     ]
     dropdown_options.insert(0, {"title": "", "id": ""})
     return dropdown_options
-
-
-def empty_kwargs_factory() -> dict[str, t.Any]:
-    """Initialize the field extra_kwargs.
-
-    We aren't allowed to directly assign a mutable type like a dict to
-    a dataclass field.
-    """
-    return {}
 
 
 def get_standard_metadata(metadata: BaseModel, identifier: str) -> MetadataInputTypes:
@@ -117,34 +106,42 @@ def get_comma_separated_string(metadata: BaseModel, identifier: str) -> str:
 
 
 @dataclass
-class DisplayMetadata:
-    """Controls for how a given metadata field should be displayed."""
+class DisplayMetadata(ABC):
+    """Controls how a given metadata field should be displayed."""
 
     identifier: str
     display_name: str
     description: str
     obligatory: bool = False
     editable: bool = True
-    url: bool = False
     multiple_language_support: bool = False
+    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
     show_description: bool = True
+
+    @abstractmethod
+    def render(
+        self,
+        component_id: dict,
+        language: str,
+        metadata: BaseModel,
+    ) -> Component:
+        """Build a component."""
+        ...
 
 
 @dataclass
 class MetadataInputField(DisplayMetadata):
-    """Controls how a input field should be displayed."""
+    """Controls how an input field should be displayed."""
 
     type: str = "text"
-    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
-    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
 
     def render(
         self,
         component_id: dict,
-        language: str,  # noqa: ARG002 Required by Dash
+        language: str,  # noqa: ARG002
         metadata: BaseModel,
     ) -> ssb.Input:
-        """Build component."""
+        """Build an Input component."""
         value = self.value_getter(metadata, self.identifier)
         return ssb.Input(
             label=self.display_name,
@@ -161,10 +158,8 @@ class MetadataInputField(DisplayMetadata):
 
 @dataclass
 class MetadataDropdownField(DisplayMetadata):
-    """Control how a Dropdown should be displayed."""
+    """Controls how a Dropdown should be displayed."""
 
-    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
-    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
     # fmt: off
     options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
     # fmt: on
@@ -173,10 +168,10 @@ class MetadataDropdownField(DisplayMetadata):
         self,
         component_id: dict,
         language: str,
-        dataset: BaseModel,
+        metadata: BaseModel,
     ) -> ssb.Dropdown:
         """Build Dropdown component."""
-        value = self.value_getter(dataset, self.identifier)
+        value = self.value_getter(metadata, self.identifier)
         return ssb.Dropdown(
             header=self.display_name,
             id=component_id,
@@ -190,30 +185,28 @@ class MetadataDropdownField(DisplayMetadata):
 
 @dataclass
 class MetadataPeriodField(DisplayMetadata):
-    """Control how fields which define a time period are displayed for Dataset.
+    """Controls how fields which define a time period are displayed.
 
-    These are a special case since two fields have a relationship to one another.>
+    These are a special case since two fields have a relationship to one another.
     """
 
     id_type: str = ""
-    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_date_metadata_and_stringify
-    type: str = "date"
 
     def render(
         self,
         component_id: dict,
-        language: str,  # noqa: ARG002 Required by Dash
-        dataset: BaseModel,
+        language: str,  # noqa: ARG002
+        metadata: BaseModel,
     ) -> ssb.Input:
         """Build Input date component."""
-        value = self.value_getter(dataset, self.identifier)
+        value = self.value_getter(metadata, self.identifier)
         component_id["type"] = self.id_type
         return ssb.Input(
             label=self.display_name,
             id=component_id,
             debounce=False,
-            type=self.type,
+            type="date",
             disabled=not self.editable,
             showDescription=self.show_description,
             description=self.description,
@@ -226,20 +219,19 @@ class MetadataPeriodField(DisplayMetadata):
 class MetadataCheckboxField(DisplayMetadata):
     """Controls for how a checkbox metadata field should be displayed."""
 
-    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
 
     def render(
         self,
-        variable_id: dict,
-        language: str,  # noqa: ARG002 Required by Dash
-        variable: model.Variable,
+        component_id: dict,
+        language: str,  # noqa: ARG002
+        metadata: BaseModel,
     ) -> ssb.Checkbox:
         """Build Checkbox component."""
-        value = self.value_getter(variable, self.identifier)
+        value = self.value_getter(metadata, self.identifier)
         return ssb.Checkbox(
             label=self.display_name,
-            id=variable_id,
+            id=component_id,
             disabled=not self.editable,
             value=value,
             showDescription=self.show_description,
@@ -255,26 +247,3 @@ VariablesFieldTypes = (
 )
 
 DatasetFieldTypes = MetadataInputField | MetadataDropdownField | MetadataPeriodField
-
-
-@dataclass
-class DisplayDatasetMetadata(DisplayMetadata):
-    """Controls for how a given metadata field should be displayed.
-
-    Specific to dataset fields.
-    """
-
-    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
-    component: type[Component] = dcc.Input
-    value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
-
-
-@dataclass
-class DisplayDatasetMetadataDropdown(DisplayDatasetMetadata):
-    """Include the possible options which a user may choose from."""
-
-    # fmt: off
-    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
-    # fmt: on
-    extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
-    component: type[Component] = dcc.Dropdown
