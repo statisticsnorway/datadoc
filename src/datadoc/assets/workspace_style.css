@@ -35,9 +35,6 @@
     flex-direction: column;
     gap: 1rem;
     width: 100%;
-}
-
-.edit-section.dataset-edit-section{
     padding: 1rem;
 }
 
@@ -74,6 +71,11 @@
     width: 100%;
 }
 
+.dropdown-wrapper{
+    max-width: 500px;
+    width: 100%;
+}
+
 .form-check.ssb-checkbox{
     align-self: center;
 }
@@ -86,14 +88,14 @@ label.form-check-label{
     padding-left: 0.5rem;
 }
 
-.dropdown-wrapper > .ssb-glossary.info-glossary > .glossary-popup {
+.ssb-input.input-component > span > .ssb-glossary.info-glossary > .glossary-popup {
     margin-left: 20px;
     left: unset;
     top: unset;
     bottom: 5px;
 }
 
-.dropdown-wrapper > .ssb-glossary.info-glossary > .glossary-popup::after {
+.ssb-input.input-component > span > .ssb-glossary.info-glossary > .glossary-popup::after {
     left: -10px;
     margin-left: -10px;
     top: unset;
@@ -104,4 +106,20 @@ label.form-check-label{
 
 .ssb-glossary.datadoc-glossary > .glossary-popup .content-box > .glossary-closing{
     margin-top: 1.8rem;
+}
+
+.dropdown-wrapper > .ssb-glossary.info-glossary > .glossary-popup {
+        margin-left: 20px;
+        left: unset;
+        top: unset;
+        bottom: 5px;
+    }
+
+.dropdown-wrapper > .ssb-glossary.info-glossary > .glossary-popup::after {
+        left: -10px;
+        margin-left: -10px;
+        top: unset;
+        bottom: 5px;
+        transform: rotateX(-90deg);
+        -webkit-transform: rotate(-90deg);
 }
