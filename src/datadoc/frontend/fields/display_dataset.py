@@ -11,7 +11,6 @@ from datadoc import enums
 from datadoc import state
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import DatasetFieldTypes
-from datadoc.frontend.fields.display_base import DisplayDatasetMetadataDropdown
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
@@ -162,7 +161,6 @@ DISPLAY_DATASET: dict[
         display_name="Register URI",
         description="Lenke (URI) til register i registeroversikt (oversikt over alle registre meldt Datatilsynet (oppdatering foretas av sikkerhetsrådgiver))",
         multiple_language_support=True,
-        url=True,
         type="url",
     ),
     DatasetIdentifiers.POPULATION_DESCRIPTION: MetadataInputField(
@@ -176,8 +174,8 @@ DISPLAY_DATASET: dict[
         identifier=DatasetIdentifiers.VERSION.value,
         display_name="Versjon",
         description="Versjon",
-        extra_kwargs={"type": "number", "min": 1},
         obligatory=True,
+        type="number",
     ),
     DatasetIdentifiers.VERSION_DESCRIPTION: MetadataInputField(
         identifier=DatasetIdentifiers.VERSION_DESCRIPTION.value,
@@ -330,10 +328,8 @@ DISPLAYED_DATASET_METADATA: list[DatasetFieldTypes] = (
     + NON_EDITABLE_DATASET_METADATA
 )
 
-DISPLAYED_DROPDOWN_DATASET_METADATA: list[DisplayDatasetMetadataDropdown] = [
-    m
-    for m in DISPLAYED_DATASET_METADATA
-    if isinstance(m, DisplayDatasetMetadataDropdown)
+DISPLAYED_DROPDOWN_DATASET_METADATA: list[MetadataDropdownField] = [
+    m for m in DISPLAYED_DATASET_METADATA if isinstance(m, MetadataDropdownField)
 ]
 
 OBLIGATORY_DATASET_METADATA_IDENTIFIERS: list[str] = [
