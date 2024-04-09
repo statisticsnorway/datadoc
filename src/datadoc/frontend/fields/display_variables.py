@@ -89,7 +89,7 @@ DISPLAY_VARIABLES: dict[
     VariableIdentifiers.DIRECT_PERSON_IDENTIFYING: MetadataCheckboxField(
         identifier=VariableIdentifiers.DIRECT_PERSON_IDENTIFYING.value,
         display_name="Direkte personidentifiserende informasjon",
-        description="Direkte personidentifiserende informasjon (DPI)",
+        description="Velges hvis variabelen inneholder informasjon som innebærer at enkeltpersoner kan identifiseres. Gjelder ikke hvis kolonnen er pseudonymisert eller anonymisert.",
         obligatory=True,
     ),
     VariableIdentifiers.DATA_SOURCE: MetadataInputField(
