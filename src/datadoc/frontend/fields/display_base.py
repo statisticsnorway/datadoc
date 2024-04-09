@@ -160,6 +160,7 @@ class MetadataInputField(DisplayMetadata):
 class MetadataDropdownField(DisplayMetadata):
     """Control how a Dropdown should be displayed."""
 
+    show_description: bool = True
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
     # fmt: off
@@ -180,6 +181,8 @@ class MetadataDropdownField(DisplayMetadata):
             items=self.options_getter(SupportedLanguages(language)),
             value=value,
             className="dropdown-component",
+            showDescription=self.show_description,
+            description=self.description,
         )
 
 
