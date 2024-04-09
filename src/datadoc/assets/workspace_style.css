@@ -91,28 +91,21 @@
 .form-check{
     padding-left: 0;
 }
-.ssb-input.input-component > span > .ssb-glossary.info-glossary > .glossary-popup.open > .content-box {
-    height: 160px;
-    width:320px;
-    padding: 1.2rem;
+
+.ssb-input.input-component > span > .ssb-glossary.info-glossary > .glossary-popup {
+    margin-left: 20px;
+    left: unset;
+    top: unset;
+    bottom: 5px;
 }
 
 .ssb-input.input-component > span > .ssb-glossary.info-glossary > .glossary-popup::after {
-    left: -5%;
+    left: -10px;
     margin-left: -10px;
-    top: 120px;
+    top: unset;
+    bottom: 5px;
     transform: rotateX(-90deg);
     -webkit-transform: rotate(-90deg);
-}
-
-.ssb-input.input-component > span > .ssb-glossary.info-glossary > .glossary-popup {
-      /*left: 72%;
-    top: -135px;*/
-    margin-left: 20px;
-    left: 0;
-    top: 0;
-    bottom: 15px;
-    right: 20px;
 }
 
 .ssb-glossary.datadoc-glossary > .glossary-popup .content-box > .glossary-closing{
