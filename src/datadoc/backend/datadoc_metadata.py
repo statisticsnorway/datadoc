@@ -188,11 +188,7 @@ class DataDocMetadata:
             metadata_created_by=user_info.get_user_info_for_current_platform().short_email,
             # TODO @mmwinther: Remove multiple_language_support once the model is updated.
             # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
-            subject_field=model.LanguageStringType(
-                en=subject_field,
-                nb=subject_field,
-                nn=subject_field,
-            ),
+            subject_field=subject_field,
         )
         self.variables = self.ds_schema.get_fields()
 

@@ -32,7 +32,6 @@ class VariableIdentifiers(str, Enum):
     MEASUREMENT_UNIT = "measurement_unit"
     FORMAT = "format"
     CLASSIFICATION_URI = "classification_uri"
-    SENTINEL_VALUE_URI = "sentinel_value_uri"
     INVALID_VALUE_DESCRIPTION = "invalid_value_description"
     IDENTIFIER = "id"
     CONTAINS_DATA_FROM = "contains_data_from"
@@ -137,13 +136,6 @@ DISPLAY_VARIABLES: dict[
         identifier=VariableIdentifiers.CLASSIFICATION_URI.value,
         display_name="Kodeverkets URI",
         description="Lenke (URI) til gyldige kodeverk (klassifikasjon eller kodeliste) i KLASS",
-        url=True,
-        type="url",
-    ),
-    VariableIdentifiers.SENTINEL_VALUE_URI: MetadataInputField(
-        identifier=VariableIdentifiers.SENTINEL_VALUE_URI.value,
-        display_name="Spesialverdienes URI",
-        description="En lenke (URI) til en oversikt over 'spesialverdier' som inngår i variabelen.",
         url=True,
         type="url",
     ),

@@ -82,7 +82,6 @@ class DatasetIdentifiers(str, Enum):
     NAME = "name"
     DESCRIPTION = "description"
     DATA_SOURCE = "data_source"
-    REGISTER_URI = "register_uri"
     POPULATION_DESCRIPTION = "population_description"
     VERSION = "version"
     VERSION_DESCRIPTION = "version_description"
@@ -156,14 +155,6 @@ DISPLAY_DATASET: dict[
         description="Datakilde. Settes enten for datasettet eller variabelforekomst.",
         obligatory=True,
         multiple_language_support=True,
-    ),
-    DatasetIdentifiers.REGISTER_URI: MetadataInputField(
-        identifier=DatasetIdentifiers.REGISTER_URI.value,
-        display_name="Register URI",
-        description="Lenke (URI) til register i registeroversikt (oversikt over alle registre meldt Datatilsynet (oppdatering foretas av sikkerhetsrådgiver))",
-        multiple_language_support=True,
-        url=True,
-        type="url",
     ),
     DatasetIdentifiers.POPULATION_DESCRIPTION: MetadataInputField(
         identifier=DatasetIdentifiers.POPULATION_DESCRIPTION.value,
