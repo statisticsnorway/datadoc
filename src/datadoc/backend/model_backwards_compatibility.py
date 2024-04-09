@@ -63,6 +63,19 @@ def handle_current_version(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     return supplied_metadata
 
 
+def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
+    """Handle breaking changes for v2.2.0.
+
+    Blablabla
+    """
+    for variable in supplied_metadata["variables"]:
+        variable["special_value"] = None
+        variable["custom_type"] = None
+
+    supplied_metadata["document_version"] = "3.1.0"
+    return supplied_metadata
+
+
 def handle_version_2_1_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Handle breaking changes for v2.1.0.
 
@@ -120,7 +133,8 @@ def handle_version_0_1_1(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
 BackwardsCompatibleVersion(version="0.1.1", handler=handle_version_0_1_1)
 BackwardsCompatibleVersion(version="1.0.0", handler=handle_version_1_0_0)
 BackwardsCompatibleVersion(version="2.1.0", handler=handle_version_2_1_0)
-BackwardsCompatibleVersion(version="2.2.0", handler=handle_current_version)
+BackwardsCompatibleVersion(version="2.2.0", handler=handle_version_2_2_0)
+BackwardsCompatibleVersion(version="3.1.0", handler=handle_current_version)
 
 
 def upgrade_metadata(fresh_metadata: dict[str, Any]) -> dict[str, Any]:
