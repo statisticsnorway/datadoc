@@ -56,7 +56,7 @@ def test_build_input_fields_props_input(input_field_section):
     assert variable_input_field_for_name.type == "text"
     assert isinstance(variable_input_field_for_name, ssb.Input)
     assert variable_input_field_for_name.debounce is True
-    assert variable_input_field_for_name.disabled is False
+    assert variable_input_field_for_name.readOnly is False
     assert variable_input_field_for_name.label == "Navn"
 
 
