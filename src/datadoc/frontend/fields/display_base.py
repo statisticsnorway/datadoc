@@ -127,13 +127,13 @@ class DisplayMetadata:
     editable: bool = True
     url: bool = False
     multiple_language_support: bool = False
+    show_description: bool = True
 
 
 @dataclass
 class MetadataInputField(DisplayMetadata):
     """Controls how a input field should be displayed."""
 
-    show_description: bool = True
     type: str = "text"
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
@@ -183,6 +183,8 @@ class MetadataDropdownField(DisplayMetadata):
             items=self.options_getter(SupportedLanguages(language)),
             value=value,
             className="dropdown-component",
+            showDescription=self.show_description,
+            description=self.description,
         )
 
 
@@ -193,7 +195,6 @@ class MetadataPeriodField(DisplayMetadata):
     These are a special case since two fields have a relationship to one another.>
     """
 
-    show_description: bool = True
     id_type: str = ""
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_date_metadata_and_stringify
@@ -225,7 +226,6 @@ class MetadataPeriodField(DisplayMetadata):
 class MetadataCheckboxField(DisplayMetadata):
     """Controls for how a checkbox metadata field should be displayed."""
 
-    show_description: bool = True
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
 
