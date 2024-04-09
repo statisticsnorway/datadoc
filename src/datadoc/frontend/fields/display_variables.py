@@ -56,6 +56,7 @@ DISPLAY_VARIABLES: dict[
         description="Variabelnavn kan arves fra VarDef, men kan også dokumenteres/endres her.",
         obligatory=True,
         multiple_language_support=True,
+        show_description=False,
         type="text",
     ),
     VariableIdentifiers.DATA_TYPE: MetadataDropdownField(
@@ -84,6 +85,7 @@ DISPLAY_VARIABLES: dict[
         description="En lenke (URI) til variabelens definisjon i SSB (Vardok/VarDef)",
         url=True,
         obligatory=True,
+        show_description=False,
         type="url",
     ),
     VariableIdentifiers.DIRECT_PERSON_IDENTIFYING: MetadataCheckboxField(
