@@ -292,7 +292,6 @@ DISPLAY_DATASET: dict[
         description="ÅÅÅÅ-MM-DD",
         obligatory=True,
         editable=True,
-        show_description=False,
         id_type=DATASET_METADATA_DATE_INPUT,
     ),
     DatasetIdentifiers.CONTAINS_DATA_UNTIL: MetadataPeriodField(
