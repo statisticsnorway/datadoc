@@ -225,6 +225,7 @@ class MetadataPeriodField(DisplayMetadata):
 class MetadataCheckboxField(DisplayMetadata):
     """Controls for how a checkbox metadata field should be displayed."""
 
+    show_description: bool = True
     extra_kwargs: dict[str, Any] = field(default_factory=empty_kwargs_factory)
     value_getter: Callable[[BaseModel, str], Any] = get_standard_metadata
 
@@ -241,7 +242,7 @@ class MetadataCheckboxField(DisplayMetadata):
             id=variable_id,
             disabled=not self.editable,
             value=value,
-            showDescription=True,
+            showDescription=self.show_description,
             description=self.description,
         )
 
