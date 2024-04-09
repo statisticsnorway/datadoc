@@ -44,7 +44,7 @@ opened_dataset_success = build_ssb_alert(
 naming_convention_warning = build_ssb_alert(
     AlertTypes.WARNING,
     "opened-dataset_warning",
-    "Filen følger ikke navnestandard. Vennlist se",
+    "Filen følger ikke navnestandard. Vennligst se",
     "opened-dataset-warning-explanation",
     link=get_dapla_manual_naming_standard_url(),
 )

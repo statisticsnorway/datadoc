@@ -116,6 +116,7 @@ class DisplayMetadata(ABC):
     editable: bool = True
     multiple_language_support: bool = False
     value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
+    show_description: bool = True
 
     @abstractmethod
     def render(
@@ -147,7 +148,9 @@ class MetadataInputField(DisplayMetadata):
             id=component_id,
             debounce=True,
             type=self.type,
-            disabled=not self.editable,
+            showDescription=self.show_description,
+            description=self.description,
+            readOnly=not self.editable,
             value=value,
             className="input-component",
         )
@@ -175,6 +178,8 @@ class MetadataDropdownField(DisplayMetadata):
             items=self.options_getter(SupportedLanguages(language)),
             value=value,
             className="dropdown-component",
+            showDescription=self.show_description,
+            description=self.description,
         )
 
 
@@ -203,6 +208,8 @@ class MetadataPeriodField(DisplayMetadata):
             debounce=False,
             type="date",
             disabled=not self.editable,
+            showDescription=self.show_description,
+            description=self.description,
             value=value,
             className="input-component",
         )
@@ -227,7 +234,7 @@ class MetadataCheckboxField(DisplayMetadata):
             id=component_id,
             disabled=not self.editable,
             value=value,
-            showDescription=True,
+            showDescription=self.show_description,
             description=self.description,
         )
 
