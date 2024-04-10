@@ -1,4 +1,6 @@
 {
+    "document_version": "0.0.1",
+    "datadoc": {
         "percentage_complete": 98,
         "document_version": "2.2.0",
         "dataset": {
@@ -21,6 +23,7 @@
                 "nn": "",
                 "nb": "Skatteetaten"
             },
+            "register_uri": null,
             "population_description": {
                 "en": "",
                 "nn": "",
@@ -30,7 +33,11 @@
             "version_description": null,
             "unit_type": "PERSON",
             "temporality_type": "STATUS",
-            "subject_field": "Skatt",
+            "subject_field": {
+                "en": "",
+                "nn": "",
+                "nb": "Skatt"
+            },
             "keyword": [
                 "Skatt",
                 "Person",
@@ -42,11 +49,7 @@
                 "nb": "Norge"
             },
             "id": "143fca77-ef56-419c-a1e1-d69c4199f020",
-            "owner": {
-                "en": "",
-                "nn": "",
-                "nb": "723"
-            },
+            "owner": "NNN",
             "file_path": null,
             "metadata_created_date": "2022-09-05T11:07:14Z",
             "metadata_created_by": "default_user@ssb.no",
@@ -74,9 +77,8 @@
                 "measurement_unit": null,
                 "format": null,
                 "classification_uri": null,
-                "special_value": null,
+                "sentinel_value_uri": null,
                 "invalid_value_description": null,
-                "custom_type": null,
                 "id": null,
                 "contains_data_from": null,
                 "contains_data_until": null
@@ -99,9 +101,8 @@
                 "measurement_unit": null,
                 "format": null,
                 "classification_uri": null,
-                "special_value": null,
+                "sentinel_value_uri": null,
                 "invalid_value_description": null,
-                "custom_type": null,
                 "id": null,
                 "contains_data_from": null,
                 "contains_data_until": null
@@ -124,9 +125,8 @@
                 "measurement_unit": null,
                 "format": null,
                 "classification_uri": null,
-                "special_value": null,
+                "sentinel_value_uri": null,
                 "invalid_value_description": null,
-                "custom_type": null,
                 "id": null,
                 "contains_data_from": null,
                 "contains_data_until": null
@@ -149,9 +149,8 @@
                 "measurement_unit": null,
                 "format": null,
                 "classification_uri": null,
-                "special_value": null,
+                "sentinel_value_uri": null,
                 "invalid_value_description": null,
-                "custom_type": null,
                 "id": null,
                 "contains_data_from": null,
                 "contains_data_until": null
@@ -174,9 +173,8 @@
                 "measurement_unit": null,
                 "format": null,
                 "classification_uri": null,
-                "special_value": null,
+                "sentinel_value_uri": null,
                 "invalid_value_description": null,
-                "custom_type": null,
                 "id": null,
                 "contains_data_from": null,
                 "contains_data_until": null
@@ -199,9 +197,8 @@
                 "measurement_unit": null,
                 "format": null,
                 "classification_uri": null,
-                "special_value": null,
+                "sentinel_value_uri": null,
                 "invalid_value_description": null,
-                "custom_type": null,
                 "id": null,
                 "contains_data_from": null,
                 "contains_data_until": null
@@ -224,9 +221,8 @@
                 "measurement_unit": null,
                 "format": null,
                 "classification_uri": null,
-                "special_value": null,
+                "sentinel_value_uri": null,
                 "invalid_value_description": null,
-                "custom_type": null,
                 "id": null,
                 "contains_data_from": null,
                 "contains_data_until": null
@@ -249,12 +245,13 @@
                 "measurement_unit": null,
                 "format": null,
                 "classification_uri": null,
-                "special_value": null,
+                "sentinel_value_uri": null,
                 "invalid_value_description": null,
-                "custom_type": null,
                 "id": null,
                 "contains_data_from": null,
                 "contains_data_until": null
             }
         ]
-    }
+    },
+    "pseudonymization": null
+}

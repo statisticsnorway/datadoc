@@ -7,6 +7,7 @@ import pytest
 
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.model_backwards_compatibility import UnknownModelVersionError
+from datadoc.backend.model_backwards_compatibility import handle_version_2_2_0
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
 from tests.utils import TEST_COMPATIBILITY_DIRECTORY
 
@@ -23,6 +24,16 @@ def test_existing_metadata_current_model_version():
     fresh_metadata = {"document_version": current_model_version}
     upgraded_metadata = upgrade_metadata(fresh_metadata)
     assert upgraded_metadata == fresh_metadata
+
+
+def test_handle_version_2_2_0():
+    existing_metadata_file: Path = Path(
+        "/Users/jansander/Repository/github/datadoc/tests/resources/existing_metadata_file/compatibility/v2_2_0/person_data_v1__DOC.json",
+    )
+    with existing_metadata_file.open(mode="r", encoding="utf-8") as file:
+        fresh_metadata = json.load(file)
+    upgraded_metadata = handle_version_2_2_0(fresh_metadata)
+    assert "custom_type" in upgraded_metadata
 
 
 def test_existing_metadata_unknown_model_version():

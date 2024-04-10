@@ -118,6 +118,9 @@ class DataDocMetadata:
             with document.open(mode="r", encoding="utf-8") as file:
                 fresh_metadata = json.load(file)
             logger.info("Opened existing metadata file %s", document)
+            fresh_metadata = upgrade_metadata(
+                fresh_metadata,
+            )
             if self.is_metadata_in_container_structure(fresh_metadata):
                 self.container = model.MetadataContainer.model_validate_json(
                     json.dumps(fresh_metadata),
@@ -129,9 +132,6 @@ class DataDocMetadata:
                 # In this case we've read in a file with an empty "datadoc" structure.
                 # A typical example of this is a file produced from a pseudonymization process.
                 return
-            datadoc_metadata = upgrade_metadata(
-                datadoc_metadata,
-            )
             meta = model.DatadocMetadata.model_validate_json(
                 json.dumps(datadoc_metadata),
             )

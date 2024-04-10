@@ -68,10 +68,10 @@ def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
 
     Blablabla
     """
-    for i in range(supplied_metadata["variables"]):
+    for i in range(len(supplied_metadata["variables"])):
         supplied_metadata["variables"][i]["special_value"] = None
         supplied_metadata["variables"][i]["custom_type"] = None
-
+    supplied_metadata["dataset"]["custom_type"] = None
     supplied_metadata["document_version"] = "3.1.0"
     return supplied_metadata
 
@@ -132,7 +132,10 @@ def handle_version_0_1_1(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
 # MUST be ordered from oldest to newest.
 BackwardsCompatibleVersion(version="0.1.1", handler=handle_version_0_1_1)
 BackwardsCompatibleVersion(version="1.0.0", handler=handle_version_1_0_0)
-BackwardsCompatibleVersion(version="2.1.0", handler=handle_version_2_1_0)
+BackwardsCompatibleVersion(
+    version="2.1.0",
+    handler=handle_version_2_1_0,
+)  # Her må det lages container
 BackwardsCompatibleVersion(version="2.2.0", handler=handle_version_2_2_0)
 BackwardsCompatibleVersion(version="3.1.0", handler=handle_current_version)
 
