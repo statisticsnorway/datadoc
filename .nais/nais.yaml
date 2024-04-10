@@ -16,7 +16,7 @@ spec:
     disableAutoScaling: true
     max: 1
     min: 1
-  port: 8080
+  port: 8050
 
   accessPolicy:
     outbound:
