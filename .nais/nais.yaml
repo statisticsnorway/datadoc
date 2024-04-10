@@ -3,9 +3,6 @@ kind: Application
 metadata:
   name: datadoc-pr-{{ pr-number }}
   namespace: dapla-metadata
-  annotations:
-    nais.io/read-only-file-system: "false"
-    nais.io/run-as-user: "1337"
   labels:
     team: dapla-metadata
 spec:
