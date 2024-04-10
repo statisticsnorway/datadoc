@@ -68,9 +68,9 @@ def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
 
     Blablabla
     """
-    for variable in supplied_metadata["variables"]:
-        variable["special_value"] = None
-        variable["custom_type"] = None
+    for i in range(supplied_metadata["variables"]):
+        supplied_metadata["variables"][i]["special_value"] = None
+        supplied_metadata["variables"][i]["custom_type"] = None
 
     supplied_metadata["document_version"] = "3.1.0"
     return supplied_metadata
