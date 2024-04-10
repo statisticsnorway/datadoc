@@ -51,9 +51,9 @@ ENV \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PIP_DEFAULT_TIMEOUT=100
 
-RUN useradd --create-home appuser
-USER appuser
-ENV PATH="/home/appuser/.local/bin:$PATH"
+# RUN useradd --create-home appuser
+# USER appuser
+# ENV PATH="/home/appuser/.local/bin:$PATH"
 
 # export environment variables for the CMD
 ENV PACKAGE_NAME=$PACKAGE_NAME
