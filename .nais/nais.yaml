@@ -36,4 +36,4 @@ spec:
     enabled: false
 
   ingresses:
-    - https://datadoc-pr-{{ pr-number }}.internal.staging.ssb.cloud.nais.io
+    - https://datadoc-pr-{{ pr-number }}.staging.ssb.cloud.nais.io
