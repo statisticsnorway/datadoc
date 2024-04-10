@@ -10,7 +10,7 @@ on:
 env:
   REGISTRY: europe-north1-docker.pkg.dev/nais-management-b3a7/dapla-metadata/datadoc
   IMAGE: datadoc
-  TAG: ${{ github.head_ref }}-${{ github.sha }}
+  TAG: ${{ github.ref_name }}-${{ github.sha }}
 
 jobs:
   docker-build:
