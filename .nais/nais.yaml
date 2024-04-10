@@ -6,14 +6,13 @@ metadata:
   labels:
     team: dapla-metadata
 spec:
-  image: "{{ image }}"
-  #       ^--- interpolated from the variable in the action
+  image: "{{ image }}"  # Injected from the Github Action
+  port: 8050
 
   replicas:
     disableAutoScaling: true
     max: 1
     min: 1
-  port: 8050
 
   accessPolicy:
     outbound:
@@ -34,3 +33,13 @@ spec:
 
   ingresses:
     - https://datadoc-pr-{{ pr-number }}.staging.ssb.cloud.nais.io
+
+  liveness:
+    path: /healthz/live
+    port: 8050
+  readiness:
+    path: /healthz/ready
+    port: 8050
+  startup:
+    path: /healthz/startup
+    port: 8050
