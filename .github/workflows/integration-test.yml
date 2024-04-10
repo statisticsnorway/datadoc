@@ -1,0 +1,90 @@
+name: Integration test
+
+on:
+  push:
+    paths:
+      - "src/datadoc/**"
+      - "poetry.lock"
+      - ".github/workflows/integration-test.yml"
+
+env:
+  REGISTRY: europe-north1-docker.pkg.dev/nais-management-b3a7/dapla-metadata/datadoc
+  IMAGE: datadoc
+  TAG: ${{ github.head_ref }}-${{ github.sha }}
+
+jobs:
+  docker-build:
+    permissions:
+      contents: "read"
+      id-token: "write"
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.metadata.outputs.tags }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: "Authenticate to Google Cloud"
+        id: "auth"
+        uses: "google-github-actions/auth@v2.1.2"
+        with:
+          workload_identity_provider: "projects/906675412832/locations/global/workloadIdentityPools/ssb-identity-pool/providers/github-oidc-provider"
+          service_account: "gh-ssb@nais-management-b3a7.iam.gserviceaccount.com"
+          token_format: "access_token"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: "oauth2accesstoken"
+          password: "${{ steps.auth.outputs.access_token }}"
+
+      - name: Docker meta
+        id: metadata
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE }}
+          # Docker tags based on the following events/attributes
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha
+            type=raw,value=${{ env.TAG }}, enable=true
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+          file: Dockerfile
+          push: true
+          tags: |
+            ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+
+      - name: Output image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+
+  deploy:
+    name: Deploy to NAIS
+    runs-on: ubuntu-latest
+    needs: docker-build
+    steps:
+      - uses: actions/checkout@v3
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: staging
+          RESOURCE: .nais/nais.yaml
+          VAR: image=${{ needs.docker-build.outputs.image-tag }}
+          DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443

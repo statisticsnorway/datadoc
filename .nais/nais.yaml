@@ -1,0 +1,39 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  name: datadoc-pr-{{branch}}
+  namespace: dapla-metadata
+  annotations:
+    nais.io/read-only-file-system: "false"
+    nais.io/run-as-user: "1337"
+  labels:
+    team: dapla-metadata
+spec:
+  image: "{{ image }}"
+  #       ^--- interpolated from the variable in the action
+
+  replicas:
+    disableAutoScaling: true
+    max: 1
+    min: 1
+  port: 8080
+
+  accessPolicy:
+    outbound:
+      external:
+        - host: data.ssb.no
+        - host: www.ssb.no
+
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      memory: 1Gi
+
+  ttl: 1h
+
+  prometheus:
+    enabled: false
+
+  ingresses:
+    - https://datadoc-{{branch}}.internal.staging.ssb.cloud.nais.io
