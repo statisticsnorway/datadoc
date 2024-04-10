@@ -54,11 +54,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE }}
           # Docker tags based on the following events/attributes
           tags: |
-            type=schedule
-            type=ref,event=branch
             type=ref,event=pr
-            type=sha
-            type=raw,value=${{ env.TAG }}, enable=true
 
       - name: Build and push
         uses: docker/build-push-action@v5
