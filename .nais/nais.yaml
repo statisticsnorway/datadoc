@@ -1,7 +1,7 @@
 apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
-  name: datadoc-pr-{{branch}}
+  name: datadoc-pr-{{ pr-number }}
   namespace: dapla-metadata
   annotations:
     nais.io/read-only-file-system: "false"
@@ -36,4 +36,4 @@ spec:
     enabled: false
 
   ingresses:
-    - https://datadoc-{{branch}}.internal.staging.ssb.cloud.nais.io
+    - https://datadoc-pr-{{ pr-number }}.internal.staging.ssb.cloud.nais.io
