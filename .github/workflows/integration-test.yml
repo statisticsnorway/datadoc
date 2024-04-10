@@ -5,6 +5,7 @@ on:
     paths:
       - "src/datadoc/**"
       - "poetry.lock"
+      - ".nais/nais.yaml"
       - ".github/workflows/integration-test.yml"
 
 env:
