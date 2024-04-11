@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 from typing import Any
 
 import ssb_dash_components as ssb
+from dash import html
 
 from datadoc import state
 from datadoc.enums import SupportedLanguages
@@ -64,6 +65,18 @@ def get_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str | No
     return str(value)
 
 
+def get_multilanguage_metadata_and_stringify(
+    metadata: BaseModel,
+    identifier: str,
+    language: str,  # noqa: ARG001
+) -> str | None:
+    """Get a metadata multilanguage value from the model and cast to string."""
+    value = get_standard_metadata(metadata, identifier)
+    if value is None:
+        return None
+    return str(value)
+
+
 def get_date_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str | None:
     """Get a metadata date value from the model.
 
@@ -93,6 +106,18 @@ def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> str | N
     if value is None:
         return value
     return str(getattr(value, state.current_metadata_language))
+
+
+def get_multi_language_metadata_and_stringify(
+    metadata: BaseModel,
+    identifier: str,
+    language: SupportedLanguages,
+) -> str | None:
+    """Get a metadata value supporting multiple languages from the model."""
+    value: LanguageStringType | None = getattr(metadata, identifier)
+    if value is None:
+        return value
+    return str(getattr(value, language))
 
 
 def get_comma_separated_string(metadata: BaseModel, identifier: str) -> str:
@@ -216,6 +241,57 @@ class MetadataPeriodField(DisplayMetadata):
 
 
 @dataclass
+class MetadataMultiLanguageField(DisplayMetadata):
+    """Controls how fields which support multi-language are displayed.
+
+    These are a special case since they return a group of input fields..
+    """
+
+    def render(
+        self,
+        component_id: dict,  # noqa: ARG002
+        language: str,  # noqa: ARG002
+        metadata: BaseModel,
+    ) -> html.Fieldset:
+        """Build fieldset group."""
+        return html.Fieldset(
+            children=(
+                [
+                    ssb.Glossary(
+                        children=(html.Legend(self.display_name)),
+                        explanation=self.description,
+                    ),
+                    ssb.Input(
+                        label="Bokmål",
+                        value=get_multi_language_metadata_and_stringify(
+                            metadata,
+                            self.identifier,
+                            SupportedLanguages.NORSK_BOKMÅL,
+                        ),
+                    ),
+                    ssb.Input(
+                        label="Nynorsk",
+                        value=get_multi_language_metadata_and_stringify(
+                            metadata,
+                            self.identifier,
+                            SupportedLanguages.NORSK_NYNORSK,
+                        ),
+                    ),
+                    ssb.Input(
+                        label="English",
+                        value=get_multi_language_metadata_and_stringify(
+                            metadata,
+                            self.identifier,
+                            SupportedLanguages.ENGLISH,
+                        ),
+                    ),
+                ]
+            ),
+            className="multilanguage-fieldset",
+        )
+
+
+@dataclass
 class MetadataCheckboxField(DisplayMetadata):
     """Controls for how a checkbox metadata field should be displayed."""
 
@@ -246,4 +322,9 @@ VariablesFieldTypes = (
     | MetadataPeriodField
 )
 
-DatasetFieldTypes = MetadataInputField | MetadataDropdownField | MetadataPeriodField
+DatasetFieldTypes = (
+    MetadataInputField
+    | MetadataDropdownField
+    | MetadataPeriodField
+    | MetadataMultiLanguageField
+)

@@ -13,6 +13,7 @@ from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import DatasetFieldTypes
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
+from datadoc.frontend.fields.display_base import MetadataMultiLanguageField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
 from datadoc.frontend.fields.display_base import get_comma_separated_string
 from datadoc.frontend.fields.display_base import get_enum_options_for_language
@@ -141,7 +142,7 @@ DISPLAY_DATASET: dict[
             enums.DataSetState,
         ),
     ),
-    DatasetIdentifiers.NAME: MetadataInputField(
+    DatasetIdentifiers.NAME: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.NAME.value,
         display_name="Navn",
         description="Datasettnavn",
