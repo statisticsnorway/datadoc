@@ -71,22 +71,28 @@ def _find_and_update_language_strings(supplied_metadata: dict | None) -> dict | 
 
 
 def _convert_language_string_type(supplied_value: dict) -> dict[list[dict]]:
-    return {
-        "root": [
-            {
-                "language_code": "en",
-                "language_text": supplied_value["en"],
-            },
-            {
-                "language_code": "nn",
-                "language_text": supplied_value["nn"],
-            },
-            {
-                "language_code": "nb",
-                "language_text": supplied_value["nb"],
-            },
-        ],
-    }
+    return [
+        {
+            "languageCode": "en",
+            "languageText": supplied_value["en"],
+        },
+        {
+            "languageCode": "nn",
+            "languageText": supplied_value["nn"],
+        },
+        {
+            "languageCode": "nb",
+            "languageText": supplied_value["nb"],
+        },
+    ]
+
+
+def _remove_element_from_model(
+    supplied_metadata: dict[str, Any],
+    element_to_remove: str,
+) -> None:
+    if element_to_remove in supplied_metadata:
+        del supplied_metadata[element_to_remove]
 
 
 def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
@@ -94,13 +100,24 @@ def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
 
     Blablabla
     """
+    if supplied_metadata["datadoc"]["dataset"]["subject_field"] is not None:
+        supplied_metadata["datadoc"]["dataset"]["subject_field"] = supplied_metadata[
+            "datadoc"
+        ]["dataset"]["subject_field"]["en"]
+
+    _remove_element_from_model(supplied_metadata["datadoc"]["dataset"], "register_uri")
+
     for i in range(len(supplied_metadata["datadoc"]["variables"])):
+        _remove_element_from_model(
+            supplied_metadata["datadoc"]["variables"][i],
+            "sentinel_value_uri",
+        )
         supplied_metadata["datadoc"]["variables"][i]["special_value"] = None
         supplied_metadata["datadoc"]["variables"][i]["custom_type"] = None
-        supplied_metadata["datadoc"]["variables"][
-            i
-        ] = _find_and_update_language_strings(
-            supplied_metadata["datadoc"]["variables"][i],
+        supplied_metadata["datadoc"]["variables"][i] = (
+            _find_and_update_language_strings(
+                supplied_metadata["datadoc"]["variables"][i],
+            )
         )
     supplied_metadata["datadoc"]["dataset"]["custom_type"] = None
     supplied_metadata["datadoc"]["dataset"] = _find_and_update_language_strings(
@@ -148,6 +165,8 @@ def handle_version_1_0_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
             "nb": "",
         }
 
+    _remove_element_from_model(supplied_metadata["dataset"], "data_source_path")
+
     supplied_metadata["document_version"] = "2.1.0"
     return supplied_metadata
 
@@ -171,6 +190,18 @@ def handle_version_0_1_1(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     supplied_metadata["dataset"] = {
         k: None if v == "" else v for k, v in supplied_metadata["dataset"].items()
     }
+
+    key_renaming = [("data_type", "datatype")]
+
+    for i in range(len(supplied_metadata["variables"])):
+
+        for new_key, old_key in key_renaming:
+            supplied_metadata["variables"][i][new_key] = supplied_metadata["variables"][
+                i
+            ].pop(
+                old_key,
+            )
+
     return supplied_metadata
 
 

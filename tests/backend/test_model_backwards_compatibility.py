@@ -9,6 +9,9 @@ from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.model_backwards_compatibility import UnknownModelVersionError
 from datadoc.backend.model_backwards_compatibility import add_container
 from datadoc.backend.model_backwards_compatibility import handle_version_2_2_0
+from datadoc.backend.model_backwards_compatibility import (
+    is_metadata_in_container_structure,
+)
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
 from tests.utils import TEST_COMPATIBILITY_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
@@ -63,8 +66,11 @@ def test_backwards_compatibility(
     with existing_metadata_file.open() as f:
         file_metadata = json.loads(f.read())
 
+    if is_metadata_in_container_structure(file_metadata):
+        file_metadata = file_metadata["datadoc"]
+
     # Just test a single value to make sure we have a working model
-    assert metadata.dataset.name.en == file_metadata["dataset"]["name"][0]["languageText"]  # type: ignore [union-attr]
+    assert metadata.dataset.name.root[0].languageText == file_metadata["dataset"]["name"]["en"]  # type: ignore [union-attr]
 
 
 def test_add_container():
