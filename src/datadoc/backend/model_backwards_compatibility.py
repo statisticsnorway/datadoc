@@ -101,9 +101,10 @@ def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     Blablabla
     """
     if supplied_metadata["datadoc"]["dataset"]["subject_field"] is not None:
-        supplied_metadata["datadoc"]["dataset"]["subject_field"] = supplied_metadata[
-            "datadoc"
-        ]["dataset"]["subject_field"]["en"]
+        data = supplied_metadata["datadoc"]["dataset"]["subject_field"]
+        supplied_metadata["datadoc"]["dataset"]["subject_field"] = str(
+            data["en"] or data["nn"] or data["nb"],
+        )
 
     _remove_element_from_model(supplied_metadata["datadoc"]["dataset"], "register_uri")
 
