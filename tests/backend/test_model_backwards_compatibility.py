@@ -7,6 +7,7 @@ import pytest
 
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.model_backwards_compatibility import UnknownModelVersionError
+from datadoc.backend.model_backwards_compatibility import add_container
 from datadoc.backend.model_backwards_compatibility import handle_version_2_2_0
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
 from tests.utils import TEST_COMPATIBILITY_DIRECTORY
@@ -64,3 +65,13 @@ def test_backwards_compatibility(
 
     # Just test a single value to make sure we have a working model
     assert metadata.dataset.name.en == file_metadata["dataset"]["name"]["en"]  # type: ignore [union-attr]
+
+
+def test_add_container():
+    doc = {
+        "percentage_complete": 98,
+        "document_version": "2.1.0",
+        "dataset": {"short_name": "person_data_v1", "assessment": "SENSITIVE"},
+    }
+    doc_with_container = add_container(doc)
+    assert doc_with_container

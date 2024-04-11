@@ -110,6 +110,15 @@ def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     return supplied_metadata
 
 
+def add_container(existing_metadata: dict) -> dict:
+    """Add container for previous versions."""
+    return {
+        "document_version": "0.0.1",
+        "datadoc": existing_metadata,
+        "pseudonymization": None,
+    }
+
+
 def handle_version_2_1_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Handle breaking changes for v2.1.0.
 
@@ -118,7 +127,7 @@ def handle_version_2_1_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     data = supplied_metadata["dataset"]["owner"]
     supplied_metadata["dataset"]["owner"] = str(data["nb"] or data["nn"] or data["en"])
     supplied_metadata["document_version"] = "2.2.0"
-    return supplied_metadata
+    return add_container(supplied_metadata)
 
 
 def handle_version_1_0_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
