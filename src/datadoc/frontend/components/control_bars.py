@@ -15,7 +15,7 @@ from datadoc.utils import get_app_version
 COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
 header = ssb.Header(
-    [ssb.Title("DataDoc", size=1, id="main-title", className="main-title")],
+    [ssb.Title("Datadoc", size=1, id="main-title", className="main-title")],
     className="datadoc-header",
 )
 
