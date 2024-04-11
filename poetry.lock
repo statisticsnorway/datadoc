@@ -4205,13 +4205,13 @@ sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
 name = "ssb-dash-components"
-version = "0.6.1"
+version = "0.7.0"
 description = "Dash Component library for SSB"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "ssb_dash_components-0.6.1-py3-none-any.whl", hash = "sha256:59c55d4e09248f5ae05b6e228109650f4cd420b651dfb4a97d8a24dcfea33421"},
-    {file = "ssb_dash_components-0.6.1.tar.gz", hash = "sha256:c49ca40c56bae477558bff7c83c39836413e341d1756cd286c0942ef8cf1c13f"},
+    {file = "ssb_dash_components-0.7.0-py3-none-any.whl", hash = "sha256:c1e5845e5aa7ee969cf146142c184ee9c26b2d21446562edc598890904ee7035"},
+    {file = "ssb_dash_components-0.7.0.tar.gz", hash = "sha256:11b68f6095b8760ed3da2ab57cf7366285dc64038dc975fd5534b580ebfc41a4"},
 ]
 
 [package.dependencies]
@@ -4755,4 +4755,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "0c0087f0c11b565a05f789d26b51c93c04a53ef3d6904937121512a0a18633bd"
+content-hash = "bf13504ef84b5bd82eb04b5448dfaabc7b797c318062c53b05f91eb3f74a2be0"
