@@ -75,4 +75,5 @@ def test_add_container():
     }
     doc_with_container = add_container(doc)
     assert doc_with_container["document_version"] == "0.0.1"
+    assert doc_with_container["datadoc"]["document_version"] == "2.1.0"
     assert "pseudonymization" in doc_with_container
