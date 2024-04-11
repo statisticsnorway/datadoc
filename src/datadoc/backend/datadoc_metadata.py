@@ -17,6 +17,9 @@ from datadoc_model import model
 from datadoc.backend import user_info
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.dataset_parser import DatasetParser
+from datadoc.backend.model_backwards_compatibility import (
+    is_metadata_in_container_structure,
+)
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
 from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
@@ -121,7 +124,7 @@ class DataDocMetadata:
             fresh_metadata = upgrade_metadata(
                 fresh_metadata,
             )
-            if self.is_metadata_in_container_structure(fresh_metadata):
+            if is_metadata_in_container_structure(fresh_metadata):
                 self.container = model.MetadataContainer.model_validate_json(
                     json.dumps(fresh_metadata),
                 )
@@ -146,17 +149,6 @@ class DataDocMetadata:
                 document,
                 exc_info=True,
             )
-
-    def is_metadata_in_container_structure(
-        self,
-        metadata: dict,
-    ) -> bool:
-        """At a certain point a metadata 'container' was introduced.
-
-        The container provides a structure for different 'types' of metadata, such as 'datadoc', 'pseudonymization' etc.
-        This method returns True if the metadata is in the container structure, False otherwise.
-        """
-        return "datadoc" in metadata
 
     def extract_metadata_from_dataset(
         self,
