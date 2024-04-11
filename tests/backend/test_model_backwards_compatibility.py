@@ -64,7 +64,7 @@ def test_backwards_compatibility(
         file_metadata = json.loads(f.read())
 
     # Just test a single value to make sure we have a working model
-    assert metadata.dataset.name.en == file_metadata["dataset"]["name"]["en"]  # type: ignore [union-attr]
+    assert metadata.dataset.name.en == file_metadata["dataset"]["name"][0]["languageText"]  # type: ignore [union-attr]
 
 
 def test_add_container():
