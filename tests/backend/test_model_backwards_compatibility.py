@@ -10,6 +10,7 @@ from datadoc.backend.model_backwards_compatibility import UnknownModelVersionErr
 from datadoc.backend.model_backwards_compatibility import handle_version_2_2_0
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
 from tests.utils import TEST_COMPATIBILITY_DIRECTORY
+from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
 
 BACKWARDS_COMPATIBLE_VERSION_DIRECTORIES = [
     d for d in TEST_COMPATIBILITY_DIRECTORY.iterdir() if d.is_dir()
@@ -26,14 +27,21 @@ def test_existing_metadata_current_model_version():
     assert upgraded_metadata == fresh_metadata
 
 
-def test_handle_version_2_2_0():
-    existing_metadata_file: Path = Path(
-        "/Users/rlj/metadata/datadoc/tests/resources/existing_metadata_file/compatibility/v2_2_0/person_data_v1__DOC.json",
+def test_handle_version_2_2_0() -> None:
+    pydir: Path = Path(__file__).resolve().parent
+    rootdir: Path = pydir.parent.parent
+    existing_metadata_file: Path = (
+        rootdir
+        / TEST_COMPATIBILITY_DIRECTORY
+        / "v2_2_0"
+        / TEST_EXISTING_METADATA_FILE_NAME
     )
     with existing_metadata_file.open(mode="r", encoding="utf-8") as file:
         fresh_metadata = json.load(file)
     upgraded_metadata = handle_version_2_2_0(fresh_metadata)
     assert "custom_type" in upgraded_metadata["datadoc"]["dataset"]
+    assert "custom_type" in upgraded_metadata["datadoc"]["variables"][0]
+    assert "special_value" in upgraded_metadata["datadoc"]["variables"][0]
 
 
 def test_existing_metadata_unknown_model_version():

@@ -18,8 +18,6 @@ from datetime import timezone
 from typing import TYPE_CHECKING
 from typing import Any
 
-from datadoc_model.model import LanguageStringType
-
 if TYPE_CHECKING:
     from collections.abc import Callable
 
@@ -63,21 +61,16 @@ def handle_current_version(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     return supplied_metadata
 
 
-def _find_and_update_language_strings(
-    supplied_metadata: dict[str, Any],
-) -> dict[str, Any]:
-
-    for i in supplied_metadata:
-        if isinstance(supplied_metadata[i], dict) and "en" in supplied_metadata[i]:
-            supplied_metadata[i] = _convert_language_string_type(
-                supplied_metadata[i],
-            )
-
-    return supplied_metadata
+def _find_and_update_language_strings(supplied_metadata: dict | None) -> dict | None:
+    if isinstance(supplied_metadata, dict):
+        for key, value in supplied_metadata.items():
+            if isinstance(value, dict) and "en" in value:
+                supplied_metadata[key] = _convert_language_string_type(value)
+        return supplied_metadata
+    return None
 
 
 def _convert_language_string_type(supplied_value: dict) -> dict[list[dict]]:
-
     return {
         "root": [
             {
@@ -104,15 +97,15 @@ def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     for i in range(len(supplied_metadata["datadoc"]["variables"])):
         supplied_metadata["datadoc"]["variables"][i]["special_value"] = None
         supplied_metadata["datadoc"]["variables"][i]["custom_type"] = None
+        supplied_metadata["datadoc"]["variables"][
+            i
+        ] = _find_and_update_language_strings(
+            supplied_metadata["datadoc"]["variables"][i],
+        )
     supplied_metadata["datadoc"]["dataset"]["custom_type"] = None
-
     supplied_metadata["datadoc"]["dataset"] = _find_and_update_language_strings(
         supplied_metadata["datadoc"]["dataset"],
     )
-    supplied_metadata["datadoc"]["variables"] = _find_and_update_language_strings(
-        supplied_metadata["datadoc"]["variables"],
-    )
-
     supplied_metadata["datadoc"]["document_version"] = "3.1.0"
     return supplied_metadata
 
@@ -140,9 +133,12 @@ def handle_version_1_0_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
                 timespec="seconds",
             )
     if isinstance(supplied_metadata["dataset"]["data_source"], str):
-        supplied_metadata["dataset"]["data_source"] = LanguageStringType(
-            en=supplied_metadata["dataset"]["data_source"],
-        )
+        supplied_metadata["dataset"]["data_source"] = {
+            "en": supplied_metadata["dataset"]["data_source"],
+            "nn": "",
+            "nb": "",
+        }
+
     supplied_metadata["document_version"] = "2.1.0"
     return supplied_metadata
 
