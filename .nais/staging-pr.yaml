@@ -1,3 +1,5 @@
+# Deploy to staging environment for an individual PR
+
 apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
