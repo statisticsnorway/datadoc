@@ -63,16 +63,57 @@ def handle_current_version(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     return supplied_metadata
 
 
+def _find_and_update_language_strings(
+    supplied_metadata: dict[str, Any],
+) -> dict[str, Any]:
+
+    for i in supplied_metadata:
+        if isinstance(supplied_metadata[i], dict) and "en" in supplied_metadata[i]:
+            supplied_metadata[i] = _convert_language_string_type(
+                supplied_metadata[i],
+            )
+
+    return supplied_metadata
+
+
+def _convert_language_string_type(supplied_value: dict) -> dict[list[dict]]:
+
+    return {
+        "root": [
+            {
+                "language_code": "en",
+                "language_text": supplied_value["en"],
+            },
+            {
+                "language_code": "nn",
+                "language_text": supplied_value["nn"],
+            },
+            {
+                "language_code": "nb",
+                "language_text": supplied_value["nb"],
+            },
+        ],
+    }
+
+
 def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Handle breaking changes for v2.2.0.
 
     Blablabla
     """
-    for i in range(len(supplied_metadata["variables"])):
-        supplied_metadata["variables"][i]["special_value"] = None
-        supplied_metadata["variables"][i]["custom_type"] = None
-    supplied_metadata["dataset"]["custom_type"] = None
-    supplied_metadata["document_version"] = "3.1.0"
+    for i in range(len(supplied_metadata["datadoc"]["variables"])):
+        supplied_metadata["datadoc"]["variables"][i]["special_value"] = None
+        supplied_metadata["datadoc"]["variables"][i]["custom_type"] = None
+    supplied_metadata["datadoc"]["dataset"]["custom_type"] = None
+
+    supplied_metadata["datadoc"]["dataset"] = _find_and_update_language_strings(
+        supplied_metadata["datadoc"]["dataset"],
+    )
+    supplied_metadata["datadoc"]["variables"] = _find_and_update_language_strings(
+        supplied_metadata["datadoc"]["variables"],
+    )
+
+    supplied_metadata["datadoc"]["document_version"] = "3.1.0"
     return supplied_metadata
 
 
@@ -143,7 +184,11 @@ BackwardsCompatibleVersion(version="3.1.0", handler=handle_current_version)
 def upgrade_metadata(fresh_metadata: dict[str, Any]) -> dict[str, Any]:
     """Run the handler for this version to upgrade the document to the latest version."""
     # Special case for current version, we expose the current_model_version parameter for test purposes
-    supplied_version = fresh_metadata[VERSION_FIELD_NAME]
+
+    if is_metadata_in_container_structure(fresh_metadata):
+        supplied_version = fresh_metadata["datadoc"][VERSION_FIELD_NAME]
+    else:
+        supplied_version = fresh_metadata[VERSION_FIELD_NAME]
     start_running_handlers = False
     # Run all the handlers in order from the supplied version onwards
     for k, v in SUPPORTED_VERSIONS.items():
@@ -154,3 +199,14 @@ def upgrade_metadata(fresh_metadata: dict[str, Any]) -> dict[str, Any]:
     if not start_running_handlers:
         raise UnknownModelVersionError(supplied_version)
     return fresh_metadata
+
+
+def is_metadata_in_container_structure(
+    metadata: dict,
+) -> bool:
+    """At a certain point a metadata 'container' was introduced.
+
+    The container provides a structure for different 'types' of metadata, such as 'datadoc', 'pseudonymization' etc.
+    This method returns True if the metadata is in the container structure, False otherwise.
+    """
+    return "datadoc" in metadata

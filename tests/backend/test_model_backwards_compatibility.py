@@ -28,12 +28,12 @@ def test_existing_metadata_current_model_version():
 
 def test_handle_version_2_2_0():
     existing_metadata_file: Path = Path(
-        "/Users/jansander/Repository/github/datadoc/tests/resources/existing_metadata_file/compatibility/v2_2_0/person_data_v1__DOC.json",
+        "/Users/rlj/metadata/datadoc/tests/resources/existing_metadata_file/compatibility/v2_2_0/person_data_v1__DOC.json",
     )
     with existing_metadata_file.open(mode="r", encoding="utf-8") as file:
         fresh_metadata = json.load(file)
     upgraded_metadata = handle_version_2_2_0(fresh_metadata)
-    assert "custom_type" in upgraded_metadata
+    assert "custom_type" in upgraded_metadata["datadoc"]["dataset"]
 
 
 def test_existing_metadata_unknown_model_version():
