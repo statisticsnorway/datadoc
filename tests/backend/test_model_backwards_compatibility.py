@@ -74,4 +74,5 @@ def test_add_container():
         "dataset": {"short_name": "person_data_v1", "assessment": "SENSITIVE"},
     }
     doc_with_container = add_container(doc)
-    assert doc_with_container
+    assert doc_with_container["document_version"] == "0.0.1"
+    assert "pseudonymization" in doc_with_container
