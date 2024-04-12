@@ -115,6 +115,7 @@ def get_multi_language_metadata_and_stringify(
 ) -> str | None:
     """Get a metadata value supporting multiple languages from the model."""
     value: LanguageStringType | None = getattr(metadata, identifier)
+    logger.info("Mulitlanguage registered: %s", value)
     if value is None:
         return value
     return str(getattr(value, language))
@@ -247,9 +248,11 @@ class MetadataMultiLanguageField(DisplayMetadata):
     These are a special case since they return a group of input fields..
     """
 
+    type: str = "text"
+
     def render(
         self,
-        component_id: dict,  # noqa: ARG002
+        component_id: dict,
         language: str,  # noqa: ARG002
         metadata: BaseModel,
     ) -> html.Fieldset:
@@ -258,7 +261,12 @@ class MetadataMultiLanguageField(DisplayMetadata):
             children=(
                 [
                     ssb.Glossary(
-                        children=(html.Legend(self.display_name)),
+                        children=(
+                            html.Legend(
+                                self.display_name,
+                                className="multilanguage-legend",
+                            )
+                        ),
                         explanation=self.description,
                     ),
                     ssb.Input(
@@ -268,6 +276,10 @@ class MetadataMultiLanguageField(DisplayMetadata):
                             self.identifier,
                             SupportedLanguages.NORSK_BOKMÅL,
                         ),
+                        debounce=True,
+                        id=f"{component_id}-nb",
+                        type=self.type,
+                        className="multilanguage-input-component",
                     ),
                     ssb.Input(
                         label="Nynorsk",
@@ -276,6 +288,10 @@ class MetadataMultiLanguageField(DisplayMetadata):
                             self.identifier,
                             SupportedLanguages.NORSK_NYNORSK,
                         ),
+                        debounce=True,
+                        id=f"{component_id}-nn",
+                        type=self.type,
+                        className="multilanguage-input-component",
                     ),
                     ssb.Input(
                         label="English",
@@ -284,6 +300,10 @@ class MetadataMultiLanguageField(DisplayMetadata):
                             self.identifier,
                             SupportedLanguages.ENGLISH,
                         ),
+                        debounce=True,
+                        id=f"{component_id}-en",
+                        type=self.type,
+                        className="multilanguage-input-component",
                     ),
                 ]
             ),
