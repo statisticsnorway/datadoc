@@ -22,7 +22,9 @@ def test_find_existing_language_string_no_existing_strings(bokmål_name: str):
         bokmål_name,
         "name",
     )
-    assert language_strings == model.LanguageStringType(nb=bokmål_name)
+    assert language_strings == model.LanguageStringType(
+        [model.LanguageStringTypeItem(languageCode="nb", languageText=bokmål_name)],
+    )
 
 
 def test_find_existing_language_string_pre_existing_strings(

@@ -5,6 +5,7 @@ from datadoc_model import model
 from datadoc.enums import SupportedLanguages
 from datadoc.utils import calculate_percentage
 from datadoc.utils import get_display_values
+from datadoc.utils import get_languagetext_from_languagestringtype
 from datadoc.utils import running_in_notebook
 
 
@@ -23,3 +24,16 @@ def test_get_display_values(
     variable = model.Variable(name=language_object)
     values = get_display_values(variable, SupportedLanguages.NORSK_BOKMÅL)
     assert values["name"] == bokmål_name
+
+
+def test_get_languagetext_from_languagestringtype(
+    language_dicts: list[dict[str, str]],
+    bokmål_name: str,
+):
+    assert (
+        get_languagetext_from_languagestringtype(
+            language_dicts,
+            SupportedLanguages.NORSK_BOKMÅL,
+        )
+        == bokmål_name
+    )

@@ -79,7 +79,12 @@ def find_existing_language_string(
         # This means that no strings have been saved yet so we need to construct
         # a new LanguageStrings object
         language_strings = model.LanguageStringType(
-            **{state.current_metadata_language.value: value},
+            [
+                model.LanguageStringTypeItem(
+                    languageCode=state.current_metadata_language.value,
+                    languageText=value,
+                ),
+            ],
         )
     else:
         # In this case there's an existing object so we save this string

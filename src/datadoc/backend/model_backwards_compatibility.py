@@ -115,10 +115,10 @@ def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
         )
         supplied_metadata["datadoc"]["variables"][i]["special_value"] = None
         supplied_metadata["datadoc"]["variables"][i]["custom_type"] = None
-        supplied_metadata["datadoc"]["variables"][i] = (
-            _find_and_update_language_strings(
-                supplied_metadata["datadoc"]["variables"][i],
-            )
+        supplied_metadata["datadoc"]["variables"][
+            i
+        ] = _find_and_update_language_strings(
+            supplied_metadata["datadoc"]["variables"][i],
         )
     supplied_metadata["datadoc"]["dataset"]["custom_type"] = None
     supplied_metadata["datadoc"]["dataset"] = _find_and_update_language_strings(
@@ -195,7 +195,6 @@ def handle_version_0_1_1(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     key_renaming = [("data_type", "datatype")]
 
     for i in range(len(supplied_metadata["variables"])):
-
         for new_key, old_key in key_renaming:
             supplied_metadata["variables"][i][new_key] = supplied_metadata["variables"][
                 i
@@ -223,6 +222,8 @@ def upgrade_metadata(fresh_metadata: dict[str, Any]) -> dict[str, Any]:
     # Special case for current version, we expose the current_model_version parameter for test purposes
 
     if is_metadata_in_container_structure(fresh_metadata):
+        if fresh_metadata["datadoc"] is None:
+            return fresh_metadata
         supplied_version = fresh_metadata["datadoc"][VERSION_FIELD_NAME]
     else:
         supplied_version = fresh_metadata[VERSION_FIELD_NAME]

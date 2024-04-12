@@ -36,6 +36,10 @@ class VariableIdentifiers(str, Enum):
     IDENTIFIER = "id"
     CONTAINS_DATA_FROM = "contains_data_from"
     CONTAINS_DATA_UNTIL = "contains_data_until"
+    CUSTOM_TYPE = "custom_type"
+    SPECIAL_VALUE = "special_value"
+    DATA_ELEMENT_PATH = "data_element_path"
+    MULTIPLICATION_FACTOR = "multiplication_factor"
 
 
 DISPLAY_VARIABLES: dict[
@@ -162,6 +166,26 @@ DISPLAY_VARIABLES: dict[
         display_name="Inneholder data t.o.m.",
         description="Variabelforekomsten i datasettet inneholder data til og med denne dato.",
         id_type=VARIABLES_METADATA_DATE_INPUT,
+    ),
+    VariableIdentifiers.CUSTOM_TYPE: MetadataInputField(
+        identifier=VariableIdentifiers.CUSTOM_TYPE.value,
+        display_name="Egendefinert type",
+        description="",
+    ),
+    VariableIdentifiers.SPECIAL_VALUE: MetadataInputField(
+        identifier=VariableIdentifiers.SPECIAL_VALUE.value,
+        display_name="Spesialverdi",
+        description="",
+    ),
+    VariableIdentifiers.DATA_ELEMENT_PATH: MetadataInputField(
+        identifier=VariableIdentifiers.DATA_ELEMENT_PATH.value,
+        display_name="Data element sti",
+        description="",
+    ),
+    VariableIdentifiers.MULTIPLICATION_FACTOR: MetadataInputField(
+        identifier=VariableIdentifiers.MULTIPLICATION_FACTOR.value,
+        display_name="Multiplikasjonsfaktor",
+        description="",
     ),
 }
 

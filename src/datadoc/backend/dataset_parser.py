@@ -13,6 +13,7 @@ from abc import abstractmethod
 
 import pandas as pd
 from datadoc_model.model import LanguageStringType
+from datadoc_model.model import LanguageStringTypeItem
 from datadoc_model.model import Variable
 from pyarrow import parquet as pq
 
@@ -212,11 +213,17 @@ class DatasetParserSas7Bdat(DatasetParser):
                     # Assume labels are defined in the default language (NORSK_BOKMÅL)
                     # If this is not correct, the user may fix it via the UI
                     name=LanguageStringType(
-                        **{
-                            state.current_metadata_language.value: sas_reader.columns[  # type: ignore [attr-defined]
-                                i
-                            ].label,
-                        },
+                        [
+                            LanguageStringTypeItem(
+                                languageCode=state.current_metadata_language.value,
+                                languageText=sas_reader.columns[  # type: ignore [attr-defined]
+                                    i
+                                ].label,
+                            ),
+                        ],
+                        # state.current_metadata_language.value: sas_reader.columns[  # type: ignore [attr-defined]
+                        #     i
+                        # ].label,
                     ),
                     # Access the python type for the value and transform it to a DataDoc Data type
                     data_type=self.transform_data_type(type(v).__name__.lower()),

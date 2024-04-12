@@ -99,6 +99,10 @@ class DatasetIdentifiers(str, Enum):
     METADATA_LAST_UPDATED_BY = "metadata_last_updated_by"
     CONTAINS_DATA_FROM = "contains_data_from"
     CONTAINS_DATA_UNTIL = "contains_data_until"
+    CUSTOM_TYPE = "custom_type"
+    USE_RESTRICTION = "use_restriction"
+    USE_RESTRICTION_DATE = "use_restriction_date"
+    CONTAINS_PERSONAL_DATA = "contains_personal_data"
 
 
 DISPLAY_DATASET: dict[
@@ -292,6 +296,26 @@ DISPLAY_DATASET: dict[
         obligatory=True,
         editable=True,
         id_type=DATASET_METADATA_DATE_INPUT,
+    ),
+    DatasetIdentifiers.CUSTOM_TYPE: MetadataInputField(
+        identifier=DatasetIdentifiers.CUSTOM_TYPE.value,
+        display_name="Egendefinert type",
+        description="",
+    ),
+    DatasetIdentifiers.USE_RESTRICTION: MetadataInputField(
+        identifier=DatasetIdentifiers.USE_RESTRICTION.value,
+        display_name="Brukerrestriksjon",
+        description="",
+    ),
+    DatasetIdentifiers.USE_RESTRICTION_DATE: MetadataPeriodField(
+        identifier=DatasetIdentifiers.USE_RESTRICTION_DATE.value,
+        display_name="Bruksrestriksjonsdato",
+        description="",
+    ),
+    DatasetIdentifiers.CONTAINS_PERSONAL_DATA: MetadataInputField(
+        identifier=DatasetIdentifiers.CONTAINS_PERSONAL_DATA.value,
+        display_name="Inneholder personopplysninger",
+        description="",
     ),
 }
 

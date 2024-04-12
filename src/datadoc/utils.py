@@ -1,13 +1,17 @@
 """General utilities."""
 
+from __future__ import annotations
+
 import datetime
 import importlib
+from typing import TYPE_CHECKING
 from typing import Any
 
 from datadoc_model import model
 from pydantic import AnyUrl
 
-from datadoc.enums import SupportedLanguages
+if TYPE_CHECKING:
+    from datadoc.enums import SupportedLanguages
 
 METADATA_DOCUMENT_FILE_SUFFIX = "__DOC.json"
 
@@ -29,6 +33,22 @@ def calculate_percentage(completed: int, total: int) -> int:
     return round((completed / total) * 100)
 
 
+def get_languagetext_from_languagestringtype(
+    variable: list[dict[str, str]] | None,
+    language: SupportedLanguages,
+) -> str | None:
+    """Return value from a LanguageStringType for given language."""
+    root = variable
+    if root:
+        for i in root:
+            if i["languageCode"] == language.value:
+                return i["languageText"]
+    else:
+        msg = "Root is none"
+        raise AssertionError(msg)
+    return None
+
+
 def get_display_values(
     variable: model.Variable,
     current_language: SupportedLanguages,
@@ -37,7 +57,10 @@ def get_display_values(
     return_dict = {}
     for field_name, value in variable:
         if isinstance(value, model.LanguageStringType):
-            return_dict[field_name] = value.model_dump()[current_language.value]
+            return_dict[field_name] = get_languagetext_from_languagestringtype(
+                value.model_dump(),  # type: ignore [arg-type]
+                current_language,
+            )
         elif isinstance(value, AnyUrl):
             return_dict[field_name] = str(value)
         else:
