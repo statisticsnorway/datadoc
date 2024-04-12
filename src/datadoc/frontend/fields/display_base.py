@@ -65,18 +65,6 @@ def get_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str | No
     return str(value)
 
 
-def get_multilanguage_metadata_and_stringify(
-    metadata: BaseModel,
-    identifier: str,
-    language: str,  # noqa: ARG001
-) -> str | None:
-    """Get a metadata multilanguage value from the model and cast to string."""
-    value = get_standard_metadata(metadata, identifier)
-    if value is None:
-        return None
-    return str(value)
-
-
 def get_date_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str | None:
     """Get a metadata date value from the model.
 
