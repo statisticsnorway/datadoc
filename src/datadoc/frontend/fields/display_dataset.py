@@ -148,9 +148,8 @@ DISPLAY_DATASET: dict[
         description="Datasettnavn",
         obligatory=True,
         multiple_language_support=True,
-        value_getter=get_metadata_and_stringify,
     ),
-    DatasetIdentifiers.DATA_SOURCE: MetadataInputField(
+    DatasetIdentifiers.DATA_SOURCE: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.DATA_SOURCE.value,
         display_name="Datakilde",
         description="Datakilde. Settes enten for datasettet eller variabelforekomst.",
@@ -164,7 +163,7 @@ DISPLAY_DATASET: dict[
         multiple_language_support=True,
         type="url",
     ),
-    DatasetIdentifiers.POPULATION_DESCRIPTION: MetadataInputField(
+    DatasetIdentifiers.POPULATION_DESCRIPTION: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.POPULATION_DESCRIPTION.value,
         display_name="Populasjon",
         description="Populasjonen datasettet dekker. Populasjonsbeskrivelsen inkluderer enhetstype, geografisk dekningsområde og tidsperiode.",
@@ -178,7 +177,7 @@ DISPLAY_DATASET: dict[
         obligatory=True,
         type="number",
     ),
-    DatasetIdentifiers.VERSION_DESCRIPTION: MetadataInputField(
+    DatasetIdentifiers.VERSION_DESCRIPTION: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.VERSION_DESCRIPTION.value,
         display_name="Versjonsbeskrivelse",
         description="Årsak/grunnlag for denne versjonen av datasettet i form av beskrivende tekst.",
@@ -203,7 +202,7 @@ DISPLAY_DATASET: dict[
         ),
         obligatory=True,
     ),
-    DatasetIdentifiers.DESCRIPTION: MetadataInputField(
+    DatasetIdentifiers.DESCRIPTION: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.DESCRIPTION.value,
         display_name="Beskrivelse",
         description="Beskrivelse av datasettet",
@@ -226,7 +225,7 @@ DISPLAY_DATASET: dict[
         description="En kommaseparert liste med søkbare nøkkelord som kan bidra til utvikling av effektive filtrerings- og søketjeneste.",
         value_getter=get_comma_separated_string,
     ),
-    DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION: MetadataInputField(
+    DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION.value,
         display_name="Geografisk dekningsområde",
         description="Beskrivelse av datasettets geografiske dekningsområde. Målet er på sikt at dette skal hentes fra Klass, men fritekst vil også kunne brukes.",
