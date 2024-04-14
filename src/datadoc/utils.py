@@ -38,9 +38,8 @@ def get_languagetext_from_languagestringtype(
     language: SupportedLanguages,
 ) -> str | None:
     """Return value from a LanguageStringType for given language."""
-    root = variable
-    if root:
-        for i in root:
+    if variable:
+        for i in variable:
             if i["languageCode"] == language.value:
                 return i["languageText"]
     else:

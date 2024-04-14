@@ -41,10 +41,13 @@ def test_find_existing_language_string_pre_existing_strings(
         nynorsk_name,
         "name",
     )
+    l = language_strings
     assert language_strings == model.LanguageStringType(
-        nb=bokmål_name,
-        en=english_name,
-        nn=nynorsk_name,
+        [
+            model.LanguageStringTypeItem(languageCode="en", languageText=english_name),
+            model.LanguageStringTypeItem(languageCode="nb", languageText=bokmål_name),
+            model.LanguageStringTypeItem(languageCode="nn", languageText=nynorsk_name),
+        ],
     )
 
 

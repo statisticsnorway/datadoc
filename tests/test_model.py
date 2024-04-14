@@ -19,7 +19,13 @@ def test_dataset_metadata_definition_parity():
 
 def test_variables_metadata_definition_parity():
     """The metadata fields are currently defined in multiple places for technical reasons. We want these to always be exactly identical."""
+    a = sorted([i.value for i in VariableIdentifiers])
+    b = sorted(
+        Variable().model_dump().keys(),
+    )
+
     assert sorted([i.value for i in VariableIdentifiers]) == sorted(
         Variable().model_dump().keys(),
     )
+
     assert sorted(VariableIdentifiers) == sorted(DISPLAY_VARIABLES.keys())

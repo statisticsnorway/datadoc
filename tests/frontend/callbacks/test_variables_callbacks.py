@@ -30,7 +30,14 @@ if TYPE_CHECKING:
         (
             VariableIdentifiers.NAME,
             "Variable name",
-            enums.LanguageStringType(nb="Variable name"),
+            enums.LanguageStringType(
+                [
+                    enums.LanguageStringTypeItem(
+                        languageCode="nb",
+                        languageText="Variable name",
+                    ),
+                ],
+            ),
         ),
         (
             VariableIdentifiers.DATA_TYPE,
@@ -55,17 +62,38 @@ if TYPE_CHECKING:
         (
             VariableIdentifiers.DATA_SOURCE,
             "Atlantis",
-            enums.LanguageStringType(nb="Atlantis"),
+            enums.LanguageStringType(
+                [
+                    enums.LanguageStringTypeItem(
+                        languageCode="nb",
+                        languageText="Atlantis",
+                    ),
+                ],
+            ),
         ),
         (
             VariableIdentifiers.POPULATION_DESCRIPTION,
             "Population description",
-            enums.LanguageStringType(nb="Population description"),
+            enums.LanguageStringType(
+                [
+                    enums.LanguageStringTypeItem(
+                        languageCode="nb",
+                        languageText="Population description",
+                    ),
+                ],
+            ),
         ),
         (
             VariableIdentifiers.COMMENT,
             "Comment",
-            enums.LanguageStringType(nb="Comment"),
+            enums.LanguageStringType(
+                [
+                    enums.LanguageStringTypeItem(
+                        languageCode="nb",
+                        languageText="Comment",
+                    ),
+                ],
+            ),
         ),
         (
             VariableIdentifiers.TEMPORALITY_TYPE,
@@ -88,14 +116,16 @@ if TYPE_CHECKING:
             Url("https://www.example.com"),
         ),
         (
-            VariableIdentifiers.SENTINEL_VALUE_URI,
-            "https://www.example.com",
-            Url("https://www.example.com"),
-        ),
-        (
             VariableIdentifiers.INVALID_VALUE_DESCRIPTION,
             "Invalid value",
-            enums.LanguageStringType(nb="Invalid value"),
+            enums.LanguageStringType(
+                [
+                    enums.LanguageStringTypeItem(
+                        languageCode="nb",
+                        languageText="Invalid value",
+                    ),
+                ],
+            ),
         ),
         (
             VariableIdentifiers.IDENTIFIER,
