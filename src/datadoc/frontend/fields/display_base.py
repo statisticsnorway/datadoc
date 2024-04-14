@@ -103,7 +103,17 @@ def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> str | N
     value: LanguageStringType | None = getattr(metadata, identifier)
     if value is None:
         return value
-    return str(getattr(value, state.current_metadata_language))
+    return str(_get_string_type_item(value, state.current_metadata_language))
+
+
+def _get_string_type_item(
+    language_strings: LanguageStringType,
+    current_metadata_language: SupportedLanguages,
+) -> str | None:
+    for i in language_strings.root:
+        if i.languageCode == current_metadata_language:
+            return i.languageText
+    return None
 
 
 def get_comma_separated_string(metadata: BaseModel, identifier: str) -> str:

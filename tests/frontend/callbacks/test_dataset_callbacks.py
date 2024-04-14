@@ -138,14 +138,7 @@ def file_path_without_dates():
         (
             DatasetIdentifiers.SUBJECT_FIELD,
             "al03",
-            enums.LanguageStringType(
-                [
-                    enums.LanguageStringTypeItem(
-                        languageCode="nb",
-                        languageText="al03",
-                    ),
-                ],
-            ),
+            "al03",
         ),
         (
             DatasetIdentifiers.KEYWORD,
@@ -271,11 +264,11 @@ def test_update_dataset_metadata_language_enums():
     state.metadata.dataset.dataset_state = DataSetState.PROCESSED_DATA
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     output = update_dataset_metadata_language()
-    assert DataSetState.PROCESSED_DATA.language_strings.nb not in output
+    assert DataSetState.PROCESSED_DATA.language_strings not in output
     assert DataSetState.PROCESSED_DATA.name in output
     state.current_metadata_language = SupportedLanguages.ENGLISH
     output = update_dataset_metadata_language()
-    assert DataSetState.PROCESSED_DATA.language_strings.nb not in output
+    assert DataSetState.PROCESSED_DATA.language_strings not in output
     assert DataSetState.PROCESSED_DATA.name in output
 
 

@@ -213,7 +213,7 @@ DISPLAY_DATASET: dict[
         obligatory=True,
         # TODO @mmwinther: Remove multiple_language_support once the model is updated.
         # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
-        multiple_language_support=True,
+        multiple_language_support=False,
         options_getter=get_statistical_subject_options,
     ),
     DatasetIdentifiers.KEYWORD: MetadataInputField(
