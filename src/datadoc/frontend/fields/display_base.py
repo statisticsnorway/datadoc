@@ -30,10 +30,10 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 DATASET_METADATA_INPUT = "dataset-metadata-input"
+DATASET_METADATA_DATE_INPUT = "dataset-metadata-date-input"
 
 VARIABLES_METADATA_INPUT = "variables-metadata-input"
 VARIABLES_METADATA_DATE_INPUT = "variables-metadata-date-input"
-DATASET_METADATA_DATE_INPUT = "dataset-metadata-date-input"
 
 
 def get_enum_options_for_language(
