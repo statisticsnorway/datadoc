@@ -256,6 +256,7 @@ class MetadataMultiLanguageField(DisplayMetadata):
                             )
                         ),
                         explanation=self.description,
+                        className="legend-glossary",
                     ),
                     ssb.Input(
                         label="Bokmål",
