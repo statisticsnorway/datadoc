@@ -46,14 +46,14 @@ label.form-check-label{
     margin-top: 1.8rem;
 }
 
-.dropdown-wrapper > .ssb-glossary.info-glossary > .glossary-popup {
+.ssb-dropdown.dropdown-component > .ssb-glossary.info-glossary > .glossary-popup {
     margin-left: 20px;
     left: unset;
     top: unset;
     bottom: 5px;
 }
 
-.dropdown-wrapper > .ssb-glossary.info-glossary > .glossary-popup::after {
+.ssb-dropdown.dropdown-component > .ssb-glossary.info-glossary > .glossary-popup::after {
     left: -10px;
     margin-left: -10px;
     top: unset;
