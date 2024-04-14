@@ -81,11 +81,11 @@ label.form-check-label{
 }
 
 .multilanguage-fieldset{
-   border: 1px solid #274247;
-   outline: #274247;
-   padding: 1rem;
-   max-width: 500px;
-   width: 100%;
+    border: 1px solid #274247;
+    outline: #274247;
+    padding: 1rem;
+    max-width: 500px;
+    width: 100%;
 }
 
 .multilanguage-fieldset:focus{
@@ -110,4 +110,24 @@ label.form-check-label{
 .ssb-input.multilanguage-input-component{
     max-width: 450px;
     width: 100%;
+}
+
+.multilanguage-fieldset > .ssb-glossary.legend-glossary > .glossary-popup {
+    margin-left: 20px;
+    left: unset;
+    top: unset;
+    bottom: 5px;
+}
+
+.multilanguage-fieldset > .ssb-glossary.legend-glossary > .glossary-popup::after {
+    left: -10px;
+    margin-left: -10px;
+    top: unset;
+    bottom: 5px;
+    transform: rotateX(-90deg);
+    -webkit-transform: rotate(-90deg);
+}
+
+.ssb-glossary.legend-glossary > .glossary-popup .content-box > .glossary-closing{
+    margin-top: 1.8rem;
 }

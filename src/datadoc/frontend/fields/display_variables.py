@@ -10,6 +10,7 @@ from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import MetadataCheckboxField
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
+from datadoc.frontend.fields.display_base import MetadataMultiLanguageField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
 from datadoc.frontend.fields.display_base import VariablesFieldTypes
 from datadoc.frontend.fields.display_base import get_enum_options_for_language
@@ -50,7 +51,7 @@ DISPLAY_VARIABLES: dict[
         obligatory=True,
         editable=False,
     ),
-    VariableIdentifiers.NAME: MetadataInputField(
+    VariableIdentifiers.NAME: MetadataMultiLanguageField(
         identifier=VariableIdentifiers.NAME.value,
         display_name="Navn",
         description="Variabelnavn kan arves fra VarDef, men kan også dokumenteres/endres her.",
@@ -91,21 +92,21 @@ DISPLAY_VARIABLES: dict[
         description="Velges hvis variabelen inneholder informasjon som innebærer at enkeltpersoner kan identifiseres. Gjelder ikke hvis kolonnen er pseudonymisert eller anonymisert.",
         obligatory=True,
     ),
-    VariableIdentifiers.DATA_SOURCE: MetadataInputField(
+    VariableIdentifiers.DATA_SOURCE: MetadataMultiLanguageField(
         identifier=VariableIdentifiers.DATA_SOURCE.value,
         display_name="Datakilde",
         description="Datakilde. Settes på datasettnivå, men kan overstyres på variabelforekomstnivå.",
         multiple_language_support=True,
         type="text",
     ),
-    VariableIdentifiers.POPULATION_DESCRIPTION: MetadataInputField(
+    VariableIdentifiers.POPULATION_DESCRIPTION: MetadataMultiLanguageField(
         identifier=VariableIdentifiers.POPULATION_DESCRIPTION.value,
         display_name="Populasjonen",
         description="Populasjonen variabelen beskriver kan spesifiseres nærmere her. Settes på datasettnivå, men kan overstyres på variabelforekomstnivå.",
         multiple_language_support=True,
         type="text",
     ),
-    VariableIdentifiers.COMMENT: MetadataInputField(
+    VariableIdentifiers.COMMENT: MetadataMultiLanguageField(
         identifier=VariableIdentifiers.COMMENT.value,
         display_name="Kommentar",
         description="Ytterligere presiseringer av variabeldefinisjon",
@@ -144,7 +145,7 @@ DISPLAY_VARIABLES: dict[
         description="En lenke (URI) til en oversikt over 'spesialverdier' som inngår i variabelen.",
         type="url",
     ),
-    VariableIdentifiers.INVALID_VALUE_DESCRIPTION: MetadataInputField(
+    VariableIdentifiers.INVALID_VALUE_DESCRIPTION: MetadataMultiLanguageField(
         identifier=VariableIdentifiers.INVALID_VALUE_DESCRIPTION.value,
         display_name="Ugyldige verdier",
         description="En beskrivelse av ugyldige verdier som inngår i variabelen dersom spesialverdiene ikke er tilstrekkelige eller ikke kan benyttes.",

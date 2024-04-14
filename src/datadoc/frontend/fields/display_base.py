@@ -329,6 +329,7 @@ VariablesFieldTypes = (
     | MetadataDropdownField
     | MetadataCheckboxField
     | MetadataPeriodField
+    | MetadataMultiLanguageField
 )
 
 DatasetFieldTypes = (
