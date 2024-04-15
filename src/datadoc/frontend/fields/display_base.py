@@ -35,6 +35,24 @@ DATASET_METADATA_DATE_INPUT = "dataset-metadata-date-input"
 VARIABLES_METADATA_INPUT = "variables-metadata-input"
 VARIABLES_METADATA_DATE_INPUT = "variables-metadata-date-input"
 
+METADATA_LANGUAGES = [
+    {
+        "supported_language": SupportedLanguages.NORSK_BOKMÅL,
+        "language_title": "Bokmål",
+        "language_value": "nb",
+    },
+    {
+        "supported_language": SupportedLanguages.NORSK_NYNORSK,
+        "language_title": "Nynorsk",
+        "language_value": "nn",
+    },
+    {
+        "supported_language": SupportedLanguages.ENGLISH,
+        "language_title": "English",
+        "language_value": "en",
+    },
+]
+
 
 def get_enum_options_for_language(
     enum: Enum,
@@ -175,7 +193,7 @@ class MetadataDropdownField(DisplayMetadata):
     """Controls how a Dropdown should be displayed."""
 
     # fmt: off
-    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
+    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: [] # noqa: E731, RUF100
     # fmt: on
 
     def render(
@@ -241,22 +259,29 @@ class MetadataMultiLanguageField(DisplayMetadata):
     def render_input_group(
         self,
         component_id: dict,
-        supported_language: SupportedLanguages,
-        label: str,
         metadata: BaseModel,
-    ) -> ssb.Input:
+    ) -> html.Section:
         """Build section with Input components for each language."""
-        return ssb.Input(
-            label=label,
-            value=get_multi_language_metadata_and_stringify(
-                metadata,
-                self.identifier,
-                supported_language,
-            ),
-            debounce=True,
-            id=f"{component_id}-nb",
-            type=self.type,
-            className="multilanguage-input-component",
+        return html.Section(
+            children=[
+                ssb.Input(
+                    label=i["language_title"],
+                    value=get_multi_language_metadata_and_stringify(
+                        metadata,
+                        self.identifier,
+                        SupportedLanguages(i["supported_language"]),
+                    ),
+                    debounce=True,
+                    id={
+                        "type": component_id["type"],
+                        "id": component_id["id"],
+                        "language": i["language_value"],
+                    },
+                    type=self.type,
+                    className="multilanguage-input-component",
+                )
+                for i in METADATA_LANGUAGES
+            ],
         )
 
     def render(
@@ -281,45 +306,7 @@ class MetadataMultiLanguageField(DisplayMetadata):
                     ),
                     self.render_input_group(
                         component_id=component_id,
-                        supported_language=SupportedLanguages.NORSK_BOKMÅL,
-                        label="Bokmål",
                         metadata=metadata,
-                    ),
-                    ssb.Input(
-                        label="Bokmål",
-                        value=get_multi_language_metadata_and_stringify(
-                            metadata,
-                            self.identifier,
-                            SupportedLanguages.NORSK_BOKMÅL,
-                        ),
-                        debounce=True,
-                        id=f"{component_id}-nb",
-                        type=self.type,
-                        className="multilanguage-input-component",
-                    ),
-                    ssb.Input(
-                        label="Nynorsk",
-                        value=get_multi_language_metadata_and_stringify(
-                            metadata,
-                            self.identifier,
-                            SupportedLanguages.NORSK_NYNORSK,
-                        ),
-                        debounce=True,
-                        id=f"{component_id}-nn",
-                        type=self.type,
-                        className="multilanguage-input-component",
-                    ),
-                    ssb.Input(
-                        label="English",
-                        value=get_multi_language_metadata_and_stringify(
-                            metadata,
-                            self.identifier,
-                            SupportedLanguages.ENGLISH,
-                        ),
-                        debounce=True,
-                        id=f"{component_id}-en",
-                        type=self.type,
-                        className="multilanguage-input-component",
                     ),
                 ]
             ),
