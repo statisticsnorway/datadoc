@@ -301,6 +301,7 @@ DISPLAY_DATASET: dict[
         identifier=DatasetIdentifiers.CUSTOM_TYPE.value,
         display_name="Egendefinert type",
         description="",
+        editable=False,
     ),
     DatasetIdentifiers.USE_RESTRICTION: MetadataInputField(
         identifier=DatasetIdentifiers.USE_RESTRICTION.value,

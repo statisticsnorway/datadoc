@@ -171,11 +171,13 @@ DISPLAY_VARIABLES: dict[
         identifier=VariableIdentifiers.CUSTOM_TYPE.value,
         display_name="Egendefinert type",
         description="",
+        editable=False,
     ),
     VariableIdentifiers.SPECIAL_VALUE: MetadataInputField(
         identifier=VariableIdentifiers.SPECIAL_VALUE.value,
         display_name="Spesialverdi",
         description="",
+        editable=False,
     ),
     VariableIdentifiers.DATA_ELEMENT_PATH: MetadataInputField(
         identifier=VariableIdentifiers.DATA_ELEMENT_PATH.value,
