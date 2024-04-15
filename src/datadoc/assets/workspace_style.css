@@ -35,9 +35,6 @@
     flex-direction: column;
     gap: 1rem;
     width: 100%;
-}
-
-.edit-section.dataset-edit-section{
     padding: 1rem;
 }
 
@@ -62,26 +59,4 @@
     margin-bottom: 1rem;
     padding-bottom: 1rem;
 
-}
-
-.ssb-input.input-component{
-    max-width: 500px;
-    width: 100%;
-}
-
-.ssb-dropdown.dropdown-component {
-    max-width: 500px;
-    width: 100%;
-}
-
-.form-check.ssb-checkbox{
-    align-self: center;
-}
-
-.form-check{
-    padding-left: 0;
-}
-
-label.form-check-label{
-    padding-left: 0.5rem;
 }

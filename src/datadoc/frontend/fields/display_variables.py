@@ -85,7 +85,6 @@ DISPLAY_VARIABLES: dict[
         identifier=VariableIdentifiers.DEFINITION_URI.value,
         display_name="Definition URI",
         description="En lenke (URI) til variabelens definisjon i SSB (Vardok/VarDef)",
-        url=True,
         obligatory=True,
         type="url",
     ),
@@ -140,7 +139,6 @@ DISPLAY_VARIABLES: dict[
         identifier=VariableIdentifiers.CLASSIFICATION_URI.value,
         display_name="Kodeverkets URI",
         description="Lenke (URI) til gyldige kodeverk (klassifikasjon eller kodeliste) i KLASS",
-        url=True,
         type="url",
     ),
     VariableIdentifiers.INVALID_VALUE_DESCRIPTION: MetadataInputField(

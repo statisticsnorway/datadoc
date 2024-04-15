@@ -189,12 +189,12 @@ def build_dataset_edit_section(
             dbc.Form(
                 [
                     i.render(
-                        {
+                        component_id={
                             "type": DATASET_METADATA_INPUT,
                             "id": i.identifier,
                         },
-                        language,
-                        dataset,
+                        language=language,
+                        metadata=dataset,
                     )
                     for i in metadata_inputs
                 ],

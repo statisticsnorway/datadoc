@@ -154,7 +154,6 @@ def test_build_input_fields_type_url(field_list, variable, language):
         for element in input_section.children
         if isinstance(element, ssb.Input) and element.type == "url"
     ]
-    assert all(item.url is True for item in variable_identifier_url)
     assert all(item.debounce is True for item in elements_of_input_and_type_url)
     for item1, item2 in zip(elements_of_input_and_type_url, variable_identifier_url):
         assert item1.label == item2.display_name

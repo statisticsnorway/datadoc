@@ -1,0 +1,81 @@
+
+.ssb-input.input-component{
+    max-width: 500px;
+    width: 100%;
+}
+
+.ssb-dropdown.dropdown-component {
+    max-width: 500px;
+    width: 100%;
+}
+
+.dropdown-wrapper{
+    max-width: 500px;
+    width: 100%;
+}
+
+.form-check.ssb-checkbox{
+    align-self: center;
+}
+
+.form-check{
+    padding-left: 0;
+}
+
+label.form-check-label{
+    padding-left: 0.5rem;
+}
+
+.ssb-input.input-component > span > .ssb-glossary.info-glossary > .glossary-popup {
+    margin-left: 20px;
+    left: unset;
+    top: unset;
+    bottom: 5px;
+}
+
+.ssb-input.input-component > span > .ssb-glossary.info-glossary > .glossary-popup::after {
+    left: -10px;
+    margin-left: -10px;
+    top: unset;
+    bottom: 5px;
+    transform: rotateX(-90deg);
+    -webkit-transform: rotate(-90deg);
+}
+
+.ssb-glossary.datadoc-glossary > .glossary-popup .content-box > .glossary-closing{
+    margin-top: 1.8rem;
+}
+
+.ssb-dropdown.dropdown-component > .ssb-glossary.info-glossary > .glossary-popup {
+    margin-left: 20px;
+    left: unset;
+    top: unset;
+    bottom: 5px;
+}
+
+.ssb-dropdown.dropdown-component > .ssb-glossary.info-glossary > .glossary-popup::after {
+    left: -10px;
+    margin-left: -10px;
+    top: unset;
+    bottom: 5px;
+    transform: rotateX(-90deg);
+    -webkit-transform: rotate(-90deg);
+}
+
+.ssb-input.input-component input[readonly]{
+    border: 1px solid #274247 !important;
+    outline: unset !important;
+    outline-offset: unset !important;
+}
+
+.ssb-input.input-component input[readonly]:focus{
+    border: 1px solid #274247 !important;
+    outline: unset !important;
+    outline-offset: unset !important;
+}
+
+.ssb-input.input-component input[readonly]:hover{
+    border: 1px solid #274247 !important;
+    outline: unset !important;
+    outline-offset: unset !important;
+}
