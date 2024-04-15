@@ -140,7 +140,7 @@ def test_build_dataset_is_form_component(title, field_types, language, dataset, 
 
 
 @pytest.mark.parametrize(
-    ("edit_section", "expected_inputs", "expected_dropdowns"),
+    ("edit_section", "expected_inputs", "expected_dropdowns", "expected_multilanguage"),
     [
         (
             build_dataset_edit_section(
@@ -152,6 +152,7 @@ def test_build_dataset_is_form_component(title, field_types, language, dataset, 
             ),
             7,
             0,
+            0,
         ),
         (
             build_dataset_edit_section(
@@ -161,7 +162,8 @@ def test_build_dataset_is_form_component(title, field_types, language, dataset, 
                 model.Dataset(),
                 {},
             ),
-            3,
+            2,
+            1,
             1,
         ),
         (
@@ -172,8 +174,9 @@ def test_build_dataset_is_form_component(title, field_types, language, dataset, 
                 model.Dataset(short_name="super_dataset"),
                 {"type": "dataset-edit-section", "id": "obligatory-en"},
             ),
-            8,
             3,
+            3,
+            5,
         ),
     ],
 )
@@ -181,15 +184,19 @@ def test_build_dataset_edit_section_renders_ssb_components(
     edit_section,
     expected_inputs,
     expected_dropdowns,
+    expected_multilanguage,
 ):
     fields = edit_section.children[1].children
-
     input_components = [element for element in fields if isinstance(element, ssb.Input)]
     dropdown_components = [
         element for element in fields if isinstance(element, ssb.Dropdown)
     ]
+    multilanguage_components = [
+        element for element in fields if isinstance(element, html.Fieldset)
+    ]
     assert len(input_components) == expected_inputs
     assert len(dropdown_components) == expected_dropdowns
+    assert len(multilanguage_components) == expected_multilanguage
 
 
 @pytest.mark.parametrize(
@@ -288,7 +295,7 @@ DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL: list[DatasetFieldTypes] = [
                 model.Dataset(short_name="input_dataset"),
                 {"type": "dataset-edit-section", "id": "recommended-nb"},
             ),
-            16,
+            10,
             ssb.Input,
         ),
         (
