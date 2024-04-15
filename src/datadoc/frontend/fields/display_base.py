@@ -174,7 +174,7 @@ class MetadataDropdownField(DisplayMetadata):
     """Controls how a Dropdown should be displayed."""
 
     # fmt: off
-    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
+    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []
     # fmt: on
 
     def render(
@@ -259,4 +259,9 @@ VariablesFieldTypes = (
     | MetadataPeriodField
 )
 
-DatasetFieldTypes = MetadataInputField | MetadataDropdownField | MetadataPeriodField
+DatasetFieldTypes = (
+    MetadataInputField
+    | MetadataDropdownField
+    | MetadataPeriodField
+    | MetadataCheckboxField
+)
