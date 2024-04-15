@@ -100,7 +100,7 @@ def _add_language_string_item(
 
 def find_existing_language_string(
     metadata_model_object: pydantic.BaseModel,
-    value: str,
+    value: SupportedLanguages,
     metadata_identifier: str,
 ) -> model.LanguageStringType:
     """Get or create a LanguageStrings object and return it."""

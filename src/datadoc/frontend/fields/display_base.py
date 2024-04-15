@@ -103,7 +103,7 @@ def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> str | N
     value: LanguageStringType | None = getattr(metadata, identifier)
     if value is None:
         return value
-    return str(_get_string_type_item(value, state.current_metadata_language))
+    return _get_string_type_item(value, state.current_metadata_language)
 
 
 def _get_string_type_item(
