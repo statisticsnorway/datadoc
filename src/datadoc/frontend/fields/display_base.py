@@ -238,6 +238,27 @@ class MetadataMultiLanguageField(DisplayMetadata):
 
     type: str = "text"
 
+    def render_input_group(
+        self,
+        component_id: dict,
+        supported_language: SupportedLanguages,
+        label: str,
+        metadata: BaseModel,
+    ) -> ssb.Input:
+        """Build section with Input components for each language."""
+        return ssb.Input(
+            label=label,
+            value=get_multi_language_metadata_and_stringify(
+                metadata,
+                self.identifier,
+                supported_language,
+            ),
+            debounce=True,
+            id=f"{component_id}-nb",
+            type=self.type,
+            className="multilanguage-input-component",
+        )
+
     def render(
         self,
         component_id: dict,
@@ -257,6 +278,12 @@ class MetadataMultiLanguageField(DisplayMetadata):
                         ),
                         explanation=self.description,
                         className="legend-glossary",
+                    ),
+                    self.render_input_group(
+                        component_id=component_id,
+                        supported_language=SupportedLanguages.NORSK_BOKMÅL,
+                        label="Bokmål",
+                        metadata=metadata,
                     ),
                     ssb.Input(
                         label="Bokmål",
