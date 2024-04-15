@@ -110,9 +110,10 @@ def _get_string_type_item(
     language_strings: LanguageStringType,
     current_metadata_language: SupportedLanguages,
 ) -> str | None:
-    for i in language_strings.root:
-        if i.languageCode == current_metadata_language:
-            return i.languageText
+    if language_strings.root is not None:
+        for i in language_strings.root:
+            if i.languageCode == current_metadata_language:
+                return i.languageText
     return None
 
 
