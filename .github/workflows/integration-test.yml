@@ -104,3 +104,4 @@ jobs:
           environment-id: ${{ secrets.DATADOC_MABL_ENVIRONMENT_ID }}
           uri: https://datadoc-pr-${{github.event.number}}.external.staging.ssb.cloud.nais.io
           mabl-branch: ${{ github.head_ref }}
+          plan-labels: Datadoc
