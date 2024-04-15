@@ -70,7 +70,7 @@ def test_backwards_compatibility(
         file_metadata = file_metadata["datadoc"]
 
     # Just test a single value to make sure we have a working model
-    assert metadata.dataset.name.root[0].languageText == file_metadata["dataset"]["name"]["en"]  # type: ignore [union-attr]
+    assert metadata.dataset.name.root[0].languageText == file_metadata["dataset"]["name"]["en"]  # type: ignore [union-attr, index]
 
 
 def test_add_container():

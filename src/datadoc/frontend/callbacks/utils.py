@@ -69,37 +69,41 @@ def get_options_for_language(
 
 def _check_if_language_string_item_exists(
     language_strings: model.LanguageStringType,
-    language_code: SupportedLanguages,
+    language_code: str,
 ) -> bool:
+    if language_strings.root is None:
+        return False
     return any(i.languageCode == language_code for i in language_strings.root)
 
 
 def _update_language_string_item(
     language_strings: model.LanguageStringType,
-    language_code: SupportedLanguages,
+    language_code: str,
     new_value: str,
 ) -> None:
-    for i in language_strings.root:
-        if i.languageCode == language_code:
-            i.languageText = new_value
+    if language_strings.root is not None:
+        for i in language_strings.root:
+            if i.languageCode == language_code:
+                i.languageText = new_value
 
 
 def _add_language_string_item(
     language_strings: model.LanguageStringType,
-    language_code: SupportedLanguages,
+    language_code: str,
     language_text: str,
 ) -> None:
-    language_strings.root.append(
-        model.LanguageStringTypeItem(
-            languageCode=language_code,
-            languageText=language_text,
-        ),
-    )
+    if language_strings.root is not None:
+        language_strings.root.append(
+            model.LanguageStringTypeItem(
+                languageCode=language_code,
+                languageText=language_text,
+            ),
+        )
 
 
 def find_existing_language_string(
     metadata_model_object: pydantic.BaseModel,
-    value: SupportedLanguages,
+    value: str,
     metadata_identifier: str,
 ) -> model.LanguageStringType:
     """Get or create a LanguageStrings object and return it."""
