@@ -34,7 +34,11 @@ spec:
     enabled: false
 
   ingresses:
-    - https://datadoc-pr-{{ pr-number }}.staging.ssb.cloud.nais.io
+    - https://datadoc-pr-{{ pr-number }}.external.staging.ssb.cloud.nais.io
+
+  filesFrom:
+    - configmap: integration-test-dataset
+      mountPath: /var/run/datasets/ifpn/klargjorte_data/
 
   liveness:
     path: /healthz/live
