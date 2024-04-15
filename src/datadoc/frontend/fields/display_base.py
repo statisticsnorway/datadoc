@@ -128,6 +128,7 @@ class DisplayMetadata(ABC):
     multiple_language_support: bool = False
     value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
     show_description: bool = True
+    disabled: bool = False
 
     @abstractmethod
     def render(
@@ -163,6 +164,7 @@ class MetadataInputField(DisplayMetadata):
             description=self.description,
             readOnly=not self.editable,
             value=value,
+            disabled=self.disabled,
             className="input-component",
         )
 
