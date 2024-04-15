@@ -26,6 +26,10 @@ label.form-check-label{
     padding-left: 0.5rem;
 }
 
+.ssb-glossary.info-glossary{
+    max-width: fit-content;
+}
+
 .ssb-input.input-component > span > .ssb-glossary.info-glossary > .glossary-popup {
     margin-left: 20px;
     left: unset;
