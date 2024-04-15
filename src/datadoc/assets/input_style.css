@@ -66,6 +66,13 @@ label.form-check-label{
     -webkit-transform: rotate(-90deg);
 }
 
+.ssb-glossary.info-glossary > .glossary-button  > .glossary-textwrap > .ssb-dropdown label, .ssb-dropdown .dropdown-label{
+    margin-bottom: 0;
+}
+
+.ssb-input-label{
+    margin-bottom: 0;
+}
 .ssb-input.input-component input[readonly]{
     border: 1px solid #274247 !important;
     outline: unset !important;
