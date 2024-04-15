@@ -382,10 +382,10 @@ class UseRestriction(LanguageStringsEnum):
                 languageText=model.UseRestriction.DELETION_ANONYMIZATION.value,
             ),
             LanguageStringTypeItem(
-                languageCode="nn", languageText="SLETTING/ANONYMISERING"
+                languageCode="nn", languageText="SLETTING/ANONYMISERING",
             ),
             LanguageStringTypeItem(
-                languageCode="nb", languageText="SLETTING/ANONYMISERING"
+                languageCode="nb", languageText="SLETTING/ANONYMISERING",
             ),
         ],
     )
@@ -396,10 +396,10 @@ class UseRestriction(LanguageStringsEnum):
                 languageText=model.UseRestriction.PROCESS_LIMITATIONS.value,
             ),
             LanguageStringTypeItem(
-                languageCode="nn", languageText="BEHANDLINGSBEGRENSNINGER"
+                languageCode="nn", languageText="BEHANDLINGSBEGRENSNINGER",
             ),
             LanguageStringTypeItem(
-                languageCode="nb", languageText="BEHANDLINGSBEGRENSNINGER"
+                languageCode="nb", languageText="BEHANDLINGSBEGRENSNINGER",
             ),
         ],
     )
@@ -410,10 +410,10 @@ class UseRestriction(LanguageStringsEnum):
                 languageText=model.UseRestriction.SECONDARY_USE_RESTRICTIONS.value,
             ),
             LanguageStringTypeItem(
-                languageCode="nn", languageText="SEKUNDÆRBRUKSRESTRIKSJONER"
+                languageCode="nn", languageText="SEKUNDÆRBRUKSRESTRIKSJONER",
             ),
             LanguageStringTypeItem(
-                languageCode="nb", languageText="SEKUNDÆRBRUKSRESTRIKSJONER"
+                languageCode="nb", languageText="SEKUNDÆRBRUKSRESTRIKSJONER",
             ),
         ],
     )
