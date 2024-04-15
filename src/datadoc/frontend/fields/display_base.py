@@ -174,7 +174,7 @@ class MetadataDropdownField(DisplayMetadata):
     """Controls how a Dropdown should be displayed."""
 
     # fmt: off
-    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []
+    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731, RUF100
     # fmt: on
 
     def render(
