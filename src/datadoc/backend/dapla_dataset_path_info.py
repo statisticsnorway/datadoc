@@ -368,8 +368,15 @@ class DaplaDatasetPathInfo:
     ) -> set:
         norwegian_dataset_state_path_part = dataset_state.get_value_for_language(
             SupportedLanguages.NORSK_BOKMÅL,
-        ).lower()
-        return {norwegian_dataset_state_path_part.replace(" ", x) for x in ["-", "_"]}
+        )
+        if norwegian_dataset_state_path_part is not None:
+            norwegian_dataset_state_path_part = (
+                norwegian_dataset_state_path_part.lower()
+            )
+            return_value = {
+                norwegian_dataset_state_path_part.replace(" ", x) for x in ["-", "_"]
+            }
+        return return_value
 
     @property
     def dataset_short_name(

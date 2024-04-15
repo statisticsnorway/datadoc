@@ -72,33 +72,63 @@ def file_path_without_dates():
         (
             DatasetIdentifiers.NAME,
             "Dataset name",
-            enums.LanguageStringType(nb="Dataset name"),
+            enums.LanguageStringType(
+                [
+                    enums.LanguageStringTypeItem(
+                        languageCode="nb",
+                        languageText="Dataset name",
+                    ),
+                ],
+            ),
         ),
         (
             DatasetIdentifiers.DESCRIPTION,
             "Dataset description",
-            enums.LanguageStringType(nb="Dataset description"),
+            enums.LanguageStringType(
+                [
+                    enums.LanguageStringTypeItem(
+                        languageCode="nb",
+                        languageText="Dataset description",
+                    ),
+                ],
+            ),
         ),
         (
             DatasetIdentifiers.DATA_SOURCE,
             "Census",
-            enums.LanguageStringType(nb="Census"),
-        ),
-        (
-            DatasetIdentifiers.REGISTER_URI,
-            "https://www.example.com",
-            enums.LanguageStringType(nb="https://www.example.com"),
+            enums.LanguageStringType(
+                [
+                    enums.LanguageStringTypeItem(
+                        languageCode="nb",
+                        languageText="Census",
+                    ),
+                ],
+            ),
         ),
         (
             DatasetIdentifiers.DESCRIPTION,
             "Population description",
-            enums.LanguageStringType(nb="Population description"),
+            enums.LanguageStringType(
+                [
+                    enums.LanguageStringTypeItem(
+                        languageCode="nb",
+                        languageText="Population description",
+                    ),
+                ],
+            ),
         ),
         (DatasetIdentifiers.VERSION, 1, "1"),
         (
             DatasetIdentifiers.VERSION_DESCRIPTION,
             "Version description",
-            enums.LanguageStringType(nb="Version description"),
+            enums.LanguageStringType(
+                [
+                    enums.LanguageStringTypeItem(
+                        languageCode="nb",
+                        languageText="Version description",
+                    ),
+                ],
+            ),
         ),
         (
             DatasetIdentifiers.TEMPORALITY_TYPE,
@@ -108,7 +138,7 @@ def file_path_without_dates():
         (
             DatasetIdentifiers.SUBJECT_FIELD,
             "al03",
-            enums.LanguageStringType(nb="al03"),
+            "al03",
         ),
         (
             DatasetIdentifiers.KEYWORD,
@@ -118,7 +148,14 @@ def file_path_without_dates():
         (
             DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION,
             "Spatial coverage description",
-            enums.LanguageStringType(nb="Spatial coverage description"),
+            enums.LanguageStringType(
+                [
+                    enums.LanguageStringTypeItem(
+                        languageCode="nb",
+                        languageText="Spatial coverage description",
+                    ),
+                ],
+            ),
         ),
         (
             DatasetIdentifiers.ID,
@@ -227,11 +264,11 @@ def test_update_dataset_metadata_language_enums():
     state.metadata.dataset.dataset_state = DataSetState.PROCESSED_DATA
     state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     output = update_dataset_metadata_language()
-    assert DataSetState.PROCESSED_DATA.language_strings.nb not in output
+    assert DataSetState.PROCESSED_DATA.language_strings not in output
     assert DataSetState.PROCESSED_DATA.name in output
     state.current_metadata_language = SupportedLanguages.ENGLISH
     output = update_dataset_metadata_language()
-    assert DataSetState.PROCESSED_DATA.language_strings.nb not in output
+    assert DataSetState.PROCESSED_DATA.language_strings not in output
     assert DataSetState.PROCESSED_DATA.name in output
 
 
@@ -387,7 +424,18 @@ def test_process_special_cases_language_string(
     identifier = random.choice(  # noqa: S311
         MULTIPLE_LANGUAGE_DATASET_METADATA,
     )
-    expected = model.LanguageStringType(nb="Existing language string", en=value)
+    expected = model.LanguageStringType(
+        [
+            model.LanguageStringTypeItem(
+                languageCode="nb",
+                languageText="Existing language string",
+            ),
+            model.LanguageStringTypeItem(
+                languageCode="en",
+                languageText=value,
+            ),
+        ],
+    )
     mock_find.return_value = expected
 
     assert process_special_cases(value, identifier) == expected

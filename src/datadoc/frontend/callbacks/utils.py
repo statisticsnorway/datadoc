@@ -67,6 +67,40 @@ def get_options_for_language(
     ]
 
 
+def _check_if_language_string_item_exists(
+    language_strings: model.LanguageStringType,
+    language_code: str,
+) -> bool:
+    if language_strings.root is None:
+        return False
+    return any(i.languageCode == language_code for i in language_strings.root)
+
+
+def _update_language_string_item(
+    language_strings: model.LanguageStringType,
+    language_code: str,
+    new_value: str,
+) -> None:
+    if language_strings.root is not None:
+        for i in language_strings.root:
+            if i.languageCode == language_code:
+                i.languageText = new_value
+
+
+def _add_language_string_item(
+    language_strings: model.LanguageStringType,
+    language_code: str,
+    language_text: str,
+) -> None:
+    if language_strings.root is not None:
+        language_strings.root.append(
+            model.LanguageStringTypeItem(
+                languageCode=language_code,
+                languageText=language_text,
+            ),
+        )
+
+
 def find_existing_language_string(
     metadata_model_object: pydantic.BaseModel,
     value: str,
@@ -74,17 +108,34 @@ def find_existing_language_string(
 ) -> model.LanguageStringType:
     """Get or create a LanguageStrings object and return it."""
     # In this case we need to set the string to the correct language code
+
     language_strings = getattr(metadata_model_object, metadata_identifier)
-    if language_strings is None:
-        # This means that no strings have been saved yet so we need to construct
-        # a new LanguageStrings object
-        language_strings = model.LanguageStringType(
-            **{state.current_metadata_language.value: value},
-        )
+
+    if language_strings is not None:
+        if _check_if_language_string_item_exists(
+            language_strings,
+            state.current_metadata_language.value,
+        ):
+            _update_language_string_item(
+                language_strings,
+                state.current_metadata_language.value,
+                value,
+            )
+        else:
+            _add_language_string_item(
+                language_strings,
+                state.current_metadata_language.value,
+                value,
+            )
     else:
-        # In this case there's an existing object so we save this string
-        # to the current language
-        setattr(language_strings, state.current_metadata_language.value, value)
+        language_strings = model.LanguageStringType(
+            root=[
+                model.LanguageStringTypeItem(
+                    languageCode=state.current_metadata_language.value,
+                    languageText=value,
+                ),
+            ],
+        )
     return language_strings
 
 

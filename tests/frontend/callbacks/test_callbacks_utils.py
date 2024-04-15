@@ -22,7 +22,9 @@ def test_find_existing_language_string_no_existing_strings(bokmål_name: str):
         bokmål_name,
         "name",
     )
-    assert language_strings == model.LanguageStringType(nb=bokmål_name)
+    assert language_strings == model.LanguageStringType(
+        [model.LanguageStringTypeItem(languageCode="nb", languageText=bokmål_name)],
+    )
 
 
 def test_find_existing_language_string_pre_existing_strings(
@@ -40,14 +42,16 @@ def test_find_existing_language_string_pre_existing_strings(
         "name",
     )
     assert language_strings == model.LanguageStringType(
-        nb=bokmål_name,
-        en=english_name,
-        nn=nynorsk_name,
+        [
+            model.LanguageStringTypeItem(languageCode="en", languageText=english_name),
+            model.LanguageStringTypeItem(languageCode="nb", languageText=bokmål_name),
+            model.LanguageStringTypeItem(languageCode="nn", languageText=nynorsk_name),
+        ],
     )
 
 
 def test_update_global_language_state():
-    language: SupportedLanguages = (
+    language: SupportedLanguages = (  # type: ignore[annotation-unchecked]
         random.choice(  # noqa: S311 not for cryptographic purposes
             list(SupportedLanguages),
         )

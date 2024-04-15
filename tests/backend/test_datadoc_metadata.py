@@ -62,7 +62,12 @@ def generate_periodic_file(
 def test_existing_metadata_file(
     metadata: DataDocMetadata,
 ):
-    assert metadata.dataset.name.en == "successfully_read_existing_file"  # type: ignore [union-attr]
+    root = getattr(metadata.dataset.name, "root", [])
+    if root:
+        assert root[0].languageText == "successfully_read_existing_file"
+    else:
+        msg = "Root is none"
+        raise AssertionError(msg)
 
 
 def test_metadata_document_percent_complete(metadata: DataDocMetadata):
@@ -353,9 +358,7 @@ def test_extract_subject_field_value_from_statistic_structure_xml(
         subject_mapping_fake_statistical_structure,
         str(copy_dataset_to_path),
     )
-    # TODO @mmwinther: Remove multiple_language_support once the model is updated.
-    # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
-    assert metadata.dataset.subject_field.en == expected_subject_code  # type: ignore [union-attr]
+    assert metadata.dataset.subject_field == expected_subject_code  # type: ignore [union-attr]
 
 
 @pytest.mark.parametrize(

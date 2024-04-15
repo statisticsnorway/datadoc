@@ -92,7 +92,18 @@ def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> str | N
     value: LanguageStringType | None = getattr(metadata, identifier)
     if value is None:
         return value
-    return str(getattr(value, state.current_metadata_language))
+    return _get_string_type_item(value, state.current_metadata_language)
+
+
+def _get_string_type_item(
+    language_strings: LanguageStringType,
+    current_metadata_language: SupportedLanguages,
+) -> str | None:
+    if language_strings.root is not None:
+        for i in language_strings.root:
+            if i.languageCode == current_metadata_language:
+                return i.languageText
+    return None
 
 
 def get_comma_separated_string(metadata: BaseModel, identifier: str) -> str:
@@ -117,6 +128,7 @@ class DisplayMetadata(ABC):
     multiple_language_support: bool = False
     value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
     show_description: bool = True
+    disabled: bool = False
 
     @abstractmethod
     def render(
@@ -152,6 +164,7 @@ class MetadataInputField(DisplayMetadata):
             description=self.description,
             readOnly=not self.editable,
             value=value,
+            disabled=self.disabled,
             className="input-component",
         )
 
@@ -161,7 +174,7 @@ class MetadataDropdownField(DisplayMetadata):
     """Controls how a Dropdown should be displayed."""
 
     # fmt: off
-    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731
+    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731, RUF100
     # fmt: on
 
     def render(
@@ -246,4 +259,9 @@ VariablesFieldTypes = (
     | MetadataPeriodField
 )
 
-DatasetFieldTypes = MetadataInputField | MetadataDropdownField | MetadataPeriodField
+DatasetFieldTypes = (
+    MetadataInputField
+    | MetadataDropdownField
+    | MetadataPeriodField
+    | MetadataCheckboxField
+)

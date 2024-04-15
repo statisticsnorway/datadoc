@@ -17,6 +17,9 @@ from datadoc_model import model
 from datadoc.backend import user_info
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.dataset_parser import DatasetParser
+from datadoc.backend.model_backwards_compatibility import (
+    is_metadata_in_container_structure,
+)
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
 from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
@@ -118,7 +121,10 @@ class DataDocMetadata:
             with document.open(mode="r", encoding="utf-8") as file:
                 fresh_metadata = json.load(file)
             logger.info("Opened existing metadata file %s", document)
-            if self.is_metadata_in_container_structure(fresh_metadata):
+            fresh_metadata = upgrade_metadata(
+                fresh_metadata,
+            )
+            if is_metadata_in_container_structure(fresh_metadata):
                 self.container = model.MetadataContainer.model_validate_json(
                     json.dumps(fresh_metadata),
                 )
@@ -129,9 +135,6 @@ class DataDocMetadata:
                 # In this case we've read in a file with an empty "datadoc" structure.
                 # A typical example of this is a file produced from a pseudonymization process.
                 return
-            datadoc_metadata = upgrade_metadata(
-                datadoc_metadata,
-            )
             meta = model.DatadocMetadata.model_validate_json(
                 json.dumps(datadoc_metadata),
             )
@@ -146,17 +149,6 @@ class DataDocMetadata:
                 document,
                 exc_info=True,
             )
-
-    def is_metadata_in_container_structure(
-        self,
-        metadata: dict,
-    ) -> bool:
-        """At a certain point a metadata 'container' was introduced.
-
-        The container provides a structure for different 'types' of metadata, such as 'datadoc', 'pseudonymization' etc.
-        This method returns True if the metadata is in the container structure, False otherwise.
-        """
-        return "datadoc" in metadata
 
     def extract_metadata_from_dataset(
         self,
@@ -188,11 +180,7 @@ class DataDocMetadata:
             metadata_created_by=user_info.get_user_info_for_current_platform().short_email,
             # TODO @mmwinther: Remove multiple_language_support once the model is updated.
             # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
-            subject_field=model.LanguageStringType(
-                en=subject_field,
-                nb=subject_field,
-                nn=subject_field,
-            ),
+            subject_field=subject_field,
         )
         self.variables = self.ds_schema.get_fields()
 

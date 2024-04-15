@@ -162,7 +162,7 @@ def test_build_dataset_is_form_component(title, field_types, language, dataset, 
                 {},
             ),
             3,
-            1,
+            2,
         ),
         (
             build_dataset_edit_section(
@@ -288,18 +288,7 @@ DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL: list[DatasetFieldTypes] = [
                 model.Dataset(short_name="input_dataset"),
                 {"type": "dataset-edit-section", "id": "recommended-nb"},
             ),
-            16,
-            ssb.Input,
-        ),
-        (
-            build_dataset_edit_section(
-                "",
-                DATASET_INPUT_URL_FIELD_LIST,
-                SupportedLanguages.NORSK_BOKMÅL,
-                model.Dataset(short_name="url_dataset"),
-                {"type": "dataset-edit-section", "id": "obligatory-nb"},
-            ),
-            1,
+            15,
             ssb.Input,
         ),
         (
@@ -310,7 +299,7 @@ DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL: list[DatasetFieldTypes] = [
                 model.Dataset(short_name="date_dataset"),
                 {"type": "dataset-edit-section", "id": "title-nb"},
             ),
-            2,
+            3,
             ssb.Input,
         ),
         (
@@ -321,7 +310,7 @@ DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL: list[DatasetFieldTypes] = [
                 model.Dataset(short_name="dropdown_dataset"),
                 {"type": "dataset-edit-section", "id": "dropdown-en"},
             ),
-            4,
+            5,
             ssb.Dropdown,
         ),
     ],

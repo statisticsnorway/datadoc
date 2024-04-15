@@ -9,6 +9,7 @@ from datadoc.enums import SupportedLanguages
 from datadoc.utils import calculate_percentage
 from datadoc.utils import get_app_version
 from datadoc.utils import get_display_values
+from datadoc.utils import get_languagetext_from_language_string_type
 from datadoc.utils import running_in_notebook
 
 
@@ -34,3 +35,16 @@ def test_get_app_version():
         pyproject = tomli.load(f)
 
     assert get_app_version() == pyproject["tool"]["poetry"]["version"]
+
+
+def test_get_languagetext_from_languagestringtype(
+    language_dicts: list[dict[str, str]],
+    bokmål_name: str,
+):
+    assert (
+        get_languagetext_from_language_string_type(
+            language_dicts,
+            SupportedLanguages.NORSK_BOKMÅL,
+        )
+        == bokmål_name
+    )

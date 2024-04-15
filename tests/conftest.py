@@ -128,8 +128,26 @@ def nynorsk_name() -> str:
 
 
 @pytest.fixture()
-def language_object(english_name: str, bokmål_name: str) -> model.LanguageStringType:
-    return model.LanguageStringType(en=english_name, nb=bokmål_name)
+def language_object(
+    english_name: str,
+    bokmål_name: str,
+    nynorsk_name: str,
+) -> model.LanguageStringType:
+    return model.LanguageStringType(
+        [
+            model.LanguageStringTypeItem(languageCode="en", languageText=english_name),
+            model.LanguageStringTypeItem(languageCode="nb", languageText=bokmål_name),
+            model.LanguageStringTypeItem(languageCode="nn", languageText=nynorsk_name),
+        ],
+    )
+
+
+@pytest.fixture()
+def language_dicts(english_name: str, bokmål_name: str) -> list[dict[str, str]]:
+    return [
+        {"languageCode": "en", "languageText": english_name},
+        {"languageCode": "nb", "languageText": bokmål_name},
+    ]
 
 
 @pytest.fixture()
