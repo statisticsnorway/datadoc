@@ -90,6 +90,11 @@ label.form-check-label{
     padding: 1rem;
     max-width: 500px;
     width: 100%;
+    position: relative;
+}
+
+.multilanguage-fieldset > .ssb-glossary.legend-glossary > .glossary-button{
+    padding: 0 0.3rem;
 }
 
 .multilanguage-fieldset:focus{
@@ -107,9 +112,16 @@ label.form-check-label{
     font-size: 1rem;
 }
 
+.ssb-glossary.legend-glossary{
+    position: absolute;
+    z-index: 10;
+    top: -20px;
+}
+
 .legend-glossary{
     background-color: white;
     padding-top: 0;
+    margin: 0.3rem;
 }
 .ssb-input.multilanguage-input-component{
     max-width: 450px;
