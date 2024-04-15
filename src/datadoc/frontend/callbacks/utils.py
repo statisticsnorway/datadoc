@@ -89,7 +89,6 @@ def _add_language_string_item(
     language_code: SupportedLanguages,
     language_text: str,
 ) -> None:
-
     language_strings.root.append(
         model.LanguageStringTypeItem(
             languageCode=language_code,

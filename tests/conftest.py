@@ -129,7 +129,7 @@ def nynorsk_name() -> str:
 
 @pytest.fixture()
 def language_object(
-    english_name: str, bokmål_name: str, nynorsk_name: str
+    english_name: str, bokmål_name: str, nynorsk_name: str,
 ) -> model.LanguageStringType:
     return model.LanguageStringType(
         [
