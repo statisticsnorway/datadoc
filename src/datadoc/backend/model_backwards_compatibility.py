@@ -96,10 +96,7 @@ def _remove_element_from_model(
 
 
 def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
-    """Handle breaking changes for v2.2.0.
-
-    Blablabla
-    """
+    """Handle breaking changes for v2.2.0."""
     if supplied_metadata["datadoc"]["dataset"]["subject_field"] is not None:
         data = supplied_metadata["datadoc"]["dataset"]["subject_field"]
         supplied_metadata["datadoc"]["dataset"]["subject_field"] = str(
