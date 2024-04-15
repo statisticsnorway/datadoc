@@ -11,6 +11,7 @@ from datadoc import enums
 from datadoc import state
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import DatasetFieldTypes
+from datadoc.frontend.fields.display_base import MetadataCheckboxField
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
@@ -293,9 +294,13 @@ DISPLAY_DATASET: dict[
         editable=True,
         id_type=DATASET_METADATA_DATE_INPUT,
     ),
-    DatasetIdentifiers.USE_RESTRICTION: MetadataInputField(
+    DatasetIdentifiers.USE_RESTRICTION: MetadataDropdownField(
         identifier=DatasetIdentifiers.USE_RESTRICTION.value,
         display_name="Brukerrestriksjon",
+        options_getter=functools.partial(
+            get_enum_options_for_language,
+            enums.UseRestriction,
+        ),
         description="",
     ),
     DatasetIdentifiers.USE_RESTRICTION_DATE: MetadataPeriodField(
@@ -303,13 +308,13 @@ DISPLAY_DATASET: dict[
         display_name="Bruksrestriksjonsdato",
         description="",
     ),
-    DatasetIdentifiers.CONTAINS_PERSONAL_DATA: MetadataInputField(
+    DatasetIdentifiers.CONTAINS_PERSONAL_DATA: MetadataCheckboxField(
         identifier=DatasetIdentifiers.CONTAINS_PERSONAL_DATA.value,
         display_name="Inneholder personopplysninger",
         description="",
+        obligatory=True,
     ),
 }
-
 for v in DISPLAY_DATASET.values():
     if v.multiple_language_support:
         v.value_getter = get_multi_language_metadata

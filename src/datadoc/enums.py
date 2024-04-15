@@ -370,3 +370,50 @@ class VariableRole(LanguageStringsEnum):
             LanguageStringTypeItem(languageCode="nb", languageText="ATTRIBUTT"),
         ],
     )
+
+
+class UseRestriction(LanguageStringsEnum):
+    """Lifecycle status of a dataset."""
+
+    DELETION_ANONYMIZATION = LanguageStringType(
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.UseRestriction.DELETION_ANONYMIZATION.value,
+            ),
+            LanguageStringTypeItem(
+                languageCode="nn", languageText="SLETTING/ANONYMISERING"
+            ),
+            LanguageStringTypeItem(
+                languageCode="nb", languageText="SLETTING/ANONYMISERING"
+            ),
+        ],
+    )
+    PROCESS_LIMITATIONS = LanguageStringType(
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.UseRestriction.PROCESS_LIMITATIONS.value,
+            ),
+            LanguageStringTypeItem(
+                languageCode="nn", languageText="BEHANDLINGSBEGRENSNINGER"
+            ),
+            LanguageStringTypeItem(
+                languageCode="nb", languageText="BEHANDLINGSBEGRENSNINGER"
+            ),
+        ],
+    )
+    SECONDARY_USE_RESTRICTIONS = LanguageStringType(
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.UseRestriction.SECONDARY_USE_RESTRICTIONS.value,
+            ),
+            LanguageStringTypeItem(
+                languageCode="nn", languageText="SEKUNDÆRBRUKSRESTRIKSJONER"
+            ),
+            LanguageStringTypeItem(
+                languageCode="nb", languageText="SEKUNDÆRBRUKSRESTRIKSJONER"
+            ),
+        ],
+    )

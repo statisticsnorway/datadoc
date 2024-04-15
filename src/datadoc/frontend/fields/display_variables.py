@@ -172,6 +172,7 @@ DISPLAY_VARIABLES: dict[
         identifier=VariableIdentifiers.MULTIPLICATION_FACTOR.value,
         display_name="Multiplikasjonsfaktor",
         description="",
+        type="number",
     ),
 }
 
