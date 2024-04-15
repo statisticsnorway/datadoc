@@ -98,7 +98,6 @@ class DatasetIdentifiers(str, Enum):
     METADATA_LAST_UPDATED_BY = "metadata_last_updated_by"
     CONTAINS_DATA_FROM = "contains_data_from"
     CONTAINS_DATA_UNTIL = "contains_data_until"
-    CUSTOM_TYPE = "custom_type"
     USE_RESTRICTION = "use_restriction"
     USE_RESTRICTION_DATE = "use_restriction_date"
     CONTAINS_PERSONAL_DATA = "contains_personal_data"
@@ -293,12 +292,6 @@ DISPLAY_DATASET: dict[
         obligatory=True,
         editable=True,
         id_type=DATASET_METADATA_DATE_INPUT,
-    ),
-    DatasetIdentifiers.CUSTOM_TYPE: MetadataInputField(
-        identifier=DatasetIdentifiers.CUSTOM_TYPE.value,
-        display_name="Egendefinert type",
-        description="",
-        disabled=True,
     ),
     DatasetIdentifiers.USE_RESTRICTION: MetadataInputField(
         identifier=DatasetIdentifiers.USE_RESTRICTION.value,

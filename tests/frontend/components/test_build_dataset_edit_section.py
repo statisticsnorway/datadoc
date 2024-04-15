@@ -161,7 +161,7 @@ def test_build_dataset_is_form_component(title, field_types, language, dataset, 
                 model.Dataset(),
                 {},
             ),
-            6,
+            5,
             1,
         ),
         (
@@ -288,7 +288,7 @@ DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL: list[DatasetFieldTypes] = [
                 model.Dataset(short_name="input_dataset"),
                 {"type": "dataset-edit-section", "id": "recommended-nb"},
             ),
-            18,
+            17,
             ssb.Input,
         ),
         (
