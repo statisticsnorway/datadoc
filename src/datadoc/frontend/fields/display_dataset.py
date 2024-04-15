@@ -296,15 +296,11 @@ DISPLAY_DATASET: dict[
     ),
     DatasetIdentifiers.USE_RESTRICTION: MetadataDropdownField(
         identifier=DatasetIdentifiers.USE_RESTRICTION.value,
-<<<<<<< HEAD
         display_name="Brukerrestriksjon",
         options_getter=functools.partial(
             get_enum_options_for_language,
             enums.UseRestriction,
         ),
-=======
-        display_name="Bruksrestriksjon",
->>>>>>> refs/remotes/origin/feature/update-to-latest-datadoc-model
         description="",
     ),
     DatasetIdentifiers.USE_RESTRICTION_DATE: MetadataPeriodField(
