@@ -121,7 +121,12 @@ def process_special_cases(
             value,
             metadata_identifier,
         )
-    elif metadata_identifier == DatasetIdentifiers.DATASET_STATUS.value and value == "":
+    elif (
+        metadata_identifier == DatasetIdentifiers.DATASET_STATUS.value
+        and value == ""
+        or metadata_identifier == DatasetIdentifiers.DATASET_STATE.value
+        and value == ""
+    ):
         updated_value = None
     else:
         updated_value = value
