@@ -295,7 +295,7 @@ DISPLAY_DATASET: dict[
     ),
     DatasetIdentifiers.USE_RESTRICTION: MetadataInputField(
         identifier=DatasetIdentifiers.USE_RESTRICTION.value,
-        display_name="Brukerrestriksjon",
+        display_name="Bruksrestriksjon",
         description="",
     ),
     DatasetIdentifiers.USE_RESTRICTION_DATE: MetadataPeriodField(
