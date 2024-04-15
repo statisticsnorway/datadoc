@@ -121,7 +121,8 @@ def get_multi_language_metadata_and_stringify(
 ) -> str | None:
     """Get a metadata value supporting multiple languages from the model."""
     value: LanguageStringType | None = getattr(metadata, identifier)
-    logger.info("Mulitlanguage registered: %s", value)
+    if value is not None:
+        logger.info("Multilanguage registered: %s", value)
     if value is None:
         return value
     return str(getattr(value, language))
