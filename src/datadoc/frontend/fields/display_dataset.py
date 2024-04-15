@@ -296,7 +296,7 @@ DISPLAY_DATASET: dict[
     ),
     DatasetIdentifiers.USE_RESTRICTION: MetadataDropdownField(
         identifier=DatasetIdentifiers.USE_RESTRICTION.value,
-        display_name="Brukerrestriksjon",
+        display_name="Bruksrestriksjon",
         options_getter=functools.partial(
             get_enum_options_for_language,
             enums.UseRestriction,
