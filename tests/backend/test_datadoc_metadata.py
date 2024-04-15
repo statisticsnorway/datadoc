@@ -358,8 +358,6 @@ def test_extract_subject_field_value_from_statistic_structure_xml(
         subject_mapping_fake_statistical_structure,
         str(copy_dataset_to_path),
     )
-    # TODO @mmwinther: Remove multiple_language_support once the model is updated.
-    # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
     assert metadata.dataset.subject_field == expected_subject_code  # type: ignore [union-attr]
 
 

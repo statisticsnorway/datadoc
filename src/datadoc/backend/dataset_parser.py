@@ -221,9 +221,6 @@ class DatasetParserSas7Bdat(DatasetParser):
                                 ].label,
                             ),
                         ],
-                        # state.current_metadata_language.value: sas_reader.columns[  # type: ignore [attr-defined]
-                        #     i
-                        # ].label,
                     ),
                     # Access the python type for the value and transform it to a DataDoc Data type
                     data_type=self.transform_data_type(type(v).__name__.lower()),
