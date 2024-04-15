@@ -70,7 +70,7 @@ def _find_and_update_language_strings(supplied_metadata: dict | None) -> dict | 
     return None
 
 
-def _convert_language_string_type(supplied_value: dict) -> dict[list[dict]]:
+def _convert_language_string_type(supplied_value: dict) -> list[dict[str, str]]:
     return [
         {
             "languageCode": "en",
