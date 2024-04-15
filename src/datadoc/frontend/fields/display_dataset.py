@@ -210,8 +210,6 @@ DISPLAY_DATASET: dict[
         display_name="Statistikkområde",
         description="Primær statistikkområdet som datasettet inngår i",
         obligatory=True,
-        # TODO @mmwinther: Remove multiple_language_support once the model is updated.
-        # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
         multiple_language_support=False,
         options_getter=get_statistical_subject_options,
     ),

@@ -9,7 +9,7 @@ from datadoc.enums import SupportedLanguages
 from datadoc.utils import calculate_percentage
 from datadoc.utils import get_app_version
 from datadoc.utils import get_display_values
-from datadoc.utils import get_languagetext_from_languagestringtype
+from datadoc.utils import get_languagetext_from_language_string_type
 from datadoc.utils import running_in_notebook
 
 
@@ -42,7 +42,7 @@ def test_get_languagetext_from_languagestringtype(
     bokmål_name: str,
 ):
     assert (
-        get_languagetext_from_languagestringtype(
+        get_languagetext_from_language_string_type(
             language_dicts,
             SupportedLanguages.NORSK_BOKMÅL,
         )

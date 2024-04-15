@@ -33,7 +33,7 @@ def calculate_percentage(completed: int, total: int) -> int:
     return round((completed / total) * 100)
 
 
-def get_languagetext_from_languagestringtype(
+def get_languagetext_from_language_string_type(
     variable: list[dict[str, str]] | None,
     language: SupportedLanguages,
 ) -> str | None:
@@ -56,7 +56,7 @@ def get_display_values(
     return_dict = {}
     for field_name, value in variable:
         if isinstance(value, model.LanguageStringType):
-            return_dict[field_name] = get_languagetext_from_languagestringtype(
+            return_dict[field_name] = get_languagetext_from_language_string_type(
                 value.model_dump(),  # type: ignore [arg-type]
                 current_language,
             )
