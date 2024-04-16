@@ -136,21 +136,7 @@ def get_multi_language_metadata_and_stringify(
         logger.info("Multilanguage registered: %s", value)
     if value is None:
         return value
-    return str(getattr(value, language))
-
-
-def get_multi_language_metadata_and_stringify2(
-    metadata: BaseModel,
-    identifier: str,
-    language: SupportedLanguages,
-) -> str | None:
-    """Get a metadata value supporting multiple languages from the model."""
-    value: LanguageStringType | None = getattr(metadata, identifier)
-    if value is not None:
-        logger.info("Multilanguage registered: %s", value)
-    if value is None:
-        return value
-    return str(getattr(value, language))
+    return _get_string_type_item(value, language)
 
 
 def get_comma_separated_string(metadata: BaseModel, identifier: str) -> str:
