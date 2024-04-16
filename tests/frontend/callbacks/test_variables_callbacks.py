@@ -141,12 +141,12 @@ def test_accept_variable_metadata_input_valid(
     expected_model_value: Any,  # noqa: ANN401
 ):
     state.metadata = metadata
-    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     assert (
         accept_variable_metadata_input(
             value,
             metadata.variables[0].short_name,
             metadata_field=metadata_field.value,
+            language="nb",
         )
         is None
     )
