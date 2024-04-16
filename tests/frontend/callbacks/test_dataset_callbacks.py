@@ -176,8 +176,7 @@ def test_accept_dataset_metadata_input_valid_data(
     metadata: DataDocMetadata,
 ):
     state.metadata = metadata
-    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
-    output = accept_dataset_metadata_input(provided_value, metadata_identifier)
+    output = accept_dataset_metadata_input(provided_value, metadata_identifier, "nb")
     assert output[0] is False
     assert output[1] == ""
     assert (
@@ -191,6 +190,7 @@ def test_accept_dataset_metadata_input_incorrect_data_type(metadata: DataDocMeta
     output = accept_dataset_metadata_input(
         3.1415,
         DatasetIdentifiers.DATASET_STATE.value,
+        "",
     )
     assert output[0] is True
     assert "validation error for Dataset" in output[1]
@@ -419,7 +419,7 @@ def test_process_special_cases_language_string(
     metadata: DataDocMetadata,
 ):
     state.metadata = metadata
-    state.current_metadata_language = SupportedLanguages.ENGLISH
+    language = "en"
     value = "Test language string"
     identifier = random.choice(  # noqa: S311
         MULTIPLE_LANGUAGE_DATASET_METADATA,
@@ -438,7 +438,7 @@ def test_process_special_cases_language_string(
     )
     mock_find.return_value = expected
 
-    assert process_special_cases(value, identifier) == expected
+    assert process_special_cases(value, identifier, language) == expected
 
 
 def test_process_special_cases_no_change():

@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 from datadoc import enums
 from datadoc import state
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
+from datadoc.frontend.fields.display_base import DATASET_METADATA_MULTILANGUAGE_INPUT
 from datadoc.frontend.fields.display_base import DatasetFieldTypes
 from datadoc.frontend.fields.display_base import MetadataCheckboxField
 from datadoc.frontend.fields.display_base import MetadataDropdownField
@@ -151,6 +152,7 @@ DISPLAY_DATASET: dict[
         description="Datasettnavn",
         obligatory=True,
         multiple_language_support=True,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
     DatasetIdentifiers.DATA_SOURCE: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.DATA_SOURCE.value,
@@ -158,6 +160,7 @@ DISPLAY_DATASET: dict[
         description="Datakilde. Settes enten for datasettet eller variabelforekomst.",
         obligatory=True,
         multiple_language_support=True,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
     DatasetIdentifiers.POPULATION_DESCRIPTION: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.POPULATION_DESCRIPTION.value,
@@ -165,6 +168,7 @@ DISPLAY_DATASET: dict[
         description="Populasjonen datasettet dekker. Populasjonsbeskrivelsen inkluderer enhetstype, geografisk dekningsområde og tidsperiode.",
         obligatory=True,
         multiple_language_support=True,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
     DatasetIdentifiers.VERSION: MetadataInputField(
         identifier=DatasetIdentifiers.VERSION.value,
@@ -179,6 +183,7 @@ DISPLAY_DATASET: dict[
         description="Årsak/grunnlag for denne versjonen av datasettet i form av beskrivende tekst.",
         multiple_language_support=True,
         obligatory=True,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
     DatasetIdentifiers.UNIT_TYPE: MetadataDropdownField(
         identifier=DatasetIdentifiers.UNIT_TYPE.value,
@@ -204,6 +209,7 @@ DISPLAY_DATASET: dict[
         description="Beskrivelse av datasettet",
         multiple_language_support=True,
         obligatory=True,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
     DatasetIdentifiers.SUBJECT_FIELD: MetadataDropdownField(
         identifier=DatasetIdentifiers.SUBJECT_FIELD.value,
@@ -224,6 +230,7 @@ DISPLAY_DATASET: dict[
         display_name="Geografisk dekningsområde",
         description="Beskrivelse av datasettets geografiske dekningsområde. Målet er på sikt at dette skal hentes fra Klass, men fritekst vil også kunne brukes.",
         multiple_language_support=True,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
     DatasetIdentifiers.ID: MetadataInputField(
         identifier=DatasetIdentifiers.ID.value,

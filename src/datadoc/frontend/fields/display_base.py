@@ -31,9 +31,11 @@ logger = logging.getLogger(__name__)
 
 DATASET_METADATA_INPUT = "dataset-metadata-input"
 DATASET_METADATA_DATE_INPUT = "dataset-metadata-date-input"
+DATASET_METADATA_MULTILANGUAGE_INPUT = "dataset-metadata-multilanguage-input"
 
 VARIABLES_METADATA_INPUT = "variables-metadata-input"
 VARIABLES_METADATA_DATE_INPUT = "variables-metadata-date-input"
+VARIABLES_METADATA_MULTILANGUAGE_INPUT = "dataset-metadata-multilanguage-input"
 
 METADATA_LANGUAGES = [
     {
@@ -268,6 +270,7 @@ class MetadataMultiLanguageField(DisplayMetadata):
     These are a special case since they return a group of input fields..
     """
 
+    id_type: str = ""
     type: str = "text"
 
     def render_input_group(
@@ -288,7 +291,7 @@ class MetadataMultiLanguageField(DisplayMetadata):
                         ),
                         debounce=True,
                         id={
-                            "type": component_id["type"],
+                            "type": self.id_type,
                             "id": component_id["id"],
                             "variable_short_name": component_id["variable_short_name"],
                             "language": i["language_value"],
@@ -310,7 +313,7 @@ class MetadataMultiLanguageField(DisplayMetadata):
                     ),
                     debounce=True,
                     id={
-                        "type": component_id["type"],
+                        "type": self.id_type,
                         "id": component_id["id"],
                         "language": i["language_value"],
                     },

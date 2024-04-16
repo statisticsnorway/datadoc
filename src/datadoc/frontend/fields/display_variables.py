@@ -7,6 +7,7 @@ from enum import Enum
 
 from datadoc import enums
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
+from datadoc.frontend.fields.display_base import VARIABLES_METADATA_MULTILANGUAGE_INPUT
 from datadoc.frontend.fields.display_base import MetadataCheckboxField
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
@@ -59,6 +60,7 @@ DISPLAY_VARIABLES: dict[
         obligatory=True,
         multiple_language_support=True,
         type="text",
+        id_type=VARIABLES_METADATA_MULTILANGUAGE_INPUT,
     ),
     VariableIdentifiers.DATA_TYPE: MetadataDropdownField(
         identifier=VariableIdentifiers.DATA_TYPE.value,
@@ -99,6 +101,7 @@ DISPLAY_VARIABLES: dict[
         description="Datakilde. Settes på datasettnivå, men kan overstyres på variabelforekomstnivå.",
         multiple_language_support=True,
         type="text",
+        id_type=VARIABLES_METADATA_MULTILANGUAGE_INPUT,
     ),
     VariableIdentifiers.POPULATION_DESCRIPTION: MetadataMultiLanguageField(
         identifier=VariableIdentifiers.POPULATION_DESCRIPTION.value,
@@ -106,6 +109,7 @@ DISPLAY_VARIABLES: dict[
         description="Populasjonen variabelen beskriver kan spesifiseres nærmere her. Settes på datasettnivå, men kan overstyres på variabelforekomstnivå.",
         multiple_language_support=True,
         type="text",
+        id_type=VARIABLES_METADATA_MULTILANGUAGE_INPUT,
     ),
     VariableIdentifiers.COMMENT: MetadataMultiLanguageField(
         identifier=VariableIdentifiers.COMMENT.value,
@@ -113,6 +117,7 @@ DISPLAY_VARIABLES: dict[
         description="Ytterligere presiseringer av variabeldefinisjon",
         multiple_language_support=True,
         type="text",
+        id_type=VARIABLES_METADATA_MULTILANGUAGE_INPUT,
     ),
     VariableIdentifiers.TEMPORALITY_TYPE: MetadataDropdownField(
         identifier=VariableIdentifiers.TEMPORALITY_TYPE.value,
