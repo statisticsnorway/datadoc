@@ -40,6 +40,10 @@ spec:
     - configmap: integration-test-dataset
       mountPath: /var/run/datasets/ifpn/klargjorte_data/
 
+  env:
+    - name: DATADOC_STATISTICAL_SUBJECT_SOURCE_URL
+      value: "https://www.ssb.no/xp/_/service/mimir/subjectStructurStatistics"
+
   liveness:
     path: /healthz/live
     port: 8050
