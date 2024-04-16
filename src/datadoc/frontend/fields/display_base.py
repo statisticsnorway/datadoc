@@ -276,6 +276,29 @@ class MetadataMultiLanguageField(DisplayMetadata):
         metadata: BaseModel,
     ) -> html.Section:
         """Build section with Input components for each language."""
+        if "variable_short_name" in component_id:
+            return html.Section(
+                children=[
+                    ssb.Input(
+                        label=i["language_title"],
+                        value=get_multi_language_metadata_and_stringify(
+                            metadata,
+                            self.identifier,
+                            SupportedLanguages(i["supported_language"]),
+                        ),
+                        debounce=True,
+                        id={
+                            "type": component_id["type"],
+                            "id": component_id["id"],
+                            "variable_short_name": component_id["variable_short_name"],
+                            "language": i["language_value"],
+                        },
+                        type=self.type,
+                        className="multilanguage-input-component",
+                    )
+                    for i in METADATA_LANGUAGES
+                ],
+            )
         return html.Section(
             children=[
                 ssb.Input(
