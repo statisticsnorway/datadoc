@@ -26,7 +26,7 @@ Changelog = "https://github.com/statisticsnorway/datadoc/releases"
 python = ">=3.10,<4.0"
 pyarrow = ">=8.0.0"
 dash = ">=2.15.0"
-pydantic = "==2.5.2"
+pydantic = ">=2.5.2"
 dash-bootstrap-components = ">=1.1.0"
 pandas = ">=1.4.2"
 ssb-datadoc-model = "5.1.0"
@@ -40,7 +40,7 @@ beautifulsoup4 = ">=4.12.3"
 cloudpathlib = { extras = ["gs"], version = ">=0.17.0" }
 pyjwt = ">=2.8.0"
 ssb-klass-python = ">=0.0.9"
-ssb-dash-components = "^0.7.0"
+ssb-dash-components = ">=0.7.3"
 
 [tool.poetry.group.dev.dependencies]
 mypy = ">=0.950"
