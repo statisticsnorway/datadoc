@@ -85,9 +85,18 @@ def register_callbacks(app: Dash) -> None:
         return False
 
     @app.callback(
-        Output("dataset-validation-error", "is_open"),
-        Output("dataset-validation-explanation", "children"),
-        Input({"type": DATASET_METADATA_INPUT, "id": ALL}, "value"),
+        Output(
+            {"type": DATASET_METADATA_INPUT, "id": MATCH, "language": MATCH},
+            "error",
+        ),
+        Output(
+            {"type": DATASET_METADATA_INPUT, "id": MATCH, "language": MATCH},
+            "errorMessage",
+        ),
+        Input(
+            {"type": DATASET_METADATA_INPUT, "id": MATCH, "language": MATCH},
+            "value",
+        ),
         prevent_initial_call=True,
     )
     def callback_accept_dataset_metadata_input(
@@ -101,6 +110,7 @@ def register_callbacks(app: Dash) -> None:
         return accept_dataset_metadata_input(
             ctx.triggered[0]["value"],
             ctx.triggered_id["id"],
+            ctx.triggered_id["language"],
         )
 
     @app.callback(
