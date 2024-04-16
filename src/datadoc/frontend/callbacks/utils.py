@@ -105,6 +105,7 @@ def find_existing_language_string(
     metadata_model_object: pydantic.BaseModel,
     value: str,
     metadata_identifier: str,
+    language: str,
 ) -> model.LanguageStringType:
     """Get or create a LanguageStrings object and return it."""
     # In this case we need to set the string to the correct language code
@@ -114,24 +115,24 @@ def find_existing_language_string(
     if language_strings is not None:
         if _check_if_language_string_item_exists(
             language_strings,
-            state.current_metadata_language.value,
+            language,
         ):
             _update_language_string_item(
                 language_strings,
-                state.current_metadata_language.value,
+                language,
                 value,
             )
         else:
             _add_language_string_item(
                 language_strings,
-                state.current_metadata_language.value,
+                language,
                 value,
             )
     else:
         language_strings = model.LanguageStringType(
             root=[
                 model.LanguageStringTypeItem(
-                    languageCode=state.current_metadata_language.value,
+                    languageCode=language,
                     languageText=value,
                 ),
             ],

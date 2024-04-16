@@ -211,6 +211,7 @@ def register_callbacks(app: Dash) -> None:
                 "type": VARIABLES_METADATA_INPUT,
                 "variable_short_name": MATCH,
                 "id": MATCH,
+                "language": MATCH,
             },
             "error",
         ),
@@ -219,6 +220,7 @@ def register_callbacks(app: Dash) -> None:
                 "type": VARIABLES_METADATA_INPUT,
                 "variable_short_name": MATCH,
                 "id": MATCH,
+                "language": MATCH,
             },
             "errorMessage",
         ),
@@ -227,6 +229,7 @@ def register_callbacks(app: Dash) -> None:
                 "type": VARIABLES_METADATA_INPUT,
                 "variable_short_name": MATCH,
                 "id": MATCH,
+                "language": MATCH,
             },
             "value",
         ),
@@ -240,6 +243,7 @@ def register_callbacks(app: Dash) -> None:
             ctx.triggered[0]["value"],
             ctx.triggered_id["variable_short_name"],
             ctx.triggered_id["id"],
+            ctx.triggered_id["language"],
         )
         if not message:
             # No error to display.
