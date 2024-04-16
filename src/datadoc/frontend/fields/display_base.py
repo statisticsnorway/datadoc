@@ -111,10 +111,35 @@ def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> str | N
     value: LanguageStringType | None = getattr(metadata, identifier)
     if value is None:
         return value
-    return str(getattr(value, state.current_metadata_language))
+    return _get_string_type_item(value, state.current_metadata_language)
+
+
+def _get_string_type_item(
+    language_strings: LanguageStringType,
+    current_metadata_language: SupportedLanguages,
+) -> str | None:
+    if language_strings.root is not None:
+        for i in language_strings.root:
+            if i.languageCode == current_metadata_language:
+                return i.languageText
+    return None
 
 
 def get_multi_language_metadata_and_stringify(
+    metadata: BaseModel,
+    identifier: str,
+    language: SupportedLanguages,
+) -> str | None:
+    """Get a metadata value supporting multiple languages from the model."""
+    value: LanguageStringType | None = getattr(metadata, identifier)
+    if value is not None:
+        logger.info("Multilanguage registered: %s", value)
+    if value is None:
+        return value
+    return str(getattr(value, language))
+
+
+def get_multi_language_metadata_and_stringify2(
     metadata: BaseModel,
     identifier: str,
     language: SupportedLanguages,
@@ -150,6 +175,7 @@ class DisplayMetadata(ABC):
     multiple_language_support: bool = False
     value_getter: Callable[[BaseModel, str], Any] = get_metadata_and_stringify
     show_description: bool = True
+    disabled: bool = False
 
     @abstractmethod
     def render(
@@ -185,6 +211,7 @@ class MetadataInputField(DisplayMetadata):
             description=self.description,
             readOnly=not self.editable,
             value=value,
+            disabled=self.disabled,
             className="input-component",
         )
 
@@ -351,5 +378,6 @@ DatasetFieldTypes = (
     MetadataInputField
     | MetadataDropdownField
     | MetadataPeriodField
+    | MetadataCheckboxField
     | MetadataMultiLanguageField
 )

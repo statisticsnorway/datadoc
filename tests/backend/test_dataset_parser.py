@@ -6,6 +6,7 @@ import pathlib
 import pandas as pd
 import pytest
 from datadoc_model.model import LanguageStringType
+from datadoc_model.model import LanguageStringTypeItem
 from datadoc_model.model import Variable
 
 from datadoc import state
@@ -56,17 +57,23 @@ def test_get_fields_sas7bdat():
     expected_fields = [
         Variable(
             short_name="tekst",
-            name=LanguageStringType(nb="Tekst"),
+            name=LanguageStringType(
+                [LanguageStringTypeItem(languageCode="nb", languageText="Tekst")],
+            ),
             data_type=DataType.STRING,
         ),
         Variable(
             short_name="tall",
-            name=LanguageStringType(nb="Tall"),
+            name=LanguageStringType(
+                [LanguageStringTypeItem(languageCode="nb", languageText="Tall")],
+            ),
             data_type=DataType.FLOAT,
         ),
         Variable(
             short_name="dato",
-            name=LanguageStringType(nb="Dato"),
+            name=LanguageStringType(
+                [LanguageStringTypeItem(languageCode="nb", languageText="Dato")],
+            ),
             data_type=DataType.DATETIME,
         ),
     ]

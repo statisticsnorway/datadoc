@@ -11,6 +11,7 @@ from datadoc import enums
 from datadoc import state
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import DatasetFieldTypes
+from datadoc.frontend.fields.display_base import MetadataCheckboxField
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import MetadataMultiLanguageField
@@ -82,7 +83,6 @@ class DatasetIdentifiers(str, Enum):
     NAME = "name"
     DESCRIPTION = "description"
     DATA_SOURCE = "data_source"
-    REGISTER_URI = "register_uri"
     POPULATION_DESCRIPTION = "population_description"
     VERSION = "version"
     VERSION_DESCRIPTION = "version_description"
@@ -100,6 +100,9 @@ class DatasetIdentifiers(str, Enum):
     METADATA_LAST_UPDATED_BY = "metadata_last_updated_by"
     CONTAINS_DATA_FROM = "contains_data_from"
     CONTAINS_DATA_UNTIL = "contains_data_until"
+    USE_RESTRICTION = "use_restriction"
+    USE_RESTRICTION_DATE = "use_restriction_date"
+    CONTAINS_PERSONAL_DATA = "contains_personal_data"
 
 
 DISPLAY_DATASET: dict[
@@ -156,13 +159,6 @@ DISPLAY_DATASET: dict[
         obligatory=True,
         multiple_language_support=True,
     ),
-    DatasetIdentifiers.REGISTER_URI: MetadataInputField(
-        identifier=DatasetIdentifiers.REGISTER_URI.value,
-        display_name="Register URI",
-        description="Lenke (URI) til register i registeroversikt (oversikt over alle registre meldt Datatilsynet (oppdatering foretas av sikkerhetsrådgiver))",
-        multiple_language_support=True,
-        type="url",
-    ),
     DatasetIdentifiers.POPULATION_DESCRIPTION: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.POPULATION_DESCRIPTION.value,
         display_name="Populasjon",
@@ -214,9 +210,7 @@ DISPLAY_DATASET: dict[
         display_name="Statistikkområde",
         description="Primær statistikkområdet som datasettet inngår i",
         obligatory=True,
-        # TODO @mmwinther: Remove multiple_language_support once the model is updated.
-        # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
-        multiple_language_support=True,
+        multiple_language_support=False,
         options_getter=get_statistical_subject_options,
     ),
     DatasetIdentifiers.KEYWORD: MetadataInputField(
@@ -300,8 +294,27 @@ DISPLAY_DATASET: dict[
         editable=True,
         id_type=DATASET_METADATA_DATE_INPUT,
     ),
+    DatasetIdentifiers.USE_RESTRICTION: MetadataDropdownField(
+        identifier=DatasetIdentifiers.USE_RESTRICTION.value,
+        display_name="Bruksrestriksjon",
+        options_getter=functools.partial(
+            get_enum_options_for_language,
+            enums.UseRestriction,
+        ),
+        description="",
+    ),
+    DatasetIdentifiers.USE_RESTRICTION_DATE: MetadataPeriodField(
+        identifier=DatasetIdentifiers.USE_RESTRICTION_DATE.value,
+        display_name="Bruksrestriksjonsdato",
+        description="",
+    ),
+    DatasetIdentifiers.CONTAINS_PERSONAL_DATA: MetadataCheckboxField(
+        identifier=DatasetIdentifiers.CONTAINS_PERSONAL_DATA.value,
+        display_name="Inneholder personopplysninger",
+        description="",
+        obligatory=True,
+    ),
 }
-
 for v in DISPLAY_DATASET.values():
     if v.multiple_language_support:
         v.value_getter = get_multi_language_metadata

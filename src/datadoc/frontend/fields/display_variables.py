@@ -33,11 +33,12 @@ class VariableIdentifiers(str, Enum):
     MEASUREMENT_UNIT = "measurement_unit"
     FORMAT = "format"
     CLASSIFICATION_URI = "classification_uri"
-    SENTINEL_VALUE_URI = "sentinel_value_uri"
     INVALID_VALUE_DESCRIPTION = "invalid_value_description"
     IDENTIFIER = "id"
     CONTAINS_DATA_FROM = "contains_data_from"
     CONTAINS_DATA_UNTIL = "contains_data_until"
+    DATA_ELEMENT_PATH = "data_element_path"
+    MULTIPLICATION_FACTOR = "multiplication_factor"
 
 
 DISPLAY_VARIABLES: dict[
@@ -139,13 +140,7 @@ DISPLAY_VARIABLES: dict[
         description="Lenke (URI) til gyldige kodeverk (klassifikasjon eller kodeliste) i KLASS",
         type="url",
     ),
-    VariableIdentifiers.SENTINEL_VALUE_URI: MetadataInputField(
-        identifier=VariableIdentifiers.SENTINEL_VALUE_URI.value,
-        display_name="Spesialverdienes URI",
-        description="En lenke (URI) til en oversikt over 'spesialverdier' som inngår i variabelen.",
-        type="url",
-    ),
-    VariableIdentifiers.INVALID_VALUE_DESCRIPTION: MetadataMultiLanguageField(
+    VariableIdentifiers.INVALID_VALUE_DESCRIPTION: MetadataInputField(
         identifier=VariableIdentifiers.INVALID_VALUE_DESCRIPTION.value,
         display_name="Ugyldige verdier",
         description="En beskrivelse av ugyldige verdier som inngår i variabelen dersom spesialverdiene ikke er tilstrekkelige eller ikke kan benyttes.",
@@ -168,6 +163,17 @@ DISPLAY_VARIABLES: dict[
         display_name="Inneholder data t.o.m.",
         description="Variabelforekomsten i datasettet inneholder data til og med denne dato.",
         id_type=VARIABLES_METADATA_DATE_INPUT,
+    ),
+    VariableIdentifiers.DATA_ELEMENT_PATH: MetadataInputField(
+        identifier=VariableIdentifiers.DATA_ELEMENT_PATH.value,
+        display_name="Data element sti",
+        description="",
+    ),
+    VariableIdentifiers.MULTIPLICATION_FACTOR: MetadataInputField(
+        identifier=VariableIdentifiers.MULTIPLICATION_FACTOR.value,
+        display_name="Multiplikasjonsfaktor",
+        description="",
+        type="number",
     ),
 }
 

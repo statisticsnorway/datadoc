@@ -6,6 +6,7 @@ from enum import Enum
 
 from datadoc_model import model
 from datadoc_model.model import LanguageStringType
+from datadoc_model.model import LanguageStringTypeItem
 
 
 class DaplaRegion(str, Enum):
@@ -69,49 +70,92 @@ class LanguageStringsEnum(Enum):
     def get_value_for_language(
         self,
         language: SupportedLanguages,
-    ) -> str:
+    ) -> str | None:
         """Retrieve the string for the relevant language."""
-        return str(getattr(self.language_strings, language.value))
+        if self.language_strings.root is not None:
+            for item in self.language_strings.root:
+                if item.languageCode == language:
+                    return item.languageText
+        return None
 
 
 class Assessment(LanguageStringsEnum):
     """Sensitivity of data."""
 
     SENSITIVE = LanguageStringType(
-        en=model.Assessment.SENSITIVE.value,
-        nn="SENSITIV",
-        nb="SENSITIV",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.Assessment.SENSITIVE.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="SENSITIV"),
+            LanguageStringTypeItem(languageCode="nb", languageText="SENSITIV"),
+        ],
     )
     PROTECTED = LanguageStringType(
-        en=model.Assessment.PROTECTED.value,
-        nn="SKJERMET",
-        nb="SKJERMET",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.Assessment.PROTECTED.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="SKJERMET"),
+            LanguageStringTypeItem(languageCode="nb", languageText="SKJERMET"),
+        ],
     )
-    OPEN = LanguageStringType(en=model.Assessment.OPEN.value, nn="ÅPEN", nb="ÅPEN")
+    OPEN = LanguageStringType(
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.Assessment.OPEN.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="ÅPEN"),
+            LanguageStringTypeItem(languageCode="nb", languageText="ÅPEN"),
+        ],
+    )
 
 
 class DataSetStatus(LanguageStringsEnum):
     """Lifecycle status of a dataset."""
 
     DRAFT = LanguageStringType(
-        en=model.DataSetStatus.DRAFT.value,
-        nn="UTKAST",
-        nb="UTKAST",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.DataSetStatus.DRAFT.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="UTKAST"),
+            LanguageStringTypeItem(languageCode="nb", languageText="UTKAST"),
+        ],
     )
     INTERNAL = LanguageStringType(
-        en=model.DataSetStatus.INTERNAL.value,
-        nn="INTERN",
-        nb="INTERN",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.DataSetStatus.INTERNAL.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="INTERN"),
+            LanguageStringTypeItem(languageCode="nb", languageText="INTERN"),
+        ],
     )
     EXTERNAL = LanguageStringType(
-        en=model.DataSetStatus.EXTERNAL.value,
-        nn="EKSTERN",
-        nb="EKSTERN",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.DataSetStatus.EXTERNAL.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="EKSTERN"),
+            LanguageStringTypeItem(languageCode="nb", languageText="EKSTERN"),
+        ],
     )
     DEPRECATED = LanguageStringType(
-        en=model.DataSetStatus.DEPRECATED.value,
-        nn="UTGÅTT",
-        nb="UTGÅTT",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.DataSetStatus.DEPRECATED.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="UTGÅTT"),
+            LanguageStringTypeItem(languageCode="nb", languageText="UTGÅTT"),
+        ],
     )
 
 
@@ -119,29 +163,54 @@ class DataSetState(LanguageStringsEnum):
     """Processing state of a dataset."""
 
     SOURCE_DATA = LanguageStringType(
-        en=model.DataSetState.SOURCE_DATA.value,
-        nn="KILDEDATA",
-        nb="KILDEDATA",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.DataSetState.SOURCE_DATA.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="KILDEDATA"),
+            LanguageStringTypeItem(languageCode="nb", languageText="KILDEDATA"),
+        ],
     )
     INPUT_DATA = LanguageStringType(
-        en=model.DataSetState.INPUT_DATA.value,
-        nn="INNDATA",
-        nb="INNDATA",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.DataSetState.INPUT_DATA.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="INNDATA"),
+            LanguageStringTypeItem(languageCode="nb", languageText="INNDATA"),
+        ],
     )
     PROCESSED_DATA = LanguageStringType(
-        en=model.DataSetState.PROCESSED_DATA.value,
-        nn="KLARGJORTE DATA",
-        nb="KLARGJORTE DATA",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.DataSetState.PROCESSED_DATA.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="KLARGJORTE DATA"),
+            LanguageStringTypeItem(languageCode="nb", languageText="KLARGJORTE DATA"),
+        ],
     )
     STATISTICS = LanguageStringType(
-        en=model.DataSetState.STATISTICS.value,
-        nn="STATISTIKK",
-        nb="STATISTIKK",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.DataSetState.STATISTICS.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="STATISTIKK"),
+            LanguageStringTypeItem(languageCode="nb", languageText="STATISTIKK"),
+        ],
     )
     OUTPUT_DATA = LanguageStringType(
-        en=model.DataSetState.OUTPUT_DATA.value,
-        nn="UTDATA",
-        nb="UTDATA",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.DataSetState.OUTPUT_DATA.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="UTDATA"),
+            LanguageStringTypeItem(languageCode="nb", languageText="UTDATA"),
+        ],
     )
 
 
@@ -152,50 +221,99 @@ class TemporalityTypeType(LanguageStringsEnum):
     """
 
     FIXED = LanguageStringType(
-        en=model.TemporalityTypeType.FIXED.value,
-        nn="FAST",
-        nb="FAST",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.TemporalityTypeType.FIXED.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="FAST"),
+            LanguageStringTypeItem(languageCode="nb", languageText="FAST"),
+        ],
     )
     STATUS = LanguageStringType(
-        en=model.TemporalityTypeType.STATUS.value,
-        nn="TVERRSNITT",
-        nb="TVERRSNITT",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.TemporalityTypeType.STATUS.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="TVERRSNITT"),
+            LanguageStringTypeItem(languageCode="nb", languageText="TVERRSNITT"),
+        ],
     )
     ACCUMULATED = LanguageStringType(
-        en=model.TemporalityTypeType.ACCUMULATED.value,
-        nn="AKKUMULERT",
-        nb="AKKUMULERT",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.TemporalityTypeType.ACCUMULATED.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="AKKUMULERT"),
+            LanguageStringTypeItem(languageCode="nb", languageText="AKKUMULERT"),
+        ],
     )
     EVENT = LanguageStringType(
-        en=model.TemporalityTypeType.EVENT.value,
-        nn="HENDELSE",
-        nb="HENDELSE",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.TemporalityTypeType.EVENT.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="HENDELSE"),
+            LanguageStringTypeItem(languageCode="nb", languageText="HENDELSE"),
+        ],
     )
 
 
 class DataType(LanguageStringsEnum):
     """Simplified data types for metadata purposes."""
 
-    STRING = LanguageStringType(en=model.DataType.STRING.value, nn="TEKST", nb="TEKST")
+    STRING = LanguageStringType(
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.DataType.STRING.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="TEKST"),
+            LanguageStringTypeItem(languageCode="nb", languageText="TEKST"),
+        ],
+    )
     INTEGER = LanguageStringType(
-        en=model.DataType.INTEGER.value,
-        nn="HELTALL",
-        nb="HELTALL",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.DataType.INTEGER.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="HELTALL"),
+            LanguageStringTypeItem(languageCode="nb", languageText="HELTALL"),
+        ],
     )
     FLOAT = LanguageStringType(
-        en=model.DataType.FLOAT.value,
-        nn="DESIMALTALL",
-        nb="DESIMALTALL",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.DataType.FLOAT.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="DESIMALTALL"),
+            LanguageStringTypeItem(languageCode="nb", languageText="DESIMALTALL"),
+        ],
     )
     DATETIME = LanguageStringType(
-        en=model.DataType.DATETIME.value,
-        nn="DATOTID",
-        nb="DATOTID",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.DataType.DATETIME.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="DATOTID"),
+            LanguageStringTypeItem(languageCode="nb", languageText="DATOTID"),
+        ],
     )
     BOOLEAN = LanguageStringType(
-        en=model.DataType.BOOLEAN.value,
-        nn="BOOLSK",
-        nb="BOOLSK",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.DataType.BOOLEAN.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="BOOLSK"),
+            LanguageStringTypeItem(languageCode="nb", languageText="BOOLSK"),
+        ],
     )
 
 
@@ -203,27 +321,105 @@ class VariableRole(LanguageStringsEnum):
     """The role of a variable in a dataset."""
 
     IDENTIFIER = LanguageStringType(
-        en=model.VariableRole.IDENTIFIER.value,
-        nn="IDENTIFIKATOR",
-        nb="IDENTIFIKATOR",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.VariableRole.IDENTIFIER.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="IDENTIFIKATOR"),
+            LanguageStringTypeItem(languageCode="nb", languageText="IDENTIFIKATOR"),
+        ],
     )
     MEASURE = LanguageStringType(
-        en=model.VariableRole.MEASURE.value,
-        nn="MÅLEVARIABEL",
-        nb="MÅLEVARIABEL",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.VariableRole.MEASURE.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="MÅLEVARIABEL"),
+            LanguageStringTypeItem(languageCode="nb", languageText="MÅLEVARIABEL"),
+        ],
     )
     START_TIME = LanguageStringType(
-        en=model.VariableRole.START_TIME.value,
-        nn="STARTTID",
-        nb="STARTTID",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.VariableRole.START_TIME.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="STARTTID"),
+            LanguageStringTypeItem(languageCode="nb", languageText="STARTTID"),
+        ],
     )
     STOP_TIME = LanguageStringType(
-        en=model.VariableRole.STOP_TIME.value,
-        nn="STOPPTID",
-        nb="STOPPTID",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.VariableRole.STOP_TIME.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="STOPPTID"),
+            LanguageStringTypeItem(languageCode="nb", languageText="STOPPTID"),
+        ],
     )
     ATTRIBUTE = LanguageStringType(
-        en=model.VariableRole.ATTRIBUTE.value,
-        nn="ATTRIBUTT",
-        nb="ATTRIBUTT",
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.VariableRole.ATTRIBUTE.value,
+            ),
+            LanguageStringTypeItem(languageCode="nn", languageText="ATTRIBUTT"),
+            LanguageStringTypeItem(languageCode="nb", languageText="ATTRIBUTT"),
+        ],
+    )
+
+
+class UseRestriction(LanguageStringsEnum):
+    """Lifecycle status of a dataset."""
+
+    DELETION_ANONYMIZATION = LanguageStringType(
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.UseRestriction.DELETION_ANONYMIZATION.value,
+            ),
+            LanguageStringTypeItem(
+                languageCode="nn",
+                languageText="SLETTING/ANONYMISERING",
+            ),
+            LanguageStringTypeItem(
+                languageCode="nb",
+                languageText="SLETTING/ANONYMISERING",
+            ),
+        ],
+    )
+    PROCESS_LIMITATIONS = LanguageStringType(
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.UseRestriction.PROCESS_LIMITATIONS.value,
+            ),
+            LanguageStringTypeItem(
+                languageCode="nn",
+                languageText="BEHANDLINGSBEGRENSNINGER",
+            ),
+            LanguageStringTypeItem(
+                languageCode="nb",
+                languageText="BEHANDLINGSBEGRENSNINGER",
+            ),
+        ],
+    )
+    SECONDARY_USE_RESTRICTIONS = LanguageStringType(
+        [
+            LanguageStringTypeItem(
+                languageCode="en",
+                languageText=model.UseRestriction.SECONDARY_USE_RESTRICTIONS.value,
+            ),
+            LanguageStringTypeItem(
+                languageCode="nn",
+                languageText="SEKUNDÆRBRUKSRESTRIKSJONER",
+            ),
+            LanguageStringTypeItem(
+                languageCode="nb",
+                languageText="SEKUNDÆRBRUKSRESTRIKSJONER",
+            ),
+        ],
     )
