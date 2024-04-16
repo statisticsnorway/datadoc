@@ -29,10 +29,7 @@ progress_bar = dbc.CardBody(
             id="progress-bar",
             max="100",
             value="0",
-            style={
-                "width": "800px",
-                "height": "3rem",
-            },
+            className="progress-bar",
         ),
     ],
     className="progress-bar-wrapper",
