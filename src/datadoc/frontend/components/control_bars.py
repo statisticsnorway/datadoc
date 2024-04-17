@@ -22,7 +22,8 @@ header = ssb.Header(
 progress_bar = dbc.CardBody(
     children=[
         html.Label(
-            title="Progress",
+            title="progress-bar",
+            id="progress-bar-label",
             children=[ssb.Title("Progress", size=6)],
         ),
         html.Progress(

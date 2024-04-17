@@ -1,11 +1,17 @@
 .progress-bar{
-    max-width: 800px;
+    /*max-width: 800px;*/
     width: 100%;
-    height: 2rem;
+    height: 1.5rem;
     border: 1px solid #274247;
     border-radius: 10px;
+    position: relative;
 }
 
+#progress-bar-label{
+    position: absolute;
+    top: 150px;
+    z-index: 1;
+}
 progress::-webkit-progress-bar {
     background-color: white;
  }
