@@ -223,8 +223,10 @@ class DataDocMetadata:
         else:
             self.container = model.MetadataContainer(datadoc=datadoc)
         if self.metadata_document:
-            self.metadata_document.write_text(self.container.model_dump_json(indent=4))
+            content = self.container.model_dump_json(indent=4)
+            self.metadata_document.write_text(content)
             logger.info("Saved metadata document %s", self.metadata_document)
+            logger.info("Metadata content:\n%s", content)
         else:
             msg = "No metadata document to save"
             raise ValueError(msg)

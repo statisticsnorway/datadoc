@@ -148,10 +148,11 @@ def get_dataset_path() -> pathlib.Path | CloudPath | str | None:
     if state.metadata.dataset_path is not None:
         return state.metadata.dataset_path
     path_from_env = config.get_datadoc_dataset_path()
-    logger.info(
-        "Dataset path from env var: '%s'",
-        path_from_env,
-    )
+    if path_from_env:
+        logger.info(
+            "Dataset path from env var: '%s'",
+            path_from_env,
+        )
     return path_from_env
 
 
