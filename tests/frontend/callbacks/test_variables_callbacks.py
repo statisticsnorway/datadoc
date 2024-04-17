@@ -13,7 +13,6 @@ from pydantic_core import Url
 
 from datadoc import enums
 from datadoc import state
-from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
@@ -269,8 +268,8 @@ def test_populate_variables_workspace_filter_variables(
         len(
             populate_variables_workspace(
                 metadata.variables,
-                SupportedLanguages.NORSK_BOKMÅL,
                 search_query,
+                0,
             ),
         )
         == expected_length

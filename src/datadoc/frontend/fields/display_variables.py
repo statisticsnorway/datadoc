@@ -15,7 +15,6 @@ from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import MetadataMultiLanguageField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
 from datadoc.frontend.fields.display_base import get_enum_options_for_language
-from datadoc.frontend.fields.display_base import get_multi_language_metadata
 
 
 class VariableIdentifiers(str, Enum):
@@ -185,10 +184,6 @@ DISPLAY_VARIABLES: dict[
 MULTIPLE_LANGUAGE_VARIABLES_METADATA = [
     m.identifier for m in DISPLAY_VARIABLES.values() if m.multiple_language_support
 ]
-
-for v in DISPLAY_VARIABLES.values():
-    if v.multiple_language_support:
-        v.value_getter = get_multi_language_metadata
 
 OBLIGATORY_VARIABLES_METADATA = [
     m for m in DISPLAY_VARIABLES.values() if m.obligatory and m.editable

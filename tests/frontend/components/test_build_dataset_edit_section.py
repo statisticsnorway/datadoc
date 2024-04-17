@@ -6,7 +6,6 @@ import ssb_dash_components as ssb  # type: ignore[import-untyped]
 from dash import html
 from datadoc_model import model
 
-from datadoc.enums import SupportedLanguages
 from datadoc.frontend.components.builders import build_dataset_edit_section
 from datadoc.frontend.fields.display_base import FieldTypes
 from datadoc.frontend.fields.display_base import MetadataDropdownField
@@ -32,49 +31,42 @@ INPUT_DATA_BUILD_DATASET_SECTION = [
     (
         "Obligatorisk",
         NON_EDITABLE_DATASET_METADATA,
-        SupportedLanguages.NORSK_BOKMÅL,
         model.Dataset(short_name="fantastic_dataset"),
         {"type": "dataset-edit-section", "id": "obligatory-nb"},
     ),
     (
         "",
         [],
-        SupportedLanguages.NORSK_BOKMÅL,
         model.Dataset(short_name="fantastic_dataset"),
         {"type": "dataset-edit-section", "id": "obligatory-nb"},
     ),
     (
         "",
         [],
-        "",
         None,
         {},
     ),
     (
         "Amazing title",
         [],
-        SupportedLanguages.ENGLISH,
         None,
         {"type": "dataset-edit-section", "id": "obligatory-en"},
     ),
     (
         "New title",
         OPTIONAL_DATASET_METADATA,
-        SupportedLanguages.NORSK_NYNORSK,
         model.Dataset(),
         {},
     ),
     (
         "New title",
         {},
-        SupportedLanguages.NORSK_BOKMÅL,
         model.Dataset(short_name="last_dataset"),
         {},
     ),
     (
         "Lazy title",
         OBLIGATORY_MINUS_ATYPICAL_DROPDOWNS,
-        SupportedLanguages.NORSK_BOKMÅL,
         model.Dataset(short_name="nosy_dataset"),
         {"type": "dataset-edit-section", "id": "obligatory-nb"},
     ),
@@ -82,20 +74,18 @@ INPUT_DATA_BUILD_DATASET_SECTION = [
 
 
 @pytest.mark.parametrize(
-    ("title", "field_types", "language", "dataset", "key"),
+    ("title", "field_types", "dataset", "key"),
     INPUT_DATA_BUILD_DATASET_SECTION,
 )
 def test_build_dataset_section_is_html_section(
     title,
     field_types,
-    language,
     dataset,
     key,
 ):
     edit_section = build_dataset_edit_section(
         title,
         field_types,
-        language,
         dataset,
         key,
     )
@@ -105,14 +95,13 @@ def test_build_dataset_section_is_html_section(
 
 
 @pytest.mark.parametrize(
-    ("title", "field_types", "language", "dataset", "key"),
+    ("title", "field_types", "dataset", "key"),
     INPUT_DATA_BUILD_DATASET_SECTION,
 )
-def test_build_dataset_has_title_component(title, field_types, language, dataset, key):
+def test_build_dataset_has_title_component(title, field_types, dataset, key):
     edit_section = build_dataset_edit_section(
         title,
         field_types,
-        language,
         dataset,
         key,
     )
@@ -123,14 +112,13 @@ def test_build_dataset_has_title_component(title, field_types, language, dataset
 
 
 @pytest.mark.parametrize(
-    ("title", "field_types", "language", "dataset", "key"),
+    ("title", "field_types", "dataset", "key"),
     INPUT_DATA_BUILD_DATASET_SECTION,
 )
-def test_build_dataset_is_form_component(title, field_types, language, dataset, key):
+def test_build_dataset_is_form_component(title, field_types, dataset, key):
     edit_section = build_dataset_edit_section(
         title,
         field_types,
-        language,
         dataset,
         key,
     )
@@ -146,7 +134,6 @@ def test_build_dataset_is_form_component(title, field_types, language, dataset, 
             build_dataset_edit_section(
                 "",
                 NON_EDITABLE_DATASET_METADATA,
-                SupportedLanguages.NORSK_BOKMÅL,
                 model.Dataset(short_name="fantastic_dataset"),
                 {"type": "dataset-edit-section", "id": "obligatory-nb"},
             ),
@@ -158,7 +145,6 @@ def test_build_dataset_is_form_component(title, field_types, language, dataset, 
             build_dataset_edit_section(
                 "New title",
                 OPTIONAL_DATASET_METADATA,
-                SupportedLanguages.NORSK_NYNORSK,
                 model.Dataset(),
                 {},
             ),
@@ -170,7 +156,6 @@ def test_build_dataset_is_form_component(title, field_types, language, dataset, 
             build_dataset_edit_section(
                 "",
                 OBLIGATORY_MINUS_ATYPICAL_DROPDOWNS,
-                SupportedLanguages.ENGLISH,
                 model.Dataset(short_name="super_dataset"),
                 {"type": "dataset-edit-section", "id": "obligatory-en"},
             ),
@@ -200,20 +185,18 @@ def test_build_dataset_edit_section_renders_ssb_components(
 
 
 @pytest.mark.parametrize(
-    ("title", "field_types", "language", "dataset", "key"),
+    ("title", "field_types", "dataset", "key"),
     INPUT_DATA_BUILD_DATASET_SECTION,
 )
 def test_build_dataset_edit_section_input_component_props(
     title,
     field_types,
-    language,
     dataset,
     key,
 ):
     edit_section = build_dataset_edit_section(
         title,
         field_types,
-        language,
         dataset,
         key,
     )
@@ -232,20 +215,18 @@ def test_build_dataset_edit_section_input_component_props(
 
 
 @pytest.mark.parametrize(
-    ("title", "field_types", "language", "dataset", "key"),
+    ("title", "field_types", "dataset", "key"),
     INPUT_DATA_BUILD_DATASET_SECTION,
 )
 def test_build_dataset_edit_section_dropdown_component_props(
     title,
     field_types,
-    language,
     dataset,
     key,
 ):
     edit_section = build_dataset_edit_section(
         title,
         field_types,
-        language,
         dataset,
         key,
     )
@@ -291,7 +272,6 @@ DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL: list[FieldTypes] = [
             build_dataset_edit_section(
                 "",
                 DATASET_INPUT_FIELD_LIST,
-                SupportedLanguages.NORSK_BOKMÅL,
                 model.Dataset(short_name="input_dataset"),
                 {"type": "dataset-edit-section", "id": "recommended-nb"},
             ),
@@ -302,7 +282,6 @@ DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL: list[FieldTypes] = [
             build_dataset_edit_section(
                 "title",
                 DATASET_DATE_FIELD_LIST,
-                SupportedLanguages.NORSK_BOKMÅL,
                 model.Dataset(short_name="date_dataset"),
                 {"type": "dataset-edit-section", "id": "title-nb"},
             ),
@@ -313,7 +292,6 @@ DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL: list[FieldTypes] = [
             build_dataset_edit_section(
                 "dropdown",
                 DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL,
-                SupportedLanguages.ENGLISH,
                 model.Dataset(short_name="dropdown_dataset"),
                 {"type": "dataset-edit-section", "id": "dropdown-en"},
             ),

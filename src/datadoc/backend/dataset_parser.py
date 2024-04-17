@@ -17,8 +17,8 @@ from datadoc_model.model import LanguageStringTypeItem
 from datadoc_model.model import Variable
 from pyarrow import parquet as pq
 
-from datadoc import state
 from datadoc.enums import DataType
+from datadoc.enums import SupportedLanguages
 
 if t.TYPE_CHECKING:
     import pyarrow as pa
@@ -215,7 +215,7 @@ class DatasetParserSas7Bdat(DatasetParser):
                     name=LanguageStringType(
                         [
                             LanguageStringTypeItem(
-                                languageCode=state.current_metadata_language.value,
+                                languageCode=SupportedLanguages.NORSK_BOKMÅL.value,
                                 languageText=sas_reader.columns[  # type: ignore [attr-defined]
                                     i
                                 ].label,

@@ -4,11 +4,8 @@ from __future__ import annotations
 
 import dash_bootstrap_components as dbc
 import ssb_dash_components as ssb
-from dash import dcc
 from dash import html
 
-from datadoc import state
-from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.utils import get_app_version
 
@@ -25,28 +22,14 @@ progress_bar = dbc.CardBody(
 )
 
 
-def build_language_dropdown() -> dbc.Row:
-    """Build the language dropdown."""
+def build_footer_control_bar() -> dbc.Row:
+    """Build footer control bar which resides below all the content."""
     return dbc.CardBody(
         dbc.Row(
             [
                 dbc.Col(
                     html.P(f"v{get_app_version()}", className="small"),
                     align="end",
-                ),
-                dbc.Col(
-                    dcc.Dropdown(
-                        id="language-dropdown",
-                        searchable=False,
-                        value=state.current_metadata_language.value,
-                        className="ssb-dropdown",
-                        options=[
-                            {"label": i.name, "value": i.value}
-                            for i in SupportedLanguages
-                        ],
-                    ),
-                    align="center",
-                    width="auto",
                 ),
             ],
             justify="between",

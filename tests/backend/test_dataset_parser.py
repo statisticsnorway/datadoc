@@ -9,7 +9,6 @@ from datadoc_model.model import LanguageStringType
 from datadoc_model.model import LanguageStringTypeItem
 from datadoc_model.model import Variable
 
-from datadoc import state
 from datadoc.backend.dataset_parser import KNOWN_BOOLEAN_TYPES
 from datadoc.backend.dataset_parser import KNOWN_DATETIME_TYPES
 from datadoc.backend.dataset_parser import KNOWN_FLOAT_TYPES
@@ -18,7 +17,6 @@ from datadoc.backend.dataset_parser import KNOWN_STRING_TYPES
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.dataset_parser import DatasetParserParquet
 from datadoc.enums import DataType
-from datadoc.enums import SupportedLanguages
 from tests.utils import TEST_PARQUET_FILEPATH
 from tests.utils import TEST_PARQUET_GZIP_FILEPATH
 from tests.utils import TEST_SAS7BDAT_FILEPATH
@@ -53,7 +51,6 @@ def test_get_fields_parquet(local_parser: DatasetParserParquet):
 
 
 def test_get_fields_sas7bdat():
-    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     expected_fields = [
         Variable(
             short_name="tekst",

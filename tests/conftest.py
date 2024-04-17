@@ -106,7 +106,6 @@ def _clear_state() -> None:
     """Global fixture, referred to in pytest.ini."""
     try:
         del state.metadata
-        del state.current_metadata_language
         del state.statistic_subject_mapping
     except AttributeError:
         pass

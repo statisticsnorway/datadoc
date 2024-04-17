@@ -13,7 +13,6 @@ from typing import Any
 import ssb_dash_components as ssb
 from dash import html
 
-from datadoc import state
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
 
@@ -58,12 +57,11 @@ METADATA_LANGUAGES = [
 
 def get_enum_options_for_language(
     enum: Enum,
-    language: SupportedLanguages,
 ) -> list[dict[str, str]]:
     """Generate the list of options based on the currently chosen language."""
     dropdown_options = [
         {
-            "title": i.get_value_for_language(language),
+            "title": i.get_value_for_language(SupportedLanguages.NORSK_BOKMÅL),
             "id": i.name,
         }
         for i in get_language_strings_enum(enum)  # type: ignore [attr-defined]
@@ -106,14 +104,6 @@ def get_date_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str
     convert_value = date[:10]
     logger.info("Display date: %s", convert_value)
     return convert_value
-
-
-def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> str | None:
-    """Get a metadata value supporting multiple languages from the model."""
-    value: LanguageStringType | None = getattr(metadata, identifier)
-    if value is None:
-        return value
-    return _get_string_type_item(value, state.current_metadata_language)
 
 
 def _get_string_type_item(
@@ -169,7 +159,6 @@ class DisplayMetadata(ABC):
     def render(
         self,
         component_id: dict,
-        language: str,
         metadata: BaseModel,
     ) -> Component:
         """Build a component."""
@@ -185,7 +174,6 @@ class MetadataInputField(DisplayMetadata):
     def render(
         self,
         component_id: dict,
-        language: str,  # noqa: ARG002
         metadata: BaseModel,
     ) -> ssb.Input:
         """Build an Input component."""
@@ -208,14 +196,11 @@ class MetadataInputField(DisplayMetadata):
 class MetadataDropdownField(DisplayMetadata):
     """Controls how a Dropdown should be displayed."""
 
-    # fmt: off
-    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: [] # noqa: E731, RUF100
-    # fmt: on
+    options_getter: Callable[[], list[dict[str, str]]] = list
 
     def render(
         self,
         component_id: dict,
-        language: str,
         metadata: BaseModel,
     ) -> ssb.Dropdown:
         """Build Dropdown component."""
@@ -223,7 +208,7 @@ class MetadataDropdownField(DisplayMetadata):
         return ssb.Dropdown(
             header=self.display_name,
             id=component_id,
-            items=self.options_getter(SupportedLanguages(language)),
+            items=self.options_getter(),
             value=value,
             className="dropdown-component",
             showDescription=self.show_description,
@@ -244,7 +229,6 @@ class MetadataPeriodField(DisplayMetadata):
     def render(
         self,
         component_id: dict,
-        language: str,  # noqa: ARG002
         metadata: BaseModel,
     ) -> ssb.Input:
         """Build Input date component."""
@@ -272,6 +256,7 @@ class MetadataMultiLanguageField(DisplayMetadata):
 
     id_type: str = ""
     type: str = "text"
+    value_getter = get_multi_language_metadata_and_stringify
 
     def render_input_group(
         self,
@@ -327,7 +312,6 @@ class MetadataMultiLanguageField(DisplayMetadata):
     def render(
         self,
         component_id: dict,
-        language: str,  # noqa: ARG002
         metadata: BaseModel,
     ) -> html.Fieldset:
         """Build fieldset group."""
@@ -363,7 +347,6 @@ class MetadataCheckboxField(DisplayMetadata):
     def render(
         self,
         component_id: dict,
-        language: str,  # noqa: ARG002
         metadata: BaseModel,
     ) -> ssb.Checkbox:
         """Build Checkbox component."""
