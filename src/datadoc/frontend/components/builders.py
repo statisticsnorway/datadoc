@@ -14,8 +14,7 @@ from dash import html
 
 from datadoc.frontend.fields.display_base import DATASET_METADATA_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
-from datadoc.frontend.fields.display_base import DatasetFieldTypes
-from datadoc.frontend.fields.display_base import VariablesFieldTypes
+from datadoc.frontend.fields.display_base import FieldTypes
 
 if TYPE_CHECKING:
     from datadoc_model import model
@@ -104,7 +103,7 @@ def build_ssb_alert(  # noqa: PLR0913 not immediately obvious how to improve thi
 
 
 def build_input_field_section(
-    metadata_fields: list[VariablesFieldTypes],
+    metadata_fields: list[FieldTypes],
     variable: model.Variable,
     language: str,
 ) -> dbc.Form:
@@ -157,13 +156,6 @@ def build_ssb_accordion(
         children=[
             html.Section(
                 id={
-                    "type": "variable-input-alerts",
-                    "variable_short_name": variable_short_name,
-                },
-                className="alert-section",
-            ),
-            html.Section(
-                id={
                     "type": "variable-inputs",
                     "variable_short_name": variable_short_name,
                 },
@@ -176,7 +168,7 @@ def build_ssb_accordion(
 
 def build_dataset_edit_section(
     title: str,
-    metadata_inputs: list[DatasetFieldTypes],
+    metadata_inputs: list[FieldTypes],
     language: str,
     dataset: model.Dataset,
     key: dict,
