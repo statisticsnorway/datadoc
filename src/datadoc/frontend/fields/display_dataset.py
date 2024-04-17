@@ -121,6 +121,7 @@ DISPLAY_DATASET: dict[
         identifier=DatasetIdentifiers.ASSESSMENT.value,
         display_name="Verdivurdering",
         description="Verdivurdering (sensitivitetsklassifisering) for datasettet.",
+        obligatory=True,
         options_getter=functools.partial(
             get_enum_options_for_language,
             enums.Assessment,
