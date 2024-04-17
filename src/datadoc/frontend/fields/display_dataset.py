@@ -10,10 +10,12 @@ from typing import TYPE_CHECKING
 from datadoc import enums
 from datadoc import state
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
-from datadoc.frontend.fields.display_base import DatasetFieldTypes
+from datadoc.frontend.fields.display_base import DATASET_METADATA_MULTILANGUAGE_INPUT
+from datadoc.frontend.fields.display_base import FieldTypes
 from datadoc.frontend.fields.display_base import MetadataCheckboxField
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
+from datadoc.frontend.fields.display_base import MetadataMultiLanguageField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
 from datadoc.frontend.fields.display_base import get_comma_separated_string
 from datadoc.frontend.fields.display_base import get_enum_options_for_language
@@ -106,7 +108,7 @@ class DatasetIdentifiers(str, Enum):
 
 DISPLAY_DATASET: dict[
     DatasetIdentifiers,
-    DatasetFieldTypes,
+    FieldTypes,
 ] = {
     DatasetIdentifiers.SHORT_NAME: MetadataInputField(
         identifier=DatasetIdentifiers.SHORT_NAME.value,
@@ -144,27 +146,29 @@ DISPLAY_DATASET: dict[
             enums.DataSetState,
         ),
     ),
-    DatasetIdentifiers.NAME: MetadataInputField(
+    DatasetIdentifiers.NAME: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.NAME.value,
         display_name="Navn",
         description="Datasettnavn",
         obligatory=True,
         multiple_language_support=True,
-        value_getter=get_metadata_and_stringify,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
-    DatasetIdentifiers.DATA_SOURCE: MetadataInputField(
+    DatasetIdentifiers.DATA_SOURCE: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.DATA_SOURCE.value,
         display_name="Datakilde",
         description="Datakilde. Settes enten for datasettet eller variabelforekomst.",
         obligatory=True,
         multiple_language_support=True,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
-    DatasetIdentifiers.POPULATION_DESCRIPTION: MetadataInputField(
+    DatasetIdentifiers.POPULATION_DESCRIPTION: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.POPULATION_DESCRIPTION.value,
         display_name="Populasjon",
         description="Populasjonen datasettet dekker. Populasjonsbeskrivelsen inkluderer enhetstype, geografisk dekningsområde og tidsperiode.",
         obligatory=True,
         multiple_language_support=True,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
     DatasetIdentifiers.VERSION: MetadataInputField(
         identifier=DatasetIdentifiers.VERSION.value,
@@ -173,12 +177,13 @@ DISPLAY_DATASET: dict[
         obligatory=True,
         type="number",
     ),
-    DatasetIdentifiers.VERSION_DESCRIPTION: MetadataInputField(
+    DatasetIdentifiers.VERSION_DESCRIPTION: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.VERSION_DESCRIPTION.value,
         display_name="Versjonsbeskrivelse",
         description="Årsak/grunnlag for denne versjonen av datasettet i form av beskrivende tekst.",
         multiple_language_support=True,
         obligatory=True,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
     DatasetIdentifiers.UNIT_TYPE: MetadataDropdownField(
         identifier=DatasetIdentifiers.UNIT_TYPE.value,
@@ -198,12 +203,13 @@ DISPLAY_DATASET: dict[
         ),
         obligatory=True,
     ),
-    DatasetIdentifiers.DESCRIPTION: MetadataInputField(
+    DatasetIdentifiers.DESCRIPTION: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.DESCRIPTION.value,
         display_name="Beskrivelse",
         description="Beskrivelse av datasettet",
         multiple_language_support=True,
         obligatory=True,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
     DatasetIdentifiers.SUBJECT_FIELD: MetadataDropdownField(
         identifier=DatasetIdentifiers.SUBJECT_FIELD.value,
@@ -219,11 +225,12 @@ DISPLAY_DATASET: dict[
         description="En kommaseparert liste med søkbare nøkkelord som kan bidra til utvikling av effektive filtrerings- og søketjeneste.",
         value_getter=get_comma_separated_string,
     ),
-    DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION: MetadataInputField(
+    DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION.value,
         display_name="Geografisk dekningsområde",
         description="Beskrivelse av datasettets geografiske dekningsområde. Målet er på sikt at dette skal hentes fra Klass, men fritekst vil også kunne brukes.",
         multiple_language_support=True,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
     DatasetIdentifiers.ID: MetadataInputField(
         identifier=DatasetIdentifiers.ID.value,
@@ -319,7 +326,7 @@ for v in DISPLAY_DATASET.values():
     if v.multiple_language_support:
         v.value_getter = get_multi_language_metadata
 
-MULTIPLE_LANGUAGE_DATASET_METADATA = [
+MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS = [
     m.identifier for m in DISPLAY_DATASET.values() if m.multiple_language_support
 ]
 
@@ -335,14 +342,17 @@ NON_EDITABLE_DATASET_METADATA = [m for m in DISPLAY_DATASET.values() if not m.ed
 
 
 # The order of this list MUST match the order of display components, as defined in DatasetTab.py
-DISPLAYED_DATASET_METADATA: list[DatasetFieldTypes] = (
+DISPLAYED_DATASET_METADATA: list[FieldTypes] = (
     OBLIGATORY_EDITABLE_DATASET_METADATA
     + OPTIONAL_DATASET_METADATA
     + NON_EDITABLE_DATASET_METADATA
 )
 
-DISPLAYED_DROPDOWN_DATASET_METADATA: list[MetadataDropdownField] = [
+DROPDOWN_DATASET_METADATA: list[MetadataDropdownField] = [
     m for m in DISPLAYED_DATASET_METADATA if isinstance(m, MetadataDropdownField)
+]
+DROPDOWN_DATASET_METADATA_IDENTIFIERS: list[str] = [
+    m.identifier for m in DROPDOWN_DATASET_METADATA
 ]
 
 OBLIGATORY_DATASET_METADATA_IDENTIFIERS: list[str] = [

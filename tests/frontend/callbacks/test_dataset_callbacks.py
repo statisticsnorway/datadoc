@@ -23,7 +23,9 @@ from datadoc.frontend.callbacks.dataset import change_language_dataset_metadata
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.dataset import process_special_cases
 from datadoc.frontend.callbacks.dataset import update_dataset_metadata_language
-from datadoc.frontend.fields.display_dataset import MULTIPLE_LANGUAGE_DATASET_METADATA
+from datadoc.frontend.fields.display_dataset import (
+    MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS,
+)
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from tests.utils import TEST_PARQUET_FILEPATH
 
@@ -176,8 +178,7 @@ def test_accept_dataset_metadata_input_valid_data(
     metadata: DataDocMetadata,
 ):
     state.metadata = metadata
-    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
-    output = accept_dataset_metadata_input(provided_value, metadata_identifier)
+    output = accept_dataset_metadata_input(provided_value, metadata_identifier, "nb")
     assert output[0] is False
     assert output[1] == ""
     assert (
@@ -191,6 +192,7 @@ def test_accept_dataset_metadata_input_incorrect_data_type(metadata: DataDocMeta
     output = accept_dataset_metadata_input(
         3.1415,
         DatasetIdentifiers.DATASET_STATE.value,
+        "",
     )
     assert output[0] is True
     assert "validation error for Dataset" in output[1]
@@ -312,17 +314,24 @@ def test_change_language_dataset_metadata_options_enums(
             assert {d["id"] for d in test_without_empty_option} == {e.name for e in enum_for_options}  # type: ignore [attr-defined]
 
 
+@pytest.mark.parametrize(
+    "path",
+    [
+        "valid/path/to/person_data_v1.parquet",
+        "  path/with/extra/whitespace/person_data_v1.parquet  ",
+    ],
+)
 @patch(f"{DATASET_CALLBACKS_MODULE}.open_file")
 def test_open_dataset_handling_normal(
     open_file_mock: Mock,  # noqa: ARG001
     n_clicks_1: int,
-    file_path: str,
+    path: str,
 ):
     state.current_metadata_language = SupportedLanguages.ENGLISH
 
     opened, show_error, naming_standard, error_msg, language = open_dataset_handling(
         n_clicks_1,
-        file_path,
+        path,
     )
     assert opened
     assert not show_error
@@ -419,10 +428,10 @@ def test_process_special_cases_language_string(
     metadata: DataDocMetadata,
 ):
     state.metadata = metadata
-    state.current_metadata_language = SupportedLanguages.ENGLISH
+    language = "en"
     value = "Test language string"
     identifier = random.choice(  # noqa: S311
-        MULTIPLE_LANGUAGE_DATASET_METADATA,
+        MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS,
     )
     expected = model.LanguageStringType(
         [
@@ -438,7 +447,7 @@ def test_process_special_cases_language_string(
     )
     mock_find.return_value = expected
 
-    assert process_special_cases(value, identifier) == expected
+    assert process_special_cases(value, identifier, language) == expected
 
 
 def test_process_special_cases_no_change():
