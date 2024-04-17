@@ -13,7 +13,6 @@ from datadoc_model import model
 
 from datadoc import enums
 from datadoc import state
-from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
@@ -324,7 +323,6 @@ def test_open_dataset_handling_naming_standard(
     n_clicks_1: int,
     file_path_without_dates: str,
 ):
-    state.current_metadata_language = SupportedLanguages.ENGLISH
     opened, show_error, naming_standard, error_msg, counter = open_dataset_handling(
         n_clicks_1,
         file_path_without_dates,

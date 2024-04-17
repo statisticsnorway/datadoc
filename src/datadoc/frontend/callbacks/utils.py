@@ -22,7 +22,6 @@ if TYPE_CHECKING:
     import pydantic
     from cloudpathlib import CloudPath
 
-    from datadoc.enums import SupportedLanguages
 
 logger = logging.getLogger(__name__)
 
@@ -44,20 +43,6 @@ def get_language_strings_enum(
         cast(type[enums.LanguageStringsEnum], enum).__name__,
     )
     return language_strings_enum
-
-
-def get_options_for_language(
-    language: SupportedLanguages,
-    enum: Enum,
-) -> list[dict[str, str]]:
-    """Generate the list of options based on the currently chosen language."""
-    return [
-        {
-            "label": i.get_value_for_language(language),
-            "value": i.name,
-        }
-        for i in get_language_strings_enum(enum)  # type: ignore [arg-type, attr-defined]
-    ]
 
 
 def _check_if_language_string_item_exists(
@@ -147,8 +132,6 @@ def get_dataset_path() -> pathlib.Path | CloudPath | str | None:
     )
     return path_from_env
 
-
-ISO_DATE_FORMAT = "YYYY-MM-DD"
 
 VALIDATION_ERROR = "Validation error: "
 DATE_VALIDATION_MESSAGE = f"{VALIDATION_ERROR}contains_data_from must be the same or earlier date than contains_data_until"

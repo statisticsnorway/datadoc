@@ -32,7 +32,6 @@ class AlertTypes(Enum):
 class AlertType:
     """Attributes of a concrete alert type."""
 
-    alert_class_name: str
     color: str
 
     @staticmethod
@@ -43,15 +42,12 @@ class AlertType:
 
 ALERT_TYPES = {
     AlertTypes.ERROR: AlertType(
-        alert_class_name="ssb-dialog error",
         color="danger",
     ),
     AlertTypes.WARNING: AlertType(
-        alert_class_name="ssb-dialog warning",
         color="warning",
     ),
     AlertTypes.SUCCESS: AlertType(
-        alert_class_name="ssb-dialog",
         color="success",
     ),
 }

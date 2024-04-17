@@ -4,14 +4,6 @@ from __future__ import annotations
 
 import datetime
 import importlib
-from typing import TYPE_CHECKING
-from typing import Any
-
-from datadoc_model import model
-from pydantic import AnyUrl
-
-if TYPE_CHECKING:
-    from datadoc.enums import SupportedLanguages
 
 METADATA_DOCUMENT_FILE_SUFFIX = "__DOC.json"
 
@@ -31,40 +23,6 @@ def running_in_notebook() -> bool:
 def calculate_percentage(completed: int, total: int) -> int:
     """Calculate percentage as a rounded integer."""
     return round((completed / total) * 100)
-
-
-def get_languagetext_from_language_string_type(
-    variable: list[dict[str, str]] | None,
-    language: SupportedLanguages,
-) -> str | None:
-    """Return value from a LanguageStringType for given language."""
-    if variable:
-        for i in variable:
-            if i["languageCode"] == language.value:
-                return i["languageText"]
-    else:
-        msg = "Root is none"
-        raise AssertionError(msg)
-    return None
-
-
-def get_display_values(
-    variable: model.Variable,
-    current_language: SupportedLanguages,
-) -> dict[str, Any]:
-    """Return a dictionary representation of Model.DataDocVariable with strings in the currently selected language."""
-    return_dict = {}
-    for field_name, value in variable:
-        if isinstance(value, model.LanguageStringType):
-            return_dict[field_name] = get_languagetext_from_language_string_type(
-                value.model_dump(),  # type: ignore [arg-type]
-                current_language,
-            )
-        elif isinstance(value, AnyUrl):
-            return_dict[field_name] = str(value)
-        else:
-            return_dict[field_name] = value
-    return return_dict
 
 
 def pick_random_port() -> int:

@@ -185,7 +185,7 @@ def register_callbacks(app: Dash) -> None:
         prevent_initial_call=True,
     )
     def callback_populate_variables_info_section(
-        language: str,  # noqa: ARG001 Dash requires arguments for all Inputs
+        dataset_opened_counter: int,  # noqa: ARG001 Dash requires arguments for all Inputs
     ) -> str:
         return f"Datasettet inneholder {len(state.metadata.variables)} variabler."
 

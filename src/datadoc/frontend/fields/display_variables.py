@@ -14,7 +14,7 @@ from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import MetadataMultiLanguageField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
-from datadoc.frontend.fields.display_base import get_enum_options_for_language
+from datadoc.frontend.fields.display_base import get_enum_options
 
 
 class VariableIdentifiers(str, Enum):
@@ -67,7 +67,7 @@ DISPLAY_VARIABLES: dict[
         description="Datatype",
         obligatory=True,
         options_getter=functools.partial(
-            get_enum_options_for_language,
+            get_enum_options,
             enums.DataType,
         ),
     ),
@@ -77,7 +77,7 @@ DISPLAY_VARIABLES: dict[
         description="Variabelens rolle i datasett",
         obligatory=True,
         options_getter=functools.partial(
-            get_enum_options_for_language,
+            get_enum_options,
             enums.VariableRole,
         ),
     ),
@@ -123,7 +123,7 @@ DISPLAY_VARIABLES: dict[
         display_name="Temporalitetstype",
         description="Temporalitetstype. Settes enten for variabelforekomst eller datasett. Se Temporalitet, hendelser og forløp.",
         options_getter=functools.partial(
-            get_enum_options_for_language,
+            get_enum_options,
             enums.TemporalityTypeType,
         ),
     ),

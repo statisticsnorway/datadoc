@@ -16,7 +16,6 @@ from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
-from datadoc.frontend.fields.display_dataset import DISPLAYED_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import (
     DROPDOWN_DATASET_METADATA_IDENTIFIERS,
 )
@@ -186,17 +185,6 @@ def accept_dataset_metadata_input(
         )
 
     return show_error, error_explanation
-
-
-def update_dataset_metadata_language() -> list[MetadataInputTypes]:
-    """Return new values for ALL the dataset metadata inputs.
-
-    This allows editing of strings in the chosen language.
-    """
-    return [
-        m.value_getter(state.metadata.dataset, m.identifier)
-        for m in DISPLAYED_DATASET_METADATA
-    ]
 
 
 def accept_dataset_metadata_date_input(
