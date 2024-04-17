@@ -97,6 +97,7 @@ def process_keyword(value: str) -> list[str]:
 def process_special_cases(
     value: MetadataInputTypes | LanguageStringType,
     metadata_identifier: str,
+    language: str | None = None,
 ) -> MetadataInputTypes | LanguageStringType:
     """Pre-process metadata where needed.
 
@@ -116,11 +117,13 @@ def process_special_cases(
         value,
         str,
     ):
-        updated_value = find_existing_language_string(
-            state.metadata.dataset,
-            value,
-            metadata_identifier,
-        )
+        if language is not None:
+            updated_value = find_existing_language_string(
+                state.metadata.dataset,
+                value,
+                metadata_identifier,
+                language,
+            )
     elif (
         metadata_identifier == DatasetIdentifiers.DATASET_STATUS.value
         and value == ""
@@ -138,6 +141,7 @@ def process_special_cases(
 def accept_dataset_metadata_input(
     value: MetadataInputTypes | LanguageStringType,
     metadata_identifier: str,
+    language: str | None = None,
 ) -> tuple[bool, str]:
     """Handle user inputs of dataset metadata values."""
     logger.debug(
@@ -146,7 +150,9 @@ def accept_dataset_metadata_input(
         metadata_identifier,
     )
     try:
-        value = process_special_cases(value, metadata_identifier)
+        if language is None:
+            value = process_special_cases(value, metadata_identifier)
+        value = process_special_cases(value, metadata_identifier, language)
         # Update the value in the model
         setattr(
             state.metadata.dataset,

@@ -31,8 +31,10 @@ from datadoc.frontend.components.variables_tab import ACCORDION_WRAPPER_ID
 from datadoc.frontend.components.variables_tab import VARIABLES_INFORMATION_ID
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import DATASET_METADATA_INPUT
+from datadoc.frontend.fields.display_base import DATASET_METADATA_MULTILANGUAGE_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
+from datadoc.frontend.fields.display_base import VARIABLES_METADATA_MULTILANGUAGE_INPUT
 from datadoc.frontend.fields.display_dataset import NON_EDITABLE_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import OBLIGATORY_EDITABLE_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import OPTIONAL_DATASET_METADATA
@@ -85,9 +87,18 @@ def register_callbacks(app: Dash) -> None:
         return False
 
     @app.callback(
-        Output("dataset-validation-error", "is_open"),
-        Output("dataset-validation-explanation", "children"),
-        Input({"type": DATASET_METADATA_INPUT, "id": ALL}, "value"),
+        Output(
+            {"type": DATASET_METADATA_INPUT, "id": MATCH},
+            "error",
+        ),
+        Output(
+            {"type": DATASET_METADATA_INPUT, "id": MATCH},
+            "errorMessage",
+        ),
+        Input(
+            {"type": DATASET_METADATA_INPUT, "id": MATCH},
+            "value",
+        ),
         prevent_initial_call=True,
     )
     def callback_accept_dataset_metadata_input(
@@ -101,6 +112,47 @@ def register_callbacks(app: Dash) -> None:
         return accept_dataset_metadata_input(
             ctx.triggered[0]["value"],
             ctx.triggered_id["id"],
+        )
+
+    @app.callback(
+        Output(
+            {
+                "type": DATASET_METADATA_MULTILANGUAGE_INPUT,
+                "id": MATCH,
+                "language": MATCH,
+            },
+            "error",
+        ),
+        Output(
+            {
+                "type": DATASET_METADATA_MULTILANGUAGE_INPUT,
+                "id": MATCH,
+                "language": MATCH,
+            },
+            "errorMessage",
+        ),
+        Input(
+            {
+                "type": DATASET_METADATA_MULTILANGUAGE_INPUT,
+                "id": MATCH,
+                "language": MATCH,
+            },
+            "value",
+        ),
+        prevent_initial_call=True,
+    )
+    def callback_accept_dataset_metadata_multilanguage_input(
+        value: MetadataInputTypes,  # noqa: ARG001 argument required by Dash
+    ) -> tuple[bool, str]:
+        """Save updated dataset metadata values.
+
+        Will display an alert if validation fails.
+        """
+        # Get the ID of the input that changed. This MUST match the attribute name defined in DataDocDataSet
+        return accept_dataset_metadata_input(
+            ctx.triggered[0]["value"],
+            ctx.triggered_id["id"],
+            ctx.triggered_id["language"],
         )
 
     @app.callback(
@@ -240,6 +292,52 @@ def register_callbacks(app: Dash) -> None:
             ctx.triggered[0]["value"],
             ctx.triggered_id["variable_short_name"],
             ctx.triggered_id["id"],
+        )
+        if not message:
+            # No error to display.
+            return False, ""
+
+        return True, message
+
+    @app.callback(
+        Output(
+            {
+                "type": VARIABLES_METADATA_MULTILANGUAGE_INPUT,
+                "variable_short_name": MATCH,
+                "id": MATCH,
+                "language": MATCH,
+            },
+            "error",
+        ),
+        Output(
+            {
+                "type": VARIABLES_METADATA_MULTILANGUAGE_INPUT,
+                "variable_short_name": MATCH,
+                "id": MATCH,
+                "language": MATCH,
+            },
+            "errorMessage",
+        ),
+        Input(
+            {
+                "type": VARIABLES_METADATA_MULTILANGUAGE_INPUT,
+                "variable_short_name": MATCH,
+                "id": MATCH,
+                "language": MATCH,
+            },
+            "value",
+        ),
+        prevent_initial_call=True,
+    )
+    def callback_accept_variable_metadata_multilanguage_input(
+        value: MetadataInputTypes,  # noqa: ARG001 argument required by Dash
+    ) -> dbc.Alert:
+        """Save updated variable metadata values."""
+        message = accept_variable_metadata_input(
+            ctx.triggered[0]["value"],
+            ctx.triggered_id["variable_short_name"],
+            ctx.triggered_id["id"],
+            ctx.triggered_id["language"],
         )
         if not message:
             # No error to display.

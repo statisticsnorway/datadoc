@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 from typing import Any
 
 import ssb_dash_components as ssb
+from dash import html
 
 from datadoc import state
 from datadoc.enums import SupportedLanguages
@@ -29,10 +30,30 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 DATASET_METADATA_INPUT = "dataset-metadata-input"
+DATASET_METADATA_DATE_INPUT = "dataset-metadata-date-input"
+DATASET_METADATA_MULTILANGUAGE_INPUT = "dataset-metadata-multilanguage-input"
 
 VARIABLES_METADATA_INPUT = "variables-metadata-input"
 VARIABLES_METADATA_DATE_INPUT = "variables-metadata-date-input"
-DATASET_METADATA_DATE_INPUT = "dataset-metadata-date-input"
+VARIABLES_METADATA_MULTILANGUAGE_INPUT = "dataset-metadata-multilanguage-input"
+
+METADATA_LANGUAGES = [
+    {
+        "supported_language": SupportedLanguages.NORSK_BOKMÅL,
+        "language_title": "Bokmål",
+        "language_value": "nb",
+    },
+    {
+        "supported_language": SupportedLanguages.NORSK_NYNORSK,
+        "language_title": "Nynorsk",
+        "language_value": "nn",
+    },
+    {
+        "supported_language": SupportedLanguages.ENGLISH,
+        "language_title": "English",
+        "language_value": "en",
+    },
+]
 
 
 def get_enum_options_for_language(
@@ -106,6 +127,20 @@ def _get_string_type_item(
     return None
 
 
+def get_multi_language_metadata_and_stringify(
+    metadata: BaseModel,
+    identifier: str,
+    language: SupportedLanguages,
+) -> str | None:
+    """Get a metadata value supporting multiple languages from the model."""
+    value: LanguageStringType | None = getattr(metadata, identifier)
+    if value is not None:
+        logger.info("Multilanguage registered: %s", value)
+    if value is None:
+        return value
+    return _get_string_type_item(value, language)
+
+
 def get_comma_separated_string(metadata: BaseModel, identifier: str) -> str:
     """Get a metadata value which is a list of strings from the model and convert it to a comma separated string."""
     value: list[str] = getattr(metadata, identifier)
@@ -174,7 +209,7 @@ class MetadataDropdownField(DisplayMetadata):
     """Controls how a Dropdown should be displayed."""
 
     # fmt: off
-    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: []  # noqa: E731, RUF100
+    options_getter: Callable[[SupportedLanguages], list[dict[str, str]]] = lambda _: [] # noqa: E731, RUF100
     # fmt: on
 
     def render(
@@ -229,6 +264,97 @@ class MetadataPeriodField(DisplayMetadata):
 
 
 @dataclass
+class MetadataMultiLanguageField(DisplayMetadata):
+    """Controls how fields which support multi-language are displayed.
+
+    These are a special case since they return a group of input fields..
+    """
+
+    id_type: str = ""
+    type: str = "text"
+
+    def render_input_group(
+        self,
+        component_id: dict,
+        metadata: BaseModel,
+    ) -> html.Section:
+        """Build section with Input components for each language."""
+        if "variable_short_name" in component_id:
+            return html.Section(
+                children=[
+                    ssb.Input(
+                        label=i["language_title"],
+                        value=get_multi_language_metadata_and_stringify(
+                            metadata,
+                            self.identifier,
+                            SupportedLanguages(i["supported_language"]),
+                        ),
+                        debounce=True,
+                        id={
+                            "type": self.id_type,
+                            "id": component_id["id"],
+                            "variable_short_name": component_id["variable_short_name"],
+                            "language": i["language_value"],
+                        },
+                        type=self.type,
+                        className="multilanguage-input-component",
+                    )
+                    for i in METADATA_LANGUAGES
+                ],
+            )
+        return html.Section(
+            children=[
+                ssb.Input(
+                    label=i["language_title"],
+                    value=get_multi_language_metadata_and_stringify(
+                        metadata,
+                        self.identifier,
+                        SupportedLanguages(i["supported_language"]),
+                    ),
+                    debounce=True,
+                    id={
+                        "type": self.id_type,
+                        "id": component_id["id"],
+                        "language": i["language_value"],
+                    },
+                    type=self.type,
+                    className="multilanguage-input-component",
+                )
+                for i in METADATA_LANGUAGES
+            ],
+        )
+
+    def render(
+        self,
+        component_id: dict,
+        language: str,  # noqa: ARG002
+        metadata: BaseModel,
+    ) -> html.Fieldset:
+        """Build fieldset group."""
+        return html.Fieldset(
+            children=(
+                [
+                    ssb.Glossary(
+                        children=(
+                            html.Legend(
+                                self.display_name,
+                                className="multilanguage-legend",
+                            )
+                        ),
+                        explanation=self.description,
+                        className="legend-glossary",
+                    ),
+                    self.render_input_group(
+                        component_id=component_id,
+                        metadata=metadata,
+                    ),
+                ]
+            ),
+            className="multilanguage-fieldset",
+        )
+
+
+@dataclass
 class MetadataCheckboxField(DisplayMetadata):
     """Controls for how a checkbox metadata field should be displayed."""
 
@@ -257,6 +383,7 @@ VariablesFieldTypes = (
     | MetadataDropdownField
     | MetadataCheckboxField
     | MetadataPeriodField
+    | MetadataMultiLanguageField
 )
 
 DatasetFieldTypes = (
@@ -264,4 +391,5 @@ DatasetFieldTypes = (
     | MetadataDropdownField
     | MetadataPeriodField
     | MetadataCheckboxField
+    | MetadataMultiLanguageField
 )

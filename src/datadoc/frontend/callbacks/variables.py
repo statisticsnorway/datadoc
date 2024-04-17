@@ -70,6 +70,7 @@ def handle_multi_language_metadata(
     metadata_field: str,
     new_value: MetadataInputTypes | LanguageStringType,
     updated_row_id: str,
+    language: str,
 ) -> MetadataInputTypes | LanguageStringType:
     """Handle updates to fields which support multiple languages."""
     if new_value is None:
@@ -80,6 +81,7 @@ def handle_multi_language_metadata(
             state.metadata.variables_lookup[updated_row_id],
             "",
             metadata_field,
+            language,
         )
 
     if isinstance(new_value, str):
@@ -87,6 +89,7 @@ def handle_multi_language_metadata(
             state.metadata.variables_lookup[updated_row_id],
             new_value,
             metadata_field,
+            language,
         )
 
     return new_value
@@ -96,6 +99,7 @@ def accept_variable_metadata_input(
     value: MetadataInputTypes,
     variable_short_name: str,
     metadata_field: str,
+    language: str | None = None,
 ) -> str | None:
     """Validate and save the value when variable metadata is updated.
 
@@ -108,11 +112,15 @@ def accept_variable_metadata_input(
         value,
     )
     try:
-        if metadata_field in MULTIPLE_LANGUAGE_VARIABLES_METADATA:
+        if (
+            metadata_field in MULTIPLE_LANGUAGE_VARIABLES_METADATA
+            and language is not None
+        ):
             new_value = handle_multi_language_metadata(
                 metadata_field,
                 value,
                 variable_short_name,
+                language,
             )
         elif value == "":
             # Allow clearing non-multiple-language text fields

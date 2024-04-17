@@ -16,11 +16,11 @@ from datadoc.frontend.callbacks.utils import update_global_language_state
 
 def test_find_existing_language_string_no_existing_strings(bokmål_name: str):
     dataset_metadata = model.Dataset()
-    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     language_strings = find_existing_language_string(
         dataset_metadata,
         bokmål_name,
         "name",
+        "nb",
     )
     assert language_strings == model.LanguageStringType(
         [model.LanguageStringTypeItem(languageCode="nb", languageText=bokmål_name)],
@@ -35,11 +35,11 @@ def test_find_existing_language_string_pre_existing_strings(
 ):
     dataset_metadata = model.Dataset()
     dataset_metadata.name = language_object
-    state.current_metadata_language = SupportedLanguages.NORSK_NYNORSK
     language_strings = find_existing_language_string(
         dataset_metadata,
         nynorsk_name,
         "name",
+        "nn",
     )
     assert language_strings == model.LanguageStringType(
         [

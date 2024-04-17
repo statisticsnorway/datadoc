@@ -66,6 +66,13 @@ label.form-check-label{
     -webkit-transform: rotate(-90deg);
 }
 
+.ssb-glossary.info-glossary > .glossary-button  > .glossary-textwrap > .ssb-dropdown label, .ssb-dropdown .dropdown-label{
+    margin-bottom: 0;
+}
+
+.ssb-input-label{
+    margin-bottom: 0;
+}
 .ssb-input.input-component input[readonly]{
     border: 1px solid #274247 !important;
     outline: unset !important;
@@ -82,4 +89,69 @@ label.form-check-label{
     border: 1px solid #274247 !important;
     outline: unset !important;
     outline-offset: unset !important;
+}
+
+.multilanguage-fieldset{
+    border: 1px solid #274247;
+    outline: #274247;
+    padding: 1rem;
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+    margin-top: 1.5rem;
+}
+
+.multilanguage-fieldset > .ssb-glossary.legend-glossary > .glossary-button{
+    padding: 0 0.3rem;
+}
+
+.multilanguage-fieldset:focus{
+    border: 1px solid #00824d;
+    outline: 1px solid #00824d;
+    outline-offset: 0;
+}
+.multilanguage-fieldset:hover{
+    border: 1px solid #00824d;
+    outline: 1px solid #00824d;
+    outline-offset: 0;
+}
+.multilanguage-legend{
+    width: fit-content;
+    font-size: 1rem;
+}
+
+.ssb-glossary.legend-glossary{
+    position: absolute;
+    z-index: 10;
+    top: -20px;
+}
+
+.legend-glossary{
+    background-color: white;
+    padding-top: 0;
+    margin: 0.3rem;
+}
+.ssb-input.multilanguage-input-component{
+    max-width: 450px;
+    width: 100%;
+}
+
+.multilanguage-fieldset > .ssb-glossary.legend-glossary > .glossary-popup {
+    margin-left: 20px;
+    left: unset;
+    top: unset;
+    bottom: 5px;
+}
+
+.multilanguage-fieldset > .ssb-glossary.legend-glossary > .glossary-popup::after {
+    left: -10px;
+    margin-left: -10px;
+    top: unset;
+    bottom: 5px;
+    transform: rotateX(-90deg);
+    -webkit-transform: rotate(-90deg);
+}
+
+.ssb-glossary.legend-glossary > .glossary-popup .content-box > .glossary-closing{
+    margin-top: 1.8rem;
 }
