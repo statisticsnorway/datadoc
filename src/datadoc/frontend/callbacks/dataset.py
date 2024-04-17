@@ -150,8 +150,6 @@ def accept_dataset_metadata_input(
         metadata_identifier,
     )
     try:
-        if language is None:
-            value = process_special_cases(value, metadata_identifier)
         value = process_special_cases(value, metadata_identifier, language)
         # Update the value in the model
         setattr(
