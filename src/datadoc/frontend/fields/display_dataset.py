@@ -155,6 +155,14 @@ DISPLAY_DATASET: dict[
         multiple_language_support=True,
         id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
+    DatasetIdentifiers.DESCRIPTION: MetadataMultiLanguageField(
+        identifier=DatasetIdentifiers.DESCRIPTION.value,
+        display_name="Beskrivelse",
+        description="Beskrivelse av datasettet",
+        multiple_language_support=True,
+        obligatory=True,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
+    ),
     DatasetIdentifiers.DATA_SOURCE: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.DATA_SOURCE.value,
         display_name="Datakilde",
@@ -203,14 +211,6 @@ DISPLAY_DATASET: dict[
             enums.TemporalityTypeType,
         ),
         obligatory=True,
-    ),
-    DatasetIdentifiers.DESCRIPTION: MetadataMultiLanguageField(
-        identifier=DatasetIdentifiers.DESCRIPTION.value,
-        display_name="Beskrivelse",
-        description="Beskrivelse av datasettet",
-        multiple_language_support=True,
-        obligatory=True,
-        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
     DatasetIdentifiers.SUBJECT_FIELD: MetadataDropdownField(
         identifier=DatasetIdentifiers.SUBJECT_FIELD.value,
