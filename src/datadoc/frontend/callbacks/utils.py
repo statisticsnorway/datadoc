@@ -106,10 +106,8 @@ def find_existing_language_string(
     value: str,
     metadata_identifier: str,
     language: str,
-) -> model.LanguageStringType:
+) -> model.LanguageStringType | None:
     """Get or create a LanguageStrings object and return it."""
-    # In this case we need to set the string to the correct language code
-
     language_strings = getattr(metadata_model_object, metadata_identifier)
 
     if language_strings is not None:
@@ -122,13 +120,15 @@ def find_existing_language_string(
                 language,
                 value,
             )
-        else:
+        elif value != "":
             _add_language_string_item(
                 language_strings,
                 language,
                 value,
             )
-    else:
+        else:
+            return None
+    elif value != "":
         language_strings = model.LanguageStringType(
             root=[
                 model.LanguageStringTypeItem(
@@ -137,6 +137,9 @@ def find_existing_language_string(
                 ),
             ],
         )
+    else:
+        # Don't create an item if the value is empty
+        return None
     return language_strings
 
 

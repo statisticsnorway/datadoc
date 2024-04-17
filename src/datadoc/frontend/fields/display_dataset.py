@@ -11,7 +11,7 @@ from datadoc import enums
 from datadoc import state
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import DATASET_METADATA_MULTILANGUAGE_INPUT
-from datadoc.frontend.fields.display_base import DatasetFieldTypes
+from datadoc.frontend.fields.display_base import FieldTypes
 from datadoc.frontend.fields.display_base import MetadataCheckboxField
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
@@ -108,7 +108,7 @@ class DatasetIdentifiers(str, Enum):
 
 DISPLAY_DATASET: dict[
     DatasetIdentifiers,
-    DatasetFieldTypes,
+    FieldTypes,
 ] = {
     DatasetIdentifiers.SHORT_NAME: MetadataInputField(
         identifier=DatasetIdentifiers.SHORT_NAME.value,
@@ -326,7 +326,7 @@ for v in DISPLAY_DATASET.values():
     if v.multiple_language_support:
         v.value_getter = get_multi_language_metadata
 
-MULTIPLE_LANGUAGE_DATASET_METADATA = [
+MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS = [
     m.identifier for m in DISPLAY_DATASET.values() if m.multiple_language_support
 ]
 
@@ -342,14 +342,17 @@ NON_EDITABLE_DATASET_METADATA = [m for m in DISPLAY_DATASET.values() if not m.ed
 
 
 # The order of this list MUST match the order of display components, as defined in DatasetTab.py
-DISPLAYED_DATASET_METADATA: list[DatasetFieldTypes] = (
+DISPLAYED_DATASET_METADATA: list[FieldTypes] = (
     OBLIGATORY_EDITABLE_DATASET_METADATA
     + OPTIONAL_DATASET_METADATA
     + NON_EDITABLE_DATASET_METADATA
 )
 
-DISPLAYED_DROPDOWN_DATASET_METADATA: list[MetadataDropdownField] = [
+DROPDOWN_DATASET_METADATA: list[MetadataDropdownField] = [
     m for m in DISPLAYED_DATASET_METADATA if isinstance(m, MetadataDropdownField)
+]
+DROPDOWN_DATASET_METADATA_IDENTIFIERS: list[str] = [
+    m.identifier for m in DROPDOWN_DATASET_METADATA
 ]
 
 OBLIGATORY_DATASET_METADATA_IDENTIFIERS: list[str] = [

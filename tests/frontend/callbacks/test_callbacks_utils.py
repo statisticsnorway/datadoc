@@ -16,14 +16,26 @@ from datadoc.frontend.callbacks.utils import update_global_language_state
 
 def test_find_existing_language_string_no_existing_strings(bokmål_name: str):
     dataset_metadata = model.Dataset()
-    language_strings = find_existing_language_string(
+    assert find_existing_language_string(
         dataset_metadata,
         bokmål_name,
         "name",
         "nb",
-    )
-    assert language_strings == model.LanguageStringType(
+    ) == model.LanguageStringType(
         [model.LanguageStringTypeItem(languageCode="nb", languageText=bokmål_name)],
+    )
+
+
+def test_find_existing_language_string_no_existing_strings_empty_value():
+    dataset_metadata = model.Dataset()
+    assert (
+        find_existing_language_string(
+            dataset_metadata,
+            "",
+            "name",
+            "nb",
+        )
+        is None
     )
 
 

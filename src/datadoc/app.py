@@ -21,12 +21,10 @@ from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.register_callbacks import register_callbacks
-from datadoc.frontend.components.alerts import dataset_validation_error
 from datadoc.frontend.components.alerts import naming_convention_warning
 from datadoc.frontend.components.alerts import opened_dataset_error
 from datadoc.frontend.components.alerts import opened_dataset_success
 from datadoc.frontend.components.alerts import saved_metadata_success
-from datadoc.frontend.components.alerts import variables_validation_error
 from datadoc.frontend.components.control_bars import build_controls_bar
 from datadoc.frontend.components.control_bars import build_language_dropdown
 from datadoc.frontend.components.control_bars import header
@@ -61,8 +59,6 @@ def build_app(app: type[Dash]) -> Dash:
                 [
                     progress_bar,
                     build_controls_bar(),
-                    variables_validation_error,
-                    dataset_validation_error,
                     opened_dataset_error,
                     saved_metadata_success,
                     opened_dataset_success,

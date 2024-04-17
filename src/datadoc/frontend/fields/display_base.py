@@ -378,18 +378,10 @@ class MetadataCheckboxField(DisplayMetadata):
         )
 
 
-VariablesFieldTypes = (
+FieldTypes = (
     MetadataInputField
     | MetadataDropdownField
     | MetadataCheckboxField
     | MetadataPeriodField
-    | MetadataMultiLanguageField
-)
-
-DatasetFieldTypes = (
-    MetadataInputField
-    | MetadataDropdownField
-    | MetadataPeriodField
-    | MetadataCheckboxField
     | MetadataMultiLanguageField
 )
