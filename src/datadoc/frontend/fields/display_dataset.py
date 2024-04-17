@@ -326,7 +326,7 @@ for v in DISPLAY_DATASET.values():
     if v.multiple_language_support:
         v.value_getter = get_multi_language_metadata
 
-MULTIPLE_LANGUAGE_DATASET_METADATA = [
+MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS = [
     m.identifier for m in DISPLAY_DATASET.values() if m.multiple_language_support
 ]
 
@@ -348,8 +348,11 @@ DISPLAYED_DATASET_METADATA: list[FieldTypes] = (
     + NON_EDITABLE_DATASET_METADATA
 )
 
-DISPLAYED_DROPDOWN_DATASET_METADATA: list[MetadataDropdownField] = [
+DROPDOWN_DATASET_METADATA: list[MetadataDropdownField] = [
     m for m in DISPLAYED_DATASET_METADATA if isinstance(m, MetadataDropdownField)
+]
+DROPDOWN_DATASET_METADATA_IDENTIFIERS: list[str] = [
+    m.identifier for m in DROPDOWN_DATASET_METADATA
 ]
 
 OBLIGATORY_DATASET_METADATA_IDENTIFIERS: list[str] = [

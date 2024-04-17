@@ -20,8 +20,13 @@ from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.callbacks.utils import update_global_language_state
 from datadoc.frontend.fields.display_dataset import DISPLAYED_DATASET_METADATA
-from datadoc.frontend.fields.display_dataset import DISPLAYED_DROPDOWN_DATASET_METADATA
-from datadoc.frontend.fields.display_dataset import MULTIPLE_LANGUAGE_DATASET_METADATA
+from datadoc.frontend.fields.display_dataset import DROPDOWN_DATASET_METADATA
+from datadoc.frontend.fields.display_dataset import (
+    DROPDOWN_DATASET_METADATA_IDENTIFIERS,
+)
+from datadoc.frontend.fields.display_dataset import (
+    MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS,
+)
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
 
@@ -113,7 +118,7 @@ def process_special_cases(
         updated_value = process_keyword(value)
     elif metadata_identifier == DatasetIdentifiers.VERSION.value:
         updated_value = str(value)
-    elif metadata_identifier in MULTIPLE_LANGUAGE_DATASET_METADATA and isinstance(
+    elif metadata_identifier in MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS and isinstance(
         value,
         str,
     ):
@@ -124,12 +129,7 @@ def process_special_cases(
                 metadata_identifier,
                 language,
             )
-    elif (
-        metadata_identifier == DatasetIdentifiers.DATASET_STATUS.value
-        and value == ""
-        or metadata_identifier == DatasetIdentifiers.DATASET_STATE.value
-        and value == ""
-    ):
+    elif metadata_identifier in DROPDOWN_DATASET_METADATA_IDENTIFIERS and value == "":
         updated_value = None
     else:
         updated_value = value
@@ -196,7 +196,7 @@ def change_language_dataset_metadata(
     """
     update_global_language_state(language)
     return (
-        *(e.options_getter(language) for e in DISPLAYED_DROPDOWN_DATASET_METADATA),
+        *(e.options_getter(language) for e in DROPDOWN_DATASET_METADATA),
         update_dataset_metadata_language(),
     )
 
