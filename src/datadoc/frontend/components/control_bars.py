@@ -19,12 +19,11 @@ header = ssb.Header(
     className="datadoc-header",
 )
 
-progress_bar = dbc.CardBody(
+progress_bar = html.Div(
     children=[
         html.Label(
             title="progress-bar",
             id="progress-bar-label",
-            children=[ssb.Title("Progress", size=6)],
         ),
         html.Progress(
             id="progress-bar",

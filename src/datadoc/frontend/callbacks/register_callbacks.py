@@ -70,6 +70,16 @@ def register_callbacks(app: Dash) -> None:
         return str(state.metadata.percent_complete)
 
     @app.callback(
+        Output("progress-bar-label", "children"),
+        Input("progress-bar", "value"),
+    )
+    def callback_update_progress_label(
+        value: str,
+    ) -> str:
+        """Update the progress bar label when progress bar is updated."""
+        return f"{value}%"
+
+    @app.callback(
         Output("saved-metadata-success", "is_open"),
         Input("save-button", "n_clicks"),
         prevent_initial_call=True,
