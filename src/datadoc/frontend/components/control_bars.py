@@ -23,6 +23,7 @@ progress_bar = html.Div(
     children=[
         html.Label(
             title="progress-bar",
+            htmlFor="progress-bar",
             id="progress-bar-label",
         ),
         html.Progress(

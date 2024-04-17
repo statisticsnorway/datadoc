@@ -76,10 +76,10 @@ def register_callbacks(app: Dash) -> None:
         Input("progress-bar", "value"),
     )
     def callback_update_progress_label(
-        value: str,
+        value: MetadataInputTypes,  # noqa: ARG001 argument required by Dash
     ) -> str:
         """Update the progress bar label when progress bar is updated."""
-        return f"{value}%"
+        return f"{state.metadata.percent_complete}%"
 
     @app.callback(
         Output("saved-metadata-success", "is_open"),
