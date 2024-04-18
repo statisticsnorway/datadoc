@@ -9,9 +9,10 @@
 #progress-bar-label{
     position: absolute;
     top: 145px;
-    left: 20%;
+    left: 25%;
     z-index: 1;
-    color: white;
+    color: #162327;
+    font-weight: 502;
 
 }
 progress::-webkit-progress-bar {
