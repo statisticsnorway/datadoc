@@ -12,7 +12,7 @@ from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.utils import get_app_version
 
-COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
+# COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
 header = ssb.Header(
     [ssb.Title("Datadoc", size=1, id="main-title", className="main-title")],

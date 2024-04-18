@@ -1,7 +1,6 @@
 .progress-bar{
     width: 100%;
     height: 1.8rem;
-    border: 4px solid #B6E8B8;
     border-radius: 10px;
     position: relative;
 }
@@ -15,7 +14,7 @@
 
 }
 progress::-webkit-progress-bar {
-    background-color: white;
+    background-color: #C3DCDC;
  }
  progress::-webkit-progress-value {
     background-color: #00824D;
