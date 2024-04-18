@@ -178,8 +178,6 @@ class DataDocMetadata:
             contains_data_until=str(dapla_dataset_path_info.contains_data_until),
             file_path=str(self.dataset_path),
             metadata_created_by=user_info.get_user_info_for_current_platform().short_email,
-            # TODO @mmwinther: Remove multiple_language_support once the model is updated.
-            # https://github.com/statisticsnorway/ssb-datadoc-model/issues/41
             subject_field=subject_field,
         )
         self.variables = self.ds_schema.get_fields()

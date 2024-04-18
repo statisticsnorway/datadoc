@@ -16,13 +16,10 @@ if TYPE_CHECKING:
     from datadoc.backend.code_list import CodeList
     from datadoc.backend.datadoc_metadata import DataDocMetadata
     from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-    from datadoc.enums import SupportedLanguages
 
 
 # Global metadata container
 metadata: DataDocMetadata
-
-current_metadata_language: SupportedLanguages
 
 statistic_subject_mapping: StatisticSubjectMapping
 

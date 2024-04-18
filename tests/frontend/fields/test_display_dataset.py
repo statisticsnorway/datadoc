@@ -1,7 +1,6 @@
 import pytest
 
 from datadoc import state
-from datadoc.enums import SupportedLanguages
 from datadoc.frontend.fields.display_dataset import get_statistical_subject_options
 from datadoc.frontend.fields.display_dataset import get_unit_type_options
 from tests.backend.test_code_list import CODE_LIST_DIR
@@ -46,7 +45,7 @@ def test_get_statistical_subject_options(
 ):
     state.statistic_subject_mapping = subject_mapping_fake_statistical_structure
     state.statistic_subject_mapping.wait_for_external_result()
-    assert get_statistical_subject_options(SupportedLanguages.NORSK_BOKMÅL) == expected
+    assert get_statistical_subject_options() == expected
 
 
 @pytest.mark.parametrize(
@@ -69,4 +68,4 @@ def test_get_unit_type_options(
 ):
     state.unit_types = code_list_fake_structure
     state.unit_types.wait_for_external_result()
-    assert get_unit_type_options(SupportedLanguages.NORSK_BOKMÅL) == expected
+    assert get_unit_type_options() == expected

@@ -6,21 +6,16 @@ import logging
 import traceback
 from typing import TYPE_CHECKING
 
+from dash import no_update
 from pydantic import ValidationError
 
 from datadoc import state
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.datadoc_metadata import DataDocMetadata
-from datadoc.enums import (
-    SupportedLanguages,  # noqa: TCH001 import is needed for docs build
-)
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
-from datadoc.frontend.callbacks.utils import update_global_language_state
-from datadoc.frontend.fields.display_dataset import DISPLAYED_DATASET_METADATA
-from datadoc.frontend.fields.display_dataset import DROPDOWN_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import (
     DROPDOWN_DATASET_METADATA_IDENTIFIERS,
 )
@@ -60,7 +55,8 @@ def open_file(file_path: str | None = None) -> DataDocMetadata:
 def open_dataset_handling(
     n_clicks: int,
     file_path: str,
-) -> tuple[bool, bool, bool, str, str]:
+    dataset_opened_counter: int,
+) -> tuple[bool, bool, bool, str, int]:
     """Handle errors and other logic around opening a dataset file."""
     if file_path:
         file_path = file_path.strip()
@@ -73,7 +69,7 @@ def open_dataset_handling(
             True,
             False,
             f"Filen '{file_path}' finnes ikke.",
-            state.current_metadata_language.value,
+            no_update,
         )
     except Exception as e:  # noqa: BLE001
         return (
@@ -81,15 +77,33 @@ def open_dataset_handling(
             True,
             False,
             "\n".join(traceback.format_exception_only(type(e), e)),
-            state.current_metadata_language.value,
+            no_update,
         )
+    dataset_opened_counter += 1
     if n_clicks and n_clicks > 0:
         dapla_dataset_path_info = DaplaDatasetPathInfo(file_path)
         if not dapla_dataset_path_info.path_complies_with_naming_standard():
-            return (True, False, True, "", state.current_metadata_language.value)
-        return True, False, False, "", state.current_metadata_language.value
-    # no message
-    return False, False, False, "", state.current_metadata_language.value
+            return (
+                True,
+                False,
+                True,
+                "",
+                dataset_opened_counter,
+            )
+        return (
+            True,
+            False,
+            False,
+            "",
+            dataset_opened_counter,
+        )
+    return (
+        False,
+        False,
+        False,
+        "",
+        dataset_opened_counter,
+    )
 
 
 def process_keyword(value: str) -> list[str]:
@@ -172,34 +186,6 @@ def accept_dataset_metadata_input(
         )
 
     return show_error, error_explanation
-
-
-def update_dataset_metadata_language() -> list[MetadataInputTypes]:
-    """Return new values for ALL the dataset metadata inputs.
-
-    This allows editing of strings in the chosen language.
-    """
-    return [
-        m.value_getter(state.metadata.dataset, m.identifier)
-        for m in DISPLAYED_DATASET_METADATA
-    ]
-
-
-def change_language_dataset_metadata(
-    language: SupportedLanguages,
-) -> tuple[object, ...]:
-    """Change the language for the displayed dataset metadata.
-
-    This is done in three steps:
-    - Update the chosen language globally.
-    - Update the language for dropdown options.
-    - Update the language of all the metadata values.
-    """
-    update_global_language_state(language)
-    return (
-        *(e.options_getter(language) for e in DROPDOWN_DATASET_METADATA),
-        update_dataset_metadata_language(),
-    )
 
 
 def accept_dataset_metadata_date_input(

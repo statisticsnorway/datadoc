@@ -3,35 +3,27 @@ from __future__ import annotations
 import datetime
 import random
 from typing import TYPE_CHECKING
-from typing import cast
 from unittest.mock import Mock
 from unittest.mock import patch
 from uuid import UUID
 
+import dash
 import pytest
 from datadoc_model import model
 
 from datadoc import enums
 from datadoc import state
-from datadoc.backend.datadoc_metadata import DataDocMetadata
-from datadoc.enums import DataSetState
-from datadoc.enums import LanguageStringsEnum
-from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
-from datadoc.frontend.callbacks.dataset import change_language_dataset_metadata
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.dataset import process_special_cases
-from datadoc.frontend.callbacks.dataset import update_dataset_metadata_language
 from datadoc.frontend.fields.display_dataset import (
     MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS,
 )
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
-from tests.utils import TEST_PARQUET_FILEPATH
 
 if TYPE_CHECKING:
-    from datadoc.backend.code_list import CodeList
-    from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
+    from datadoc.backend.datadoc_metadata import DataDocMetadata
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 DATASET_CALLBACKS_MODULE = "datadoc.frontend.callbacks.dataset"
@@ -243,77 +235,6 @@ def test_accept_dataset_metadata_input_date_validation(
         assert output[3] == ""
 
 
-def test_update_dataset_metadata_language_strings(
-    metadata: DataDocMetadata,
-    bokmål_name: str,
-    english_name: str,
-    language_object: model.LanguageStringType,
-):
-    state.metadata = metadata
-    state.metadata.dataset.name = language_object
-    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
-    output = update_dataset_metadata_language()
-    assert english_name not in output
-    assert bokmål_name in output
-    state.current_metadata_language = SupportedLanguages.ENGLISH
-    output = update_dataset_metadata_language()
-    assert english_name in output
-    assert bokmål_name not in output
-
-
-def test_update_dataset_metadata_language_enums():
-    state.metadata = DataDocMetadata(str(TEST_PARQUET_FILEPATH))
-    state.metadata.dataset.dataset_state = DataSetState.PROCESSED_DATA
-    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
-    output = update_dataset_metadata_language()
-    assert DataSetState.PROCESSED_DATA.language_strings not in output
-    assert DataSetState.PROCESSED_DATA.name in output
-    state.current_metadata_language = SupportedLanguages.ENGLISH
-    output = update_dataset_metadata_language()
-    assert DataSetState.PROCESSED_DATA.language_strings not in output
-    assert DataSetState.PROCESSED_DATA.name in output
-
-
-@pytest.mark.parametrize(
-    "enum_for_options",
-    [
-        enums.Assessment,
-        enums.DataSetState,
-        enums.DataSetStatus,
-        enums.TemporalityTypeType,
-    ],
-)
-@pytest.mark.parametrize("language", list(SupportedLanguages))
-def test_change_language_dataset_metadata_options_enums(
-    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
-    code_list_fake_structure: CodeList,
-    metadata: DataDocMetadata,
-    enum_for_options: LanguageStringsEnum,
-    language: SupportedLanguages,
-):
-    state.metadata = metadata
-    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
-    state.statistic_subject_mapping = subject_mapping_fake_statistical_structure
-    state.unit_types = code_list_fake_structure
-    state.organisational_units = code_list_fake_structure
-    value = change_language_dataset_metadata(language)
-
-    for options in cast(list[list[dict[str, str]]], value[0:-1]):
-        assert all(list(d.keys()) == ["title", "id"] for d in options)
-
-        member_names = {m.name for m in enum_for_options}  # type: ignore [attr-defined]
-        values = [i for d in options for i in d.values()]
-        test_without_empty_option = options[1:]
-        if member_names.intersection(values):
-            assert {d["title"] for d in test_without_empty_option} == {
-                e.get_value_for_language(
-                    language,
-                )
-                for e in enum_for_options  # type: ignore [attr-defined]
-            }
-            assert {d["id"] for d in test_without_empty_option} == {e.name for e in enum_for_options}  # type: ignore [attr-defined]
-
-
 @pytest.mark.parametrize(
     "path",
     [
@@ -327,17 +248,16 @@ def test_open_dataset_handling_normal(
     n_clicks_1: int,
     path: str,
 ):
-    state.current_metadata_language = SupportedLanguages.ENGLISH
-
-    opened, show_error, naming_standard, error_msg, language = open_dataset_handling(
+    opened, show_error, naming_standard, error_msg, counter = open_dataset_handling(
         n_clicks_1,
         path,
+        0,
     )
     assert opened
     assert not show_error
     assert naming_standard
     assert error_msg == ""
-    assert language == "en"
+    assert counter == 1
 
 
 @patch(f"{DATASET_CALLBACKS_MODULE}.open_file")
@@ -346,18 +266,18 @@ def test_open_dataset_handling_file_not_found(
     n_clicks_1: int,
     file_path: str,
 ):
-    state.current_metadata_language = SupportedLanguages.ENGLISH
     open_file_mock.side_effect = FileNotFoundError()
 
-    opened, show_error, naming_standard, error_msg, language = open_dataset_handling(
+    opened, show_error, naming_standard, error_msg, counter = open_dataset_handling(
         n_clicks_1,
         file_path,
+        0,
     )
     assert not opened
     assert show_error
     assert not naming_standard
     assert error_msg.startswith(f"Filen '{file_path}' finnes ikke.")
-    assert language == "en"
+    assert counter == dash.no_update
 
 
 @patch(f"{DATASET_CALLBACKS_MODULE}.open_file")
@@ -366,18 +286,18 @@ def test_open_dataset_handling_general_exception(
     n_clicks_1: int,
     file_path: str,
 ):
-    state.current_metadata_language = SupportedLanguages.ENGLISH
     open_file_mock.side_effect = ValueError()
 
-    opened, show_error, naming_standard, error_msg, language = open_dataset_handling(
+    opened, show_error, naming_standard, error_msg, counter = open_dataset_handling(
         n_clicks_1,
         file_path,
+        0,
     )
     assert not opened
     assert show_error
     assert not naming_standard
     assert error_msg.startswith("ValueError")
-    assert language == "en"
+    assert counter == dash.no_update
 
 
 @patch(f"{DATASET_CALLBACKS_MODULE}.open_file")
@@ -385,16 +305,16 @@ def test_open_dataset_handling_no_click(
     open_file_mock: Mock,  # noqa: ARG001
     file_path: str,
 ):
-    state.current_metadata_language = SupportedLanguages.ENGLISH
-    opened, show_error, naming_standard, error_msg, language = open_dataset_handling(
+    opened, show_error, naming_standard, error_msg, counter = open_dataset_handling(
         0,
         file_path,
+        0,
     )
     assert not opened
     assert not show_error
     assert not naming_standard
     assert error_msg == ""
-    assert language == "en"
+    assert counter == 1
 
 
 @patch(f"{DATASET_CALLBACKS_MODULE}.open_file")
@@ -403,16 +323,16 @@ def test_open_dataset_handling_naming_standard(
     n_clicks_1: int,
     file_path_without_dates: str,
 ):
-    state.current_metadata_language = SupportedLanguages.ENGLISH
-    opened, show_error, naming_standard, error_msg, language = open_dataset_handling(
+    opened, show_error, naming_standard, error_msg, counter = open_dataset_handling(
         n_clicks_1,
         file_path_without_dates,
+        0,
     )
     assert opened is True
     assert not show_error
     assert naming_standard
     assert error_msg == ""
-    assert language == "en"
+    assert counter == 1
 
 
 def test_process_special_cases_keyword():

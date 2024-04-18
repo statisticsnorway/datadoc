@@ -11,6 +11,7 @@ from pathlib import Path
 
 import dash_bootstrap_components as dbc
 from dash import Dash
+from dash import dcc
 from dash import html
 from flask_healthz import healthz
 
@@ -19,14 +20,13 @@ from datadoc import state
 from datadoc.backend.code_list import CodeList
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.register_callbacks import register_callbacks
 from datadoc.frontend.components.alerts import naming_convention_warning
 from datadoc.frontend.components.alerts import opened_dataset_error
 from datadoc.frontend.components.alerts import opened_dataset_success
 from datadoc.frontend.components.alerts import saved_metadata_success
 from datadoc.frontend.components.control_bars import build_controls_bar
-from datadoc.frontend.components.control_bars import build_language_dropdown
+from datadoc.frontend.components.control_bars import build_footer_control_bar
 from datadoc.frontend.components.control_bars import header
 from datadoc.frontend.components.control_bars import progress_bar
 from datadoc.frontend.components.dataset_tab import build_dataset_tab
@@ -57,6 +57,11 @@ def build_app(app: type[Dash]) -> Dash:
             ),
             html.Main(
                 [
+                    dcc.Store(
+                        id="dataset-opened-counter",
+                        data=0,
+                        storage_type="session",
+                    ),
                     progress_bar,
                     build_controls_bar(),
                     opened_dataset_error,
@@ -73,7 +78,7 @@ def build_app(app: type[Dash]) -> Dash:
             ),
             html.Footer(
                 [
-                    build_language_dropdown(),
+                    build_footer_control_bar(),
                 ],
                 className="language-footer",
             ),
@@ -93,7 +98,6 @@ def get_app(
     """Centralize all the ugliness around initializing the app."""
     logger.info("Datadoc version v%s", get_app_version())
     collect_data_from_external_sources(executor)
-    state.current_metadata_language = SupportedLanguages.NORSK_BOKMÅL
     state.metadata = DataDocMetadata(
         state.statistic_subject_mapping,
         dataset_path=dataset_path,

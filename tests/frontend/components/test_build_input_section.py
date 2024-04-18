@@ -5,7 +5,6 @@ import pytest
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
 from datadoc_model import model
 
-from datadoc.enums import SupportedLanguages
 from datadoc.frontend.components.builders import build_input_field_section
 from datadoc.frontend.fields.display_base import MetadataCheckboxField
 from datadoc.frontend.fields.display_base import MetadataDropdownField
@@ -20,22 +19,18 @@ INPUT_FIELD_SECTION = [
     (
         VARIABLES_METADATA,
         model.Variable(short_name="hoveddiagnose"),
-        SupportedLanguages.NORSK_NYNORSK,
     ),
     (
         VARIABLES_METADATA,
         model.Variable(short_name="pers_id"),
-        SupportedLanguages.NORSK_BOKMÅL,
     ),
     (
         VARIABLES_METADATA,
         model.Variable(short_name="ber_bruttoformue"),
-        SupportedLanguages.ENGLISH,
     ),
     (
         VARIABLES_METADATA,
         model.Variable(short_name="sykepenger"),
-        SupportedLanguages.NORSK_BOKMÅL,
     ),
 ]
 
@@ -45,18 +40,17 @@ def test_build_input_field_section_no_input():
     input_section = build_input_field_section(
         [],
         "",
-        "",
     )
     assert input_section.children == []
     assert isinstance(input_section, dbc.Form)
 
 
 @pytest.mark.parametrize(
-    ("field_list", "variable", "language"),
+    ("field_list", "variable"),
     INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_input_components(field_list, variable, language):
-    input_section = build_input_field_section(field_list, variable, language)
+def test_build_input_fields_input_components(field_list, variable):
+    input_section = build_input_field_section(field_list, variable)
     type_input = ssb.Input
     elements_of_input = [
         element for element in input_section.children if isinstance(element, type_input)
@@ -87,12 +81,12 @@ def test_build_input_fields_input_components(field_list, variable, language):
 
 
 @pytest.mark.parametrize(
-    ("field_list", "variable", "language"),
+    ("field_list", "variable"),
     INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_checkbox_components(field_list, variable, language):
+def test_build_input_fields_checkbox_components(field_list, variable):
     """Test checkbox fields for variabel identifiers."""
-    input_section = build_input_field_section(field_list, variable, language)
+    input_section = build_input_field_section(field_list, variable)
     type_checkbox = ssb.Checkbox
     elements_of_checkbox = [
         element
@@ -116,12 +110,12 @@ def test_build_input_fields_checkbox_components(field_list, variable, language):
 
 
 @pytest.mark.parametrize(
-    ("field_list", "variable", "language"),
+    ("field_list", "variable"),
     INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_type_date(field_list, variable, language):
+def test_build_input_fields_type_date(field_list, variable):
     """Test Input field type 'url'."""
-    input_section = build_input_field_section(field_list, variable, language)
+    input_section = build_input_field_section(field_list, variable)
     type_input = ssb.Input
     elements_of_input = [
         element for element in input_section.children if isinstance(element, type_input)
@@ -138,11 +132,11 @@ def test_build_input_fields_type_date(field_list, variable, language):
 
 
 @pytest.mark.parametrize(
-    ("field_list", "variable", "language"),
+    ("field_list", "variable"),
     INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_type_url(field_list, variable, language):
-    input_section = build_input_field_section(field_list, variable, language)
+def test_build_input_fields_type_url(field_list, variable):
+    input_section = build_input_field_section(field_list, variable)
     variable_identifier_input = [
         element for element in field_list if isinstance(element, MetadataInputField)
     ]
@@ -160,12 +154,12 @@ def test_build_input_fields_type_url(field_list, variable, language):
 
 
 @pytest.mark.parametrize(
-    ("field_list", "variable", "language"),
+    ("field_list", "variable"),
     INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_dropdown_components(field_list, variable, language):
+def test_build_input_fields_dropdown_components(field_list, variable):
     """Test props for variable identifiers fields."""
-    input_section = build_input_field_section(field_list, variable, language)
+    input_section = build_input_field_section(field_list, variable)
     type_dropdown = ssb.Dropdown
     elements_of_dropdown = [
         element
@@ -181,4 +175,4 @@ def test_build_input_fields_dropdown_components(field_list, variable, language):
     for item1, item2 in zip(elements_of_dropdown, variable_identifier_dropdown):
         assert item1.header == item2.display_name
     for item1, item2 in zip(elements_of_dropdown, variable_identifier_dropdown):
-        assert item1.items == item2.options_getter(language)
+        assert item1.items == item2.options_getter()

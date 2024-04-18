@@ -5,10 +5,10 @@ from __future__ import annotations
 import functools
 import logging
 from enum import Enum
-from typing import TYPE_CHECKING
 
 from datadoc import enums
 from datadoc import state
+from datadoc.enums import SupportedLanguages
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import DATASET_METADATA_MULTILANGUAGE_INPUT
 from datadoc.frontend.fields.display_base import FieldTypes
@@ -18,23 +18,16 @@ from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import MetadataMultiLanguageField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
 from datadoc.frontend.fields.display_base import get_comma_separated_string
-from datadoc.frontend.fields.display_base import get_enum_options_for_language
-from datadoc.frontend.fields.display_base import get_metadata_and_stringify
-from datadoc.frontend.fields.display_base import get_multi_language_metadata
-
-if TYPE_CHECKING:
-    from datadoc.enums import SupportedLanguages
+from datadoc.frontend.fields.display_base import get_enum_options
 
 logger = logging.getLogger(__name__)
 
 
-def get_statistical_subject_options(
-    language: SupportedLanguages,
-) -> list[dict[str, str]]:
+def get_statistical_subject_options() -> list[dict[str, str]]:
     """Generate the list of options for statistical subject."""
     dropdown_options = [
         {
-            "title": f"{primary.get_title(language)} - {secondary.get_title(language)}",
+            "title": f"{primary.get_title(SupportedLanguages.NORSK_BOKMÅL)} - {secondary.get_title(SupportedLanguages.NORSK_BOKMÅL)}",
             "id": secondary.subject_code,
         }
         for primary in state.statistic_subject_mapping.primary_subjects
@@ -44,13 +37,11 @@ def get_statistical_subject_options(
     return dropdown_options
 
 
-def get_unit_type_options(
-    language: SupportedLanguages,
-) -> list[dict[str, str]]:
-    """Collect the unit type options for the given language."""
+def get_unit_type_options() -> list[dict[str, str]]:
+    """Collect the unit type options."""
     dropdown_options = [
         {
-            "title": unit_type.get_title(language),
+            "title": unit_type.get_title(SupportedLanguages.NORSK_BOKMÅL),
             "id": unit_type.code,
         }
         for unit_type in state.unit_types.classifications
@@ -59,13 +50,11 @@ def get_unit_type_options(
     return dropdown_options
 
 
-def get_owner_options(
-    language: SupportedLanguages,
-) -> list[dict[str, str]]:
-    """Collect the owner options for the given language."""
+def get_owner_options() -> list[dict[str, str]]:
+    """Collect the owner options."""
     dropdown_options = [
         {
-            "title": f"{option.code} - {option.get_title(language)}",
+            "title": f"{option.code} - {option.get_title(SupportedLanguages.NORSK_BOKMÅL)}",
             "id": option.code,
         }
         for option in state.organisational_units.classifications
@@ -123,7 +112,7 @@ DISPLAY_DATASET: dict[
         description="Verdivurdering (sensitivitetsklassifisering) for datasettet.",
         obligatory=True,
         options_getter=functools.partial(
-            get_enum_options_for_language,
+            get_enum_options,
             enums.Assessment,
         ),
     ),
@@ -132,7 +121,7 @@ DISPLAY_DATASET: dict[
         display_name="Status",
         description="Livssyklus for datasettet",
         options_getter=functools.partial(
-            get_enum_options_for_language,
+            get_enum_options,
             enums.DataSetStatus,
         ),
         obligatory=True,
@@ -143,7 +132,7 @@ DISPLAY_DATASET: dict[
         description="Datatilstand. Se Intern dokument 2021- 17  Datatilstander i SSB",
         obligatory=True,
         options_getter=functools.partial(
-            get_enum_options_for_language,
+            get_enum_options,
             enums.DataSetState,
         ),
     ),
@@ -207,7 +196,7 @@ DISPLAY_DATASET: dict[
         display_name="Temporalitetstype",
         description="Temporalitetstype. Settes enten for variabelforekomst eller datasett. Se Temporalitet, hendelser og forløp.",
         options_getter=functools.partial(
-            get_enum_options_for_language,
+            get_enum_options,
             enums.TemporalityTypeType,
         ),
         obligatory=True,
@@ -240,7 +229,6 @@ DISPLAY_DATASET: dict[
         description="Unik SSB-identifikator for datasettet (løpenummer)",
         obligatory=True,
         editable=False,
-        value_getter=get_metadata_and_stringify,
     ),
     DatasetIdentifiers.OWNER: MetadataDropdownField(
         identifier=DatasetIdentifiers.OWNER.value,
@@ -257,7 +245,6 @@ DISPLAY_DATASET: dict[
         description="Filstien inneholder datasettets navn og stien til hvor det er lagret.",
         obligatory=True,
         editable=False,
-        value_getter=get_metadata_and_stringify,
     ),
     DatasetIdentifiers.METADATA_CREATED_DATE: MetadataInputField(
         identifier=DatasetIdentifiers.METADATA_CREATED_DATE.value,
@@ -307,7 +294,7 @@ DISPLAY_DATASET: dict[
         identifier=DatasetIdentifiers.USE_RESTRICTION.value,
         display_name="Bruksrestriksjon",
         options_getter=functools.partial(
-            get_enum_options_for_language,
+            get_enum_options,
             enums.UseRestriction,
         ),
         description="",
@@ -324,9 +311,6 @@ DISPLAY_DATASET: dict[
         obligatory=True,
     ),
 }
-for v in DISPLAY_DATASET.values():
-    if v.multiple_language_support:
-        v.value_getter = get_multi_language_metadata
 
 MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS = [
     m.identifier for m in DISPLAY_DATASET.values() if m.multiple_language_support
