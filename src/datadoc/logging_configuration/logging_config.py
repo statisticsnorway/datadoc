@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging.config
 from typing import Any
 
+from datadoc.config import get_log_formatter
 from datadoc.config import get_log_level
 
 
@@ -36,7 +37,7 @@ def configure_logging(config: dict[str, Any] | None = None) -> None:
                 "stdout": {
                     "class": "logging.StreamHandler",
                     "level": get_log_level(),
-                    "formatter": "simple",
+                    "formatter": get_log_formatter(),
                     "stream": "ext://sys.stdout",
                 },
             },

@@ -32,7 +32,6 @@ class AlertTypes(Enum):
 class AlertType:
     """Attributes of a concrete alert type."""
 
-    alert_class_name: str
     color: str
 
     @staticmethod
@@ -43,15 +42,12 @@ class AlertType:
 
 ALERT_TYPES = {
     AlertTypes.ERROR: AlertType(
-        alert_class_name="ssb-dialog error",
         color="danger",
     ),
     AlertTypes.WARNING: AlertType(
-        alert_class_name="ssb-dialog warning",
         color="warning",
     ),
     AlertTypes.SUCCESS: AlertType(
-        alert_class_name="ssb-dialog",
         color="success",
     ),
 }
@@ -105,7 +101,6 @@ def build_ssb_alert(  # noqa: PLR0913 not immediately obvious how to improve thi
 def build_input_field_section(
     metadata_fields: list[FieldTypes],
     variable: model.Variable,
-    language: str,
 ) -> dbc.Form:
     """Create form with input fields for variable workspace."""
     return dbc.Form(
@@ -116,7 +111,6 @@ def build_input_field_section(
                     "variable_short_name": variable.short_name,
                     "id": i.identifier,
                 },
-                language,
                 variable,
             )
             for i in metadata_fields
@@ -130,14 +124,16 @@ def build_edit_section(
     metadata_inputs: list,
     title: str,
     variable: model.Variable,
-    language: str,
 ) -> html.Section:
     """Create input section for variable workspace."""
     return html.Section(
         id={"type": "edit-section", "title": title},
         children=[
             ssb.Title(title, size=3, className="edit-section-title"),
-            build_input_field_section(metadata_inputs, variable, language),
+            build_input_field_section(
+                metadata_inputs,
+                variable,
+            ),
         ],
         className="edit-section",
     )
@@ -169,7 +165,6 @@ def build_ssb_accordion(
 def build_dataset_edit_section(
     title: str,
     metadata_inputs: list[FieldTypes],
-    language: str,
     dataset: model.Dataset,
     key: dict,
 ) -> html.Section:
@@ -185,7 +180,6 @@ def build_dataset_edit_section(
                             "type": DATASET_METADATA_INPUT,
                             "id": i.identifier,
                         },
-                        language=language,
                         metadata=dataset,
                     )
                     for i in metadata_inputs

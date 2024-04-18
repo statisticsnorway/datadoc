@@ -24,15 +24,14 @@ if TYPE_CHECKING:
     from datadoc_model import model
     from datadoc_model.model import LanguageStringType
 
-    from datadoc.enums import SupportedLanguages
 
 logger = logging.getLogger(__name__)
 
 
 def populate_variables_workspace(
     variables: list[model.Variable],
-    language: SupportedLanguages,
     search_query: str,
+    dataset_opened_counter: int,
 ) -> list:
     """Create variable workspace with accordions for variables.
 
@@ -43,7 +42,7 @@ def populate_variables_workspace(
             variable.short_name or "",
             {
                 "type": "variables-accordion",
-                "id": f"{variable.short_name}-{language.value}",  # Insert language into the ID to invalidate browser caches
+                "id": f"{variable.short_name}-{dataset_opened_counter}",  # Insert language into the ID to invalidate browser caches
             },
             variable.short_name or "",
             children=[
@@ -51,13 +50,11 @@ def populate_variables_workspace(
                     OBLIGATORY_VARIABLES_METADATA,
                     "Obligatorisk",
                     variable,
-                    language.value,
                 ),
                 build_edit_section(
                     OPTIONAL_VARIABLES_METADATA,
                     "Anbefalt",
                     variable,
-                    language.value,
                 ),
             ],
         )
@@ -145,10 +142,10 @@ def accept_variable_metadata_input(
     else:
         if value == "":
             value = None
-        logger.debug(
-            "Successfully updated %s, %s with %s",
-            metadata_field,
+        logger.info(
+            "Updated %s: %s with value '%s'",
             variable_short_name,
+            metadata_field,
             value,
         )
         return None

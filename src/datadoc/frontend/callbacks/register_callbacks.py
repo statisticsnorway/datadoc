@@ -17,11 +17,9 @@ from dash import State
 from dash import ctx
 
 from datadoc import state
-from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
-from datadoc.frontend.callbacks.utils import update_global_language_state
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
@@ -168,14 +166,17 @@ def register_callbacks(app: Dash) -> None:
         Output("opened-dataset-error", "is_open"),
         Output("opened-dataset_warning", "is_open"),
         Output("opened-dataset-error-explanation", "children"),
-        Output("language-dropdown", "value"),  # Used to force reload of metadata
+        Output("dataset-opened-counter", "data"),  # Used to force reload of metadata
         Input("open-button", "n_clicks"),
-        State("dataset-path-input", "value"),
+        Input("dataset-path-input", "value"),
+        State("dataset-opened-counter", "data"),
+        prevent_initial_call=True,
     )
     def callback_open_dataset(
         n_clicks: int,
         dataset_path: str,
-    ) -> tuple[bool, bool, bool, str, str]:
+        dataset_opened_counter: int,
+    ) -> tuple[bool, bool, bool, str, int]:
         """Open a dataset.
 
         Shows an alert on success or failure.
@@ -184,83 +185,74 @@ def register_callbacks(app: Dash) -> None:
         language dropdown. This is a hack and could be replaced
         by a more formal mechanism.
         """
-        return open_dataset_handling(n_clicks, dataset_path)
+        return open_dataset_handling(n_clicks, dataset_path, dataset_opened_counter)
 
     @app.callback(
         Output(VARIABLES_INFORMATION_ID, "children"),
-        Input("language-dropdown", "value"),
+        Input("dataset-opened-counter", "data"),
         prevent_initial_call=True,
     )
     def callback_populate_variables_info_section(
-        language: str,  # noqa: ARG001 Dash requires arguments for all Inputs
+        dataset_opened_counter: int,  # noqa: ARG001 Dash requires arguments for all Inputs
     ) -> str:
         return f"Datasettet inneholder {len(state.metadata.variables)} variabler."
 
     @app.callback(
         Output(ACCORDION_WRAPPER_ID, "children"),
-        Input("language-dropdown", "value"),
+        Input("dataset-opened-counter", "data"),
         Input("search-variables", "value"),
         prevent_initial_call=True,
     )
     def callback_populate_variables_workspace(
-        language: str,
+        dataset_opened_counter: int,  # Dash requires arguments for all Inputs
         search_query: str,
     ) -> list:
         """Create variable workspace with accordions for variables.
 
         Allows for filtering which variables are displayed via the search box.
         """
-        update_global_language_state(SupportedLanguages(language))
         logger.debug("Populating variables workspace. Search query: %s", search_query)
         return populate_variables_workspace(
             state.metadata.variables,
-            state.current_metadata_language,
             search_query,
+            dataset_opened_counter,
         )
 
     @app.callback(
         Output(SECTION_WRAPPER_ID, "children"),
-        Input("language-dropdown", "value"),
-        State("open-button", "n_clicks"),
-        prevent_initial_call=True,
+        Input("dataset-opened-counter", "data"),
     )
     def callback_populate_dataset_workspace(
-        language: str,
-        n_clicks: int,
+        dataset_opened_counter: int,  # Dash requires arguments for all Inputs
     ) -> list:
         """Create dataset workspace with sections."""
-        update_global_language_state(SupportedLanguages(language))
-
         logger.debug("Populating dataset workspace")
         return [
             build_dataset_edit_section(
                 "Obligatorisk",
                 OBLIGATORY_EDITABLE_DATASET_METADATA,
-                state.current_metadata_language,
                 state.metadata.dataset,
                 {
                     "type": "dataset-edit-section",
-                    "id": f"obligatory-{language}-{n_clicks}",
+                    "id": f"obligatory-{dataset_opened_counter}",
                 },
             ),
             build_dataset_edit_section(
                 "Anbefalt",
                 OPTIONAL_DATASET_METADATA,
-                state.current_metadata_language,
                 state.metadata.dataset,
                 {
                     "type": "dataset-edit-section",
-                    "id": f"recommended-{language}-{n_clicks}",
+                    "id": f"recommended-{dataset_opened_counter}",
                 },
             ),
             build_dataset_edit_section(
                 "Maskingenerert",
                 NON_EDITABLE_DATASET_METADATA,
-                state.current_metadata_language,
                 state.metadata.dataset,
                 {
                     "type": "dataset-edit-section",
-                    "id": f"machine-{language}-{n_clicks}",
+                    "id": f"machine-{dataset_opened_counter}",
                 },
             ),
         ]
