@@ -121,6 +121,7 @@ DISPLAY_DATASET: dict[
         identifier=DatasetIdentifiers.ASSESSMENT.value,
         display_name="Verdivurdering",
         description="Verdivurdering (sensitivitetsklassifisering) for datasettet.",
+        obligatory=True,
         options_getter=functools.partial(
             get_enum_options_for_language,
             enums.Assessment,
@@ -152,6 +153,14 @@ DISPLAY_DATASET: dict[
         description="Datasettnavn",
         obligatory=True,
         multiple_language_support=True,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
+    ),
+    DatasetIdentifiers.DESCRIPTION: MetadataMultiLanguageField(
+        identifier=DatasetIdentifiers.DESCRIPTION.value,
+        display_name="Beskrivelse",
+        description="Beskrivelse av datasettet",
+        multiple_language_support=True,
+        obligatory=True,
         id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
     DatasetIdentifiers.DATA_SOURCE: MetadataMultiLanguageField(
@@ -203,14 +212,6 @@ DISPLAY_DATASET: dict[
         ),
         obligatory=True,
     ),
-    DatasetIdentifiers.DESCRIPTION: MetadataMultiLanguageField(
-        identifier=DatasetIdentifiers.DESCRIPTION.value,
-        display_name="Beskrivelse",
-        description="Beskrivelse av datasettet",
-        multiple_language_support=True,
-        obligatory=True,
-        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
-    ),
     DatasetIdentifiers.SUBJECT_FIELD: MetadataDropdownField(
         identifier=DatasetIdentifiers.SUBJECT_FIELD.value,
         display_name="Statistikkområde",
@@ -230,6 +231,7 @@ DISPLAY_DATASET: dict[
         display_name="Geografisk dekningsområde",
         description="Beskrivelse av datasettets geografiske dekningsområde. Målet er på sikt at dette skal hentes fra Klass, men fritekst vil også kunne brukes.",
         multiple_language_support=True,
+        obligatory=True,
         id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
     DatasetIdentifiers.ID: MetadataInputField(
