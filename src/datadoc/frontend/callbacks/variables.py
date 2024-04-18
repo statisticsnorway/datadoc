@@ -145,10 +145,10 @@ def accept_variable_metadata_input(
     else:
         if value == "":
             value = None
-        logger.debug(
-            "Successfully updated %s, %s with %s",
-            metadata_field,
+        logger.info(
+            "Updated %s: %s with value '%s'",
             variable_short_name,
+            metadata_field,
             value,
         )
         return None

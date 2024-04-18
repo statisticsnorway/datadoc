@@ -6,6 +6,7 @@ import logging
 import os
 from pathlib import Path
 from pprint import pformat
+from typing import Literal
 
 from dotenv import dotenv_values
 from dotenv import load_dotenv
@@ -72,6 +73,16 @@ def get_log_level() -> int:
             return log_levels["INFO"]
     else:
         return log_levels["INFO"]
+
+
+def get_log_formatter() -> Literal["simple", "json"]:
+    """Get log formatter configuration."""
+    if (
+        _get_config_item("DATADOC_ENABLE_JSON_FORMATTING") == "True"
+        or get_dapla_region() is not None
+    ):
+        return "json"
+    return "simple"
 
 
 def get_dash_development_mode() -> bool:

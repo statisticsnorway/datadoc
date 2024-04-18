@@ -93,19 +93,13 @@ def get_date_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str
     value = get_standard_metadata(metadata, identifier)
     if value is None:
         return ""
-    logger.info("Date registered: %s", value)
     date = str(value)
     # Pattern for datetime without T, with space - used for variables
     pattern = r"\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}"
     if re.match(pattern, date):
         convert_date_to_iso = date.replace(" ", "T")
-        logger.info("Date converted to iso format: %s", convert_date_to_iso)
-        convert_date_format = convert_date_to_iso[:10]
-        logger.info("Display date: %s", convert_date_format)
-        return convert_date_format
-    convert_value = date[:10]
-    logger.info("Display date: %s", convert_value)
-    return convert_value
+        return convert_date_to_iso[:10]
+    return date[:10]
 
 
 def get_multi_language_metadata(metadata: BaseModel, identifier: str) -> str | None:

@@ -49,7 +49,8 @@ def open_file(file_path: str | None = None) -> DataDocMetadata:
         )
 
     dataset = file_path or get_dataset_path()
-    logger.info("Opening dataset %s", dataset)
+    if dataset:
+        logger.info("Opening dataset %s", dataset)
     return DataDocMetadata(
         state.statistic_subject_mapping,
         dataset_path=str(dataset).strip() if dataset else None,
@@ -164,10 +165,10 @@ def accept_dataset_metadata_input(
     else:
         show_error = False
         error_explanation = ""
-        logger.debug(
-            "Successfully updated value = %s for metadata_identifier = %s",
-            value,
+        logger.info(
+            "Updated dataset %s with value %s",
             metadata_identifier,
+            value,
         )
 
     return show_error, error_explanation
