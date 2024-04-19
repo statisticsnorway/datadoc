@@ -121,7 +121,7 @@ def find_existing_language_string(
     return language_strings
 
 
-def get_dataset_path() -> pathlib.Path | CloudPath | str | None:
+def get_dataset_path() -> pathlib.Path | CloudPath | str:
     """Extract the path to the dataset from the potential sources."""
     if state.metadata.dataset_path is not None:
         return state.metadata.dataset_path
@@ -131,6 +131,8 @@ def get_dataset_path() -> pathlib.Path | CloudPath | str | None:
             "Dataset path from env var: '%s'",
             path_from_env,
         )
+    if path_from_env is None:
+        path_from_env = ""
     return path_from_env
 
 
