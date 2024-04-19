@@ -9,15 +9,27 @@ from dash import html
 from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.utils import get_app_version
 
-COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
+# COLORS = {"dark_1": "#F0F8F9", "green_1": "#ECFEED", "green_4": "#00824D"}
 
 header = ssb.Header(
     [ssb.Title("Datadoc", size=1, id="main-title", className="main-title")],
     className="datadoc-header",
 )
 
-progress_bar = dbc.CardBody(
-    children=[dbc.Progress(id="progress-bar", color=COLORS["green_4"], value=40)],
+progress_bar = html.Div(
+    children=[
+        html.Label(
+            title="progress-bar",
+            htmlFor="progress-bar",
+            id="progress-bar-label",
+        ),
+        html.Progress(
+            id="progress-bar",
+            max="100",
+            value="0",
+            className="progress-bar",
+        ),
+    ],
     className="progress-bar-wrapper",
 )
 
