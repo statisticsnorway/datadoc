@@ -79,7 +79,7 @@ def get_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str | No
     """Get a metadata value from the model and cast to string."""
     value = get_standard_metadata(metadata, identifier)
     if value is None:
-        return None
+        return ""
     return str(value)
 
 
@@ -121,7 +121,7 @@ def get_multi_language_metadata_and_stringify(
     if value is not None:
         logger.info("Multilanguage registered: %s", value)
     if value is None:
-        return value
+        return ""
     return _get_string_type_item(value, language)
 
 
