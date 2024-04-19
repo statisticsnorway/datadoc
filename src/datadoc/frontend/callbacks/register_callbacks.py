@@ -168,7 +168,7 @@ def register_callbacks(app: Dash) -> None:
         Output("opened-dataset-error-explanation", "children"),
         Output("dataset-opened-counter", "data"),  # Used to force reload of metadata
         Input("open-button", "n_clicks"),
-        Input("dataset-path-input", "value"),
+        State("dataset-path-input", "value"),
         State("dataset-opened-counter", "data"),
         prevent_initial_call=True,
     )
