@@ -52,7 +52,6 @@ def register_callbacks(app: Dash) -> None:
 
     @app.callback(
         Output("progress-bar", "value"),
-        Output("progress-bar", "label"),
         Input({"type": DATASET_METADATA_INPUT, "id": ALL}, "value"),
         Input(
             {
@@ -66,10 +65,19 @@ def register_callbacks(app: Dash) -> None:
     def callback_update_progress(
         value: MetadataInputTypes,  # noqa: ARG001 argument required by Dash
         data: list[dict],  # noqa: ARG001 argument required by Dash
-    ) -> tuple[int, str]:
+    ) -> str:
         """Update the progress bar when new data is entered."""
-        completion = state.metadata.percent_complete
-        return completion, f"{completion}%"
+        return str(state.metadata.percent_complete)
+
+    @app.callback(
+        Output("progress-bar-label", "children"),
+        Input("progress-bar", "value"),
+    )
+    def callback_update_progress_label(
+        value: MetadataInputTypes,  # noqa: ARG001 argument required by Dash
+    ) -> str:
+        """Update the progress bar label when progress bar is updated."""
+        return f"{state.metadata.percent_complete}%"
 
     @app.callback(
         Output("saved-metadata-success", "is_open"),
