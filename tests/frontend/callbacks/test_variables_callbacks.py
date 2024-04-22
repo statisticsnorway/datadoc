@@ -17,8 +17,6 @@ from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_i
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
-from tests.backend.test_code_list import CODE_LIST_DIR
-from tests.utils import TEST_RESOURCES_DIRECTORY
 
 if TYPE_CHECKING:
     from datadoc.backend.datadoc_metadata import DataDocMetadata
@@ -257,23 +255,21 @@ def test_accept_variable_metadata_date_input(
         ).to("utc")
 
 
+@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
 @pytest.mark.parametrize(
-    ("search_query", "expected_length", "code_list_csv_filepath_nb"),
+    ("search_query", "expected_length"),
     [
         (
             "",
             8,
-            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_measurement_unit.csv",
         ),
         (
             "a",
             4,
-            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_measurement_unit.csv",
         ),
         (
             "pers_id",
             1,
-            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_measurement_unit.csv",
         ),
     ],
 )
@@ -281,10 +277,7 @@ def test_populate_variables_workspace_filter_variables(
     search_query: str,
     expected_length: int,
     metadata: DataDocMetadata,
-    code_list_fake_structure,
 ):
-    state.measurement_units = code_list_fake_structure
-    state.measurement_units.wait_for_external_result()
     assert (
         len(
             populate_variables_workspace(
