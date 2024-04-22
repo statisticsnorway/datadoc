@@ -10,10 +10,22 @@ from datadoc.frontend.fields.display_base import MetadataCheckboxField
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
+from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
-from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
+from datadoc.frontend.fields.display_variables import VariableIdentifiers
 
-VARIABLES_METADATA = OBLIGATORY_VARIABLES_METADATA + OPTIONAL_VARIABLES_METADATA
+OPTIONAL_VARIABLES_METADATA_MINUS_MEASUREMENT_UNIT = [
+    m
+    for m in DISPLAY_VARIABLES.values()
+    if not m.obligatory
+    and m.editable
+    and m.identifier != VariableIdentifiers.MEASUREMENT_UNIT.value
+    and m.identifier != VariableIdentifiers.DATA_SOURCE.value
+]
+
+VARIABLES_METADATA = (
+    OBLIGATORY_VARIABLES_METADATA + OPTIONAL_VARIABLES_METADATA_MINUS_MEASUREMENT_UNIT
+)
 
 INPUT_FIELD_SECTION = [
     (

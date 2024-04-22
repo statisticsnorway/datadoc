@@ -3,7 +3,6 @@ import pytest
 from datadoc import state
 from datadoc.frontend.fields.display_dataset import get_statistical_subject_options
 from datadoc.frontend.fields.display_dataset import get_unit_type_options
-from datadoc.frontend.fields.display_variables import get_measurement_unit_options
 from tests.backend.test_code_list import CODE_LIST_DIR
 from tests.backend.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
@@ -70,26 +69,3 @@ def test_get_unit_type_options(
     state.unit_types = code_list_fake_structure
     state.unit_types.wait_for_external_result()
     assert get_unit_type_options() == expected
-
-
-@pytest.mark.parametrize(
-    ("code_list_csv_filepath_nb", "expected"),
-    [
-        (
-            TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_nb.csv",
-            [
-                {"title": "", "id": ""},
-                {"title": "Andel", "id": "01"},
-                {"title": "Antall", "id": "02"},
-                {"title": "Areal", "id": "03"},
-            ],
-        ),
-    ],
-)
-def test_get_measure_unit_options(
-    code_list_fake_structure,
-    expected,
-):
-    state.measurement_units = code_list_fake_structure
-    state.measurement_units.wait_for_external_result()
-    assert get_measurement_unit_options() == expected

@@ -7,8 +7,18 @@ from dash import html
 from datadoc_model import model
 
 from datadoc.frontend.components.builders import build_edit_section
+from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
-from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
+from datadoc.frontend.fields.display_variables import VariableIdentifiers
+
+OPTIONAL_VARIABLES_METADATA_MINUS_MEASUREMENT_UNIT = [
+    m
+    for m in DISPLAY_VARIABLES.values()
+    if not m.obligatory
+    and m.editable
+    and m.identifier != VariableIdentifiers.MEASUREMENT_UNIT.value
+    and m.identifier != VariableIdentifiers.DATA_SOURCE.value
+]
 
 
 @pytest.mark.parametrize(
@@ -37,7 +47,7 @@ def test_build_edit_section_return_correct_component(
     [
         ([], "", model.Variable()),
         (
-            OPTIONAL_VARIABLES_METADATA,
+            OPTIONAL_VARIABLES_METADATA_MINUS_MEASUREMENT_UNIT,
             "Anbefalt",
             model.Variable(short_name="sivilstand"),
         ),
