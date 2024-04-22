@@ -26,3 +26,5 @@ statistic_subject_mapping: StatisticSubjectMapping
 unit_types: CodeList
 
 organisational_units: CodeList
+
+measurement_units: CodeList

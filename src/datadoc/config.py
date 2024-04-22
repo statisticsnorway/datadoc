@@ -141,6 +141,11 @@ def get_unit_code() -> int | None:
     return int(_get_config_item("DATADOC_UNIT_CODE") or 702)
 
 
+def get_measurement_unit_code() -> int | None:
+    """The code for the Measurement Unit code list in Klass."""
+    return int(_get_config_item("DATADOC_MEASUREMENT_UNIT") or 702)
+
+
 def get_organisational_unit_code() -> int | None:
     """The code for the organisational units code list in Klass."""
     return int(_get_config_item("DATADOC_ORGANISATIONAL_UNIT_CODE") or 83)
