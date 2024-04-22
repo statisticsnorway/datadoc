@@ -143,7 +143,7 @@ def get_unit_code() -> int | None:
 
 def get_measurement_unit_code() -> int | None:
     """The code for the Measurement Unit code list in Klass."""
-    return int(_get_config_item("DATADOC_MEASUREMENT_UNIT") or 702)
+    return int(_get_config_item("DATADOC_MEASUREMENT_UNIT") or 303)
 
 
 def get_organisational_unit_code() -> int | None:
