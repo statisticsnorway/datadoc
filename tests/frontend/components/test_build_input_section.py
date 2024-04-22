@@ -5,7 +5,6 @@ import pytest
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
 from datadoc_model import model
 
-from datadoc import state
 from datadoc.frontend.components.builders import build_input_field_section
 from datadoc.frontend.fields.display_base import MetadataCheckboxField
 from datadoc.frontend.fields.display_base import MetadataDropdownField
@@ -13,8 +12,6 @@ from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
-from tests.backend.test_code_list import CODE_LIST_DIR
-from tests.utils import TEST_RESOURCES_DIRECTORY
 
 VARIABLES_METADATA = OBLIGATORY_VARIABLES_METADATA + OPTIONAL_VARIABLES_METADATA
 
@@ -22,26 +19,23 @@ INPUT_FIELD_SECTION = [
     (
         VARIABLES_METADATA,
         model.Variable(short_name="hoveddiagnose"),
-        TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_measurement_unit.csv",
     ),
     (
         VARIABLES_METADATA,
         model.Variable(short_name="pers_id"),
-        TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_measurement_unit.csv",
     ),
     (
         VARIABLES_METADATA,
         model.Variable(short_name="ber_bruttoformue"),
-        TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_measurement_unit.csv",
     ),
     (
         VARIABLES_METADATA,
         model.Variable(short_name="sykepenger"),
-        TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_measurement_unit.csv",
     ),
 ]
 
 
+@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
 def test_build_input_field_section_no_input():
     """Assert build with empty inputs returns dash bootstrap Form component and empty children list."""
     input_section = build_input_field_section(
@@ -52,17 +46,15 @@ def test_build_input_field_section_no_input():
     assert isinstance(input_section, dbc.Form)
 
 
+@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
 @pytest.mark.parametrize(
-    ("field_list", "variable", "code_list_csv_filepath_nb"),
+    ("field_list", "variable"),
     INPUT_FIELD_SECTION,
 )
 def test_build_input_fields_input_components(
     field_list,
     variable,
-    code_list_fake_structure,
 ):
-    state.measurement_units = code_list_fake_structure
-    state.measurement_units.wait_for_external_result()
     input_section = build_input_field_section(field_list, variable)
     type_input = ssb.Input
     elements_of_input = [
@@ -93,18 +85,16 @@ def test_build_input_fields_input_components(
     )
 
 
+@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
 @pytest.mark.parametrize(
-    ("field_list", "variable", "code_list_csv_filepath_nb"),
+    ("field_list", "variable"),
     INPUT_FIELD_SECTION,
 )
 def test_build_input_fields_checkbox_components(
     field_list,
     variable,
-    code_list_fake_structure,
 ):
     """Test checkbox fields for variabel identifiers."""
-    state.measurement_units = code_list_fake_structure
-    state.measurement_units.wait_for_external_result()
     input_section = build_input_field_section(field_list, variable)
     type_checkbox = ssb.Checkbox
     elements_of_checkbox = [
@@ -128,14 +118,13 @@ def test_build_input_fields_checkbox_components(
     )
 
 
+@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
 @pytest.mark.parametrize(
-    ("field_list", "variable", "code_list_csv_filepath_nb"),
+    ("field_list", "variable"),
     INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_type_date(field_list, variable, code_list_fake_structure):
+def test_build_input_fields_type_date(field_list, variable):
     """Test Input field type 'url'."""
-    state.measurement_units = code_list_fake_structure
-    state.measurement_units.wait_for_external_result()
     input_section = build_input_field_section(field_list, variable)
     type_input = ssb.Input
     elements_of_input = [
@@ -152,13 +141,12 @@ def test_build_input_fields_type_date(field_list, variable, code_list_fake_struc
     assert all(item.debounce is False for item in elements_of_date)
 
 
+@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
 @pytest.mark.parametrize(
-    ("field_list", "variable", "code_list_csv_filepath_nb"),
+    ("field_list", "variable"),
     INPUT_FIELD_SECTION,
 )
-def test_build_input_fields_type_url(field_list, variable, code_list_fake_structure):
-    state.measurement_units = code_list_fake_structure
-    state.measurement_units.wait_for_external_result()
+def test_build_input_fields_type_url(field_list, variable):
     input_section = build_input_field_section(field_list, variable)
     variable_identifier_input = [
         element for element in field_list if isinstance(element, MetadataInputField)
@@ -176,18 +164,16 @@ def test_build_input_fields_type_url(field_list, variable, code_list_fake_struct
         assert item1.label == item2.display_name
 
 
+@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
 @pytest.mark.parametrize(
-    ("field_list", "variable", "code_list_csv_filepath_nb"),
+    ("field_list", "variable"),
     INPUT_FIELD_SECTION,
 )
 def test_build_input_fields_dropdown_components(
     field_list,
     variable,
-    code_list_fake_structure,
 ):
     """Test props for variable identifiers fields."""
-    state.measurement_units = code_list_fake_structure
-    state.measurement_units.wait_for_external_result()
     input_section = build_input_field_section(field_list, variable)
     type_dropdown = ssb.Dropdown
     elements_of_dropdown = [

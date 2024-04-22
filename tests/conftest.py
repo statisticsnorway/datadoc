@@ -269,6 +269,12 @@ def code_list_fake_structure(_mock_fetch_dataframe, thread_pool_executor) -> Cod
 
 
 @pytest.fixture()
+def _code_list_fake_classifications_variables(code_list_fake_structure) -> None:
+    state.measurement_units = code_list_fake_structure
+    state.measurement_units.wait_for_external_result()
+
+
+@pytest.fixture()
 def copy_dataset_to_path(
     tmp_path: pathlib.Path,
     full_dataset_state_path: pathlib.Path,
