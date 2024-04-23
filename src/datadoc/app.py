@@ -9,7 +9,6 @@ import concurrent
 import logging
 from pathlib import Path
 
-import dash_bootstrap_components as dbc
 from dash import Dash
 from dash import dcc
 from dash import html
@@ -68,9 +67,9 @@ def build_app(app: type[Dash]) -> Dash:
                     saved_metadata_success,
                     opened_dataset_success,
                     naming_convention_warning,
-                    dbc.Tabs(
+                    dcc.Tabs(
                         id="tabs",
-                        class_name="ssb-tabs",
+                        className="ssb-tabs",
                         children=tabs_children,
                     ),
                 ],
