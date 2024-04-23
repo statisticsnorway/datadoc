@@ -255,9 +255,23 @@ def test_accept_variable_metadata_date_input(
         ).to("utc")
 
 
+@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
 @pytest.mark.parametrize(
     ("search_query", "expected_length"),
-    [("", 8), ("a", 4), ("pers_id", 1)],
+    [
+        (
+            "",
+            8,
+        ),
+        (
+            "a",
+            4,
+        ),
+        (
+            "pers_id",
+            1,
+        ),
+    ],
 )
 def test_populate_variables_workspace_filter_variables(
     search_query: str,
