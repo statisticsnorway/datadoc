@@ -53,7 +53,7 @@ def build_app(app: type[Dash]) -> Dash:
                     progress_bar,
                     build_controls_bar(),
                     html.Div(id="alerts-section"),
-                    dbc.Tabs(
+                    dcc.Tabs(
                         id="tabs",
                         className="ssb-tabs",
                         value="dataset",
