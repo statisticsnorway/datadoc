@@ -17,10 +17,13 @@ from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_inpu
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.dataset import process_special_cases
+from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET
 from datadoc.frontend.fields.display_dataset import (
     MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS,
 )
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
+from datadoc.frontend.text import INVALID_DATE_ORDER
+from datadoc.frontend.text import INVALID_VALUE
 
 if TYPE_CHECKING:
     from datadoc.backend.datadoc_metadata import DataDocMetadata
@@ -187,7 +190,7 @@ def test_accept_dataset_metadata_input_incorrect_data_type(metadata: DataDocMeta
         "",
     )
     assert output[0] is True
-    assert "validation error for Dataset" in output[1]
+    assert output[1] == INVALID_VALUE
 
 
 earlier = str(datetime.date(2020, 1, 1))
@@ -229,7 +232,14 @@ def test_accept_dataset_metadata_input_date_validation(
     )
     assert output[2] is expect_error
     if expect_error:
-        assert "Validation error" in output[3]
+        assert output[3] == INVALID_DATE_ORDER.format(
+            contains_data_from_display_name=DISPLAY_DATASET[
+                DatasetIdentifiers.CONTAINS_DATA_FROM
+            ].display_name,
+            contains_data_until_display_name=DISPLAY_DATASET[
+                DatasetIdentifiers.CONTAINS_DATA_UNTIL
+            ].display_name,
+        )
     else:
         assert output[1] == ""
         assert output[3] == ""

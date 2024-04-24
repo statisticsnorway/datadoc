@@ -114,7 +114,6 @@ def register_callbacks(app: Dash) -> None:
 
         Will display an alert if validation fails.
         """
-        # Get the ID of the input that changed. This MUST match the attribute name defined in DataDocDataSet
         return accept_dataset_metadata_input(
             ctx.triggered[0]["value"],
             ctx.triggered_id["id"],

@@ -13,12 +13,15 @@ from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.components.builders import build_edit_section
 from datadoc.frontend.components.builders import build_ssb_accordion
+from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import (
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,
 )
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
+from datadoc.frontend.text import INVALID_DATE_ORDER
+from datadoc.frontend.text import INVALID_VALUE
 
 if TYPE_CHECKING:
     from datadoc_model import model
@@ -131,14 +134,14 @@ def accept_variable_metadata_input(
             metadata_field,
             new_value,
         )
-    except (ValidationError, ValueError) as e:
+    except (ValidationError, ValueError):
         logger.exception(
             "Validation failed for %s, %s, %s:",
             metadata_field,
             variable_short_name,
             value,
         )
-        return str(e)
+        return INVALID_VALUE
     else:
         if value == "":
             value = None
@@ -158,15 +161,7 @@ def accept_variable_metadata_date_input(
     contains_data_until: str,
 ) -> tuple[bool, str, bool, str]:
     """Validate and save date range inputs."""
-    message = accept_variable_metadata_input(
-        (
-            contains_data_from
-            if variable_identifier == VariableIdentifiers.CONTAINS_DATA_FROM
-            else contains_data_until
-        ),
-        variable_short_name,
-        variable_identifier,
-    )
+    message = ""
 
     try:
         (
@@ -215,14 +210,23 @@ def accept_variable_metadata_date_input(
             "contains_data_until",
             contains_data_until,
         )
-        message = None
 
     no_error = (False, "")
     if not message:
         # No error to display.
         return no_error + no_error
 
-    error = (True, message)
+    error = (
+        True,
+        INVALID_DATE_ORDER.format(
+            contains_data_from_display_name=DISPLAY_VARIABLES[
+                VariableIdentifiers.CONTAINS_DATA_FROM
+            ].display_name,
+            contains_data_until_display_name=DISPLAY_VARIABLES[
+                VariableIdentifiers.CONTAINS_DATA_UNTIL
+            ].display_name,
+        ),
+    )
     return (
         error + no_error
         if variable_identifier == VariableIdentifiers.CONTAINS_DATA_FROM

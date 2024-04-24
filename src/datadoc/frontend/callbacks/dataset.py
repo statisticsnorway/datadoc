@@ -15,6 +15,7 @@ from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
+from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET
 from datadoc.frontend.fields.display_dataset import (
     DROPDOWN_DATASET_METADATA_IDENTIFIERS,
 )
@@ -22,15 +23,14 @@ from datadoc.frontend.fields.display_dataset import (
     MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS,
 )
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
+from datadoc.frontend.text import INVALID_DATE_ORDER
+from datadoc.frontend.text import INVALID_VALUE
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
 
 if TYPE_CHECKING:
     from datadoc_model.model import LanguageStringType
 
 logger = logging.getLogger(__name__)
-
-VALIDATION_ERROR = "Validation error: "
-DATE_VALIDATION_MESSAGE = f"{VALIDATION_ERROR}{DatasetIdentifiers.CONTAINS_DATA_FROM.value} must be the same or earlier date than {DatasetIdentifiers.CONTAINS_DATA_UNTIL.value}"
 
 
 def open_file(file_path: str | None = None) -> DataDocMetadata:
@@ -172,9 +172,9 @@ def accept_dataset_metadata_input(
             metadata_identifier,
             value,
         )
-    except (ValidationError, ValueError) as e:
+    except (ValidationError, ValueError):
         show_error = True
-        error_explanation = str(e)
+        error_explanation = INVALID_VALUE
         logger.exception("Error while reading in value for %s", metadata_identifier)
     else:
         show_error = False
@@ -194,6 +194,8 @@ def accept_dataset_metadata_date_input(
     contains_data_until: str | None,
 ) -> tuple[bool, str, bool, str]:
     """Validate and save date range inputs."""
+    message = ""
+
     try:
         (
             parsed_contains_data_from,
@@ -222,7 +224,7 @@ def accept_dataset_metadata_date_input(
             "contains_data_until",
             contains_data_until,
         )
-        message: str | None = str(e)
+        message = str(e)
     else:
         logger.debug(
             "Successfully updated %s, %s, %s: %s, %s",
@@ -232,14 +234,23 @@ def accept_dataset_metadata_date_input(
             "contains_data_until",
             contains_data_until,
         )
-        message = None
 
     no_error = (False, "")
     if not message:
         # No error to display.
         return no_error + no_error
 
-    error = (True, message)
+    error = (
+        True,
+        INVALID_DATE_ORDER.format(
+            contains_data_from_display_name=DISPLAY_DATASET[
+                DatasetIdentifiers.CONTAINS_DATA_FROM
+            ].display_name,
+            contains_data_until_display_name=DISPLAY_DATASET[
+                DatasetIdentifiers.CONTAINS_DATA_UNTIL
+            ].display_name,
+        ),
+    )
     return (
         error + no_error
         if dataset_identifier == DatasetIdentifiers.CONTAINS_DATA_FROM
