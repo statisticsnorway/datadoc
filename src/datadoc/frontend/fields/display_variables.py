@@ -71,8 +71,6 @@ DISPLAY_VARIABLES: dict[
         display_name="Navn",
         description="Variabelnavn kan arves fra VarDef, men kan også dokumenteres/endres her.",
         obligatory=True,
-        multiple_language_support=True,
-        type="text",
         id_type=VARIABLES_METADATA_MULTILANGUAGE_INPUT,
     ),
     VariableIdentifiers.DATA_TYPE: MetadataDropdownField(
@@ -100,7 +98,6 @@ DISPLAY_VARIABLES: dict[
         display_name="Definition URI",
         description="En lenke (URI) til variabelens definisjon i SSB (Vardok/VarDef)",
         obligatory=True,
-        type="url",
     ),
     VariableIdentifiers.DIRECT_PERSON_IDENTIFYING: MetadataCheckboxField(
         identifier=VariableIdentifiers.DIRECT_PERSON_IDENTIFYING.value,
@@ -112,24 +109,18 @@ DISPLAY_VARIABLES: dict[
         identifier=VariableIdentifiers.DATA_SOURCE.value,
         display_name="Datakilde",
         description="Datakilde. Settes på datasettnivå, men kan overstyres på variabelforekomstnivå.",
-        multiple_language_support=True,
-        type="text",
         id_type=VARIABLES_METADATA_MULTILANGUAGE_INPUT,
     ),
     VariableIdentifiers.POPULATION_DESCRIPTION: MetadataMultiLanguageField(
         identifier=VariableIdentifiers.POPULATION_DESCRIPTION.value,
         display_name="Populasjonen",
         description="Populasjonen variabelen beskriver kan spesifiseres nærmere her. Settes på datasettnivå, men kan overstyres på variabelforekomstnivå.",
-        multiple_language_support=True,
-        type="text",
         id_type=VARIABLES_METADATA_MULTILANGUAGE_INPUT,
     ),
     VariableIdentifiers.COMMENT: MetadataMultiLanguageField(
         identifier=VariableIdentifiers.COMMENT.value,
         display_name="Kommentar",
         description="Ytterligere presiseringer av variabeldefinisjon",
-        multiple_language_support=True,
-        type="text",
         id_type=VARIABLES_METADATA_MULTILANGUAGE_INPUT,
     ),
     VariableIdentifiers.TEMPORALITY_TYPE: MetadataDropdownField(
@@ -156,13 +147,12 @@ DISPLAY_VARIABLES: dict[
         identifier=VariableIdentifiers.CLASSIFICATION_URI.value,
         display_name="Kodeverkets URI",
         description="Lenke (URI) til gyldige kodeverk (klassifikasjon eller kodeliste) i KLASS",
-        type="url",
     ),
-    VariableIdentifiers.INVALID_VALUE_DESCRIPTION: MetadataInputField(
+    VariableIdentifiers.INVALID_VALUE_DESCRIPTION: MetadataMultiLanguageField(
         identifier=VariableIdentifiers.INVALID_VALUE_DESCRIPTION.value,
         display_name="Ugyldige verdier",
         description="En beskrivelse av ugyldige verdier som inngår i variabelen dersom spesialverdiene ikke er tilstrekkelige eller ikke kan benyttes.",
-        multiple_language_support=True,
+        id_type=VARIABLES_METADATA_MULTILANGUAGE_INPUT,
     ),
     VariableIdentifiers.IDENTIFIER: MetadataInputField(
         identifier=VariableIdentifiers.IDENTIFIER.value,
@@ -196,7 +186,9 @@ DISPLAY_VARIABLES: dict[
 }
 
 MULTIPLE_LANGUAGE_VARIABLES_METADATA = [
-    m.identifier for m in DISPLAY_VARIABLES.values() if m.multiple_language_support
+    m.identifier
+    for m in DISPLAY_VARIABLES.values()
+    if isinstance(m, MetadataMultiLanguageField)
 ]
 
 OBLIGATORY_VARIABLES_METADATA = [
