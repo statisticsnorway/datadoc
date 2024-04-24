@@ -276,7 +276,7 @@ def test_open_dataset_handling_file_not_found(
     assert not opened
     assert show_error
     assert not naming_standard
-    assert error_msg.startswith(f"Filen '{file_path}' finnes ikke.")
+    assert error_msg.startswith(f"Datasettet '{file_path}' finnes ikke.")
     assert counter == dash.no_update
 
 
@@ -296,7 +296,7 @@ def test_open_dataset_handling_general_exception(
     assert not opened
     assert show_error
     assert not naming_standard
-    assert error_msg.startswith("ValueError")
+    assert error_msg.startswith("Kunne ikke åpne datasettet")
     assert counter == dash.no_update
 
 

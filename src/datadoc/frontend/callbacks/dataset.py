@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-import traceback
 from typing import TYPE_CHECKING
 
 from dash import no_update
@@ -68,15 +67,16 @@ def open_dataset_handling(
             False,
             True,
             False,
-            f"Filen '{file_path}' finnes ikke.",
+            f"Datasettet '{file_path}' finnes ikke.",
             no_update,
         )
-    except Exception as e:  # noqa: BLE001
+    except Exception:
+        logger.exception("Could not open %s", str(file_path))
         return (
             False,
             True,
             False,
-            "\n".join(traceback.format_exception_only(type(e), e)),
+            f"Kunne ikke åpne datasettet '{file_path}'.",
             no_update,
         )
     dataset_opened_counter += 1
