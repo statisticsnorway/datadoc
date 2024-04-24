@@ -67,10 +67,10 @@ def get_data_source_options() -> list[dict[str, str]]:
     """Collect the unit type options."""
     dropdown_options = [
         {
-            "title": data_source.get_title(SupportedLanguages.NORSK_BOKMÅL),
-            "id": data_source.code,
-        }
-        for data_source in state.data_source.classifications
+            "title": "",  # data_source.get_title(SupportedLanguages.NORSK_BOKMÅL),
+            "id": "",  # data_source.code,
+        },
+        # for data_source in state.data_source.classifications
     ]
     dropdown_options.insert(0, {"title": "", "id": ""})
     return dropdown_options

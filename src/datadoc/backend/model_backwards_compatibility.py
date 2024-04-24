@@ -95,6 +95,22 @@ def _remove_element_from_model(
         del supplied_metadata[element_to_remove]
 
 
+def handle_version_3_1_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
+    data = supplied_metadata["datadoc"]["dataset"]["data_source"]
+    supplied_metadata["datadoc"]["dataset"]["data_source"] = str(
+        data["nb"] or data["nn"] or data["en"],
+    )
+
+    for i in range(len(supplied_metadata["datadoc"]["variables"])):
+        data = supplied_metadata["datadoc"]["variables"][i]["data_source"]
+        supplied_metadata["datadoc"]["variables"][i]["data_source"] = str(
+            data["nb"] or data["nn"] or data["en"],
+        )
+
+    supplied_metadata["datadoc"]["document_version"] = "3.2.0"
+    return supplied_metadata
+
+
 def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Handle breaking changes for v2.2.0."""
     if supplied_metadata["datadoc"]["dataset"]["subject_field"] is not None:
@@ -112,10 +128,10 @@ def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
         )
         supplied_metadata["datadoc"]["variables"][i]["special_value"] = None
         supplied_metadata["datadoc"]["variables"][i]["custom_type"] = None
-        supplied_metadata["datadoc"]["variables"][
-            i
-        ] = _find_and_update_language_strings(
-            supplied_metadata["datadoc"]["variables"][i],
+        supplied_metadata["datadoc"]["variables"][i] = (
+            _find_and_update_language_strings(
+                supplied_metadata["datadoc"]["variables"][i],
+            )
         )
     supplied_metadata["datadoc"]["dataset"]["custom_type"] = None
     supplied_metadata["datadoc"]["dataset"] = _find_and_update_language_strings(
@@ -211,7 +227,8 @@ BackwardsCompatibleVersion(
     handler=handle_version_2_1_0,
 )  # Her må det lages container
 BackwardsCompatibleVersion(version="2.2.0", handler=handle_version_2_2_0)
-BackwardsCompatibleVersion(version="3.1.0", handler=handle_current_version)
+BackwardsCompatibleVersion(version="3.1.0", handler=handle_version_3_1_0)
+BackwardsCompatibleVersion(version="3.2.0", handler=handle_current_version)
 
 
 def upgrade_metadata(fresh_metadata: dict[str, Any]) -> dict[str, Any]:
