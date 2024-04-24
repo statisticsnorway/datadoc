@@ -232,3 +232,16 @@ def accept_variable_metadata_date_input(
         if variable_identifier == VariableIdentifiers.CONTAINS_DATA_FROM
         else no_error + error
     )
+
+
+def set_dataset_values_variables() -> None:
+    """Test method for setting variables value based on dataset value."""
+    update_temp_value = ""
+    for val in state.metadata.variables:
+        if state.metadata.dataset.temporality_type is not None:
+            update_temp_value = state.metadata.dataset.temporality_type
+            setattr(
+                state.metadata.variables_lookup[val.short_name],
+                VariableIdentifiers.TEMPORALITY_TYPE,
+                update_temp_value,
+            )

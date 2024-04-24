@@ -16,6 +16,7 @@ from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
+from datadoc.frontend.callbacks.variables import set_dataset_values_variables
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_ssb_alert
 from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET
@@ -172,6 +173,7 @@ def accept_dataset_metadata_input(
             metadata_identifier,
             value,
         )
+        set_dataset_values_variables()
     except (ValidationError, ValueError):
         show_error = True
         error_explanation = INVALID_VALUE
