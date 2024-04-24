@@ -63,6 +63,19 @@ def get_owner_options() -> list[dict[str, str]]:
     return dropdown_options
 
 
+def get_data_source_options() -> list[dict[str, str]]:
+    """Collect the unit type options."""
+    dropdown_options = [
+        {
+            "title": data_source.get_title(SupportedLanguages.NORSK_BOKMÅL),
+            "id": data_source.code,
+        }
+        for data_source in state.data_source.classifications
+    ]
+    dropdown_options.insert(0, {"title": "", "id": ""})
+    return dropdown_options
+
+
 class DatasetIdentifiers(str, Enum):
     """As defined here: https://statistics-norway.atlassian.net/l/c/aoSfEWJU."""
 
@@ -152,13 +165,13 @@ DISPLAY_DATASET: dict[
         obligatory=True,
         id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
-    DatasetIdentifiers.DATA_SOURCE: MetadataMultiLanguageField(
+    DatasetIdentifiers.DATA_SOURCE: MetadataDropdownField(
         identifier=DatasetIdentifiers.DATA_SOURCE.value,
         display_name="Datakilde",
         description="Datakilde. Settes enten for datasettet eller variabelforekomst.",
         obligatory=True,
-        multiple_language_support=True,
-        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
+        multiple_language_support=False,
+        options_getter=get_data_source_options,
     ),
     DatasetIdentifiers.POPULATION_DESCRIPTION: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.POPULATION_DESCRIPTION.value,

@@ -146,6 +146,11 @@ def get_organisational_unit_code() -> int | None:
     return int(_get_config_item("DATADOC_ORGANISATIONAL_UNIT_CODE") or 83)
 
 
+def get_data_source_code() -> int | None:
+    """The code for the organisational units code list in Klass."""
+    return int(_get_config_item("DATADOC_DATA_SOURCE_CODE") or 712)
+
+
 def get_dapla_manual_naming_standard_url() -> str | None:
     """Get the URL to naming standard in the DAPLA manual."""
     return _get_config_item("DAPLA_MANUAL_NAMING_STANDARD_URL")

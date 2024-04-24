@@ -78,9 +78,9 @@ class CodeList(GetExternalSource):
 
         returns a pandas dataframe with the class data for the given classification id.
         """
-        try:
-            classifications_dataframes = {}
-            for i in self.supported_languages:
+        classifications_dataframes = {}
+        for i in self.supported_languages:
+            try:
                 classifications_dataframes[i] = (
                     KlassClassification(
                         str(self.classification_id),
@@ -89,13 +89,14 @@ class CodeList(GetExternalSource):
                     .get_codes()
                     .data
                 )
-        except Exception:
-            logger.exception(
-                "Exception while getting classifications from Klass",
-            )
-            return None
-        else:
-            return classifications_dataframes
+            except Exception:  # noqa: PERF203
+                logger.exception(
+                    "Exception while getting classifications from Klass",
+                )
+                return None
+            else:
+                return classifications_dataframes
+        return None
 
     def _extract_titles(
         self,
