@@ -14,6 +14,8 @@ from datadoc_model import model
 from datadoc import config
 from datadoc import enums
 from datadoc import state
+from datadoc.frontend.components.dataset_tab import build_dataset_tab
+from datadoc.frontend.components.variables_tab import build_variables_tab
 
 if TYPE_CHECKING:
     import pathlib
@@ -21,6 +23,7 @@ if TYPE_CHECKING:
 
     import pydantic
     from cloudpathlib import CloudPath
+    from dash import html
 
 
 logger = logging.getLogger(__name__)
@@ -194,3 +197,12 @@ def parse_and_validate_dates(
     end_output = parsed_end.astimezone(tz=datetime.timezone.utc) if parsed_end else None
 
     return start_output, end_output
+
+
+def render_tabs(tab: str) -> html.Article | None:
+    """Render tab content."""
+    if tab == "dataset":
+        return build_dataset_tab()
+    if tab == "variables":
+        return build_variables_tab()
+    return None

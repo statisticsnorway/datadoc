@@ -1,11 +1,13 @@
 from enum import Enum
 
 import pytest
+from dash import html
 from datadoc_model import model
 
 from datadoc.enums import LanguageStringsEnum
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
+from datadoc.frontend.callbacks.utils import render_tabs
 
 
 def test_find_existing_language_string_no_existing_strings(bokmål_name: str):
@@ -79,3 +81,16 @@ def test_get_language_strings_enum_unknown():
 
     with pytest.raises(AttributeError):
         get_language_strings_enum(TestEnum)
+
+
+@pytest.mark.parametrize(
+    ("tab", "content"),
+    [
+        ("dataset", "Datasett detaljer"),
+        ("variables", "Variabel detaljer"),
+    ],
+)
+def test_render_tabs(tab, content):
+    result = render_tabs(tab)
+    assert isinstance(result, html.Article)
+    assert result.children[0].children[0].children == content

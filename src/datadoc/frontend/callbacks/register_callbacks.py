@@ -21,15 +21,14 @@ from datadoc import state
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
+from datadoc.frontend.callbacks.utils import render_tabs
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
 from datadoc.frontend.components.builders import build_dataset_edit_section
 from datadoc.frontend.components.dataset_tab import SECTION_WRAPPER_ID
-from datadoc.frontend.components.dataset_tab import build_dataset_tab
 from datadoc.frontend.components.variables_tab import ACCORDION_WRAPPER_ID
 from datadoc.frontend.components.variables_tab import VARIABLES_INFORMATION_ID
-from datadoc.frontend.components.variables_tab import build_variables_tab
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import DATASET_METADATA_INPUT
 from datadoc.frontend.fields.display_base import DATASET_METADATA_MULTILANGUAGE_INPUT
@@ -194,13 +193,9 @@ def register_callbacks(app: Dash) -> None:
         Output("display-tab", "children"),
         Input("tabs", "value"),
     )
-    def render_tabs(tab: html.Article) -> html.Article | None:
+    def callback_render_tabs(tab: html.Article) -> html.Article | None:
         """Return correct tab content."""
-        if tab == "dataset":
-            return build_dataset_tab()
-        if tab == "variables":
-            return build_variables_tab()
-        return None
+        return render_tabs(tab)
 
     @app.callback(
         Output(VARIABLES_INFORMATION_ID, "children"),
