@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from dash import no_update
 from pydantic import ValidationError
 
+from datadoc import config
 from datadoc import state
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.datadoc_metadata import DataDocMetadata
@@ -15,6 +16,8 @@ from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
+from datadoc.frontend.components.builders import AlertTypes
+from datadoc.frontend.components.builders import build_ssb_alert
 from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET
 from datadoc.frontend.fields.display_dataset import (
     DROPDOWN_DATASET_METADATA_IDENTIFIERS,
@@ -28,6 +31,7 @@ from datadoc.frontend.text import INVALID_VALUE
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
 
 if TYPE_CHECKING:
+    import dash_bootstrap_components as dbc
     from datadoc_model.model import LanguageStringType
 
 logger = logging.getLogger(__name__)
@@ -55,7 +59,7 @@ def open_dataset_handling(
     n_clicks: int,
     file_path: str,
     dataset_opened_counter: int,
-) -> tuple[bool, bool, bool, str, int]:
+) -> tuple[dbc.Alert, int]:
     """Handle errors and other logic around opening a dataset file."""
     if file_path:
         file_path = file_path.strip()
@@ -64,19 +68,21 @@ def open_dataset_handling(
     except FileNotFoundError:
         logger.exception("File %s not found", str(file_path))
         return (
-            False,
-            True,
-            False,
-            f"Datasettet '{file_path}' finnes ikke.",
+            build_ssb_alert(
+                AlertTypes.ERROR,
+                "Kunne ikke åpne datasettet",
+                message=f"Datasettet '{file_path}' finnes ikke.",
+            ),
             no_update,
         )
     except Exception:
         logger.exception("Could not open %s", str(file_path))
         return (
-            False,
-            True,
-            False,
-            f"Kunne ikke åpne datasettet '{file_path}'.",
+            build_ssb_alert(
+                AlertTypes.ERROR,
+                "Kunne ikke åpne datasettet",
+                message=f"Kunne ikke åpne datasettet '{file_path}'.",
+            ),
             no_update,
         )
     dataset_opened_counter += 1
@@ -84,24 +90,18 @@ def open_dataset_handling(
         dapla_dataset_path_info = DaplaDatasetPathInfo(file_path)
         if not dapla_dataset_path_info.path_complies_with_naming_standard():
             return (
-                True,
-                False,
-                True,
-                "",
+                build_ssb_alert(
+                    AlertTypes.WARNING,
+                    "Filen følger ikke navnestandard. Vennligst se mer informasjon her:",
+                    link=config.get_dapla_manual_naming_standard_url(),
+                ),
                 dataset_opened_counter,
             )
-        return (
-            True,
-            False,
-            False,
-            "",
-            dataset_opened_counter,
-        )
     return (
-        False,
-        False,
-        False,
-        "",
+        build_ssb_alert(
+            AlertTypes.SUCCESS,
+            "Åpnet datasett",
+        ),
         dataset_opened_counter,
     )
 

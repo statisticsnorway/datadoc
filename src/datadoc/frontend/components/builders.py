@@ -65,21 +65,17 @@ def build_ssb_styled_tab(label: str, content: html.Article) -> dbc.Tab:
     )
 
 
-def build_ssb_alert(  # noqa: PLR0913 not immediately obvious how to improve this
+def build_ssb_alert(
     alert_type: AlertTypes,
-    alert_identifier: str,
     title: str,
-    content_identifier: str,
     message: str | None = None,
     *,
-    start_open: bool = False,
     link: str | None = None,
 ) -> dbc.Alert:
     """Make a Dash Alert according to SSBs Design System."""
     alert = AlertType.get_type(alert_type)
     return dbc.Alert(
-        id=alert_identifier,
-        is_open=start_open,
+        is_open=True,
         dismissable=True,
         fade=True,
         color=alert.color,
@@ -89,7 +85,6 @@ def build_ssb_alert(  # noqa: PLR0913 not immediately obvious how to improve thi
                 title,
             ),
             html.P(
-                id=content_identifier,
                 children=message,
             ),
             html.A(link, href=link, target="_blank"),

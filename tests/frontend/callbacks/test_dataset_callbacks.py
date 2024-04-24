@@ -248,8 +248,8 @@ def test_accept_dataset_metadata_input_date_validation(
 @pytest.mark.parametrize(
     "path",
     [
-        "valid/path/to/person_data_v1.parquet",
-        "  path/with/extra/whitespace/person_data_v1.parquet  ",
+        "tests/resources/datasets/ifpn/klargjorte_data/person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+        "  tests/resources/datasets/ifpn/klargjorte_data/person_testdata_p2021-12-31_p2021-12-31_v1.parquet  ",
     ],
 )
 @patch(f"{DATASET_CALLBACKS_MODULE}.open_file")
@@ -258,15 +258,12 @@ def test_open_dataset_handling_normal(
     n_clicks_1: int,
     path: str,
 ):
-    opened, show_error, naming_standard, error_msg, counter = open_dataset_handling(
+    alert, counter = open_dataset_handling(
         n_clicks_1,
         path,
         0,
     )
-    assert opened
-    assert not show_error
-    assert naming_standard
-    assert error_msg == ""
+    assert alert.color == "success"
     assert counter == 1
 
 
@@ -278,15 +275,12 @@ def test_open_dataset_handling_file_not_found(
 ):
     open_file_mock.side_effect = FileNotFoundError()
 
-    opened, show_error, naming_standard, error_msg, counter = open_dataset_handling(
+    alert, counter = open_dataset_handling(
         n_clicks_1,
         file_path,
         0,
     )
-    assert not opened
-    assert show_error
-    assert not naming_standard
-    assert error_msg.startswith(f"Datasettet '{file_path}' finnes ikke.")
+    assert alert.color == "danger"
     assert counter == dash.no_update
 
 
@@ -298,15 +292,12 @@ def test_open_dataset_handling_general_exception(
 ):
     open_file_mock.side_effect = ValueError()
 
-    opened, show_error, naming_standard, error_msg, counter = open_dataset_handling(
+    alert, counter = open_dataset_handling(
         n_clicks_1,
         file_path,
         0,
     )
-    assert not opened
-    assert show_error
-    assert not naming_standard
-    assert error_msg.startswith("Kunne ikke åpne datasettet")
+    assert alert.color == "danger"
     assert counter == dash.no_update
 
 
@@ -315,15 +306,12 @@ def test_open_dataset_handling_no_click(
     open_file_mock: Mock,  # noqa: ARG001
     file_path: str,
 ):
-    opened, show_error, naming_standard, error_msg, counter = open_dataset_handling(
+    alert, counter = open_dataset_handling(
         0,
         file_path,
         0,
     )
-    assert not opened
-    assert not show_error
-    assert not naming_standard
-    assert error_msg == ""
+    assert alert
     assert counter == 1
 
 
@@ -333,15 +321,12 @@ def test_open_dataset_handling_naming_standard(
     n_clicks_1: int,
     file_path_without_dates: str,
 ):
-    opened, show_error, naming_standard, error_msg, counter = open_dataset_handling(
+    alert, counter = open_dataset_handling(
         n_clicks_1,
         file_path_without_dates,
         0,
     )
-    assert opened is True
-    assert not show_error
-    assert naming_standard
-    assert error_msg == ""
+    assert alert.color == "warning"
     assert counter == 1
 
 
