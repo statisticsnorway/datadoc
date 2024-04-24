@@ -21,10 +21,6 @@ from datadoc.backend.code_list import CodeList
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.frontend.callbacks.register_callbacks import register_callbacks
-from datadoc.frontend.components.alerts import naming_convention_warning
-from datadoc.frontend.components.alerts import opened_dataset_error
-from datadoc.frontend.components.alerts import opened_dataset_success
-from datadoc.frontend.components.alerts import saved_metadata_success
 from datadoc.frontend.components.control_bars import build_controls_bar
 from datadoc.frontend.components.control_bars import build_footer_control_bar
 from datadoc.frontend.components.control_bars import header
@@ -64,10 +60,7 @@ def build_app(app: type[Dash]) -> Dash:
                     ),
                     progress_bar,
                     build_controls_bar(),
-                    opened_dataset_error,
-                    saved_metadata_success,
-                    opened_dataset_success,
-                    naming_convention_warning,
+                    html.Div(id="alerts-section"),
                     dbc.Tabs(
                         id="tabs",
                         class_name="ssb-tabs",
