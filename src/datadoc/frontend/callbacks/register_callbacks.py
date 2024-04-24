@@ -204,7 +204,6 @@ def register_callbacks(app: Dash) -> None:
 
     @app.callback(
         Output(VARIABLES_INFORMATION_ID, "children"),
-        Input("display-tab", "children"),
         Input("dataset-opened-counter", "data"),
         prevent_initial_call=True,
     )
@@ -217,12 +216,10 @@ def register_callbacks(app: Dash) -> None:
         Output(ACCORDION_WRAPPER_ID, "children"),
         Input("dataset-opened-counter", "data"),
         Input("search-variables", "value"),
-        Input("display-tab", "children"),
     )
     def callback_populate_variables_workspace(
         dataset_opened_counter: int,  # Dash requires arguments for all Inputs
         search_query: str,
-        tabs,  # noqa: ARG001, ANN001
     ) -> list:
         """Create variable workspace with accordions for variables.
 
