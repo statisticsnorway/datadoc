@@ -11,6 +11,7 @@ from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METAD
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 
 
+@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
 @pytest.mark.parametrize(
     ("field_list", "title", "variable"),
     [
@@ -32,10 +33,15 @@ def test_build_edit_section_return_correct_component(
     assert isinstance(edit_section, html.Section)
 
 
+@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
 @pytest.mark.parametrize(
     ("field_list", "title", "variable"),
     [
-        ([], "", model.Variable()),
+        (
+            [],
+            "",
+            model.Variable(),
+        ),
         (
             OPTIONAL_VARIABLES_METADATA,
             "Anbefalt",
@@ -61,6 +67,7 @@ def test_build_edit_section_children_return_correct_components(
     assert isinstance(form, dbc.Form)
 
 
+@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
 @pytest.mark.parametrize(
     ("field_list", "title", "variable"),
     [

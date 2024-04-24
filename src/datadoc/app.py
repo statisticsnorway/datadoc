@@ -149,6 +149,11 @@ def collect_data_from_external_sources(
         config.get_unit_code(),
     )
 
+    state.measurement_units = CodeList(
+        executor,
+        config.get_measurement_unit_code(),
+    )
+
     state.organisational_units = CodeList(
         executor,
         config.get_organisational_unit_code(),

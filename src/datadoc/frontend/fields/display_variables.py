@@ -6,6 +6,7 @@ import functools
 from enum import Enum
 
 from datadoc import enums
+from datadoc import state
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_MULTILANGUAGE_INPUT
 from datadoc.frontend.fields.display_base import FieldTypes
@@ -15,6 +16,19 @@ from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import MetadataMultiLanguageField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
 from datadoc.frontend.fields.display_base import get_enum_options
+
+
+def get_measurement_unit_options() -> list[dict[str, str]]:
+    """Collect the unit type options."""
+    dropdown_options = [
+        {
+            "title": measurement_unit.get_title(enums.SupportedLanguages.NORSK_BOKMÅL),
+            "id": measurement_unit.code,
+        }
+        for measurement_unit in state.measurement_units.classifications
+    ]
+    dropdown_options.insert(0, {"title": "", "id": ""})
+    return dropdown_options
 
 
 class VariableIdentifiers(str, Enum):
@@ -127,11 +141,11 @@ DISPLAY_VARIABLES: dict[
             enums.TemporalityTypeType,
         ),
     ),
-    VariableIdentifiers.MEASUREMENT_UNIT: MetadataInputField(
+    VariableIdentifiers.MEASUREMENT_UNIT: MetadataDropdownField(
         identifier=VariableIdentifiers.MEASUREMENT_UNIT.value,
         display_name="Måleenhet",
         description="Måleenhet. Eksempel: NOK eller USD for valuta, KG eller TONN for vekt. Se også forslag til SSBs måletyper/måleenheter.",
-        type="text",
+        options_getter=get_measurement_unit_options,
     ),
     VariableIdentifiers.FORMAT: MetadataInputField(
         identifier=VariableIdentifiers.FORMAT.value,

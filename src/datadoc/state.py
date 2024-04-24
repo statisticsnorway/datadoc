@@ -28,3 +28,5 @@ unit_types: CodeList
 organisational_units: CodeList
 
 data_source: CodeList
+
+measurement_units: CodeList
