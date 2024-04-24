@@ -83,6 +83,10 @@
     border: none;
     border-bottom: 4px solid #1a9d49;
 }
+
+.jsx-4017309047.tab-container.ssb-tabs > .jsx-3468109796.tab.workspace-tab.tab--selected:hover::before{
+  height: unset;
+}
 @media screen and (min-width: 800px){
     .jsx-4017309047.tab-container.ssb-tabs > .tab--selected.jsx-3468109796, .tab.jsx-3468109796:last-of-type.tab--selected {
         border: none;
