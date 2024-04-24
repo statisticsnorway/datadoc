@@ -195,10 +195,10 @@ def register_callbacks(app: Dash) -> None:
         Input("tabs", "value"),
     )
     def render_tabs(tab: html.Article) -> html.Article | None:
-        """Conditional return correct content."""
+        """Return correct tab content."""
         if tab == "dataset":
             return build_dataset_tab()
-        elif tab == "variables":  # noqa: RET505
+        if tab == "variables":
             return build_variables_tab()
         return None
 
