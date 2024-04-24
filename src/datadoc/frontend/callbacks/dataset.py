@@ -16,6 +16,7 @@ from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
+from datadoc.frontend.callbacks.variables import set_dataset_period_values_variables
 from datadoc.frontend.callbacks.variables import set_dataset_values_variables
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_ssb_alert
@@ -216,7 +217,7 @@ def accept_dataset_metadata_date_input(
             state.metadata.dataset.contains_data_until = (
                 parsed_contains_data_until.isoformat()
             )
-
+        set_dataset_period_values_variables()
     except (ValidationError, ValueError) as e:
         logger.exception(
             "Validation failed for %s, %s, %s: %s, %s",
