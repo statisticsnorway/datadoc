@@ -28,8 +28,6 @@ from datadoc.frontend.components.control_bars import build_controls_bar
 from datadoc.frontend.components.control_bars import build_footer_control_bar
 from datadoc.frontend.components.control_bars import header
 from datadoc.frontend.components.control_bars import progress_bar
-from datadoc.frontend.components.dataset_tab import build_dataset_tab
-from datadoc.frontend.components.variables_tab import build_variables_tab
 from datadoc.logging_configuration.logging_config import configure_logging
 from datadoc.utils import get_app_version
 from datadoc.utils import pick_random_port
@@ -41,11 +39,6 @@ logger = logging.getLogger(__name__)
 
 def build_app(app: type[Dash]) -> Dash:
     """Define the layout, register callbacks."""
-    tabs_children = [
-        build_dataset_tab(),
-        build_variables_tab(),
-    ]
-
     app.layout = html.Div(
         children=[
             html.Header(
@@ -70,8 +63,21 @@ def build_app(app: type[Dash]) -> Dash:
                     dcc.Tabs(
                         id="tabs",
                         className="ssb-tabs",
-                        children=tabs_children,
+                        value="dataset",
+                        children=[
+                            dcc.Tab(
+                                label="Datasett",
+                                value="dataset",
+                                className="workspace-tab",
+                            ),
+                            dcc.Tab(
+                                label="Variabler",
+                                value="variables",
+                                className="workspace-tab",
+                            ),
+                        ],
                     ),
+                    html.Div(id="display-tab"),
                 ],
                 className="main-content-app",
             ),
@@ -117,6 +123,7 @@ def get_app(
         title=name,
         assets_folder=f"{Path(__file__).parent}/assets",
         requests_pathname_prefix=requests_pathname_prefix,
+        suppress_callback_exceptions=True,
     )
     app = build_app(app)
     app.server.register_blueprint(healthz, url_prefix="/healthz")

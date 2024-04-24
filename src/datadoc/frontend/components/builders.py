@@ -54,6 +54,7 @@ ALERT_TYPES = {
 
 
 def build_ssb_styled_tab(label: str, content: html.Article) -> dbc.Tab:
+    # TODO(<@tilen1976>): remove function after new tabs is approved  # noqa: TD003
     """Make a Dash Tab according to SSBs Design System."""
     return dbc.Tab(
         label=label,

@@ -15,6 +15,7 @@ from dash import Input
 from dash import Output
 from dash import State
 from dash import ctx
+from dash import html
 
 from datadoc import state
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
@@ -25,8 +26,10 @@ from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
 from datadoc.frontend.components.builders import build_dataset_edit_section
 from datadoc.frontend.components.dataset_tab import SECTION_WRAPPER_ID
+from datadoc.frontend.components.dataset_tab import build_dataset_tab
 from datadoc.frontend.components.variables_tab import ACCORDION_WRAPPER_ID
 from datadoc.frontend.components.variables_tab import VARIABLES_INFORMATION_ID
+from datadoc.frontend.components.variables_tab import build_variables_tab
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import DATASET_METADATA_INPUT
 from datadoc.frontend.fields.display_base import DATASET_METADATA_MULTILANGUAGE_INPUT
@@ -188,7 +191,20 @@ def register_callbacks(app: Dash) -> None:
         return open_dataset_handling(n_clicks, dataset_path, dataset_opened_counter)
 
     @app.callback(
+        Output("display-tab", "children"),
+        Input("tabs", "value"),
+    )
+    def render_tabs(tab: html.Article) -> html.Article | None:
+        """Conditional return correct content."""
+        if tab == "dataset":
+            return build_dataset_tab()
+        elif tab == "variables":  # noqa: RET505
+            return build_variables_tab()
+        return None
+
+    @app.callback(
         Output(VARIABLES_INFORMATION_ID, "children"),
+        Input("display-tab", "children"),
         Input("dataset-opened-counter", "data"),
         prevent_initial_call=True,
     )
@@ -201,11 +217,12 @@ def register_callbacks(app: Dash) -> None:
         Output(ACCORDION_WRAPPER_ID, "children"),
         Input("dataset-opened-counter", "data"),
         Input("search-variables", "value"),
-        prevent_initial_call=True,
+        Input("display-tab", "children"),
     )
     def callback_populate_variables_workspace(
         dataset_opened_counter: int,  # Dash requires arguments for all Inputs
         search_query: str,
+        tabs,  # noqa: ARG001, ANN001
     ) -> list:
         """Create variable workspace with accordions for variables.
 
