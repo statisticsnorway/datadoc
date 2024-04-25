@@ -7,7 +7,8 @@
         "editor.formatOnSave": true
     },
     "python.testing.pytestArgs": [
-        "tests"
+        "tests", 
+        "--disable-warnings"
     ],
     "python.testing.pytestEnabled": true,
     "python.testing.unittestEnabled": false,
