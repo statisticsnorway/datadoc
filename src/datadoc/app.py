@@ -56,7 +56,6 @@ def build_app(app: type[Dash]) -> Dash:
                     dcc.Tabs(
                         id="tabs",
                         className="ssb-tabs",
-                        value="dataset",
                         children=[
                             dcc.Tab(
                                 label="Datasett",
