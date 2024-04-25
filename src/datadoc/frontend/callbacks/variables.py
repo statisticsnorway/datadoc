@@ -235,7 +235,7 @@ def accept_variable_metadata_date_input(
 
 
 def set_variables_values_inherited_from_dataset() -> None:
-    """Set variables values on temporality type, data source and population description based on dataset value."""
+    """Set variable value for temporality type, data source and population description based on dataset value."""
     update_value: str | LanguageStringType
     for val in state.metadata.variables:
         if state.metadata.dataset.temporality_type is not None:
@@ -259,8 +259,3 @@ def set_variables_values_inherited_from_dataset() -> None:
                 VariableIdentifiers.POPULATION_DESCRIPTION,
                 update_value,
             )
-
-
-def set_variables_period_values_inherited_from_dataset() -> None:
-    """Set variables values on period fields based on dataset value."""
-    logger.debug("Check date from: %s ", state.metadata.dataset.contains_data_from)

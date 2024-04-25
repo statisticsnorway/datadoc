@@ -339,18 +339,19 @@ def test_update_variables_values_from_dataset_values(metadata: DataDocMetadata):
         dataset_data_source,
     )
     set_variables_values_inherited_from_dataset()
-    assert metadata.dataset.temporality_type == get_standard_metadata(
-        metadata.variables_lookup["pers_id"],
-        VariableIdentifiers.TEMPORALITY_TYPE.value,
-    )
-    assert metadata.dataset.data_source == get_standard_metadata(
-        metadata.variables_lookup["pers_id"],
-        VariableIdentifiers.DATA_SOURCE.value,
-    )
-    assert metadata.dataset.population_description == get_standard_metadata(
-        metadata.variables_lookup["pers_id"],
-        VariableIdentifiers.POPULATION_DESCRIPTION.value,
-    )
+    for val in state.metadata.variables:
+        assert metadata.dataset.temporality_type == get_standard_metadata(
+            metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.TEMPORALITY_TYPE.value,
+        )
+        assert metadata.dataset.data_source == get_standard_metadata(
+            metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.DATA_SOURCE.value,
+        )
+        assert metadata.dataset.population_description == get_standard_metadata(
+            metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.POPULATION_DESCRIPTION.value,
+        )
 
 
 def test_variables_value_can_be_changed_after_update_from_dataset_value(
@@ -364,6 +365,11 @@ def test_variables_value_can_be_changed_after_update_from_dataset_value(
         dataset_temporality_type,
     )
     set_variables_values_inherited_from_dataset()
+    for val in state.metadata.variables:
+        assert metadata.dataset.temporality_type == get_standard_metadata(
+            metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.TEMPORALITY_TYPE.value,
+        )
     setattr(
         state.metadata.variables_lookup["pers_id"],
         VariableIdentifiers.TEMPORALITY_TYPE,
@@ -376,4 +382,11 @@ def test_variables_value_can_be_changed_after_update_from_dataset_value(
     assert dataset_temporality_type != get_standard_metadata(
         metadata.variables_lookup["pers_id"],
         VariableIdentifiers.TEMPORALITY_TYPE.value,
+    )
+    assert (
+        get_standard_metadata(
+            metadata.variables_lookup["pers_id"],
+            VariableIdentifiers.TEMPORALITY_TYPE.value,
+        )
+        == "ACCUMULATED"
     )
