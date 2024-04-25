@@ -15,12 +15,14 @@ from dash import Input
 from dash import Output
 from dash import State
 from dash import ctx
+from dash import html
 from dash import no_update
 
 from datadoc import state
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
+from datadoc.frontend.callbacks.utils import render_tabs
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
@@ -190,6 +192,14 @@ def register_callbacks(app: Dash) -> None:
         return open_dataset_handling(n_clicks, dataset_path, dataset_opened_counter)
 
     @app.callback(
+        Output("display-tab", "children"),
+        Input("tabs", "value"),
+    )
+    def callback_render_tabs(tab: html.Article) -> html.Article | None:
+        """Return correct tab content."""
+        return render_tabs(tab)
+
+    @app.callback(
         Output(VARIABLES_INFORMATION_ID, "children"),
         Input("dataset-opened-counter", "data"),
         prevent_initial_call=True,
@@ -203,7 +213,6 @@ def register_callbacks(app: Dash) -> None:
         Output(ACCORDION_WRAPPER_ID, "children"),
         Input("dataset-opened-counter", "data"),
         Input("search-variables", "value"),
-        prevent_initial_call=True,
     )
     def callback_populate_variables_workspace(
         dataset_opened_counter: int,  # Dash requires arguments for all Inputs

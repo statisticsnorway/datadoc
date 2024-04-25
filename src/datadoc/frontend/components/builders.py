@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
 from enum import Enum
 from enum import auto
@@ -51,18 +50,6 @@ ALERT_TYPES = {
         color="success",
     ),
 }
-
-
-def build_ssb_styled_tab(label: str, content: html.Article) -> dbc.Tab:
-    """Make a Dash Tab according to SSBs Design System."""
-    return dbc.Tab(
-        label=label,
-        # Replace all whitespace with dashes
-        tab_id=re.sub(r"\s+", "-", label.lower()),
-        label_class_name="ssb-tabs navigation-item workspace-tab-label",
-        children=content,
-        className="workspace-tab",
-    )
 
 
 def build_ssb_alert(
