@@ -132,10 +132,10 @@ def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
         )
         supplied_metadata["datadoc"]["variables"][i]["special_value"] = None
         supplied_metadata["datadoc"]["variables"][i]["custom_type"] = None
-        supplied_metadata["datadoc"]["variables"][i] = (
-            _find_and_update_language_strings(
-                supplied_metadata["datadoc"]["variables"][i],
-            )
+        supplied_metadata["datadoc"]["variables"][
+            i
+        ] = _find_and_update_language_strings(
+            supplied_metadata["datadoc"]["variables"][i],
         )
     supplied_metadata["datadoc"]["dataset"]["custom_type"] = None
     supplied_metadata["datadoc"]["dataset"] = _find_and_update_language_strings(
