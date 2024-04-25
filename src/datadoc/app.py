@@ -157,6 +157,11 @@ def collect_data_from_external_sources(
         executor,
         config.get_organisational_unit_code(),
     )
+
+    state.data_sources = CodeList(
+        executor,
+        config.get_data_source_code(),
+    )
     logger.debug("Finished blocking - Collecting data from external sources")
 
 

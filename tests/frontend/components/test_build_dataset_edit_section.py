@@ -127,11 +127,12 @@ def test_build_dataset_is_form_component(title, field_types, dataset, key):
     assert isinstance(dataset_form, dbc.Form)
 
 
+@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
 @pytest.mark.parametrize(
     ("edit_section", "expected_inputs", "expected_dropdowns", "expected_multilanguage"),
     [
         (
-            build_dataset_edit_section(
+            (
                 "",
                 NON_EDITABLE_DATASET_METADATA,
                 model.Dataset(short_name="fantastic_dataset"),
@@ -142,7 +143,7 @@ def test_build_dataset_is_form_component(title, field_types, dataset, key):
             0,
         ),
         (
-            build_dataset_edit_section(
+            (
                 "New title",
                 OPTIONAL_DATASET_METADATA,
                 model.Dataset(),
@@ -153,15 +154,15 @@ def test_build_dataset_is_form_component(title, field_types, dataset, key):
             0,
         ),
         (
-            build_dataset_edit_section(
+            (
                 "",
                 OBLIGATORY_MINUS_ATYPICAL_DROPDOWNS,
                 model.Dataset(short_name="super_dataset"),
                 {"type": "dataset-edit-section", "id": "obligatory-en"},
             ),
             3,
-            4,
-            6,
+            5,
+            5,
         ),
     ],
 )
@@ -171,6 +172,7 @@ def test_build_dataset_edit_section_renders_ssb_components(
     expected_dropdowns,
     expected_multilanguage,
 ):
+    edit_section = build_dataset_edit_section(*edit_section)
     fields = edit_section.children[1].children
     input_components = [element for element in fields if isinstance(element, ssb.Input)]
     dropdown_components = [
@@ -265,11 +267,12 @@ DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL: list[FieldTypes] = [
 ]
 
 
+@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
 @pytest.mark.parametrize(
     ("edit_section", "expected_num", "expected_component"),
     [
         (
-            build_dataset_edit_section(
+            (
                 "",
                 DATASET_INPUT_FIELD_LIST,
                 model.Dataset(short_name="input_dataset"),
@@ -279,7 +282,7 @@ DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL: list[FieldTypes] = [
             ssb.Input,
         ),
         (
-            build_dataset_edit_section(
+            (
                 "title",
                 DATASET_DATE_FIELD_LIST,
                 model.Dataset(short_name="date_dataset"),
@@ -289,13 +292,13 @@ DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL: list[FieldTypes] = [
             ssb.Input,
         ),
         (
-            build_dataset_edit_section(
+            (
                 "dropdown",
                 DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL,
                 model.Dataset(short_name="dropdown_dataset"),
                 {"type": "dataset-edit-section", "id": "dropdown-en"},
             ),
-            5,
+            6,
             ssb.Dropdown,
         ),
     ],
@@ -305,6 +308,7 @@ def test_build_dataset_input_fields_from_datasetidentifiers(
     expected_num,
     expected_component,
 ):
+    edit_section = build_dataset_edit_section(*edit_section)
     fields = edit_section.children[1].children
     assert len(fields) == expected_num
     for item in fields:

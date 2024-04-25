@@ -64,14 +64,7 @@ if TYPE_CHECKING:
         (
             VariableIdentifiers.DATA_SOURCE,
             "Atlantis",
-            enums.LanguageStringType(
-                [
-                    enums.LanguageStringTypeItem(
-                        languageCode="nb",
-                        languageText="Atlantis",
-                    ),
-                ],
-            ),
+            "Atlantis",
         ),
         (
             VariableIdentifiers.POPULATION_DESCRIPTION,

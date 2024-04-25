@@ -95,6 +95,26 @@ def _remove_element_from_model(
         del supplied_metadata[element_to_remove]
 
 
+def handle_version_3_1_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
+    """Handle breaking changes for v3.1.0."""
+    data: list = supplied_metadata["datadoc"]["dataset"]["data_source"]
+
+    if data is not None:
+        supplied_metadata["datadoc"]["dataset"]["data_source"] = str(
+            data[0]["languageText"],
+        )
+
+    for i in range(len(supplied_metadata["datadoc"]["variables"])):
+        data = supplied_metadata["datadoc"]["variables"][i]["data_source"]
+        if data is not None:
+            supplied_metadata["datadoc"]["variables"][i]["data_source"] = str(
+                data[0]["languageText"],
+            )
+
+    supplied_metadata["datadoc"]["document_version"] = "3.2.0"
+    return supplied_metadata
+
+
 def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Handle breaking changes for v2.2.0."""
     if supplied_metadata["datadoc"]["dataset"]["subject_field"] is not None:
@@ -211,7 +231,8 @@ BackwardsCompatibleVersion(
     handler=handle_version_2_1_0,
 )  # Her må det lages container
 BackwardsCompatibleVersion(version="2.2.0", handler=handle_version_2_2_0)
-BackwardsCompatibleVersion(version="3.1.0", handler=handle_current_version)
+BackwardsCompatibleVersion(version="3.1.0", handler=handle_version_3_1_0)
+BackwardsCompatibleVersion(version="3.2.0", handler=handle_current_version)
 
 
 def upgrade_metadata(fresh_metadata: dict[str, Any]) -> dict[str, Any]:

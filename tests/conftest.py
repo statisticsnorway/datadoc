@@ -273,6 +273,9 @@ def _code_list_fake_classifications_variables(code_list_fake_structure) -> None:
     state.measurement_units = code_list_fake_structure
     state.measurement_units.wait_for_external_result()
 
+    state.data_sources = code_list_fake_structure
+    state.data_sources.wait_for_external_result()
+
 
 @pytest.fixture()
 def copy_dataset_to_path(
