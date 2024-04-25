@@ -234,7 +234,7 @@ def accept_variable_metadata_date_input(
     )
 
 
-def set_dataset_values_variables() -> None:
+def set_variables_values_inherited_from_dataset() -> None:
     """Test method for setting variables value based on dataset value."""
     update_value: str | LanguageStringType
     for val in state.metadata.variables:
