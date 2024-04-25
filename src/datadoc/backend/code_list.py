@@ -129,12 +129,12 @@ class CodeList(GetExternalSource):
             )
         else:
             classification_codes = [None] * len(classification_names)
-        unit_types = []
+        classification_items = []
         for a, b in zip(classification_names, classification_codes):
-            unit_types.append(
+            classification_items.append(
                 CodeListItem(a, b),
             )
-        return unit_types
+        return classification_items
 
     def _get_classification_dataframe_if_loaded(self) -> bool:
         """Checks if the data from Klass is loaded, then gets the classifications from the dataframe."""

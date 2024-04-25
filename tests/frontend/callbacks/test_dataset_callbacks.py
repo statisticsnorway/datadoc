@@ -90,14 +90,7 @@ def file_path_without_dates():
         (
             DatasetIdentifiers.DATA_SOURCE,
             "Census",
-            enums.LanguageStringType(
-                [
-                    enums.LanguageStringTypeItem(
-                        languageCode="nb",
-                        languageText="Census",
-                    ),
-                ],
-            ),
+            "Census",
         ),
         (
             DatasetIdentifiers.DESCRIPTION,

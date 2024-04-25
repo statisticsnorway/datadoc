@@ -31,6 +31,19 @@ def get_measurement_unit_options() -> list[dict[str, str]]:
     return dropdown_options
 
 
+def get_data_source_options() -> list[dict[str, str]]:
+    """Collect the unit type options."""
+    dropdown_options = [
+        {
+            "title": data_sources.get_title(enums.SupportedLanguages.NORSK_BOKMÅL),
+            "id": data_sources.code,
+        }
+        for data_sources in state.data_sources.classifications
+    ]
+    dropdown_options.insert(0, {"title": "", "id": ""})
+    return dropdown_options
+
+
 class VariableIdentifiers(str, Enum):
     """As defined here: https://statistics-norway.atlassian.net/wiki/spaces/MPD/pages/3042869256/Variabelforekomst."""
 
@@ -108,13 +121,11 @@ DISPLAY_VARIABLES: dict[
         description="Velges hvis variabelen inneholder informasjon som innebærer at enkeltpersoner kan identifiseres. Gjelder ikke hvis kolonnen er pseudonymisert eller anonymisert.",
         obligatory=True,
     ),
-    VariableIdentifiers.DATA_SOURCE: MetadataMultiLanguageField(
+    VariableIdentifiers.DATA_SOURCE: MetadataDropdownField(
         identifier=VariableIdentifiers.DATA_SOURCE.value,
         display_name="Datakilde",
         description="Datakilde. Settes på datasettnivå, men kan overstyres på variabelforekomstnivå.",
-        multiple_language_support=True,
-        type="text",
-        id_type=VARIABLES_METADATA_MULTILANGUAGE_INPUT,
+        options_getter=get_data_source_options,
     ),
     VariableIdentifiers.POPULATION_DESCRIPTION: MetadataMultiLanguageField(
         identifier=VariableIdentifiers.POPULATION_DESCRIPTION.value,

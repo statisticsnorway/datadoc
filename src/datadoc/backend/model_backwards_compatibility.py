@@ -96,16 +96,20 @@ def _remove_element_from_model(
 
 
 def handle_version_3_1_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
-    data = supplied_metadata["datadoc"]["dataset"]["data_source"]
-    supplied_metadata["datadoc"]["dataset"]["data_source"] = str(
-        data["nb"] or data["nn"] or data["en"],
-    )
+    """Handle breaking changes for v3.1.0."""
+    data: list = supplied_metadata["datadoc"]["dataset"]["data_source"]
+
+    if data is not None:
+        supplied_metadata["datadoc"]["dataset"]["data_source"] = str(
+            data[0]["languageText"],
+        )
 
     for i in range(len(supplied_metadata["datadoc"]["variables"])):
         data = supplied_metadata["datadoc"]["variables"][i]["data_source"]
-        supplied_metadata["datadoc"]["variables"][i]["data_source"] = str(
-            data["nb"] or data["nn"] or data["en"],
-        )
+        if data is not None:
+            supplied_metadata["datadoc"]["variables"][i]["data_source"] = str(
+                data[0]["languageText"],
+            )
 
     supplied_metadata["datadoc"]["document_version"] = "3.2.0"
     return supplied_metadata

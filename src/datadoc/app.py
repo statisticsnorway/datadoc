@@ -159,7 +159,7 @@ def collect_data_from_external_sources(
         config.get_organisational_unit_code(),
     )
 
-    state.data_source = CodeList(
+    state.data_sources = CodeList(
         executor,
         config.get_data_source_code(),
     )
