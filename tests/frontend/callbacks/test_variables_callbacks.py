@@ -16,6 +16,11 @@ from datadoc import state
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
+from datadoc.frontend.callbacks.variables import (
+    set_variables_values_inherited_from_dataset,
+)
+from datadoc.frontend.fields.display_base import get_standard_metadata
+from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
 from datadoc.frontend.text import INVALID_DATE_ORDER
@@ -297,4 +302,52 @@ def test_populate_variables_workspace_filter_variables(
             ),
         )
         == expected_length
+    )
+
+
+def test_update_variables_values_from_dataset_values(metadata: DataDocMetadata):
+    state.metadata = metadata
+    dataset_temporality_type = enums.TemporalityTypeType.FIXED
+    dataset_population_description = [
+        {
+            "languageCode": "en",
+            "languageText": "",
+        },
+        {
+            "languageCode": "nn",
+            "languageText": "",
+        },
+        {
+            "languageCode": "nb",
+            "languageText": "Alle personer bosatte i Norge fra 1964 til 2005",
+        },
+    ]
+    dataset_data_source = None
+    setattr(
+        state.metadata.dataset,
+        DatasetIdentifiers.TEMPORALITY_TYPE,
+        dataset_temporality_type,
+    )
+    setattr(
+        state.metadata.dataset,
+        DatasetIdentifiers.POPULATION_DESCRIPTION,
+        dataset_population_description,
+    )
+    setattr(
+        state.metadata.dataset,
+        DatasetIdentifiers.DATA_SOURCE,
+        dataset_data_source,
+    )
+    set_variables_values_inherited_from_dataset()
+    assert metadata.dataset.temporality_type == get_standard_metadata(
+        metadata.variables_lookup["pers_id"],
+        VariableIdentifiers.TEMPORALITY_TYPE.value,
+    )
+    assert metadata.dataset.data_source == get_standard_metadata(
+        metadata.variables_lookup["pers_id"],
+        VariableIdentifiers.DATA_SOURCE.value,
+    )
+    assert metadata.dataset.population_description == get_standard_metadata(
+        metadata.variables_lookup["pers_id"],
+        VariableIdentifiers.POPULATION_DESCRIPTION.value,
     )
