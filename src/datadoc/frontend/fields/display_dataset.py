@@ -154,14 +154,12 @@ DISPLAY_DATASET: dict[
         display_name="Navn",
         description="Datasettnavn",
         obligatory=True,
-        multiple_language_support=True,
         id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
     DatasetIdentifiers.DESCRIPTION: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.DESCRIPTION.value,
         display_name="Beskrivelse",
         description="Beskrivelse av datasettet",
-        multiple_language_support=True,
         obligatory=True,
         id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
@@ -170,7 +168,6 @@ DISPLAY_DATASET: dict[
         display_name="Datakilde",
         description="Datakilde. Settes enten for datasettet eller variabelforekomst.",
         obligatory=True,
-        multiple_language_support=False,
         options_getter=get_data_source_options,
     ),
     DatasetIdentifiers.POPULATION_DESCRIPTION: MetadataMultiLanguageField(
@@ -178,7 +175,6 @@ DISPLAY_DATASET: dict[
         display_name="Populasjon",
         description="Populasjonen datasettet dekker. Populasjonsbeskrivelsen inkluderer enhetstype, geografisk dekningsområde og tidsperiode.",
         obligatory=True,
-        multiple_language_support=True,
         id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
     DatasetIdentifiers.VERSION: MetadataInputField(
@@ -192,7 +188,6 @@ DISPLAY_DATASET: dict[
         identifier=DatasetIdentifiers.VERSION_DESCRIPTION.value,
         display_name="Versjonsbeskrivelse",
         description="Årsak/grunnlag for denne versjonen av datasettet i form av beskrivende tekst.",
-        multiple_language_support=True,
         obligatory=True,
         id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
@@ -200,7 +195,6 @@ DISPLAY_DATASET: dict[
         identifier=DatasetIdentifiers.UNIT_TYPE.value,
         display_name="Enhetstype",
         description="Primær enhetstype for datafil, datatabell eller datasett. Se  Vi jobber med en avklaring av behov for flere enhetstyper her.",
-        multiple_language_support=False,
         options_getter=get_unit_type_options,
         obligatory=True,
     ),
@@ -219,7 +213,6 @@ DISPLAY_DATASET: dict[
         display_name="Statistikkområde",
         description="Primær statistikkområdet som datasettet inngår i",
         obligatory=True,
-        multiple_language_support=False,
         options_getter=get_statistical_subject_options,
     ),
     DatasetIdentifiers.KEYWORD: MetadataInputField(
@@ -232,7 +225,6 @@ DISPLAY_DATASET: dict[
         identifier=DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION.value,
         display_name="Geografisk dekningsområde",
         description="Beskrivelse av datasettets geografiske dekningsområde. Målet er på sikt at dette skal hentes fra Klass, men fritekst vil også kunne brukes.",
-        multiple_language_support=True,
         obligatory=True,
         id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
@@ -249,7 +241,6 @@ DISPLAY_DATASET: dict[
         description="Maskingenerert seksjonstilhørighet til den som oppretter metadata om datasettet, men kan korrigeres manuelt",
         obligatory=True,
         editable=True,
-        multiple_language_support=False,
         options_getter=get_owner_options,
     ),
     DatasetIdentifiers.FILE_PATH: MetadataInputField(
@@ -326,7 +317,9 @@ DISPLAY_DATASET: dict[
 }
 
 MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS = [
-    m.identifier for m in DISPLAY_DATASET.values() if m.multiple_language_support
+    m.identifier
+    for m in DISPLAY_DATASET.values()
+    if isinstance(m, MetadataMultiLanguageField)
 ]
 
 OBLIGATORY_EDITABLE_DATASET_METADATA = [

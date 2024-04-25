@@ -15,6 +15,7 @@ from dash import Input
 from dash import Output
 from dash import State
 from dash import ctx
+from dash import no_update
 
 from datadoc import state
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
@@ -23,7 +24,9 @@ from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
+from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_dataset_edit_section
+from datadoc.frontend.components.builders import build_ssb_alert
 from datadoc.frontend.components.dataset_tab import SECTION_WRAPPER_ID
 from datadoc.frontend.components.variables_tab import ACCORDION_WRAPPER_ID
 from datadoc.frontend.components.variables_tab import VARIABLES_INFORMATION_ID
@@ -80,7 +83,7 @@ def register_callbacks(app: Dash) -> None:
         return f"{state.metadata.percent_complete}%"
 
     @app.callback(
-        Output("saved-metadata-success", "is_open"),
+        Output("alerts-section", "children", allow_duplicate=True),
         Input("save-button", "n_clicks"),
         prevent_initial_call=True,
     )
@@ -88,9 +91,12 @@ def register_callbacks(app: Dash) -> None:
         """Save the metadata document to disk."""
         if n_clicks and n_clicks > 0:
             state.metadata.write_metadata_document()
-            return True
+            return build_ssb_alert(
+                AlertTypes.SUCCESS,
+                "Lagret metadata",
+            )
 
-        return False
+        return no_update
 
     @app.callback(
         Output(
@@ -114,7 +120,6 @@ def register_callbacks(app: Dash) -> None:
 
         Will display an alert if validation fails.
         """
-        # Get the ID of the input that changed. This MUST match the attribute name defined in DataDocDataSet
         return accept_dataset_metadata_input(
             ctx.triggered[0]["value"],
             ctx.triggered_id["id"],
@@ -162,10 +167,7 @@ def register_callbacks(app: Dash) -> None:
         )
 
     @app.callback(
-        Output("opened-dataset-success", "is_open"),
-        Output("opened-dataset-error", "is_open"),
-        Output("opened-dataset_warning", "is_open"),
-        Output("opened-dataset-error-explanation", "children"),
+        Output("alerts-section", "children", allow_duplicate=True),
         Output("dataset-opened-counter", "data"),  # Used to force reload of metadata
         Input("open-button", "n_clicks"),
         State("dataset-path-input", "value"),
@@ -176,7 +178,7 @@ def register_callbacks(app: Dash) -> None:
         n_clicks: int,
         dataset_path: str,
         dataset_opened_counter: int,
-    ) -> tuple[bool, bool, bool, str, int]:
+    ) -> tuple[dbc.Alert, int]:
         """Open a dataset.
 
         Shows an alert on success or failure.

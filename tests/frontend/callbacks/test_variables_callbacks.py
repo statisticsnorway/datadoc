@@ -16,7 +16,10 @@ from datadoc import state
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
+from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
+from datadoc.frontend.text import INVALID_DATE_ORDER
+from datadoc.frontend.text import INVALID_VALUE
 
 if TYPE_CHECKING:
     from datadoc.backend.datadoc_metadata import DataDocMetadata
@@ -158,7 +161,7 @@ def test_accept_variable_metadata_input_invalid(
         metadata_field=VariableIdentifiers.DEFINITION_URI.value,
     )
     assert message is not None
-    assert "validation error for Variable" in message
+    assert message == INVALID_VALUE
 
 
 @pytest.mark.parametrize(
@@ -181,7 +184,14 @@ def test_accept_variable_metadata_input_invalid(
             "1950-01-01",
             (
                 True,
-                "Validation error: contains_data_from must be the same or earlier date than contains_data_until",
+                INVALID_DATE_ORDER.format(
+                    contains_data_from_display_name=DISPLAY_VARIABLES[
+                        VariableIdentifiers.CONTAINS_DATA_FROM
+                    ].display_name,
+                    contains_data_until_display_name=DISPLAY_VARIABLES[
+                        VariableIdentifiers.CONTAINS_DATA_UNTIL
+                    ].display_name,
+                ),
                 False,
                 "",
             ),
@@ -200,7 +210,14 @@ def test_accept_variable_metadata_input_invalid(
                 False,
                 "",
                 True,
-                "Validation error: contains_data_from must be the same or earlier date than contains_data_until",
+                INVALID_DATE_ORDER.format(
+                    contains_data_from_display_name=DISPLAY_VARIABLES[
+                        VariableIdentifiers.CONTAINS_DATA_FROM
+                    ].display_name,
+                    contains_data_until_display_name=DISPLAY_VARIABLES[
+                        VariableIdentifiers.CONTAINS_DATA_UNTIL
+                    ].display_name,
+                ),
             ),
         ),
     ],

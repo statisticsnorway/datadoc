@@ -17,10 +17,13 @@ from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_inpu
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.dataset import process_special_cases
+from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET
 from datadoc.frontend.fields.display_dataset import (
     MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS,
 )
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
+from datadoc.frontend.text import INVALID_DATE_ORDER
+from datadoc.frontend.text import INVALID_VALUE
 
 if TYPE_CHECKING:
     from datadoc.backend.datadoc_metadata import DataDocMetadata
@@ -180,7 +183,7 @@ def test_accept_dataset_metadata_input_incorrect_data_type(metadata: DataDocMeta
         "",
     )
     assert output[0] is True
-    assert "validation error for Dataset" in output[1]
+    assert output[1] == INVALID_VALUE
 
 
 earlier = str(datetime.date(2020, 1, 1))
@@ -222,7 +225,14 @@ def test_accept_dataset_metadata_input_date_validation(
     )
     assert output[2] is expect_error
     if expect_error:
-        assert "Validation error" in output[3]
+        assert output[3] == INVALID_DATE_ORDER.format(
+            contains_data_from_display_name=DISPLAY_DATASET[
+                DatasetIdentifiers.CONTAINS_DATA_FROM
+            ].display_name,
+            contains_data_until_display_name=DISPLAY_DATASET[
+                DatasetIdentifiers.CONTAINS_DATA_UNTIL
+            ].display_name,
+        )
     else:
         assert output[1] == ""
         assert output[3] == ""
@@ -231,8 +241,8 @@ def test_accept_dataset_metadata_input_date_validation(
 @pytest.mark.parametrize(
     "path",
     [
-        "valid/path/to/person_data_v1.parquet",
-        "  path/with/extra/whitespace/person_data_v1.parquet  ",
+        "tests/resources/datasets/ifpn/klargjorte_data/person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+        "  tests/resources/datasets/ifpn/klargjorte_data/person_testdata_p2021-12-31_p2021-12-31_v1.parquet  ",
     ],
 )
 @patch(f"{DATASET_CALLBACKS_MODULE}.open_file")
@@ -241,15 +251,12 @@ def test_open_dataset_handling_normal(
     n_clicks_1: int,
     path: str,
 ):
-    opened, show_error, naming_standard, error_msg, counter = open_dataset_handling(
+    alert, counter = open_dataset_handling(
         n_clicks_1,
         path,
         0,
     )
-    assert opened
-    assert not show_error
-    assert naming_standard
-    assert error_msg == ""
+    assert alert.color == "success"
     assert counter == 1
 
 
@@ -261,15 +268,12 @@ def test_open_dataset_handling_file_not_found(
 ):
     open_file_mock.side_effect = FileNotFoundError()
 
-    opened, show_error, naming_standard, error_msg, counter = open_dataset_handling(
+    alert, counter = open_dataset_handling(
         n_clicks_1,
         file_path,
         0,
     )
-    assert not opened
-    assert show_error
-    assert not naming_standard
-    assert error_msg.startswith(f"Filen '{file_path}' finnes ikke.")
+    assert alert.color == "danger"
     assert counter == dash.no_update
 
 
@@ -281,15 +285,12 @@ def test_open_dataset_handling_general_exception(
 ):
     open_file_mock.side_effect = ValueError()
 
-    opened, show_error, naming_standard, error_msg, counter = open_dataset_handling(
+    alert, counter = open_dataset_handling(
         n_clicks_1,
         file_path,
         0,
     )
-    assert not opened
-    assert show_error
-    assert not naming_standard
-    assert error_msg.startswith("ValueError")
+    assert alert.color == "danger"
     assert counter == dash.no_update
 
 
@@ -298,15 +299,12 @@ def test_open_dataset_handling_no_click(
     open_file_mock: Mock,  # noqa: ARG001
     file_path: str,
 ):
-    opened, show_error, naming_standard, error_msg, counter = open_dataset_handling(
+    alert, counter = open_dataset_handling(
         0,
         file_path,
         0,
     )
-    assert not opened
-    assert not show_error
-    assert not naming_standard
-    assert error_msg == ""
+    assert alert
     assert counter == 1
 
 
@@ -316,15 +314,12 @@ def test_open_dataset_handling_naming_standard(
     n_clicks_1: int,
     file_path_without_dates: str,
 ):
-    opened, show_error, naming_standard, error_msg, counter = open_dataset_handling(
+    alert, counter = open_dataset_handling(
         n_clicks_1,
         file_path_without_dates,
         0,
     )
-    assert opened is True
-    assert not show_error
-    assert naming_standard
-    assert error_msg == ""
+    assert alert.color == "warning"
     assert counter == 1
 
 
