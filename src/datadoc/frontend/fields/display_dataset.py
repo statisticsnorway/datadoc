@@ -18,6 +18,7 @@ from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import MetadataMultiLanguageField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
 from datadoc.frontend.fields.display_base import get_comma_separated_string
+from datadoc.frontend.fields.display_base import get_data_source_options
 from datadoc.frontend.fields.display_base import get_enum_options
 
 logger = logging.getLogger(__name__)
@@ -150,12 +151,12 @@ DISPLAY_DATASET: dict[
         obligatory=True,
         id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
-    DatasetIdentifiers.DATA_SOURCE: MetadataMultiLanguageField(
+    DatasetIdentifiers.DATA_SOURCE: MetadataDropdownField(
         identifier=DatasetIdentifiers.DATA_SOURCE.value,
         display_name="Datakilde",
         description="Datakilde. Settes enten for datasettet eller variabelforekomst.",
         obligatory=True,
-        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
+        options_getter=get_data_source_options,
     ),
     DatasetIdentifiers.POPULATION_DESCRIPTION: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.POPULATION_DESCRIPTION.value,

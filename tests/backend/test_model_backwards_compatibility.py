@@ -25,7 +25,7 @@ BACKWARDS_COMPATIBLE_VERSION_NAMES = [
 
 
 def test_existing_metadata_current_model_version():
-    current_model_version = "3.1.0"
+    current_model_version = "3.2.0"
     fresh_metadata = {"document_version": current_model_version}
     upgraded_metadata = upgrade_metadata(fresh_metadata)
     assert upgraded_metadata == fresh_metadata
@@ -70,7 +70,7 @@ def test_backwards_compatibility(
         file_metadata = file_metadata["datadoc"]
 
     # Just test a single value to make sure we have a working model
-    assert metadata.dataset.name.root[0].languageText == file_metadata["dataset"]["name"]["en"]  # type: ignore [union-attr, index]
+    assert metadata.dataset.short_name == file_metadata["dataset"]["short_name"]  # type: ignore [union-attr, index]
 
 
 def test_add_container():

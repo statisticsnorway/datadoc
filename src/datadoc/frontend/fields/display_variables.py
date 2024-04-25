@@ -15,6 +15,7 @@ from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import MetadataMultiLanguageField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
+from datadoc.frontend.fields.display_base import get_data_source_options
 from datadoc.frontend.fields.display_base import get_enum_options
 
 
@@ -105,11 +106,11 @@ DISPLAY_VARIABLES: dict[
         description="Velges hvis variabelen inneholder informasjon som innebærer at enkeltpersoner kan identifiseres. Gjelder ikke hvis kolonnen er pseudonymisert eller anonymisert.",
         obligatory=True,
     ),
-    VariableIdentifiers.DATA_SOURCE: MetadataMultiLanguageField(
+    VariableIdentifiers.DATA_SOURCE: MetadataDropdownField(
         identifier=VariableIdentifiers.DATA_SOURCE.value,
         display_name="Datakilde",
         description="Datakilde. Settes på datasettnivå, men kan overstyres på variabelforekomstnivå.",
-        id_type=VARIABLES_METADATA_MULTILANGUAGE_INPUT,
+        options_getter=get_data_source_options,
     ),
     VariableIdentifiers.POPULATION_DESCRIPTION: MetadataMultiLanguageField(
         identifier=VariableIdentifiers.POPULATION_DESCRIPTION.value,
