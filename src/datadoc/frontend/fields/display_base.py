@@ -13,6 +13,7 @@ from typing import Any
 import ssb_dash_components as ssb
 from dash import html
 
+from datadoc import state
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
 
@@ -65,6 +66,19 @@ def get_enum_options(
             "id": i.name,
         }
         for i in get_language_strings_enum(enum)  # type: ignore [attr-defined]
+    ]
+    dropdown_options.insert(0, {"title": "", "id": ""})
+    return dropdown_options
+
+
+def get_data_source_options() -> list[dict[str, str]]:
+    """Collect the unit type options."""
+    dropdown_options = [
+        {
+            "title": data_sources.get_title(SupportedLanguages.NORSK_BOKMÅL),
+            "id": data_sources.code,
+        }
+        for data_sources in state.data_sources.classifications
     ]
     dropdown_options.insert(0, {"title": "", "id": ""})
     return dropdown_options

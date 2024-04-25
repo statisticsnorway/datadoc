@@ -18,6 +18,7 @@ from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import MetadataMultiLanguageField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
 from datadoc.frontend.fields.display_base import get_comma_separated_string
+from datadoc.frontend.fields.display_base import get_data_source_options
 from datadoc.frontend.fields.display_base import get_enum_options
 
 logger = logging.getLogger(__name__)
@@ -58,19 +59,6 @@ def get_owner_options() -> list[dict[str, str]]:
             "id": option.code,
         }
         for option in state.organisational_units.classifications
-    ]
-    dropdown_options.insert(0, {"title": "", "id": ""})
-    return dropdown_options
-
-
-def get_data_source_options() -> list[dict[str, str]]:
-    """Collect the unit type options."""
-    dropdown_options = [
-        {
-            "title": data_sources.get_title(SupportedLanguages.NORSK_BOKMÅL),
-            "id": data_sources.code,
-        }
-        for data_sources in state.data_sources.classifications
     ]
     dropdown_options.insert(0, {"title": "", "id": ""})
     return dropdown_options
