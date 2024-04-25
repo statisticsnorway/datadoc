@@ -307,7 +307,7 @@ def test_populate_variables_workspace_filter_variables(
 
 def test_update_variables_values_from_dataset_values(metadata: DataDocMetadata):
     state.metadata = metadata
-    dataset_temporality_type = enums.TemporalityTypeType.FIXED
+    dataset_temporality_type = "FIXED"
     dataset_population_description = [
         {
             "languageCode": "en",
@@ -350,4 +350,30 @@ def test_update_variables_values_from_dataset_values(metadata: DataDocMetadata):
     assert metadata.dataset.population_description == get_standard_metadata(
         metadata.variables_lookup["pers_id"],
         VariableIdentifiers.POPULATION_DESCRIPTION.value,
+    )
+
+
+def test_variables_value_can_be_changed_after_update_from_dataset_value(
+    metadata: DataDocMetadata,
+):
+    state.metadata = metadata
+    dataset_temporality_type = "FIXED"
+    setattr(
+        state.metadata.dataset,
+        DatasetIdentifiers.TEMPORALITY_TYPE,
+        dataset_temporality_type,
+    )
+    set_variables_values_inherited_from_dataset()
+    setattr(
+        state.metadata.variables_lookup["pers_id"],
+        VariableIdentifiers.TEMPORALITY_TYPE,
+        enums.TemporalityTypeType.ACCUMULATED,
+    )
+    assert dataset_temporality_type == get_standard_metadata(
+        metadata.variables_lookup["sivilstand"],
+        VariableIdentifiers.TEMPORALITY_TYPE.value,
+    )
+    assert dataset_temporality_type != get_standard_metadata(
+        metadata.variables_lookup["pers_id"],
+        VariableIdentifiers.TEMPORALITY_TYPE.value,
     )
