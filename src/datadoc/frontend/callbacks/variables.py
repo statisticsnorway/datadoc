@@ -13,6 +13,7 @@ from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.components.builders import build_edit_section
 from datadoc.frontend.components.builders import build_ssb_accordion
+from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import (
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,
@@ -232,6 +233,41 @@ def accept_variable_metadata_date_input(
         if variable_identifier == VariableIdentifiers.CONTAINS_DATA_FROM
         else no_error + error
     )
+
+
+# value: MetadataInputTypes | LanguageStringType,
+#  metadata_identifier: str,
+
+
+def convert_dataset_identifier_to_variables_identifier(
+    metadata_identifier: str,
+) -> str | None:
+    """Set the corresponding variables identifier."""
+    variables_identifier: str
+    if metadata_identifier == DatasetIdentifiers.TEMPORALITY_TYPE:
+        variables_identifier = VariableIdentifiers.TEMPORALITY_TYPE
+    elif metadata_identifier == DatasetIdentifiers.DATA_SOURCE:
+        variables_identifier = VariableIdentifiers.DATA_SOURCE
+    elif metadata_identifier == DatasetIdentifiers.POPULATION_DESCRIPTION:
+        variables_identifier = VariableIdentifiers.POPULATION_DESCRIPTION
+    else:
+        return None
+    return variables_identifier
+
+
+def set_variables_values_inherited_from_dataset2(
+    value: MetadataInputTypes | LanguageStringType,
+    metadata_identifier: str,
+) -> None:
+    """Set variable value based on dataset value."""
+    variable = convert_dataset_identifier_to_variables_identifier(metadata_identifier)
+    if value is not None and variable is not None:
+        for val in state.metadata.variables:
+            setattr(
+                state.metadata.variables_lookup[val.short_name],
+                variable,
+                value,
+            )
 
 
 def set_variables_values_inherited_from_dataset() -> None:
