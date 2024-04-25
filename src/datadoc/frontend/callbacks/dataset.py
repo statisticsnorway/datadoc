@@ -17,6 +17,9 @@ from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.callbacks.variables import (
+    set_variables_period_values_inherited_from_dataset,
+)
+from datadoc.frontend.callbacks.variables import (
     set_variables_values_inherited_from_dataset,
 )
 from datadoc.frontend.components.builders import AlertTypes
@@ -199,7 +202,7 @@ def accept_dataset_metadata_date_input(
 ) -> tuple[bool, str, bool, str]:
     """Validate and save date range inputs."""
     message = ""
-
+    set_variables_period_values_inherited_from_dataset()
     try:
         (
             parsed_contains_data_from,
