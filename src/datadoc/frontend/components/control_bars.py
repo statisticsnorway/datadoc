@@ -31,10 +31,16 @@ progress_bar = html.Div(
 )
 
 
-def build_footer_control_bar() -> html.Footer:
+def build_footer_control_bar() -> html.Div:
     """Build footer control bar which resides below all the content."""
-    return html.Footer(
-        children=[html.P(f"v{get_app_version()}", className="small")],
+    return html.Div(
+        children=[
+            html.P(
+                f"v{get_app_version()}",
+                className="small",
+                **{"aria-describedby": "Version number"},
+            ),
+        ],
         className="language-footer",
     )
 
