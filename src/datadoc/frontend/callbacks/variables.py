@@ -238,7 +238,7 @@ def accept_variable_metadata_date_input(
 def get_corresponding_identifier(
     metadata_identifier: str,
 ) -> str | None:
-    """Set the corresponding variables identifier."""
+    """Get the corresponding variables identifier for dataset identifier."""
     match metadata_identifier:
         case DatasetIdentifiers.TEMPORALITY_TYPE:
             return VariableIdentifiers.TEMPORALITY_TYPE
