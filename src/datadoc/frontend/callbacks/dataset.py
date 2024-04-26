@@ -176,6 +176,7 @@ def accept_dataset_metadata_input(
             value,
         )
         set_variables_values_inherited_from_dataset(value, metadata_identifier)
+        logger.info("Dont change dataset value: %s", value)
     except (ValidationError, ValueError):
         show_error = True
         error_explanation = INVALID_VALUE
