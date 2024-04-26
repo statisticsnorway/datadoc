@@ -244,6 +244,10 @@ def get_corresponding_identifier(
             return VariableIdentifiers.TEMPORALITY_TYPE
         case DatasetIdentifiers.DATA_SOURCE:
             return VariableIdentifiers.DATA_SOURCE
+        case DatasetIdentifiers.CONTAINS_DATA_FROM:
+            return VariableIdentifiers.CONTAINS_DATA_FROM
+        case DatasetIdentifiers.CONTAINS_DATA_UNTIL:
+            return VariableIdentifiers.CONTAINS_DATA_UNTIL
         case _:
             return None
 

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-import re
 from abc import ABC
 from abc import abstractmethod
 from dataclasses import dataclass
@@ -98,6 +97,7 @@ def get_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str | No
 
 
 def get_date_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str | None:
+    # TODO(<tilen1976>): remove if get_metdata_and_stringify is working   # noqa: TD003
     """Get a metadata date value from the model.
 
     Handle converting datetime format to date format string.
@@ -106,12 +106,8 @@ def get_date_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str
     if value is None:
         return ""
     date = str(value)
-    # Pattern for datetime without T, with space - used for variables
-    pattern = r"\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}"
-    if re.match(pattern, date):
-        convert_date_to_iso = date.replace(" ", "T")
-        return convert_date_to_iso[:10]
-    return date[:10]
+    logger.info("Date check: %s", date)
+    return date
 
 
 def _get_string_type_item(
@@ -130,6 +126,7 @@ def get_multi_language_metadata_and_stringify(
     identifier: str,
     language: SupportedLanguages,
 ) -> str | None:
+    # TODO(<tilen1976>): remove logger info   # noqa: TD003
     """Get a metadata value supporting multiple languages from the model."""
     value: LanguageStringType | None = getattr(metadata, identifier)
     if value is not None:
