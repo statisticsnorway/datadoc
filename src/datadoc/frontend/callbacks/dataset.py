@@ -209,14 +209,10 @@ def accept_dataset_metadata_date_input(
         )
 
         if parsed_contains_data_from:
-            state.metadata.dataset.contains_data_from = (
-                parsed_contains_data_from.isoformat()
-            )
+            state.metadata.dataset.contains_data_from = parsed_contains_data_from
 
         if parsed_contains_data_until:
-            state.metadata.dataset.contains_data_until = (
-                parsed_contains_data_until.isoformat()
-            )
+            state.metadata.dataset.contains_data_until = parsed_contains_data_until
     except (ValidationError, ValueError) as e:
         logger.exception(
             "Validation failed for %s, %s, %s: %s, %s",

@@ -11,6 +11,7 @@ from unittest.mock import MagicMock
 from unittest.mock import patch
 from uuid import UUID
 
+import arrow
 import pytest
 from cloudpathlib.local import LocalGSClient
 from cloudpathlib.local import LocalGSPath
@@ -223,8 +224,12 @@ def test_save_file_path_dataset_and_no_metadata(
 @pytest.mark.parametrize(
     ("insert_string", "expected_from", "expected_until"),
     [
-        ("_p2021", "2021-01-01", "2021-12-31"),
-        ("_p2022_p2023", "2022-01-01", "2023-12-31"),
+        ("_p2021", arrow.get("2021-01-01").date(), arrow.get("2021-12-31").date()),
+        (
+            "_p2022_p2023",
+            arrow.get("2022-01-01").date(),
+            arrow.get("2023-12-31").date(),
+        ),
     ],
 )
 def test_period_metadata_fields_saved(

@@ -18,6 +18,8 @@ from datetime import timezone
 from typing import TYPE_CHECKING
 from typing import Any
 
+import arrow
+
 if TYPE_CHECKING:
     from collections.abc import Callable
 
@@ -93,6 +95,32 @@ def _remove_element_from_model(
 ) -> None:
     if element_to_remove in supplied_metadata:
         del supplied_metadata[element_to_remove]
+
+
+def _cast_to_date_type(value_to_update: str | None) -> str | None:
+    # We don't want to modify None values
+    if value_to_update is None:
+        return value_to_update
+
+    return str(
+        arrow.get(
+            value_to_update,
+        ).date(),
+    )
+
+
+def handle_version_3_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
+    """Update the type of contains_data_* fields."""
+    fields = ["contains_data_from", "contains_data_until"]
+    for field in fields:
+        supplied_metadata["datadoc"]["dataset"][field] = _cast_to_date_type(
+            supplied_metadata["datadoc"]["dataset"].get(field, None),
+        )
+        for v in supplied_metadata["datadoc"]["variables"]:
+            v[field] = _cast_to_date_type(v.get(field, None))
+
+    supplied_metadata["datadoc"]["document_version"] = "3.3.0"
+    return supplied_metadata
 
 
 def handle_version_3_1_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
@@ -229,10 +257,11 @@ BackwardsCompatibleVersion(version="1.0.0", handler=handle_version_1_0_0)
 BackwardsCompatibleVersion(
     version="2.1.0",
     handler=handle_version_2_1_0,
-)  # Her må det lages container
+)  # A container must be created at this version
 BackwardsCompatibleVersion(version="2.2.0", handler=handle_version_2_2_0)
 BackwardsCompatibleVersion(version="3.1.0", handler=handle_version_3_1_0)
-BackwardsCompatibleVersion(version="3.2.0", handler=handle_current_version)
+BackwardsCompatibleVersion(version="3.2.0", handler=handle_version_3_2_0)
+BackwardsCompatibleVersion(version="3.3.0", handler=handle_current_version)
 
 
 def upgrade_metadata(fresh_metadata: dict[str, Any]) -> dict[str, Any]:

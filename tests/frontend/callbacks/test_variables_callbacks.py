@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import datetime
 from typing import TYPE_CHECKING
 from typing import Any
 from uuid import UUID
@@ -249,7 +248,7 @@ def test_accept_variable_metadata_date_input(
     setattr(
         state.metadata.variables_lookup[chosen_short_name],
         preset_identifier,
-        arrow.get(preset_value).astimezone(tz=datetime.timezone.utc),
+        arrow.get(preset_value).date(),
     )
     assert (
         accept_variable_metadata_date_input(
@@ -261,13 +260,19 @@ def test_accept_variable_metadata_date_input(
         == expected_result
     )
     if not expected_result[0]:
-        assert metadata.variables[0].contains_data_from == arrow.get(
-            contains_data_from,
-        ).to("utc")
+        assert (
+            metadata.variables[0].contains_data_from
+            == arrow.get(
+                contains_data_from,
+            ).date()
+        )
     if not expected_result[2]:
-        assert metadata.variables[0].contains_data_until == arrow.get(
-            contains_data_until,
-        ).to("utc")
+        assert (
+            metadata.variables[0].contains_data_until
+            == arrow.get(
+                contains_data_until,
+            ).date()
+        )
 
 
 @pytest.mark.usefixtures("_code_list_fake_classifications_variables")
