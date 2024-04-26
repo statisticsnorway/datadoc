@@ -235,63 +235,31 @@ def accept_variable_metadata_date_input(
     )
 
 
-# value: MetadataInputTypes | LanguageStringType,
-#  metadata_identifier: str,
-
-
-def convert_dataset_identifier_to_variables_identifier(
+def get_corresponding_identifier(
     metadata_identifier: str,
 ) -> str | None:
     """Set the corresponding variables identifier."""
-    variables_identifier: str
-    if metadata_identifier == DatasetIdentifiers.TEMPORALITY_TYPE:
-        variables_identifier = VariableIdentifiers.TEMPORALITY_TYPE
-    elif metadata_identifier == DatasetIdentifiers.DATA_SOURCE:
-        variables_identifier = VariableIdentifiers.DATA_SOURCE
-    elif metadata_identifier == DatasetIdentifiers.POPULATION_DESCRIPTION:
-        variables_identifier = VariableIdentifiers.POPULATION_DESCRIPTION
-    else:
-        return None
-    return variables_identifier
+    match metadata_identifier:
+        case DatasetIdentifiers.TEMPORALITY_TYPE:
+            return VariableIdentifiers.TEMPORALITY_TYPE
+        case DatasetIdentifiers.DATA_SOURCE:
+            return VariableIdentifiers.DATA_SOURCE
+        case DatasetIdentifiers.POPULATION_DESCRIPTION:
+            return VariableIdentifiers.POPULATION_DESCRIPTION
+        case _:
+            return None
 
 
-def set_variables_values_inherited_from_dataset2(
+def set_variables_values_inherited_from_dataset(
     value: MetadataInputTypes | LanguageStringType,
     metadata_identifier: str,
 ) -> None:
     """Set variable value based on dataset value."""
-    variable = convert_dataset_identifier_to_variables_identifier(metadata_identifier)
+    variable = get_corresponding_identifier(metadata_identifier)
     if value is not None and variable is not None:
         for val in state.metadata.variables:
             setattr(
                 state.metadata.variables_lookup[val.short_name],
                 variable,
                 value,
-            )
-
-
-def set_variables_values_inherited_from_dataset() -> None:
-    """Set variable value for temporality type, data source and population description based on dataset value."""
-    update_value: str | LanguageStringType
-    for val in state.metadata.variables:
-        if state.metadata.dataset.temporality_type is not None:
-            update_value = state.metadata.dataset.temporality_type
-            setattr(
-                state.metadata.variables_lookup[val.short_name],
-                VariableIdentifiers.TEMPORALITY_TYPE,
-                update_value,
-            )
-        if state.metadata.dataset.data_source is not None:
-            update_value = state.metadata.dataset.data_source
-            setattr(
-                state.metadata.variables_lookup[val.short_name],
-                VariableIdentifiers.DATA_SOURCE,
-                update_value,
-            )
-        if state.metadata.dataset.population_description is not None:
-            update_value = state.metadata.dataset.population_description
-            setattr(
-                state.metadata.variables_lookup[val.short_name],
-                VariableIdentifiers.POPULATION_DESCRIPTION,
-                update_value,
             )

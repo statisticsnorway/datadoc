@@ -17,7 +17,7 @@ from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.callbacks.variables import (
-    set_variables_values_inherited_from_dataset2,
+    set_variables_values_inherited_from_dataset,
 )
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_ssb_alert
@@ -175,7 +175,7 @@ def accept_dataset_metadata_input(
             metadata_identifier,
             value,
         )
-        set_variables_values_inherited_from_dataset2(value, metadata_identifier)
+        set_variables_values_inherited_from_dataset(value, metadata_identifier)
     except (ValidationError, ValueError):
         show_error = True
         error_explanation = INVALID_VALUE
