@@ -96,20 +96,6 @@ def get_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str | No
     return str(value)
 
 
-def get_date_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str | None:
-    # TODO(<tilen1976>): remove if get_metdata_and_stringify is working   # noqa: TD003
-    """Get a metadata date value from the model.
-
-    Handle converting datetime format to date format string.
-    """
-    value = get_standard_metadata(metadata, identifier)
-    if value is None:
-        return ""
-    date = str(value)
-    logger.info("Date check: %s", date)
-    return date
-
-
 def _get_string_type_item(
     language_strings: LanguageStringType,
     current_metadata_language: SupportedLanguages,
@@ -239,7 +225,7 @@ class MetadataPeriodField(DisplayMetadata):
             disabled=not self.editable,
             showDescription=True,
             description=self.description,
-            value=get_date_metadata_and_stringify(metadata, self.identifier),
+            value=get_metadata_and_stringify(metadata, self.identifier),
             className="input-component",
         )
 
