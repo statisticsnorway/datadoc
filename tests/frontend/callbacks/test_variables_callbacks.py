@@ -311,6 +311,7 @@ def test_populate_variables_workspace_filter_variables(
 
 
 def test_update_variables_values_from_dataset_values(metadata: DataDocMetadata):
+    # TODO(<tilen1976): Add dates to test  # noqa: TD003
     state.metadata = metadata
     dataset_temporality_type = "FIXED"
     dataset_data_source = None
@@ -347,6 +348,7 @@ def test_update_variables_values_from_dataset_values(metadata: DataDocMetadata):
 def test_variables_value_can_be_changed_after_update_from_dataset_value(
     metadata: DataDocMetadata,
 ):
+    # TODO(<tilen1976): Add dates to test  # noqa: TD003
     state.metadata = metadata
     dataset_temporality_type = "FIXED"
     setattr(
