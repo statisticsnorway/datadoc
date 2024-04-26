@@ -38,7 +38,6 @@ def build_footer_control_bar() -> html.Div:
             html.P(
                 f"v{get_app_version()}",
                 className="small",
-                **{"aria-describedby": "Version number"},
             ),
         ],
         className="language-footer",
