@@ -71,10 +71,10 @@ def build_app(app: type[Dash]) -> Dash:
                         ],
                     ),
                     html.Div(id="display-tab"),
+                    build_footer_control_bar(),
                 ],
                 className="main-content-app",
             ),
-            build_footer_control_bar(),
         ],
         className="app-wrapper",
     )
