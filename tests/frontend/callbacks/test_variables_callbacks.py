@@ -308,30 +308,11 @@ def test_populate_variables_workspace_filter_variables(
 def test_update_variables_values_from_dataset_values(metadata: DataDocMetadata):
     state.metadata = metadata
     dataset_temporality_type = "FIXED"
-    dataset_population_description = [
-        {
-            "languageCode": "en",
-            "languageText": "",
-        },
-        {
-            "languageCode": "nn",
-            "languageText": "",
-        },
-        {
-            "languageCode": "nb",
-            "languageText": "Alle personer bosatte i Norge fra 1964 til 2005",
-        },
-    ]
     dataset_data_source = None
     setattr(
         state.metadata.dataset,
         DatasetIdentifiers.TEMPORALITY_TYPE,
         dataset_temporality_type,
-    )
-    setattr(
-        state.metadata.dataset,
-        DatasetIdentifiers.POPULATION_DESCRIPTION,
-        dataset_population_description,
     )
     setattr(
         state.metadata.dataset,
