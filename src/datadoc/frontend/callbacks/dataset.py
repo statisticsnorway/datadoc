@@ -207,19 +207,20 @@ def accept_dataset_metadata_date_input(
             str(contains_data_from),
             str(contains_data_until),
         )
-
+        if dataset_identifier == DatasetIdentifiers.CONTAINS_DATA_FROM:
+            set_variables_values_inherited_from_dataset(
+                contains_data_from,
+                dataset_identifier,
+            )
+        if dataset_identifier == DatasetIdentifiers.CONTAINS_DATA_UNTIL:
+            set_variables_values_inherited_from_dataset(
+                contains_data_until,
+                dataset_identifier,
+            )
         if parsed_contains_data_from:
             state.metadata.dataset.contains_data_from = parsed_contains_data_from
-            set_variables_values_inherited_from_dataset(
-                parsed_contains_data_from,
-                DatasetIdentifiers.CONTAINS_DATA_FROM,
-            )
         if parsed_contains_data_until:
             state.metadata.dataset.contains_data_until = parsed_contains_data_until
-            set_variables_values_inherited_from_dataset(
-                parsed_contains_data_until,
-                DatasetIdentifiers.CONTAINS_DATA_UNTIL,
-            )
     except (ValidationError, ValueError) as e:
         logger.exception(
             "Validation failed for %s, %s, %s: %s, %s",
