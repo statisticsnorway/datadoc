@@ -34,7 +34,6 @@ progress_bar = html.Div(
 def build_footer_control_bar() -> html.Div:
     """Build footer control bar which resides below all the content."""
     return html.Div(
-        role="contentinfo",
         children=[
             html.P(
                 f"v{get_app_version()}",
