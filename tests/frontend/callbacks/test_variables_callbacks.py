@@ -338,19 +338,23 @@ def test_update_variables_values_from_dataset_values(metadata: DataDocMetadata):
         DatasetIdentifiers.DATA_SOURCE,
         dataset_data_source,
     )
-    set_variables_values_inherited_from_dataset()
+    set_variables_values_inherited_from_dataset(
+        dataset_temporality_type,
+        DatasetIdentifiers.TEMPORALITY_TYPE,
+    )
     for val in state.metadata.variables:
         assert metadata.dataset.temporality_type == get_standard_metadata(
             metadata.variables_lookup[val.short_name],
             VariableIdentifiers.TEMPORALITY_TYPE.value,
         )
+    set_variables_values_inherited_from_dataset(
+        dataset_data_source,
+        DatasetIdentifiers.DATA_SOURCE,
+    )
+    for val in state.metadata.variables:
         assert metadata.dataset.data_source == get_standard_metadata(
             metadata.variables_lookup[val.short_name],
             VariableIdentifiers.DATA_SOURCE.value,
-        )
-        assert metadata.dataset.population_description == get_standard_metadata(
-            metadata.variables_lookup[val.short_name],
-            VariableIdentifiers.POPULATION_DESCRIPTION.value,
         )
 
 
@@ -364,7 +368,10 @@ def test_variables_value_can_be_changed_after_update_from_dataset_value(
         DatasetIdentifiers.TEMPORALITY_TYPE,
         dataset_temporality_type,
     )
-    set_variables_values_inherited_from_dataset()
+    set_variables_values_inherited_from_dataset(
+        dataset_temporality_type,
+        DatasetIdentifiers.TEMPORALITY_TYPE,
+    )
     for val in state.metadata.variables:
         assert metadata.dataset.temporality_type == get_standard_metadata(
             metadata.variables_lookup[val.short_name],
