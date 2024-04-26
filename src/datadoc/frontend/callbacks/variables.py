@@ -252,6 +252,7 @@ def get_corresponding_identifier(
             return None
 
 
+# TODO(<tilen1976): method updates both dates always....  # noqa: TD003
 def set_variables_values_inherited_from_dataset(
     value: MetadataInputTypes | LanguageStringType,
     metadata_identifier: str,
