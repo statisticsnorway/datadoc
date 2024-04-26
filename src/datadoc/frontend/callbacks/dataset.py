@@ -16,6 +16,9 @@ from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
+from datadoc.frontend.callbacks.variables import (
+    set_variables_values_inherited_from_dataset,
+)
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_ssb_alert
 from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET
@@ -172,6 +175,7 @@ def accept_dataset_metadata_input(
             metadata_identifier,
             value,
         )
+        set_variables_values_inherited_from_dataset(value, metadata_identifier)
     except (ValidationError, ValueError):
         show_error = True
         error_explanation = INVALID_VALUE
@@ -195,7 +199,6 @@ def accept_dataset_metadata_date_input(
 ) -> tuple[bool, str, bool, str]:
     """Validate and save date range inputs."""
     message = ""
-
     try:
         (
             parsed_contains_data_from,
@@ -214,7 +217,6 @@ def accept_dataset_metadata_date_input(
             state.metadata.dataset.contains_data_until = (
                 parsed_contains_data_until.isoformat()
             )
-
     except (ValidationError, ValueError) as e:
         logger.exception(
             "Validation failed for %s, %s, %s: %s, %s",

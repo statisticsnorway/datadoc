@@ -13,6 +13,7 @@ from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.components.builders import build_edit_section
 from datadoc.frontend.components.builders import build_ssb_accordion
+from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import (
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,
@@ -232,3 +233,31 @@ def accept_variable_metadata_date_input(
         if variable_identifier == VariableIdentifiers.CONTAINS_DATA_FROM
         else no_error + error
     )
+
+
+def get_corresponding_identifier(
+    metadata_identifier: str,
+) -> str | None:
+    """Get the corresponding variables identifier for dataset identifier."""
+    match metadata_identifier:
+        case DatasetIdentifiers.TEMPORALITY_TYPE:
+            return VariableIdentifiers.TEMPORALITY_TYPE
+        case DatasetIdentifiers.DATA_SOURCE:
+            return VariableIdentifiers.DATA_SOURCE
+        case _:
+            return None
+
+
+def set_variables_values_inherited_from_dataset(
+    value: MetadataInputTypes | LanguageStringType,
+    metadata_identifier: str,
+) -> None:
+    """Set variable value based on dataset value."""
+    variable = get_corresponding_identifier(metadata_identifier)
+    if value is not None and variable is not None:
+        for val in state.metadata.variables:
+            setattr(
+                state.metadata.variables_lookup[val.short_name],
+                variable,
+                value,
+            )

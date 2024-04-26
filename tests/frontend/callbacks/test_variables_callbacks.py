@@ -16,6 +16,11 @@ from datadoc import state
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
+from datadoc.frontend.callbacks.variables import (
+    set_variables_values_inherited_from_dataset,
+)
+from datadoc.frontend.fields.display_base import get_standard_metadata
+from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
 from datadoc.frontend.text import INVALID_DATE_ORDER
@@ -297,4 +302,79 @@ def test_populate_variables_workspace_filter_variables(
             ),
         )
         == expected_length
+    )
+
+
+def test_update_variables_values_from_dataset_values(metadata: DataDocMetadata):
+    state.metadata = metadata
+    dataset_temporality_type = "FIXED"
+    dataset_data_source = None
+    setattr(
+        state.metadata.dataset,
+        DatasetIdentifiers.TEMPORALITY_TYPE,
+        dataset_temporality_type,
+    )
+    setattr(
+        state.metadata.dataset,
+        DatasetIdentifiers.DATA_SOURCE,
+        dataset_data_source,
+    )
+    set_variables_values_inherited_from_dataset(
+        dataset_temporality_type,
+        DatasetIdentifiers.TEMPORALITY_TYPE,
+    )
+    for val in state.metadata.variables:
+        assert metadata.dataset.temporality_type == get_standard_metadata(
+            metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.TEMPORALITY_TYPE.value,
+        )
+    set_variables_values_inherited_from_dataset(
+        dataset_data_source,
+        DatasetIdentifiers.DATA_SOURCE,
+    )
+    for val in state.metadata.variables:
+        assert metadata.dataset.data_source == get_standard_metadata(
+            metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.DATA_SOURCE.value,
+        )
+
+
+def test_variables_value_can_be_changed_after_update_from_dataset_value(
+    metadata: DataDocMetadata,
+):
+    state.metadata = metadata
+    dataset_temporality_type = "FIXED"
+    setattr(
+        state.metadata.dataset,
+        DatasetIdentifiers.TEMPORALITY_TYPE,
+        dataset_temporality_type,
+    )
+    set_variables_values_inherited_from_dataset(
+        dataset_temporality_type,
+        DatasetIdentifiers.TEMPORALITY_TYPE,
+    )
+    for val in state.metadata.variables:
+        assert metadata.dataset.temporality_type == get_standard_metadata(
+            metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.TEMPORALITY_TYPE.value,
+        )
+    setattr(
+        state.metadata.variables_lookup["pers_id"],
+        VariableIdentifiers.TEMPORALITY_TYPE,
+        enums.TemporalityTypeType.ACCUMULATED,
+    )
+    assert dataset_temporality_type == get_standard_metadata(
+        metadata.variables_lookup["sivilstand"],
+        VariableIdentifiers.TEMPORALITY_TYPE.value,
+    )
+    assert dataset_temporality_type != get_standard_metadata(
+        metadata.variables_lookup["pers_id"],
+        VariableIdentifiers.TEMPORALITY_TYPE.value,
+    )
+    assert (
+        get_standard_metadata(
+            metadata.variables_lookup["pers_id"],
+            VariableIdentifiers.TEMPORALITY_TYPE.value,
+        )
+        == "ACCUMULATED"
     )
