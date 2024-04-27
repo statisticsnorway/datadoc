@@ -383,3 +383,6 @@ def test_variables_value_can_be_changed_after_update_from_dataset_value(
         )
         == "ACCUMULATED"
     )
+
+
+# TODO(<tilen1976>): add test for multilanguage  # noqa: TD003
