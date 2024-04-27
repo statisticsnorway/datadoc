@@ -244,10 +244,41 @@ def get_corresponding_identifier(
             return VariableIdentifiers.TEMPORALITY_TYPE
         case DatasetIdentifiers.DATA_SOURCE:
             return VariableIdentifiers.DATA_SOURCE
+        case _:
+            return None
+
+
+def get_corresponding_multilanguage_identifier(
+    metadata_identifier: str,
+) -> str | None:
+    """Get the corresponding variables multilanguage identifier for dataset identifier."""
+    match metadata_identifier:
         case DatasetIdentifiers.POPULATION_DESCRIPTION:
             return VariableIdentifiers.POPULATION_DESCRIPTION
         case _:
             return None
+
+
+def set_variables_value_multilanguage(
+    value: MetadataInputTypes | LanguageStringType,
+    metadata_identifier: str,
+    language: str,
+) -> None:
+    """Set variable multilanguage value based on dataset value."""
+    variable = get_corresponding_multilanguage_identifier(metadata_identifier)
+    if value is not None and variable is not None:
+        for val in state.metadata.variables:
+            update_value = handle_multi_language_metadata(
+                variable,
+                value,
+                val.short_name,
+                language,
+            )
+            setattr(
+                state.metadata.variables_lookup[val.short_name],
+                variable,
+                update_value,
+            )
 
 
 def set_variables_values_inherited_from_dataset(
