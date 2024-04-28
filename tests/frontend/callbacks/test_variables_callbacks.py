@@ -13,7 +13,6 @@ from pydantic_core import Url
 
 from datadoc import enums
 from datadoc import state
-from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
@@ -388,25 +387,23 @@ def test_variables_value_can_be_changed_after_update_from_dataset_value(
     )
 
 
-# TODO(<tilen1976>): add test for multilanguage  updated value # noqa: TD003
-# TODO(<tilen1976>):Remove after decision how to save inherit value: root=[LanguageStringTypeItem(languageCode='nn', languageText='cvhbj'), LanguageStringTypeItem(languageCode='nb', languageText='Personer')]  # noqa: TD007, TD003
 def test_update_variables_multilanguage_values_from_dataset_values(
     metadata: DataDocMetadata,
 ):
     state.metadata = metadata
     dataset_population_description = "Personer bosatt i Norge"
+    dataset_population_description_language_item = [
+        LanguageStringTypeItem(
+            languageCode="nb",
+            languageText="Personer bosatt i Norge",
+        ),
+    ]
     metadata_identifier = DatasetIdentifiers.POPULATION_DESCRIPTION
     language = "nb"
-    updated_value = find_existing_language_string(
-        state.metadata.dataset,
-        dataset_population_description,
-        metadata_identifier,
-        language,
-    )
     setattr(
         state.metadata.dataset,
         metadata_identifier,
-        updated_value,
+        dataset_population_description_language_item,
     )
     set_variables_value_multilanguage(
         dataset_population_description,
@@ -425,7 +422,7 @@ def test_variables_multilanguage_value_can_be_changed_after_update_from_dataset_
 ):
     state.metadata = metadata
     dataset_population_description = "Persons in Norway"
-    dataset_language_item = [
+    dataset_population_description_language_item = [
         LanguageStringTypeItem(languageCode="en", languageText="Persons in Norway"),
     ]
     dataset_identifier = DatasetIdentifiers.POPULATION_DESCRIPTION
@@ -434,7 +431,7 @@ def test_variables_multilanguage_value_can_be_changed_after_update_from_dataset_
     setattr(
         state.metadata.dataset,
         dataset_identifier,
-        dataset_language_item,
+        dataset_population_description_language_item,
     )
     set_variables_value_multilanguage(
         dataset_population_description,
