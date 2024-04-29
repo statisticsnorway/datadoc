@@ -254,3 +254,13 @@ def accept_dataset_metadata_date_input(
         if dataset_identifier == DatasetIdentifiers.CONTAINS_DATA_FROM
         else no_error + error
     )
+
+
+def dataset_metadata_control() -> bool | str:
+    """Check obligatory metadata values for dataset."""
+    # Which field
+    # Message?
+    if state.metadata.dataset.assessment is None:
+        logger.info("Mangler verdi for %s", DatasetIdentifiers.ASSESSMENT.name)
+        return False
+    return True
