@@ -383,3 +383,48 @@ def test_existing_pseudo_metadata_file(
         pre_open_metadata["pseudonymization"] == post_open_metadata["pseudonymization"]
     )
     assert post_open_metadata["datadoc"] is not None
+
+
+def test_generate_variables_id(
+    metadata: DataDocMetadata,
+):
+    assert all(isinstance(v.id, UUID) for v in metadata.variables)
+
+
+@pytest.mark.parametrize(
+    "existing_metadata_path",
+    [TEST_EXISTING_METADATA_DIRECTORY / "invalid_id_field"],
+)
+def test_existing_metadata_variables_none_id(
+    existing_metadata_file: Path,
+    metadata: DataDocMetadata,
+):
+    with existing_metadata_file.open() as f:
+        pre_open_id: None = json.load(f)["datadoc"]["variables"][0]["id"]
+    assert pre_open_id is None
+    metadata.write_metadata_document()
+    with existing_metadata_file.open() as f:
+        post_write_id = json.load(f)["datadoc"]["variables"][0]["id"]
+    assert post_write_id == metadata.variables[0].id
+
+
+@pytest.mark.parametrize(
+    "existing_metadata_path",
+    [TEST_EXISTING_METADATA_DIRECTORY / "valid_variable_id_field"],
+)
+def test_existing_metadata_variables_valid_id(
+    existing_metadata_file: Path,
+    metadata: DataDocMetadata,
+):
+    with existing_metadata_file.open() as f:
+        pre_open_id: list = [v["id"] for v in json.load(f)["datadoc"]["variables"]]
+
+    assert all(isinstance(v.id, UUID) for v in metadata.variables)
+    metadata_variable_ids = [str(v.id) for v in metadata.variables]
+    assert metadata_variable_ids == pre_open_id
+
+    metadata.write_metadata_document()
+    with existing_metadata_file.open() as f:
+        post_write_id: list = [v["id"] for v in json.load(f)["datadoc"]["variables"]]
+
+    assert pre_open_id == post_write_id

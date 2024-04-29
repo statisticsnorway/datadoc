@@ -107,6 +107,8 @@ class DataDocMetadata:
                     v.variable_role = model.VariableRole.MEASURE
                 if v.direct_person_identifying is None:
                     v.direct_person_identifying = False
+                if v.id is None:
+                    v.id = uuid.uuid4()
         if not self.dataset.id:
             self.dataset.id = uuid.uuid4()
         self.variables_lookup = {v.short_name: v for v in self.variables}
