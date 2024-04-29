@@ -16,9 +16,14 @@ from datadoc import state
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
-from datadoc.frontend.callbacks.variables import set_variables_value_multilanguage
 from datadoc.frontend.callbacks.variables import (
-    set_variables_values_inherited_from_dataset,
+    set_variables_value_multilanguage_inherit_dataset_values,
+)
+from datadoc.frontend.callbacks.variables import (
+    set_variables_values_inherit_dataset_values,
+)
+from datadoc.frontend.callbacks.variables import (
+    set_variables_values_inherit_derived_date_values,
 )
 from datadoc.frontend.fields.display_base import get_metadata_and_stringify
 from datadoc.frontend.fields.display_base import get_standard_metadata
@@ -354,7 +359,7 @@ def test_variables_values_inherit_dataset_values(
         dataset_identifier,
         dataset_value,
     )
-    set_variables_values_inherited_from_dataset(
+    set_variables_values_inherit_dataset_values(
         dataset_value,
         dataset_identifier,
     )
@@ -412,7 +417,7 @@ def test_variables_values_can_be_changed_after_inherit_dataset_value(
         dataset_identifier,
         dataset_value,
     )
-    set_variables_values_inherited_from_dataset(
+    set_variables_values_inherit_dataset_values(
         dataset_value,
         dataset_identifier,
     )
@@ -461,7 +466,7 @@ def test_variables_values_multilanguage_inherit_dataset_values(
         metadata_identifier,
         dataset_population_description_language_item,
     )
-    set_variables_value_multilanguage(
+    set_variables_value_multilanguage_inherit_dataset_values(
         dataset_population_description,
         metadata_identifier,
         language,
@@ -489,7 +494,7 @@ def test_variables_values_multilanguage_can_be_changed_after_inherit_dataset_val
         dataset_identifier,
         dataset_population_description_language_item,
     )
-    set_variables_value_multilanguage(
+    set_variables_value_multilanguage_inherit_dataset_values(
         dataset_population_description,
         dataset_identifier,
         language,
@@ -514,4 +519,37 @@ def test_variables_values_multilanguage_can_be_changed_after_inherit_dataset_val
     assert metadata.dataset.population_description == get_standard_metadata(
         metadata.variables_lookup["sivilstand"],
         variables_identifier,
+    )
+
+
+def test_variables_values_date_inherit_dataset_values_derived_from_path(
+    metadata: DataDocMetadata,
+):
+    """Test method for inherit value when dataset has date value and variable date value is none."""
+    state.metadata = metadata
+    dataset_contains_data_from = "2021-10-10"
+    setattr(
+        state.metadata.dataset,
+        DatasetIdentifiers.CONTAINS_DATA_FROM,
+        dataset_contains_data_from,
+    )
+    set_variables_values_inherit_derived_date_values()
+    for val in state.metadata.variables:
+        assert metadata.dataset.contains_data_from == get_standard_metadata(
+            metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.CONTAINS_DATA_FROM,
+        )
+    for val in state.metadata.variables:
+        assert metadata.variables_lookup[val.short_name].contains_data_until is None
+    setattr(
+        state.metadata.variables_lookup["pers_id"],
+        VariableIdentifiers.CONTAINS_DATA_FROM,
+        "2011-10-10",
+    )
+    set_variables_values_inherit_derived_date_values()
+    assert metadata.variables_lookup[
+        "pers_id"
+    ].contains_data_from != get_standard_metadata(
+        metadata.dataset,
+        DatasetIdentifiers.CONTAINS_DATA_FROM,
     )

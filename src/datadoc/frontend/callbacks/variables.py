@@ -257,7 +257,22 @@ def variable_identifier_multilanguage(
     return metadata_identifiers.get(dataset_identifier)
 
 
-def set_variables_value_multilanguage(
+def set_variables_values_inherit_dataset_values(
+    value: MetadataInputTypes | LanguageStringType,
+    metadata_identifier: str,
+) -> None:
+    """Set variable value based on dataset value."""
+    variable = variable_identifier(metadata_identifier)
+    if value is not None and variable is not None:
+        for val in state.metadata.variables:
+            setattr(
+                state.metadata.variables_lookup[val.short_name],
+                variable,
+                value,
+            )
+
+
+def set_variables_value_multilanguage_inherit_dataset_values(
     value: MetadataInputTypes | LanguageStringType,
     metadata_identifier: str,
     language: str,
@@ -279,23 +294,12 @@ def set_variables_value_multilanguage(
             )
 
 
-def set_variables_values_inherited_from_dataset(
-    value: MetadataInputTypes | LanguageStringType,
-    metadata_identifier: str,
-) -> None:
-    """Set variable value based on dataset value."""
-    variable = variable_identifier(metadata_identifier)
-    if value is not None and variable is not None:
-        for val in state.metadata.variables:
-            setattr(
-                state.metadata.variables_lookup[val.short_name],
-                variable,
-                value,
-            )
+def set_variables_values_inherit_derived_date_values() -> None:
+    """Set variable date values if variables date values are not set.
 
-
-def set_variables_values_dates_derived_from_path() -> None:
-    """Set derived dates."""
+    Covers the case for inherit dataset date values where dates are derived from dataset path
+    and must be set on file opening.
+    """
     for val in state.metadata.variables:
         if state.metadata.variables_lookup[val.short_name].contains_data_from is None:
             setattr(
