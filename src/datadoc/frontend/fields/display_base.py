@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-import re
 from abc import ABC
 from abc import abstractmethod
 from dataclasses import dataclass
@@ -97,23 +96,6 @@ def get_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str | No
     return str(value)
 
 
-def get_date_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str | None:
-    """Get a metadata date value from the model.
-
-    Handle converting datetime format to date format string.
-    """
-    value = get_standard_metadata(metadata, identifier)
-    if value is None:
-        return ""
-    date = str(value)
-    # Pattern for datetime without T, with space - used for variables
-    pattern = r"\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}"
-    if re.match(pattern, date):
-        convert_date_to_iso = date.replace(" ", "T")
-        return convert_date_to_iso[:10]
-    return date[:10]
-
-
 def _get_string_type_item(
     language_strings: LanguageStringType,
     current_metadata_language: SupportedLanguages,
@@ -132,8 +114,6 @@ def get_multi_language_metadata_and_stringify(
 ) -> str | None:
     """Get a metadata value supporting multiple languages from the model."""
     value: LanguageStringType | None = getattr(metadata, identifier)
-    if value is not None:
-        logger.info("Multilanguage registered: %s", value)
     if value is None:
         return ""
     return _get_string_type_item(value, language)
@@ -242,7 +222,7 @@ class MetadataPeriodField(DisplayMetadata):
             disabled=not self.editable,
             showDescription=True,
             description=self.description,
-            value=get_date_metadata_and_stringify(metadata, self.identifier),
+            value=get_metadata_and_stringify(metadata, self.identifier),
             className="input-component",
         )
 
