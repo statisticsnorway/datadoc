@@ -400,12 +400,16 @@ def test_existing_metadata_variables_none_id(
     metadata: DataDocMetadata,
 ):
     with existing_metadata_file.open() as f:
-        pre_open_id: None = json.load(f)["datadoc"]["variables"][0]["id"]
-    assert pre_open_id is None
+        pre_open_id: list = [v["id"] for v in json.load(f)["datadoc"]["variables"]]
+    assert (i is None for i in pre_open_id)
+
+    assert all(isinstance(v.id, UUID) for v in metadata.variables)
+
     metadata.write_metadata_document()
     with existing_metadata_file.open() as f:
-        post_write_id = json.load(f)["datadoc"]["variables"][0]["id"]
-    assert post_write_id == metadata.variables[0].id
+        post_write_id: list = [v["id"] for v in json.load(f)["datadoc"]["variables"]]
+
+    assert post_write_id == [str(v.id) for v in metadata.variables]
 
 
 @pytest.mark.parametrize(
