@@ -74,12 +74,7 @@ def build_app(app: type[Dash]) -> Dash:
                 ],
                 className="main-content-app",
             ),
-            html.Footer(
-                [
-                    build_footer_control_bar(),
-                ],
-                className="language-footer",
-            ),
+            build_footer_control_bar(),
         ],
         className="app-wrapper",
     )
