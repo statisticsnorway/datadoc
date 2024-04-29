@@ -294,7 +294,7 @@ def set_variables_value_multilanguage_inherit_dataset_values(
             )
 
 
-def set_variables_values_inherit_derived_date_values() -> None:
+def set_variables_values_inherit_dataset_derived_date_values() -> None:
     """Set variable date values if variables date values are not set.
 
     Covers the case for inherit dataset date values where dates are derived from dataset path

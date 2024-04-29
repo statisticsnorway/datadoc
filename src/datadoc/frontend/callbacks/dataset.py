@@ -20,10 +20,10 @@ from datadoc.frontend.callbacks.variables import (
     set_variables_value_multilanguage_inherit_dataset_values,
 )
 from datadoc.frontend.callbacks.variables import (
-    set_variables_values_inherit_dataset_values,
+    set_variables_values_inherit_dataset_derived_date_values,
 )
 from datadoc.frontend.callbacks.variables import (
-    set_variables_values_inherit_derived_date_values,
+    set_variables_values_inherit_dataset_values,
 )
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_ssb_alert
@@ -74,7 +74,7 @@ def open_dataset_handling(
         file_path = file_path.strip()
     try:
         state.metadata = open_file(file_path)
-        set_variables_values_inherit_derived_date_values()
+        set_variables_values_inherit_dataset_derived_date_values()
     except FileNotFoundError:
         logger.exception("File %s not found", str(file_path))
         return (

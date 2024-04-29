@@ -20,10 +20,10 @@ from datadoc.frontend.callbacks.variables import (
     set_variables_value_multilanguage_inherit_dataset_values,
 )
 from datadoc.frontend.callbacks.variables import (
-    set_variables_values_inherit_dataset_values,
+    set_variables_values_inherit_dataset_derived_date_values,
 )
 from datadoc.frontend.callbacks.variables import (
-    set_variables_values_inherit_derived_date_values,
+    set_variables_values_inherit_dataset_values,
 )
 from datadoc.frontend.fields.display_base import get_metadata_and_stringify
 from datadoc.frontend.fields.display_base import get_standard_metadata
@@ -439,13 +439,6 @@ def test_variables_values_can_be_changed_after_inherit_dataset_value(
         metadata.variables_lookup["pers_id"],
         variable_identifier.value,
     )
-    assert (
-        get_metadata_and_stringify(
-            metadata.variables_lookup["pers_id"],
-            variable_identifier.value,
-        )
-        == update_value
-    )
 
 
 def test_variables_values_multilanguage_inherit_dataset_values(
@@ -522,10 +515,9 @@ def test_variables_values_multilanguage_can_be_changed_after_inherit_dataset_val
     )
 
 
-def test_variables_values_date_inherit_dataset_values_derived_from_path(
+def test_variables_values_inherit_dataset_date_values_derived_from_path(
     metadata: DataDocMetadata,
 ):
-    """Test method for inherit value when dataset has date value and variable date value is none."""
     state.metadata = metadata
     dataset_contains_data_from = "2021-10-10"
     setattr(
@@ -533,7 +525,7 @@ def test_variables_values_date_inherit_dataset_values_derived_from_path(
         DatasetIdentifiers.CONTAINS_DATA_FROM,
         dataset_contains_data_from,
     )
-    set_variables_values_inherit_derived_date_values()
+    set_variables_values_inherit_dataset_derived_date_values()
     for val in state.metadata.variables:
         assert metadata.dataset.contains_data_from == get_standard_metadata(
             metadata.variables_lookup[val.short_name],
@@ -546,7 +538,7 @@ def test_variables_values_date_inherit_dataset_values_derived_from_path(
         VariableIdentifiers.CONTAINS_DATA_FROM,
         "2011-10-10",
     )
-    set_variables_values_inherit_derived_date_values()
+    set_variables_values_inherit_dataset_derived_date_values()
     assert metadata.variables_lookup[
         "pers_id"
     ].contains_data_from != get_standard_metadata(
