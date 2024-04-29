@@ -339,7 +339,7 @@ def test_populate_variables_workspace_filter_variables(
         ),
     ],
 )
-def test_update_variables_values_from_dataset_values(
+def test_variables_values_inherit_dataset_values(
     dataset_value,
     dataset_identifier,
     variable_identifier,
