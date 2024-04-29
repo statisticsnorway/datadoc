@@ -545,3 +545,27 @@ def test_variables_values_inherit_dataset_date_values_derived_from_path(
         metadata.dataset,
         DatasetIdentifiers.CONTAINS_DATA_FROM,
     )
+
+
+def test_variables_values_inherit_dataset_date_values_not_when_variable_has_value(
+    metadata: DataDocMetadata,
+):
+    state.metadata = metadata
+    dataset_contains_data_until = "2024-01-01"
+    setattr(
+        state.metadata.variables_lookup["pers_id"],
+        VariableIdentifiers.CONTAINS_DATA_UNTIL,
+        "2011-12-10",
+    )
+    setattr(
+        state.metadata.dataset,
+        DatasetIdentifiers.CONTAINS_DATA_UNTIL,
+        dataset_contains_data_until,
+    )
+    set_variables_values_inherit_dataset_derived_date_values()
+    assert metadata.variables_lookup[
+        "pers_id"
+    ].contains_data_until != get_standard_metadata(
+        metadata.dataset,
+        DatasetIdentifiers.CONTAINS_DATA_UNTIL,
+    )
