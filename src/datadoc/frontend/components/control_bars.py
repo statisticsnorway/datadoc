@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import dash_bootstrap_components as dbc
 import ssb_dash_components as ssb
 from dash import html
 
@@ -32,18 +31,16 @@ progress_bar = html.Div(
 )
 
 
-def build_footer_control_bar() -> dbc.Row:
+def build_footer_control_bar() -> html.Aside:
     """Build footer control bar which resides below all the content."""
-    return dbc.CardBody(
-        dbc.Row(
-            [
-                dbc.Col(
-                    html.P(f"v{get_app_version()}", className="small"),
-                    align="end",
-                ),
-            ],
-            justify="between",
-        ),
+    return html.Aside(
+        children=[
+            html.P(
+                f"v{get_app_version()}",
+                className="small",
+            ),
+        ],
+        className="language-footer",
     )
 
 
