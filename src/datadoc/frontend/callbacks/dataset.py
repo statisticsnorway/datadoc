@@ -16,6 +16,7 @@ from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
+from datadoc.frontend.callbacks.variables import set_variables_value_multilanguage
 from datadoc.frontend.callbacks.variables import (
     set_variables_values_inherited_from_dataset,
 )
@@ -117,6 +118,7 @@ def process_keyword(value: str) -> list[str]:
     return [item.strip() for item in value.split(",")]
 
 
+# legge inn population update her?
 def process_special_cases(
     value: MetadataInputTypes | LanguageStringType,
     metadata_identifier: str,
@@ -147,6 +149,7 @@ def process_special_cases(
                 metadata_identifier,
                 language,
             )
+            set_variables_value_multilanguage(value, metadata_identifier, language)
     elif metadata_identifier in DROPDOWN_DATASET_METADATA_IDENTIFIERS and value == "":
         updated_value = None
     else:

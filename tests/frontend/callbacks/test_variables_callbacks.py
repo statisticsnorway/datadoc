@@ -8,6 +8,7 @@ from uuid import UUID
 
 import arrow
 import pytest
+from datadoc_model.model import LanguageStringTypeItem
 from pydantic_core import Url
 
 from datadoc import enums
@@ -15,10 +16,12 @@ from datadoc import state
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
+from datadoc.frontend.callbacks.variables import set_variables_value_multilanguage
 from datadoc.frontend.callbacks.variables import (
     set_variables_values_inherited_from_dataset,
 )
 from datadoc.frontend.fields.display_base import get_metadata_and_stringify
+from datadoc.frontend.fields.display_base import get_standard_metadata
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
@@ -396,7 +399,7 @@ def test_variables_values_inherit_dataset_values(
         ),
     ],
 )
-def test_variables_values_can_be_changed_after_update_from_dataset_value(
+def test_variables_values_can_be_changed_after_inherit_dataset_value(
     dataset_value,
     dataset_identifier,
     variable_identifier,
@@ -437,4 +440,78 @@ def test_variables_values_can_be_changed_after_update_from_dataset_value(
             variable_identifier.value,
         )
         == update_value
+    )
+
+
+def test_variables_values_multilanguage_inherit_dataset_values(
+    metadata: DataDocMetadata,
+):
+    state.metadata = metadata
+    dataset_population_description = "Personer bosatt i Norge"
+    dataset_population_description_language_item = [
+        LanguageStringTypeItem(
+            languageCode="nb",
+            languageText="Personer bosatt i Norge",
+        ),
+    ]
+    metadata_identifier = DatasetIdentifiers.POPULATION_DESCRIPTION
+    language = "nb"
+    setattr(
+        state.metadata.dataset,
+        metadata_identifier,
+        dataset_population_description_language_item,
+    )
+    set_variables_value_multilanguage(
+        dataset_population_description,
+        metadata_identifier,
+        language,
+    )
+    for val in state.metadata.variables:
+        assert metadata.dataset.population_description == get_standard_metadata(
+            metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.POPULATION_DESCRIPTION.value,
+        )
+
+
+def test_variables_values_multilanguage_can_be_changed_after_inherit_dataset_value(
+    metadata: DataDocMetadata,
+):
+    state.metadata = metadata
+    dataset_population_description = "Persons in Norway"
+    dataset_population_description_language_item = [
+        LanguageStringTypeItem(languageCode="en", languageText="Persons in Norway"),
+    ]
+    dataset_identifier = DatasetIdentifiers.POPULATION_DESCRIPTION
+    variables_identifier = VariableIdentifiers.POPULATION_DESCRIPTION
+    language = "en"
+    setattr(
+        state.metadata.dataset,
+        dataset_identifier,
+        dataset_population_description_language_item,
+    )
+    set_variables_value_multilanguage(
+        dataset_population_description,
+        dataset_identifier,
+        language,
+    )
+    for val in state.metadata.variables:
+        assert metadata.dataset.population_description == get_standard_metadata(
+            metadata.variables_lookup[val.short_name],
+            variables_identifier,
+        )
+    variables_language_item = [
+        LanguageStringTypeItem(languageCode="en", languageText="Persons in Sweden"),
+    ]
+    setattr(
+        state.metadata.variables_lookup["pers_id"],
+        variables_identifier,
+        variables_language_item,
+    )
+    assert metadata.dataset.population_description != get_standard_metadata(
+        metadata.variables_lookup["pers_id"],
+        variables_identifier,
+    )
+    assert metadata.dataset.population_description == get_standard_metadata(
+        metadata.variables_lookup["sivilstand"],
+        variables_identifier,
     )
