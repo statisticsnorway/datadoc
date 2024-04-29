@@ -399,7 +399,7 @@ def test_variables_values_inherit_dataset_values(
         ),
     ],
 )
-def test_variables_values_can_be_changed_after_update_from_dataset_value(
+def test_variables_values_can_be_changed_after_inherit_dataset_value(
     dataset_value,
     dataset_identifier,
     variable_identifier,
@@ -443,7 +443,7 @@ def test_variables_values_can_be_changed_after_update_from_dataset_value(
     )
 
 
-def test_update_variables_multilanguage_values_from_dataset_values(
+def test_variables_values_multilanguage_inherit_dataset_values(
     metadata: DataDocMetadata,
 ):
     state.metadata = metadata
@@ -473,7 +473,7 @@ def test_update_variables_multilanguage_values_from_dataset_values(
         )
 
 
-def test_variables_multilanguage_value_can_be_changed_after_update_from_dataset_value(
+def test_variables_values_multilanguage_can_be_changed_after_inherit_dataset_value(
     metadata: DataDocMetadata,
 ):
     state.metadata = metadata
