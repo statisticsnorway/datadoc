@@ -260,3 +260,20 @@ def set_variables_values_inherited_from_dataset(
                 variable,
                 value,
             )
+
+
+def set_variables_values_dates_derived_from_path() -> None:
+    """Set derived dates."""
+    for val in state.metadata.variables:
+        if state.metadata.variables_lookup[val.short_name].contains_data_from is None:
+            setattr(
+                state.metadata.variables_lookup[val.short_name],
+                VariableIdentifiers.CONTAINS_DATA_FROM,
+                state.metadata.dataset.contains_data_from,
+            )
+        if state.metadata.variables_lookup[val.short_name].contains_data_until is None:
+            setattr(
+                state.metadata.variables_lookup[val.short_name],
+                VariableIdentifiers.CONTAINS_DATA_UNTIL,
+                state.metadata.dataset.contains_data_until,
+            )

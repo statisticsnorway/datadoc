@@ -17,6 +17,9 @@ from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.callbacks.variables import (
+    set_variables_values_dates_derived_from_path,
+)
+from datadoc.frontend.callbacks.variables import (
     set_variables_values_inherited_from_dataset,
 )
 from datadoc.frontend.components.builders import AlertTypes
@@ -68,6 +71,7 @@ def open_dataset_handling(
         file_path = file_path.strip()
     try:
         state.metadata = open_file(file_path)
+        set_variables_values_dates_derived_from_path()
     except FileNotFoundError:
         logger.exception("File %s not found", str(file_path))
         return (
@@ -91,10 +95,6 @@ def open_dataset_handling(
     dataset_opened_counter += 1
     if n_clicks and n_clicks > 0:
         dapla_dataset_path_info = DaplaDatasetPathInfo(file_path)
-        set_variables_values_inherited_from_dataset(
-            state.metadata.dataset.contains_data_from,
-            DatasetIdentifiers.CONTAINS_DATA_FROM,
-        )
         if not dapla_dataset_path_info.path_complies_with_naming_standard():
             return (
                 build_ssb_alert(
