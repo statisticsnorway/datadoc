@@ -247,15 +247,14 @@ def variable_identifier(
     return metadata_identifiers.get(dataset_identifier)
 
 
-def get_corresponding_multilanguage_identifier(
-    metadata_identifier: str,
+def variable_identifier_multilanguage(
+    dataset_identifier: str,
 ) -> str | None:
-    """Get the corresponding variables multilanguage identifier for dataset identifier."""
-    match metadata_identifier:
-        case DatasetIdentifiers.POPULATION_DESCRIPTION:
-            return VariableIdentifiers.POPULATION_DESCRIPTION
-        case _:
-            return None
+    """Pair corresponding identifiers for multilanguage fields."""
+    metadata_identifiers = {
+        "population_description": VariableIdentifiers.POPULATION_DESCRIPTION,
+    }
+    return metadata_identifiers.get(dataset_identifier)
 
 
 def set_variables_value_multilanguage(
@@ -264,7 +263,7 @@ def set_variables_value_multilanguage(
     language: str,
 ) -> None:
     """Set variable multilanguage value based on dataset value."""
-    variable = get_corresponding_multilanguage_identifier(metadata_identifier)
+    variable = variable_identifier_multilanguage(metadata_identifier)
     if value is not None and variable is not None:
         for val in state.metadata.variables:
             update_value = handle_multi_language_metadata(

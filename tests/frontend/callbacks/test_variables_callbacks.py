@@ -21,6 +21,7 @@ from datadoc.frontend.callbacks.variables import (
     set_variables_values_inherited_from_dataset,
 )
 from datadoc.frontend.fields.display_base import get_metadata_and_stringify
+from datadoc.frontend.fields.display_base import get_standard_metadata
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
