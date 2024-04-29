@@ -91,6 +91,10 @@ def open_dataset_handling(
     dataset_opened_counter += 1
     if n_clicks and n_clicks > 0:
         dapla_dataset_path_info = DaplaDatasetPathInfo(file_path)
+        set_variables_values_inherited_from_dataset(
+            state.metadata.dataset.contains_data_from,
+            DatasetIdentifiers.CONTAINS_DATA_FROM,
+        )
         if not dapla_dataset_path_info.path_complies_with_naming_standard():
             return (
                 build_ssb_alert(
