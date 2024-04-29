@@ -207,10 +207,18 @@ def accept_dataset_metadata_date_input(
             str(contains_data_from),
             str(contains_data_until),
         )
-
+        if dataset_identifier == DatasetIdentifiers.CONTAINS_DATA_FROM:
+            set_variables_values_inherited_from_dataset(
+                contains_data_from,
+                dataset_identifier,
+            )
+        if dataset_identifier == DatasetIdentifiers.CONTAINS_DATA_UNTIL:
+            set_variables_values_inherited_from_dataset(
+                contains_data_until,
+                dataset_identifier,
+            )
         if parsed_contains_data_from:
             state.metadata.dataset.contains_data_from = parsed_contains_data_from
-
         if parsed_contains_data_until:
             state.metadata.dataset.contains_data_until = parsed_contains_data_until
     except (ValidationError, ValueError) as e:

@@ -13,7 +13,6 @@ from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.components.builders import build_edit_section
 from datadoc.frontend.components.builders import build_ssb_accordion
-from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import (
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,
@@ -235,17 +234,17 @@ def accept_variable_metadata_date_input(
     )
 
 
-def get_corresponding_identifier(
-    metadata_identifier: str,
+def variable_identifier(
+    dataset_identifier: str,
 ) -> str | None:
-    """Get the corresponding variables identifier for dataset identifier."""
-    match metadata_identifier:
-        case DatasetIdentifiers.TEMPORALITY_TYPE:
-            return VariableIdentifiers.TEMPORALITY_TYPE
-        case DatasetIdentifiers.DATA_SOURCE:
-            return VariableIdentifiers.DATA_SOURCE
-        case _:
-            return None
+    """Pair corresponding identifiers."""
+    metadata_identifiers = {
+        "temporality_type": VariableIdentifiers.TEMPORALITY_TYPE,
+        "data_source": VariableIdentifiers.DATA_SOURCE,
+        "contains_data_from": VariableIdentifiers.CONTAINS_DATA_FROM,
+        "contains_data_until": VariableIdentifiers.CONTAINS_DATA_UNTIL,
+    }
+    return metadata_identifiers.get(dataset_identifier)
 
 
 def set_variables_values_inherited_from_dataset(
@@ -253,7 +252,7 @@ def set_variables_values_inherited_from_dataset(
     metadata_identifier: str,
 ) -> None:
     """Set variable value based on dataset value."""
-    variable = get_corresponding_identifier(metadata_identifier)
+    variable = variable_identifier(metadata_identifier)
     if value is not None and variable is not None:
         for val in state.metadata.variables:
             setattr(

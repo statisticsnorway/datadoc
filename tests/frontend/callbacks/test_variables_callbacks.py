@@ -18,7 +18,7 @@ from datadoc.frontend.callbacks.variables import populate_variables_workspace
 from datadoc.frontend.callbacks.variables import (
     set_variables_values_inherited_from_dataset,
 )
-from datadoc.frontend.fields.display_base import get_standard_metadata
+from datadoc.frontend.fields.display_base import get_metadata_and_stringify
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
@@ -310,76 +310,131 @@ def test_populate_variables_workspace_filter_variables(
     )
 
 
-def test_update_variables_values_from_dataset_values(metadata: DataDocMetadata):
-    state.metadata = metadata
-    dataset_temporality_type = "FIXED"
-    dataset_data_source = None
-    setattr(
-        state.metadata.dataset,
-        DatasetIdentifiers.TEMPORALITY_TYPE,
-        dataset_temporality_type,
-    )
-    setattr(
-        state.metadata.dataset,
-        DatasetIdentifiers.DATA_SOURCE,
-        dataset_data_source,
-    )
-    set_variables_values_inherited_from_dataset(
-        dataset_temporality_type,
-        DatasetIdentifiers.TEMPORALITY_TYPE,
-    )
-    for val in state.metadata.variables:
-        assert metadata.dataset.temporality_type == get_standard_metadata(
-            metadata.variables_lookup[val.short_name],
-            VariableIdentifiers.TEMPORALITY_TYPE.value,
-        )
-    set_variables_values_inherited_from_dataset(
-        dataset_data_source,
-        DatasetIdentifiers.DATA_SOURCE,
-    )
-    for val in state.metadata.variables:
-        assert metadata.dataset.data_source == get_standard_metadata(
-            metadata.variables_lookup[val.short_name],
-            VariableIdentifiers.DATA_SOURCE.value,
-        )
-
-
-def test_variables_value_can_be_changed_after_update_from_dataset_value(
+@pytest.mark.parametrize(
+    (
+        "dataset_value",
+        "dataset_identifier",
+        "variable_identifier",
+    ),
+    [
+        (
+            "STATUS",
+            DatasetIdentifiers.TEMPORALITY_TYPE,
+            VariableIdentifiers.TEMPORALITY_TYPE,
+        ),
+        (
+            "01",
+            DatasetIdentifiers.DATA_SOURCE,
+            VariableIdentifiers.DATA_SOURCE,
+        ),
+        (
+            "2009-01-02",
+            DatasetIdentifiers.CONTAINS_DATA_FROM,
+            VariableIdentifiers.CONTAINS_DATA_FROM,
+        ),
+        (
+            "2021-08-10",
+            DatasetIdentifiers.CONTAINS_DATA_UNTIL,
+            VariableIdentifiers.CONTAINS_DATA_UNTIL,
+        ),
+    ],
+)
+def test_variables_values_inherit_dataset_values(
+    dataset_value,
+    dataset_identifier,
+    variable_identifier,
     metadata: DataDocMetadata,
 ):
     state.metadata = metadata
-    dataset_temporality_type = "FIXED"
     setattr(
         state.metadata.dataset,
-        DatasetIdentifiers.TEMPORALITY_TYPE,
-        dataset_temporality_type,
+        dataset_identifier,
+        dataset_value,
     )
     set_variables_values_inherited_from_dataset(
-        dataset_temporality_type,
-        DatasetIdentifiers.TEMPORALITY_TYPE,
+        dataset_value,
+        dataset_identifier,
     )
     for val in state.metadata.variables:
-        assert metadata.dataset.temporality_type == get_standard_metadata(
+        assert dataset_value == get_metadata_and_stringify(
             metadata.variables_lookup[val.short_name],
-            VariableIdentifiers.TEMPORALITY_TYPE.value,
+            variable_identifier.value,
+        )
+
+
+@pytest.mark.parametrize(
+    (
+        "dataset_value",
+        "dataset_identifier",
+        "variable_identifier",
+        "update_value",
+    ),
+    [
+        (
+            "EVENT",
+            DatasetIdentifiers.TEMPORALITY_TYPE,
+            VariableIdentifiers.TEMPORALITY_TYPE,
+            "ACCUMULATED",
+        ),
+        (
+            "02",
+            DatasetIdentifiers.DATA_SOURCE,
+            VariableIdentifiers.DATA_SOURCE,
+            "03",
+        ),
+        (
+            "2009-01-02",
+            DatasetIdentifiers.CONTAINS_DATA_FROM,
+            VariableIdentifiers.CONTAINS_DATA_FROM,
+            "1998-03-11",
+        ),
+        (
+            "1988-11-03",
+            DatasetIdentifiers.CONTAINS_DATA_UNTIL,
+            VariableIdentifiers.CONTAINS_DATA_UNTIL,
+            "2008-01-01",
+        ),
+    ],
+)
+def test_variables_values_can_be_changed_after_update_from_dataset_value(
+    dataset_value,
+    dataset_identifier,
+    variable_identifier,
+    update_value,
+    metadata: DataDocMetadata,
+):
+    state.metadata = metadata
+    setattr(
+        state.metadata.dataset,
+        dataset_identifier,
+        dataset_value,
+    )
+    set_variables_values_inherited_from_dataset(
+        dataset_value,
+        dataset_identifier,
+    )
+    for val in state.metadata.variables:
+        assert dataset_value == get_metadata_and_stringify(
+            metadata.variables_lookup[val.short_name],
+            variable_identifier,
         )
     setattr(
         state.metadata.variables_lookup["pers_id"],
-        VariableIdentifiers.TEMPORALITY_TYPE,
-        enums.TemporalityTypeType.ACCUMULATED,
+        variable_identifier,
+        update_value,
     )
-    assert dataset_temporality_type == get_standard_metadata(
+    assert dataset_value == get_metadata_and_stringify(
         metadata.variables_lookup["sivilstand"],
-        VariableIdentifiers.TEMPORALITY_TYPE.value,
+        variable_identifier.value,
     )
-    assert dataset_temporality_type != get_standard_metadata(
+    assert dataset_value != get_metadata_and_stringify(
         metadata.variables_lookup["pers_id"],
-        VariableIdentifiers.TEMPORALITY_TYPE.value,
+        variable_identifier.value,
     )
     assert (
-        get_standard_metadata(
+        get_metadata_and_stringify(
             metadata.variables_lookup["pers_id"],
-            VariableIdentifiers.TEMPORALITY_TYPE.value,
+            variable_identifier.value,
         )
-        == "ACCUMULATED"
+        == update_value
     )
