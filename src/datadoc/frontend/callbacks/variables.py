@@ -11,19 +11,25 @@ from datadoc import state
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
+from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_edit_section
 from datadoc.frontend.components.builders import build_ssb_accordion
+from datadoc.frontend.components.builders import build_ssb_alert
 from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import (
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,
 )
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
+from datadoc.frontend.fields.display_variables import (
+    OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
+)
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
 from datadoc.frontend.text import INVALID_DATE_ORDER
 from datadoc.frontend.text import INVALID_VALUE
 
 if TYPE_CHECKING:
+    import dash_bootstrap_components as dbc
     from datadoc_model import model
     from datadoc_model.model import LanguageStringType
 
@@ -292,3 +298,25 @@ def set_variables_values_inherited_from_dataset(
                 variable,
                 value,
             )
+
+
+def variables_metadata_control() -> dbc.Alert | None:
+    """Check obligatory metadata values for dataset."""
+    variable_list: list = []
+    missing_metadata: list = []
+    message: str
+    for variable in state.metadata.variables:
+        if len(variable_list) != 0:
+            missing_metadata.append(
+                f"{variable.short_name}: {variable_list}",
+            )
+        for field in variable:
+            if (
+                field[0] in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
+                and field[1] is None
+            ):
+                variable_list.append(field[0])
+                logger.info("Alert - obligatory lacks value: %s", field)
+    nl = "\n"
+    message = f"{nl.join([str(item)for item in missing_metadata])}"
+    return build_ssb_alert(AlertTypes.WARNING, "Mangler metadata", message)

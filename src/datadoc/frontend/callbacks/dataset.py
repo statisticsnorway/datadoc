@@ -33,9 +33,6 @@ from datadoc.frontend.fields.display_dataset import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
 )
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
-from datadoc.frontend.fields.display_variables import (
-    OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
-)
 from datadoc.frontend.text import INVALID_DATE_ORDER
 from datadoc.frontend.text import INVALID_VALUE
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
@@ -273,20 +270,18 @@ def accept_dataset_metadata_date_input(
     )
 
 
-def dataset_metadata_control() -> bool | str:
+# One for variable and dataset ?
+# One for build and one for check?
+def dataset_metadata_control() -> dbc.Alert | None:
     """Check obligatory metadata values for dataset."""
-    # Return alert or Message ?
+    missing_metadata: list = []
+    message: str
     for dataset_field in state.metadata.dataset:
         if (
             dataset_field[0] in OBLIGATORY_DATASET_METADATA_IDENTIFIERS
             and dataset_field[1] is None
         ):
+            missing_metadata.append(dataset_field)
             logger.info("Alert - obligatory lacks value: %s", dataset_field)
-    for variable in state.metadata.variables:
-        for field in variable:
-            if (
-                field[0] in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
-                and field[1] is None
-            ):
-                logger.info("Alert - obligatory lacks value: %s", field)
-    return True
+    message = f"Følgende felter er ikke fylt ut: {missing_metadata}"
+    return build_ssb_alert(AlertTypes.WARNING, "Mangler metadata", message)
