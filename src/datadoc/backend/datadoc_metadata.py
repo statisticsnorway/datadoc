@@ -117,6 +117,8 @@ class DataDocMetadata:
 
         if not self.dataset.id:
             self.dataset.id = uuid.uuid4()
+        if self.dataset.contains_personal_data is None:
+            self.dataset.contains_personal_data = False
         self.variables_lookup = {v.short_name: v for v in self.variables}
 
     def extract_metadata_from_existing_document(
