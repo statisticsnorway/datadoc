@@ -84,6 +84,11 @@ class DataDocMetadata:
 
         return pathlib.Path(path)
 
+    def _set_variable_uuid(self) -> None:
+        for v in self.variables:
+            if v.id is None:
+                v.id = uuid.uuid4()
+
     def extract_metadata_from_files(self) -> None:
         """Read metadata from an existing metadata document.
 
@@ -107,6 +112,9 @@ class DataDocMetadata:
                     v.variable_role = model.VariableRole.MEASURE
                 if v.direct_person_identifying is None:
                     v.direct_person_identifying = False
+
+        self._set_variable_uuid()
+
         if not self.dataset.id:
             self.dataset.id = uuid.uuid4()
         self.variables_lookup = {v.short_name: v for v in self.variables}

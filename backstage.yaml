@@ -18,4 +18,6 @@ spec:
   lifecycle: experimental
   dependsOn:
     - system:dapla-beta
+    - component:ssb-datadoc-model
+    - component:ssb-dash-components
   system: datadoc

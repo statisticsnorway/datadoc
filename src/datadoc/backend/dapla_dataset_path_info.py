@@ -269,7 +269,7 @@ def categorize_period_string(period: str) -> IsoDateFormat | SsbDateFormat:
 
     >>> categorize_period_string('unknown format')
     Traceback (most recent call last):
-     ...
+    ...
     NotImplementedError: Period format unknown format is not supported
     """
     for date_format in SUPPORTED_DATE_FORMATS:
