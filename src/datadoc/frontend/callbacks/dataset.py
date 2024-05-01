@@ -29,7 +29,13 @@ from datadoc.frontend.fields.display_dataset import (
 from datadoc.frontend.fields.display_dataset import (
     MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS,
 )
+from datadoc.frontend.fields.display_dataset import (
+    OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
+)
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
+from datadoc.frontend.fields.display_variables import (
+    OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
+)
 from datadoc.frontend.text import INVALID_DATE_ORDER
 from datadoc.frontend.text import INVALID_VALUE
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
@@ -269,9 +275,18 @@ def accept_dataset_metadata_date_input(
 
 def dataset_metadata_control() -> bool | str:
     """Check obligatory metadata values for dataset."""
-    # Which field
-    # Message?
-    if state.metadata.dataset.assessment is None:
-        logger.info("Mangler verdi for %s", DatasetIdentifiers.ASSESSMENT.name)
-        return False
+    # Return alert or Message ?
+    for dataset_field in state.metadata.dataset:
+        if (
+            dataset_field[0] in OBLIGATORY_DATASET_METADATA_IDENTIFIERS
+            and dataset_field[1] is None
+        ):
+            logger.info("Alert - obligatory lacks value: %s", dataset_field)
+    for variable in state.metadata.variables:
+        for field in variable:
+            if (
+                field[0] in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
+                and field[1] is None
+            ):
+                logger.info("Alert - obligatory lacks value: %s", field)
     return True
