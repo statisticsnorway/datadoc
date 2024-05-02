@@ -323,14 +323,10 @@ def set_variables_values_inherit_dataset_derived_date_values() -> None:
 
 def variables_metadata_control() -> dbc.Alert | None:
     """Check obligatory metadata values for dataset."""
-    variable_list: list = []
     missing_metadata: list = []
     message: str
     for variable in state.metadata.variables:
-        if len(variable_list) != 0:
-            missing_metadata.append(
-                f"{variable.short_name}: {variable_list}",
-            )
+        variable_list = []
         for field in variable:
             if (
                 field[0] in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
@@ -338,6 +334,13 @@ def variables_metadata_control() -> dbc.Alert | None:
             ):
                 variable_list.append(field[0])
                 logger.info("Alert - obligatory lacks value: %s", field)
-    nl = "\n"
-    message = f"{nl.join([str(item)for item in missing_metadata])}"
-    return build_ssb_alert(AlertTypes.WARNING, "Mangler metadata", message)
+        missing_metadata.append(
+            f"{variable.short_name}: {variable_list}",
+        )
+    message = "Følgende variabler mangler obligatorisk metadata: "
+    return build_ssb_alert(
+        AlertTypes.WARNING,
+        "Mangler metadata",
+        message,
+        missing_metadata,
+    )

@@ -56,11 +56,14 @@ def build_ssb_alert(
     alert_type: AlertTypes,
     title: str,
     message: str | None = None,
+    alert_list: list | None = None,
     *,
     link: str | None = None,
 ) -> dbc.Alert:
     """Make a Dash Alert according to SSBs Design System."""
     alert = AlertType.get_type(alert_type)
+    if alert_list is None:
+        alert_list = []
     return dbc.Alert(
         is_open=True,
         dismissable=True,
@@ -74,6 +77,7 @@ def build_ssb_alert(
             html.P(
                 children=message,
             ),
+            html.Ul([html.Li(i) for i in alert_list]),
             html.A(link, href=link, target="_blank"),
         ],
         style={"width": "70%"},

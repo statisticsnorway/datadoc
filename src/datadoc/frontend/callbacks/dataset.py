@@ -280,8 +280,6 @@ def accept_dataset_metadata_date_input(
     )
 
 
-# One for variable and dataset ?
-# One for build and one for check?
 def dataset_metadata_control() -> dbc.Alert | None:
     """Check obligatory metadata values for dataset."""
     missing_metadata: list = []
@@ -293,5 +291,10 @@ def dataset_metadata_control() -> dbc.Alert | None:
         ):
             missing_metadata.append(dataset_field)
             logger.info("Alert - obligatory lacks value: %s", dataset_field)
-    message = f"Følgende felter er ikke fylt ut: {missing_metadata}"
-    return build_ssb_alert(AlertTypes.WARNING, "Mangler metadata", message)
+    message = "Følgende felter for er ikke fylt ut: "
+    return build_ssb_alert(
+        AlertTypes.WARNING,
+        "Mangler metadata",
+        message,
+        missing_metadata,
+    )
