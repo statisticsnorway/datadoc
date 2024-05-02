@@ -16,9 +16,14 @@ from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
-from datadoc.frontend.callbacks.variables import set_variables_value_multilanguage
 from datadoc.frontend.callbacks.variables import (
-    set_variables_values_inherited_from_dataset,
+    set_variables_value_multilanguage_inherit_dataset_values,
+)
+from datadoc.frontend.callbacks.variables import (
+    set_variables_values_inherit_dataset_derived_date_values,
+)
+from datadoc.frontend.callbacks.variables import (
+    set_variables_values_inherit_dataset_values,
 )
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_ssb_alert
@@ -69,6 +74,7 @@ def open_dataset_handling(
         file_path = file_path.strip()
     try:
         state.metadata = open_file(file_path)
+        set_variables_values_inherit_dataset_derived_date_values()
     except FileNotFoundError:
         logger.exception("File %s not found", str(file_path))
         return (
@@ -149,7 +155,11 @@ def process_special_cases(
                 metadata_identifier,
                 language,
             )
-            set_variables_value_multilanguage(value, metadata_identifier, language)
+            set_variables_value_multilanguage_inherit_dataset_values(
+                value,
+                metadata_identifier,
+                language,
+            )
     elif metadata_identifier in DROPDOWN_DATASET_METADATA_IDENTIFIERS and value == "":
         updated_value = None
     else:
@@ -178,7 +188,7 @@ def accept_dataset_metadata_input(
             metadata_identifier,
             value,
         )
-        set_variables_values_inherited_from_dataset(value, metadata_identifier)
+        set_variables_values_inherit_dataset_values(value, metadata_identifier)
     except (ValidationError, ValueError):
         show_error = True
         error_explanation = INVALID_VALUE
@@ -211,12 +221,12 @@ def accept_dataset_metadata_date_input(
             str(contains_data_until),
         )
         if dataset_identifier == DatasetIdentifiers.CONTAINS_DATA_FROM:
-            set_variables_values_inherited_from_dataset(
+            set_variables_values_inherit_dataset_values(
                 contains_data_from,
                 dataset_identifier,
             )
         if dataset_identifier == DatasetIdentifiers.CONTAINS_DATA_UNTIL:
-            set_variables_values_inherited_from_dataset(
+            set_variables_values_inherit_dataset_values(
                 contains_data_until,
                 dataset_identifier,
             )
