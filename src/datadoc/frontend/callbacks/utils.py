@@ -149,9 +149,9 @@ def parse_and_validate_dates(
 ) -> tuple[datetime.datetime | None, datetime.datetime | None]:
     """Parse and validate the given dates.
 
-     Validate that:
-         - The dates are in YYYY-MM-DD format
-         - The start date is earlier or identical to the end date.
+    Validate that:
+        - The dates are in YYYY-MM-DD format
+        - The start date is earlier or identical to the end date.
 
     Examples:
     >>> parse_and_validate_dates("2021-01-01", "2021-01-01")
