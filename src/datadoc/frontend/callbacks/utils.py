@@ -206,3 +206,18 @@ def render_tabs(tab: str) -> html.Article | None:
     if tab == "variables":
         return build_variables_tab()
     return None
+
+
+def filter_metadata_tuple(field: str | tuple, filter_list: list) -> tuple:
+    """Get tuple with english and norwegian field name."""
+    return tuple(tup for tup in filter_list if any(field[0] == i for i in tup))
+
+
+def get_norwegian_field_name(field: tuple) -> str:
+    """Temp only returning norwegian."""
+    return field[1]
+
+
+def check_tuple_length(input_value: tuple) -> tuple:
+    """If one."""
+    return input_value[0] if len(input_value) == 1 else input_value

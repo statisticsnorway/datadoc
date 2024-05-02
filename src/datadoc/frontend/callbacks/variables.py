@@ -9,7 +9,10 @@ from pydantic import ValidationError
 
 from datadoc import state
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
+from datadoc.frontend.callbacks.utils import check_tuple_length
+from datadoc.frontend.callbacks.utils import filter_metadata_tuple
 from datadoc.frontend.callbacks.utils import find_existing_language_string
+from datadoc.frontend.callbacks.utils import get_norwegian_field_name
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_edit_section
@@ -324,11 +327,6 @@ def set_variables_values_inherit_dataset_derived_date_values() -> None:
             )
 
 
-def filter_metadata_tuple(field: str, filter_list: list) -> tuple:
-    """Get tuple with english and norwegian field name."""
-    return tuple(tup for tup in filter_list if any(field[0] == i for i in tup))
-
-
 def variables_metadata_control() -> dbc.Alert | None:
     """Check obligatory metadata values for dataset."""
     missing_metadata: list = []
@@ -345,14 +343,8 @@ def variables_metadata_control() -> dbc.Alert | None:
                 field[0] in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
                 and field[1] is None
             ):
-                if len(field_name) == 1:
-                    field_name = field_name[0]
-                result_list.append(field_name[1])
-                logger.info(
-                    "Alert - obligatory variable %s lacks value: %s",
-                    variable.short_name,
-                    field_name,
-                )
+                field_name = check_tuple_length(field_name)
+                result_list.append(get_norwegian_field_name(field_name))
         result_list_to_string = ", ".join(result_list)
         if len(result_list_to_string) > 0:
             missing_metadata.append(
