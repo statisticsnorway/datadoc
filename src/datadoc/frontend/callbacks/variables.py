@@ -23,6 +23,9 @@ from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METAD
 from datadoc.frontend.fields.display_variables import (
     OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
 )
+from datadoc.frontend.fields.display_variables import (
+    OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
+)
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
 from datadoc.frontend.text import INVALID_DATE_ORDER
@@ -321,23 +324,41 @@ def set_variables_values_inherit_dataset_derived_date_values() -> None:
             )
 
 
+def filter_metadata_tuple(field: str, filter_list: list) -> tuple:
+    """Get tuple with english and norwegian field name."""
+    return tuple(tup for tup in filter_list if any(field[0] == i for i in tup))
+
+
 def variables_metadata_control() -> dbc.Alert | None:
     """Check obligatory metadata values for dataset."""
     missing_metadata: list = []
     message: str
+    field_name: tuple
     for variable in state.metadata.variables:
-        variable_list = []
+        result_list = []
         for field in variable:
+            field_name = filter_metadata_tuple(
+                field,
+                OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
+            )
             if (
                 field[0] in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
                 and field[1] is None
             ):
-                variable_list.append(field[0])
-                logger.info("Alert - obligatory lacks value: %s", field)
-        missing_metadata.append(
-            f"{variable.short_name}: {variable_list}",
-        )
-    message = "Følgende variabler mangler obligatorisk metadata: "
+                if len(field_name) == 1:
+                    field_name = field_name[0]
+                result_list.append(field_name[1])
+                logger.info(
+                    "Alert - obligatory variable %s lacks value: %s",
+                    variable.short_name,
+                    field_name,
+                )
+        result_list_to_string = ", ".join(result_list)
+        if len(result_list_to_string) > 0:
+            missing_metadata.append(
+                f"{variable.short_name}: {result_list_to_string}",
+            )
+    message = "Følgende variabler mangler metadata som kan være obligatorisk for ditt datasett: "
     return build_ssb_alert(
         AlertTypes.WARNING,
         "Mangler metadata",
