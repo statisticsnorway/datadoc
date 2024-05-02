@@ -338,3 +338,9 @@ DROPDOWN_DATASET_METADATA_IDENTIFIERS: list[str] = [
 OBLIGATORY_DATASET_METADATA_IDENTIFIERS: list[str] = [
     m.identifier for m in DISPLAY_DATASET.values() if m.obligatory and m.editable
 ]
+
+OBLIGATORY_DATASET_METADATA_IDENTIFIERS_AND_DISPLAY_NAME: list[tuple] = [
+    (m.identifier, m.display_name)
+    for m in DISPLAY_DATASET.values()
+    if m.obligatory and m.editable
+]

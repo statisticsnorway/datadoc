@@ -37,6 +37,9 @@ from datadoc.frontend.fields.display_dataset import (
 from datadoc.frontend.fields.display_dataset import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
 )
+from datadoc.frontend.fields.display_dataset import (
+    OBLIGATORY_DATASET_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
+)
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.frontend.text import INVALID_DATE_ORDER
 from datadoc.frontend.text import INVALID_VALUE
@@ -284,12 +287,15 @@ def dataset_metadata_control() -> dbc.Alert | None:
     """Check obligatory metadata values for dataset."""
     missing_metadata: list = []
     message: str
-    for dataset_field in state.metadata.dataset:
+    for dataset_state, dataset_field in zip(
+        state.metadata.dataset,
+        OBLIGATORY_DATASET_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
+    ):
         if (
-            dataset_field[0] in OBLIGATORY_DATASET_METADATA_IDENTIFIERS
-            and dataset_field[1] is None
+            dataset_state[0] in OBLIGATORY_DATASET_METADATA_IDENTIFIERS
+            and dataset_state[1] is None
         ):
-            missing_metadata.append(dataset_field)
+            missing_metadata.append(dataset_field[1])
             logger.info("Alert - obligatory lacks value: %s", dataset_field)
     message = "Følgende felter for er ikke fylt ut: "
     return build_ssb_alert(
