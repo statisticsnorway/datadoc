@@ -9,6 +9,7 @@ from uuid import UUID
 import arrow
 import dash_bootstrap_components as dbc
 import pytest
+from datadoc_model.model import LanguageStringType
 from datadoc_model.model import LanguageStringTypeItem
 from pydantic_core import Url
 
@@ -577,3 +578,37 @@ def test_variables_metadata_control(metadata: DataDocMetadata):
     state.metadata = metadata
     result = variables_metadata_control()
     assert isinstance(result, dbc.Alert)
+
+
+def test_variables_metadata_control_no_missing_metadata(metadata: DataDocMetadata):
+    state.metadata = metadata
+    for val in state.metadata.variables:
+        setattr(
+            state.metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.NAME,
+            LanguageStringType(
+                [LanguageStringTypeItem(languageCode="nb", languageText="Test")],
+            ),
+        )
+        setattr(
+            state.metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.DATA_TYPE,
+            enums.DataType.STRING,
+        )
+        setattr(
+            state.metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.VARIABLE_ROLE,
+            enums.VariableRole.MEASURE,
+        )
+        setattr(
+            state.metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.DEFINITION_URI,
+            "https://www.hat.com",
+        )
+        setattr(
+            state.metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.DIRECT_PERSON_IDENTIFYING,
+            True,
+        )
+    result = variables_metadata_control()
+    assert result is None
