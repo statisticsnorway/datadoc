@@ -12,6 +12,7 @@ from datadoc import config
 from datadoc import state
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.datadoc_metadata import DataDocMetadata
+from datadoc.frontend.callbacks.utils import MISSING_METADATA_WARNING
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import check_tuple_length
 from datadoc.frontend.callbacks.utils import filter_metadata_tuple
@@ -302,7 +303,7 @@ def dataset_metadata_control() -> dbc.Alert | None:
     message = "Følgende felter for er ikke fylt ut: "
     return build_ssb_alert(
         AlertTypes.WARNING,
-        "Mangler metadata",
+        MISSING_METADATA_WARNING,
         message,
         missing_metadata,
     )

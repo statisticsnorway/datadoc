@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from pydantic import ValidationError
 
 from datadoc import state
+from datadoc.frontend.callbacks.utils import MISSING_METADATA_WARNING
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import check_tuple_length
 from datadoc.frontend.callbacks.utils import filter_metadata_tuple
@@ -353,7 +354,7 @@ def variables_metadata_control() -> dbc.Alert | None:
     message = "Følgende variabler mangler metadata som kan være obligatorisk for ditt datasett: "
     return build_ssb_alert(
         AlertTypes.WARNING,
-        "Mangler metadata",
+        MISSING_METADATA_WARNING,
         message,
         missing_metadata,
     )
