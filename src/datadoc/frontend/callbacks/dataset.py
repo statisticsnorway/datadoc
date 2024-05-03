@@ -301,6 +301,8 @@ def dataset_metadata_control() -> dbc.Alert | None:
             field_name = check_tuple_length(field_name)
             missing_metadata.append(get_norwegian_field_name(field_name))
     message = "Følgende felter for er ikke fylt ut: "
+    if len(missing_metadata) == 0:
+        return None
     return build_ssb_alert(
         AlertTypes.WARNING,
         MISSING_METADATA_WARNING,

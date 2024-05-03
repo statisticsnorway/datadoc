@@ -352,6 +352,8 @@ def variables_metadata_control() -> dbc.Alert | None:
                 f"{variable.short_name}: {result_list_to_string}",
             )
     message = "Følgende variabler mangler metadata som kan være obligatorisk for ditt datasett: "
+    if len(missing_metadata) == 0:
+        return None
     return build_ssb_alert(
         AlertTypes.WARNING,
         MISSING_METADATA_WARNING,
