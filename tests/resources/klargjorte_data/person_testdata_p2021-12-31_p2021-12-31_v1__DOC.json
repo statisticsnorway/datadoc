@@ -18,11 +18,7 @@
                 "nn": "",
                 "nb": "Person-data til demo og testing av DataDoc"
             },
-            "data_source": {
-                "en": "",
-                "nn": "",
-                "nb": "Skatteetaten, FREG og personskatt"
-            },
+            "data_source": null,
             "register_uri": null,
             "population_description": {
                 "en": "",

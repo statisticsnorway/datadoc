@@ -210,16 +210,25 @@ def render_tabs(tab: str) -> html.Article | None:
     return None
 
 
-def filter_metadata_tuple(field: str | tuple, filter_list: list) -> tuple:
-    """Get tuple with english and norwegian field name."""
-    return tuple(tup for tup in filter_list if any(field[0] == i for i in tup))
+def filter_metadata_tuple(field: str | tuple, filter_list: list) -> str:
+    """Return field display name if tuple in list."""
+    output = tuple(tup for tup in filter_list if any(field[0] == i for i in tup))
+    tuple_result = _check_tuple_length(output)
+    return _get_norwegian_field_name(tuple_result)
 
 
-def get_norwegian_field_name(field: tuple) -> str:
+def _check_tuple_length(input_value: tuple) -> tuple:
+    """Filter tuple from list."""
+    return input_value[0] if len(input_value) == 1 else input_value
+
+
+def _get_norwegian_field_name(field: tuple) -> str:
     """Temp only returning norwegian."""
     return field[1]
 
 
-def check_tuple_length(input_value: tuple) -> tuple:
-    """If one."""
-    return input_value[0] if len(input_value) == 1 else input_value
+def obligatory_metadata(metadata: tuple, obligatory_metadata: list) -> bool:
+    """Hard check metadata field."""
+    if metadata[0] in obligatory_metadata and metadata[1] is None:
+        return False
+    return True

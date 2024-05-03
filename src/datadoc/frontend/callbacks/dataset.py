@@ -14,11 +14,10 @@ from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.frontend.callbacks.utils import MISSING_METADATA_WARNING
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
-from datadoc.frontend.callbacks.utils import check_tuple_length
 from datadoc.frontend.callbacks.utils import filter_metadata_tuple
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
-from datadoc.frontend.callbacks.utils import get_norwegian_field_name
+from datadoc.frontend.callbacks.utils import obligatory_metadata
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.callbacks.variables import (
     set_variables_value_multilanguage_inherit_dataset_values,
@@ -54,6 +53,8 @@ if TYPE_CHECKING:
     from datadoc_model.model import LanguageStringType
 
 logger = logging.getLogger(__name__)
+
+MISSING_DATASET_METADATA_MESSAGE = "Følgende felter for er ikke fylt ut:"
 
 
 def open_file(file_path: str | None = None) -> DataDocMetadata:
@@ -290,22 +291,19 @@ def accept_dataset_metadata_date_input(
 def dataset_metadata_control() -> dbc.Alert | None:
     """Check obligatory metadata values for dataset."""
     missing_metadata: list = []
-    message: str
     dataset = state.metadata.dataset
     for field in dataset:
-        field_name = filter_metadata_tuple(
-            field,
-            OBLIGATORY_DATASET_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
-        )
-        if field[0] in OBLIGATORY_DATASET_METADATA_IDENTIFIERS and field[1] is None:
-            field_name = check_tuple_length(field_name)
-            missing_metadata.append(get_norwegian_field_name(field_name))
-    message = "Følgende felter for er ikke fylt ut: "
+        if not obligatory_metadata(field, OBLIGATORY_DATASET_METADATA_IDENTIFIERS):
+            field_name = filter_metadata_tuple(
+                field,
+                OBLIGATORY_DATASET_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
+            )
+            missing_metadata.append(field_name)
     if len(missing_metadata) == 0:
         return None
     return build_ssb_alert(
         AlertTypes.WARNING,
         MISSING_METADATA_WARNING,
-        message,
+        MISSING_DATASET_METADATA_MESSAGE,
         missing_metadata,
     )
