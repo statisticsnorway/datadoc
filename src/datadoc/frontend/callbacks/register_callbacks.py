@@ -93,7 +93,7 @@ def register_callbacks(app: Dash) -> None:
         prevent_initial_call=True,
     )
     def callback_save_metadata_file(n_clicks: int, alerts: list) -> list:
-        """Save the metadata document to disk."""
+        """Save the metadata document to disk and check obligatory metadata."""
         if alerts:
             alerts = []
         if n_clicks and n_clicks > 0:
