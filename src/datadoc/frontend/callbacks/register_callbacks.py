@@ -89,10 +89,13 @@ def register_callbacks(app: Dash) -> None:
     @app.callback(
         Output("alerts-section", "children", allow_duplicate=True),
         Input("save-button", "n_clicks"),
+        State("alerts-section", "children"),
         prevent_initial_call=True,
     )
-    def callback_save_metadata_file(n_clicks: int) -> list:
+    def callback_save_metadata_file(n_clicks: int, alerts: list) -> list:
         """Save the metadata document to disk."""
+        if alerts:
+            alerts = []
         if n_clicks and n_clicks > 0:
             state.metadata.write_metadata_document()
             save = build_ssb_alert(
@@ -104,6 +107,7 @@ def register_callbacks(app: Dash) -> None:
                 dataset_metadata_control(),
                 variables_metadata_control(),
             ]
+
         return no_update
 
     @app.callback(
