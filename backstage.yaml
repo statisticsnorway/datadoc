@@ -20,5 +20,6 @@ spec:
     - system:dapla-beta
     - component:ssb-datadoc-model
     - component:ssb-dash-components
+  consumesApis:
     - api:klass-api
-  system: datadoc
+  system: metadata
