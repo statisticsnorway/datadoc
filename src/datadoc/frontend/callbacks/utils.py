@@ -231,7 +231,10 @@ def _get_metadata_field_display_name(field: tuple) -> str:
 
 
 def obligatory_metadata(metadata: tuple, obligatory_metadata: list) -> bool:
-    """Hard check metadata field."""
+    """Hard check metadata field.
+
+    Tuple contains identifier and value.
+    """
     if metadata[0] in obligatory_metadata and metadata[1] is None:
         return False
     return True

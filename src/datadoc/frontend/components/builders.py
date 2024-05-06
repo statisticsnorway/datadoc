@@ -188,3 +188,14 @@ def build_dataset_edit_section(
         ],
         className="edit-section dataset-edit-section",
     )
+
+
+def build_link_object(text: str, href: str) -> dict | None:
+    """Build link object with text and URL."""
+    link_text: str | None = text
+    link_href: str | None = href
+    if link_text is None:
+        return {"link_text": link_href, "link_href": link_href}
+    if link_href is None:
+        return None
+    return {"link_text": link_text, "link_href": link_href}
