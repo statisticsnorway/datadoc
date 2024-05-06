@@ -24,6 +24,8 @@ from datadoc.backend.model_backwards_compatibility import upgrade_metadata
 from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
 from datadoc.enums import DataSetStatus
+from datadoc.enums import LanguageStringType
+from datadoc.enums import LanguageStringTypeItem
 from datadoc.frontend.fields.display_dataset import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
 )
@@ -81,7 +83,6 @@ class DataDocMetadata:
         if path.startswith(GSPath.cloud_prefix):
             client = GSClient(credentials=AuthClient.fetch_google_credentials())
             return GSPath(path, client=client)
-
         return pathlib.Path(path)
 
     def _set_variable_uuid(self) -> None:
@@ -97,7 +98,6 @@ class DataDocMetadata:
         """
         if self.metadata_document is not None and self.metadata_document.exists():
             self.extract_metadata_from_existing_document(self.metadata_document)
-
         if (
             self.dataset_path is not None
             and self.dataset == model.Dataset()
@@ -112,9 +112,7 @@ class DataDocMetadata:
                     v.variable_role = model.VariableRole.MEASURE
                 if v.direct_person_identifying is None:
                     v.direct_person_identifying = False
-
         self._set_variable_uuid()
-
         if not self.dataset.id:
             self.dataset.id = uuid.uuid4()
         if self.dataset.contains_personal_data is None:
@@ -171,11 +169,9 @@ class DataDocMetadata:
         """
         self.ds_schema: DatasetParser = DatasetParser.for_file(dataset)
         dapla_dataset_path_info = DaplaDatasetPathInfo(dataset)
-
         subject_field = self._statistic_subject_mapping.get_secondary_subject(
             dapla_dataset_path_info.statistic_short_name,
         )
-
         self.dataset = model.Dataset(
             short_name=dapla_dataset_path_info.dataset_short_name,
             dataset_state=dapla_dataset_path_info.dataset_state,
@@ -189,6 +185,7 @@ class DataDocMetadata:
             file_path=str(self.dataset_path),
             metadata_created_by=user_info.get_user_info_for_current_platform().short_email,
             subject_field=subject_field,
+            spatial_coverage_description=self.set_default_spatial_coverage_description(),
         )
         self.variables = self.ds_schema.get_fields()
 
@@ -265,3 +262,14 @@ class DataDocMetadata:
                 ],
             )
         return calculate_percentage(num_set_fields, num_all_fields)
+
+    def set_default_spatial_coverage_description(self) -> LanguageStringType:
+        """Returns the default value 'Norge'."""
+        return LanguageStringType(
+            [
+                LanguageStringTypeItem(
+                    languageCode="nb",
+                    languageText="Norge",
+                ),
+            ],
+        )
