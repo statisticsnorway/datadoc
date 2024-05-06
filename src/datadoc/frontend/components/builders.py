@@ -56,9 +56,8 @@ def build_ssb_alert(
     alert_type: AlertTypes,
     title: str,
     message: str | None = None,
+    link: dict | None = None,
     alert_list: list | None = None,
-    *,
-    link: str | None = None,
 ) -> dbc.Alert:
     """Make a Dash Alert according to SSBs Design System."""
     alert = AlertType.get_type(alert_type)
@@ -77,10 +76,21 @@ def build_ssb_alert(
             html.P(
                 children=message,
             ),
+            (
+                html.A(link["link_text"], href=link["link_href"], target="_blank")
+                if link is not None
+                else None
+            ),
             html.Ul([html.Li(i) for i in alert_list]),
-            html.A(link, href=link, target="_blank"),
         ],
         style={"width": "70%"},
+        class_name=(
+            "alert-sucsess"
+            if AlertTypes.SUCCESS
+            else "alert-warning"
+            if AlertTypes.WARNING
+            else "alert-error"
+        ),
     )
 
 

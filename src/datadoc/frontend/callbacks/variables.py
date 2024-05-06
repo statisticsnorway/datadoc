@@ -357,5 +357,6 @@ def variables_metadata_control() -> dbc.Alert | None:
         AlertTypes.WARNING,
         MISSING_METADATA_WARNING,
         CHECK_OBLIGATORY_METADATA_VARIABLES_MESSAGE,
+        None,
         missing_metadata,
     )

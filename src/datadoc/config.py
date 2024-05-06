@@ -156,6 +156,12 @@ def get_data_source_code() -> int | None:
     return int(_get_config_item("DATADOC_DATA_SOURCE_CODE") or 712)
 
 
-def get_dapla_manual_naming_standard_url() -> str | None:
+def get_dapla_manual_naming_standard_url() -> dict | None:
     """Get the URL to naming standard in the DAPLA manual."""
-    return _get_config_item("DAPLA_MANUAL_NAMING_STANDARD_URL")
+    link_text: str | None = "Dapla manual navnestandard"
+    link_href: str | None = _get_config_item("DAPLA_MANUAL_NAMING_STANDARD_URL")
+    if link_text is None:
+        return {"link_text": link_href, "link_href": link_href}
+    if link_href is None:
+        return None
+    return {"link_text": link_text, "link_href": link_href}
