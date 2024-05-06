@@ -54,7 +54,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-CHECK_OBLIGATORY_DATASET_METADATA_MESSAGE = (
+CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE = (
     "Følgende felt mangler metadata som kan være obligatorisk for ditt datasett:"
 )
 
@@ -306,6 +306,6 @@ def dataset_metadata_control() -> dbc.Alert | None:
     return build_ssb_alert(
         AlertTypes.WARNING,
         MISSING_METADATA_WARNING,
-        CHECK_OBLIGATORY_DATASET_METADATA_MESSAGE,
+        CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE,
         missing_metadata,
     )
