@@ -434,7 +434,27 @@ def test_existing_metadata_variables_valid_id(
     assert pre_open_id == post_write_id
 
 
-def test_default_spatial_coverage_description(metadata: DataDocMetadata):
+@pytest.mark.parametrize(
+    ("index", "expected_text"),
+    [
+        (0, "Norge"),
+        (1, "Noreg"),
+        (2, "Norway"),
+    ],
+)
+def test_default_spatial_coverage_description(
+    metadata: DataDocMetadata,
+    index: int,
+    expected_text: str,
+):
     metadata.extract_metadata_from_dataset(TEST_PARQUET_FILEPATH)
     language_strings = metadata.dataset.spatial_coverage_description
-    assert language_strings.root[0].languageText == "Norge"  # type: ignore [union-attr, index]
+    if (ls := language_strings) is not None and ls.root is not None:
+        if index < len(ls.root):
+            assert ls.root[index].languageText == expected_text
+        else:
+            msg = "Index out of bounds"
+            raise IndexError(msg)
+    else:
+        msg = "language_strings or root is None"
+        raise ValueError(msg)

@@ -269,5 +269,13 @@ class DataDocMetadata:
                     languageCode="nb",
                     languageText="Norge",
                 ),
+                LanguageStringTypeItem(
+                    languageCode="nn",
+                    languageText="Noreg",
+                ),
+                LanguageStringTypeItem(
+                    languageCode="en",
+                    languageText="Norway",
+                ),
             ],
         )
