@@ -347,13 +347,12 @@ def variables_metadata_control() -> dbc.Alert | None:
                     OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
                 )
                 missing_metadata_fields.append(field_name)
+        if len(missing_metadata_fields) == 0:
+            return None
         missing_metadata_fields_to_string = ", ".join(missing_metadata_fields)
-        if len(missing_metadata_fields) > 0:
-            missing_metadata.append(
-                f"{variable.short_name}: {missing_metadata_fields_to_string}",
-            )
-    if len(missing_metadata) == 0:
-        return None
+        missing_metadata.append(
+            f"{variable.short_name}: {missing_metadata_fields_to_string}",
+        )
     return build_ssb_alert(
         AlertTypes.WARNING,
         MISSING_METADATA_WARNING,
