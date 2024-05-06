@@ -210,20 +210,23 @@ def render_tabs(tab: str) -> html.Article | None:
     return None
 
 
-def filter_metadata_tuple(field: str | tuple, filter_list: list) -> str:
+def filter_obligatory_metadata_list(field: str | tuple, filter_list: list) -> str:
     """Return field display name if tuple in list."""
     output = tuple(tup for tup in filter_list if any(field[0] == i for i in tup))
-    tuple_result = _check_tuple_length(output)
-    return _get_norwegian_field_name(tuple_result)
+    tuple_result: tuple = _check_tuple_length(output)
+    return _get_metadata_field_display_name(tuple_result)
 
 
 def _check_tuple_length(input_value: tuple) -> tuple:
-    """Filter tuple from list."""
+    """Filter single tuple."""
     return input_value[0] if len(input_value) == 1 else input_value
 
 
-def _get_norwegian_field_name(field: tuple) -> str:
-    """Temp only returning norwegian."""
+def _get_metadata_field_display_name(field: tuple) -> str:
+    """Helper function for filter_obligatory_metadata_list().
+
+    Tuple contains identfifier and display name.
+    """
     return field[1]
 
 

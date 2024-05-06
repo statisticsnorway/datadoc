@@ -10,7 +10,7 @@ from pydantic import ValidationError
 from datadoc import state
 from datadoc.frontend.callbacks.utils import MISSING_METADATA_WARNING
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
-from datadoc.frontend.callbacks.utils import filter_metadata_tuple
+from datadoc.frontend.callbacks.utils import filter_obligatory_metadata_list
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import obligatory_metadata
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
@@ -341,7 +341,7 @@ def variables_metadata_control() -> dbc.Alert | None:
                 field,
                 OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
             ):
-                field_name = filter_metadata_tuple(
+                field_name = filter_obligatory_metadata_list(
                     field,
                     OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
                 )
