@@ -33,7 +33,7 @@ MetadataInputTypes: TypeAlias = (
     str | list[str] | int | float | bool | datetime.date | None
 )
 
-MISSING_METADATA_WARNING = "Advarsel - obligatorisk metadata"
+MISSING_METADATA_WARNING = "Advarsel - obligatorisk metadata ikke utfylt"
 
 
 def get_language_strings_enum(

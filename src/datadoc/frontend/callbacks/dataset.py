@@ -54,7 +54,9 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-MISSING_DATASET_METADATA_MESSAGE = "Følgende felter for er ikke fylt ut:"
+CHECK_OBLIGATORY_DATASET_METADATA_MESSAGE = (
+    "Følgende felt mangler metadata som kan være obligatorisk for ditt datasett:"
+)
 
 
 def open_file(file_path: str | None = None) -> DataDocMetadata:
@@ -304,6 +306,6 @@ def dataset_metadata_control() -> dbc.Alert | None:
     return build_ssb_alert(
         AlertTypes.WARNING,
         MISSING_METADATA_WARNING,
-        MISSING_DATASET_METADATA_MESSAGE,
+        CHECK_OBLIGATORY_DATASET_METADATA_MESSAGE,
         missing_metadata,
     )

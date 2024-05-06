@@ -42,7 +42,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-MISSING_VARIABLES_METADATA_MESSAGE = (
+CHECK_OBLIGATORY_VARIABLES_METADATA_MESSAGE = (
     "Følgende variabler mangler metadata som kan være obligatorisk for ditt datasett: "
 )
 
@@ -356,6 +356,6 @@ def variables_metadata_control() -> dbc.Alert | None:
     return build_ssb_alert(
         AlertTypes.WARNING,
         MISSING_METADATA_WARNING,
-        MISSING_VARIABLES_METADATA_MESSAGE,
+        CHECK_OBLIGATORY_VARIABLES_METADATA_MESSAGE,
         missing_metadata,
     )
