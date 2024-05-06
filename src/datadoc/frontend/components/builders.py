@@ -56,11 +56,13 @@ def build_ssb_alert(
     alert_type: AlertTypes,
     title: str,
     message: str | None = None,
-    *,
-    link: str | None = None,
+    link: dict | None = None,
+    alert_list: list | None = None,
 ) -> dbc.Alert:
     """Make a Dash Alert according to SSBs Design System."""
     alert = AlertType.get_type(alert_type)
+    if alert_list is None:
+        alert_list = []
     return dbc.Alert(
         is_open=True,
         dismissable=True,
@@ -73,10 +75,24 @@ def build_ssb_alert(
             ),
             html.P(
                 children=message,
+                className="alert_message",
             ),
-            html.A(link, href=link, target="_blank"),
+            (
+                html.A(
+                    link["link_text"],
+                    href=link["link_href"],
+                    target="_blank",
+                    className="alert_link",
+                )
+                if link is not None
+                else None
+            ),
+            html.Ul(
+                [html.Li(i, className="alert_list_item") for i in alert_list],
+                className="alert_list",
+            ),
         ],
-        style={"width": "70%"},
+        class_name="ssb-alert",
     )
 
 
@@ -172,3 +188,14 @@ def build_dataset_edit_section(
         ],
         className="edit-section dataset-edit-section",
     )
+
+
+def build_link_object(text: str, href: str) -> dict | None:
+    """Build link object with text and URL."""
+    link_text: str | None = text
+    link_href: str | None = href
+    if link_text is None:
+        return {"link_text": link_href, "link_href": link_href}
+    if link_href is None:
+        return None
+    return {"link_text": link_text, "link_href": link_href}

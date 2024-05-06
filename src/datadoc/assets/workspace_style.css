@@ -46,14 +46,6 @@
     align-items: flex-start;
 }
 
-.alert-section{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    gap: 1rem;
-    padding-top: 1rem;
-}
-
 .ssb-title.edit-section-title{
     border-bottom: 2px solid #62919A;
     margin-bottom: 1rem;

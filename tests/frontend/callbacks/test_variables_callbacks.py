@@ -7,7 +7,9 @@ from typing import Any
 from uuid import UUID
 
 import arrow
+import dash_bootstrap_components as dbc
 import pytest
+from datadoc_model.model import LanguageStringType
 from datadoc_model.model import LanguageStringTypeItem
 from pydantic_core import Url
 
@@ -25,6 +27,7 @@ from datadoc.frontend.callbacks.variables import (
 from datadoc.frontend.callbacks.variables import (
     set_variables_values_inherit_dataset_values,
 )
+from datadoc.frontend.callbacks.variables import variables_metadata_control
 from datadoc.frontend.fields.display_base import get_metadata_and_stringify
 from datadoc.frontend.fields.display_base import get_standard_metadata
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
@@ -569,3 +572,45 @@ def test_variables_values_inherit_dataset_date_values_not_when_variable_has_valu
         metadata.dataset,
         DatasetIdentifiers.CONTAINS_DATA_UNTIL,
     )
+
+
+def test_variables_metadata_control_return_alert(metadata: DataDocMetadata):
+    """Return alert when obligatory metadata is missing."""
+    state.metadata = metadata
+    result = variables_metadata_control()
+    assert isinstance(result, dbc.Alert)
+
+
+def test_variables_metadata_control_dont_return_alert(metadata: DataDocMetadata):
+    state.metadata = metadata
+    for val in state.metadata.variables:
+        """Not return alert when all obligatory metadata has value."""
+        setattr(
+            state.metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.NAME,
+            LanguageStringType(
+                [LanguageStringTypeItem(languageCode="nb", languageText="Test")],
+            ),
+        )
+        setattr(
+            state.metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.DATA_TYPE,
+            enums.DataType.STRING,
+        )
+        setattr(
+            state.metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.VARIABLE_ROLE,
+            enums.VariableRole.MEASURE,
+        )
+        setattr(
+            state.metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.DEFINITION_URI,
+            "https://www.hat.com",
+        )
+        setattr(
+            state.metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.DIRECT_PERSON_IDENTIFYING,
+            True,
+        )
+    result = variables_metadata_control()
+    assert result is None

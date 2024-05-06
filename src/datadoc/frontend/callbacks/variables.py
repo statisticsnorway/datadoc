@@ -7,28 +7,45 @@ from typing import TYPE_CHECKING
 
 from pydantic import ValidationError
 
+from datadoc import config
 from datadoc import state
+from datadoc.frontend.callbacks.utils import MISSING_METADATA_WARNING
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
+from datadoc.frontend.callbacks.utils import get_metadata_field_display_name
+from datadoc.frontend.callbacks.utils import obligatory_metadata
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
+from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_edit_section
 from datadoc.frontend.components.builders import build_ssb_accordion
+from datadoc.frontend.components.builders import build_ssb_alert
 from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import (
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,
 )
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
+from datadoc.frontend.fields.display_variables import (
+    OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
+)
+from datadoc.frontend.fields.display_variables import (
+    OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
+)
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
 from datadoc.frontend.text import INVALID_DATE_ORDER
 from datadoc.frontend.text import INVALID_VALUE
 
 if TYPE_CHECKING:
+    import dash_bootstrap_components as dbc
     from datadoc_model import model
     from datadoc_model.model import LanguageStringType
 
 
 logger = logging.getLogger(__name__)
+
+CHECK_OBLIGATORY_METADATA_VARIABLES_MESSAGE = (
+    "Følgende variabler mangler metadata som kan være obligatorisk for ditt datasett:"
+)
 
 
 def populate_variables_workspace(
@@ -313,3 +330,33 @@ def set_variables_values_inherit_dataset_derived_date_values() -> None:
                 VariableIdentifiers.CONTAINS_DATA_UNTIL,
                 state.metadata.dataset.contains_data_until,
             )
+
+
+def variables_metadata_control() -> dbc.Alert | None:
+    """Check obligatory metadata values for dataset."""
+    missing_metadata: list = []
+    for variable in state.metadata.variables:
+        missing_metadata_fields = []
+        for field in variable:
+            if not obligatory_metadata(
+                field,
+                OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
+            ):
+                field_name = get_metadata_field_display_name(
+                    field,
+                    OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
+                )
+                missing_metadata_fields.append(field_name)
+        if len(missing_metadata_fields) == 0:
+            return None
+        missing_metadata_fields_to_string = ", ".join(missing_metadata_fields)
+        missing_metadata.append(
+            f"{variable.short_name}: {missing_metadata_fields_to_string}",
+        )
+    return build_ssb_alert(
+        AlertTypes.WARNING,
+        MISSING_METADATA_WARNING,
+        CHECK_OBLIGATORY_METADATA_VARIABLES_MESSAGE,
+        config.get_variable_metadata_info(),
+        missing_metadata,
+    )

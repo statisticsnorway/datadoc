@@ -12,9 +12,12 @@ from datadoc import config
 from datadoc import state
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.datadoc_metadata import DataDocMetadata
+from datadoc.frontend.callbacks.utils import MISSING_METADATA_WARNING
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
+from datadoc.frontend.callbacks.utils import get_metadata_field_display_name
+from datadoc.frontend.callbacks.utils import obligatory_metadata
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.callbacks.variables import (
     set_variables_value_multilanguage_inherit_dataset_values,
@@ -34,6 +37,12 @@ from datadoc.frontend.fields.display_dataset import (
 from datadoc.frontend.fields.display_dataset import (
     MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS,
 )
+from datadoc.frontend.fields.display_dataset import (
+    OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
+)
+from datadoc.frontend.fields.display_dataset import (
+    OBLIGATORY_DATASET_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
+)
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.frontend.text import INVALID_DATE_ORDER
 from datadoc.frontend.text import INVALID_VALUE
@@ -44,6 +53,8 @@ if TYPE_CHECKING:
     from datadoc_model.model import LanguageStringType
 
 logger = logging.getLogger(__name__)
+
+CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE = "Følgende datasett felt mangler metadata som kan være obligatorisk for ditt datasett:"
 
 
 def open_file(file_path: str | None = None) -> DataDocMetadata:
@@ -102,7 +113,8 @@ def open_dataset_handling(
             return (
                 build_ssb_alert(
                     AlertTypes.WARNING,
-                    "Filen følger ikke navnestandard. Vennligst se mer informasjon her:",
+                    "Filen følger ikke navnestandard",
+                    message="Vennligst se mer informasjon her:",
                     link=config.get_dapla_manual_naming_standard_url(),
                 ),
                 dataset_opened_counter,
@@ -274,4 +286,26 @@ def accept_dataset_metadata_date_input(
         error + no_error
         if dataset_identifier == DatasetIdentifiers.CONTAINS_DATA_FROM
         else no_error + error
+    )
+
+
+def dataset_metadata_control() -> dbc.Alert | None:
+    """Check obligatory metadata values for dataset."""
+    missing_metadata: list = []
+    dataset = state.metadata.dataset
+    for field in dataset:
+        if not obligatory_metadata(field, OBLIGATORY_DATASET_METADATA_IDENTIFIERS):
+            field_name = get_metadata_field_display_name(
+                field,
+                OBLIGATORY_DATASET_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
+            )
+            missing_metadata.append(field_name)
+    if len(missing_metadata) == 0:
+        return None
+    return build_ssb_alert(
+        AlertTypes.WARNING,
+        MISSING_METADATA_WARNING,
+        CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE,
+        config.get_dataset_metadata_info(),
+        missing_metadata,
     )

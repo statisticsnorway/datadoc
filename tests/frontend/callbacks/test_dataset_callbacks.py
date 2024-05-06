@@ -8,13 +8,17 @@ from unittest.mock import patch
 from uuid import UUID
 
 import dash
+import dash_bootstrap_components as dbc
 import pytest
 from datadoc_model import model
+from datadoc_model.model import LanguageStringType
+from datadoc_model.model import LanguageStringTypeItem
 
 from datadoc import enums
 from datadoc import state
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
+from datadoc.frontend.callbacks.dataset import dataset_metadata_control
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.dataset import process_special_cases
 from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET
@@ -370,3 +374,58 @@ def test_process_special_cases_no_change():
     value = ["unchanged", "values"]
     identifier = "random"
     assert process_special_cases(value, identifier) == value
+
+
+def test_dataset_metadata_control_return_alert(metadata: DataDocMetadata):
+    """Return alert when obligatory metadata is missing."""
+    state.metadata = metadata
+    result = dataset_metadata_control()
+    assert isinstance(result, dbc.Alert)
+
+
+def test_dataset_metadata_control_dont_return_alert(metadata: DataDocMetadata):
+    """Not return alert when all obligatory metadata has value."""
+    state.metadata = metadata
+    setattr(
+        state.metadata.dataset,
+        DatasetIdentifiers.NAME,
+        LanguageStringType(
+            [LanguageStringTypeItem(languageCode="nb", languageText="Test")],
+        ),
+    )
+    setattr(
+        state.metadata.dataset,
+        DatasetIdentifiers.DATASET_STATUS,
+        enums.DataSetStatus.DRAFT,
+    )
+    setattr(
+        state.metadata.dataset,
+        DatasetIdentifiers.DATASET_STATE,
+        enums.DataSetState.INPUT_DATA,
+    )
+    setattr(
+        state.metadata.dataset,
+        DatasetIdentifiers.VERSION,
+        "1",
+    )
+    setattr(
+        state.metadata.dataset,
+        DatasetIdentifiers.ASSESSMENT,
+        enums.Assessment.OPEN,
+    )
+    setattr(
+        state.metadata.dataset,
+        DatasetIdentifiers.DESCRIPTION,
+        LanguageStringType(
+            [LanguageStringTypeItem(languageCode="nb", languageText="Test")],
+        ),
+    )
+    setattr(
+        state.metadata.dataset,
+        DatasetIdentifiers.VERSION_DESCRIPTION,
+        LanguageStringType(
+            [LanguageStringTypeItem(languageCode="nb", languageText="Test")],
+        ),
+    )
+    result = dataset_metadata_control()
+    assert result is not None

@@ -21,11 +21,13 @@ from dash import no_update
 from datadoc import state
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
+from datadoc.frontend.callbacks.dataset import dataset_metadata_control
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.utils import render_tabs
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
+from datadoc.frontend.callbacks.variables import variables_metadata_control
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_dataset_edit_section
 from datadoc.frontend.components.builders import build_ssb_alert
@@ -87,16 +89,24 @@ def register_callbacks(app: Dash) -> None:
     @app.callback(
         Output("alerts-section", "children", allow_duplicate=True),
         Input("save-button", "n_clicks"),
+        State("alerts-section", "children"),
         prevent_initial_call=True,
     )
-    def callback_save_metadata_file(n_clicks: int) -> bool:
-        """Save the metadata document to disk."""
+    def callback_save_metadata_file(n_clicks: int, alerts: list) -> list:
+        """Save the metadata document to disk and check obligatory metadata."""
+        if alerts:
+            alerts = []
         if n_clicks and n_clicks > 0:
             state.metadata.write_metadata_document()
-            return build_ssb_alert(
+            save = build_ssb_alert(
                 AlertTypes.SUCCESS,
                 "Lagret metadata",
             )
+            return [
+                save,
+                dataset_metadata_control(),
+                variables_metadata_control(),
+            ]
 
         return no_update
 
