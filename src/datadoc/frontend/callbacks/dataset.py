@@ -305,6 +305,6 @@ def dataset_metadata_control() -> dbc.Alert | None:
         AlertTypes.WARNING,
         MISSING_METADATA_WARNING,
         CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE,
-        None,
+        config.get_dataset_metadata_info(),
         missing_metadata,
     )

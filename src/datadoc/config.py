@@ -24,6 +24,9 @@ JUPYTERHUB_USER = "JUPYTERHUB_USER"
 DAPLA_REGION = "DAPLA_REGION"
 DAPLA_SERVICE = "DAPLA_SERVICE"
 
+DAPLA_MANUAL_TEXT = "Dapla manual navnestandard"
+DATASET_INFO_TEXT = "Datadoc - obligatorisk og anbefalte metadata"
+VARIABLE_INFO_TEXT = "Variabelforekomst"
 env_loaded = False
 
 
@@ -156,12 +159,27 @@ def get_data_source_code() -> int | None:
     return int(_get_config_item("DATADOC_DATA_SOURCE_CODE") or 712)
 
 
-def get_dapla_manual_naming_standard_url() -> dict | None:
-    """Get the URL to naming standard in the DAPLA manual."""
-    link_text: str | None = "Dapla manual navnestandard"
-    link_href: str | None = _get_config_item("DAPLA_MANUAL_NAMING_STANDARD_URL")
+def _build_link_object(text: str, config_item: str) -> dict | None:
+    """Build object for link text and link URL."""
+    link_text: str | None = text
+    link_href: str | None = _get_config_item(config_item)
     if link_text is None:
         return {"link_text": link_href, "link_href": link_href}
     if link_href is None:
         return None
     return {"link_text": link_text, "link_href": link_href}
+
+
+def get_dapla_manual_naming_standard_url() -> dict | None:
+    """Get the URL to naming standard in the DAPLA manual."""
+    return _build_link_object(DAPLA_MANUAL_TEXT, "DAPLA_MANUAL_NAMING_STANDARD_URL")
+
+
+def get_dataset_metadata_info() -> dict | None:
+    """Get the URL to metadata dataset info."""
+    return _build_link_object(DATASET_INFO_TEXT, "METADATA_DATASET_INFO")
+
+
+def get_variable_metadata_info() -> dict | None:
+    """Get the URL to metadata variable info."""
+    return _build_link_object(VARIABLE_INFO_TEXT, "METADATA_VARIABLE_INFO")

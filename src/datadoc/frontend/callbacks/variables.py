@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 from pydantic import ValidationError
 
+from datadoc import config
 from datadoc import state
 from datadoc.frontend.callbacks.utils import MISSING_METADATA_WARNING
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
@@ -357,6 +358,6 @@ def variables_metadata_control() -> dbc.Alert | None:
         AlertTypes.WARNING,
         MISSING_METADATA_WARNING,
         CHECK_OBLIGATORY_METADATA_VARIABLES_MESSAGE,
-        None,
+        config.get_variable_metadata_info(),
         missing_metadata,
     )
