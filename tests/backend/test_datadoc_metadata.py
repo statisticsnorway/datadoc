@@ -447,14 +447,5 @@ def test_default_spatial_coverage_description(
     index: int,
     expected_text: str,
 ):
-    metadata.extract_metadata_from_dataset(TEST_PARQUET_FILEPATH)
-    language_strings = metadata.dataset.spatial_coverage_description
-    if (ls := language_strings) is not None and ls.root is not None:
-        if index < len(ls.root):
-            assert ls.root[index].languageText == expected_text
-        else:
-            msg = "Index out of bounds"
-            raise IndexError(msg)
-    else:
-        msg = "language_strings or root is None"
-        raise ValueError(msg)
+    ls = metadata.dataset.spatial_coverage_description
+    assert ls.root[index].languageText == expected_text  # type: ignore[union-attr, index]
