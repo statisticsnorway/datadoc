@@ -84,13 +84,7 @@ def build_ssb_alert(
             html.Ul([html.Li(i) for i in alert_list]),
         ],
         style={"width": "70%"},
-        class_name=(
-            "alert-sucsess"
-            if AlertTypes.SUCCESS
-            else "alert-warning"
-            if AlertTypes.WARNING
-            else "alert-error"
-        ),
+        class_name="alert",
     )
 
 
