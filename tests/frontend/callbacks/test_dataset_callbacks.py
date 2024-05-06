@@ -368,13 +368,15 @@ def test_process_special_cases_no_change():
     assert process_special_cases(value, identifier) == value
 
 
-def test_dataset_metadata_control(metadata: DataDocMetadata):
+def test_dataset_metadata_control_return_alert(metadata: DataDocMetadata):
+    """Return alert when obligatory metadata is missing."""
     state.metadata = metadata
     result = dataset_metadata_control()
     assert isinstance(result, dbc.Alert)
 
 
-def test_dataset_metadata_control_no_missing_metadata(metadata: DataDocMetadata):
+def test_dataset_metadata_control_dont_return_alert(metadata: DataDocMetadata):
+    """Not return alert when all obligatory metadata has value."""
     state.metadata = metadata
     setattr(
         state.metadata.dataset,

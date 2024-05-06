@@ -574,15 +574,17 @@ def test_variables_values_inherit_dataset_date_values_not_when_variable_has_valu
     )
 
 
-def test_variables_metadata_control(metadata: DataDocMetadata):
+def test_variables_metadata_control_return_alert(metadata: DataDocMetadata):
+    """Return alert when obligatory metadata is missing."""
     state.metadata = metadata
     result = variables_metadata_control()
     assert isinstance(result, dbc.Alert)
 
 
-def test_variables_metadata_control_no_missing_metadata(metadata: DataDocMetadata):
+def test_variables_metadata_control_dont_return_alert(metadata: DataDocMetadata):
     state.metadata = metadata
     for val in state.metadata.variables:
+        """Not return alert when all obligatory metadata has value."""
         setattr(
             state.metadata.variables_lookup[val.short_name],
             VariableIdentifiers.NAME,
