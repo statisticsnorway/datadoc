@@ -432,3 +432,9 @@ def test_existing_metadata_variables_valid_id(
         post_write_id: list = [v["id"] for v in json.load(f)["datadoc"]["variables"]]
 
     assert pre_open_id == post_write_id
+
+
+def test_default_spatial_coverage_description(metadata: DataDocMetadata):
+    metadata.extract_metadata_from_dataset(TEST_PARQUET_FILEPATH)
+    language_strings = metadata.dataset.spatial_coverage_description
+    assert language_strings.root[0].languageText == "Norge"  # type: ignore [union-attr, index]
