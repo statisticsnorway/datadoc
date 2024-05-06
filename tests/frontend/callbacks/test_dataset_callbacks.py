@@ -144,6 +144,14 @@ def file_path_without_dates():
                         languageCode="nb",
                         languageText="Spatial coverage description",
                     ),
+                    enums.LanguageStringTypeItem(
+                        languageCode="nn",
+                        languageText="Noreg",
+                    ),
+                    enums.LanguageStringTypeItem(
+                        languageCode="en",
+                        languageText="Norway",
+                    ),
                 ],
             ),
         ),
