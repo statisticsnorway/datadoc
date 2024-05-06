@@ -225,7 +225,7 @@ def _check_tuple_length(input_value: tuple) -> tuple:
 def _get_display_name_value(field: tuple) -> str:
     """Get display name from tuple.
 
-    Tuple contains identfifier and display name.
+    Tuple contains identifier and display name.
     """
     return field[1]
 
