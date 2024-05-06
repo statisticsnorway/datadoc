@@ -113,7 +113,8 @@ def open_dataset_handling(
             return (
                 build_ssb_alert(
                     AlertTypes.WARNING,
-                    "Filen følger ikke navnestandard. Vennligst se mer informasjon her:",
+                    "Filen følger ikke navnestandard",
+                    message="Vennligst se mer informasjon her:",
                     link=config.get_dapla_manual_naming_standard_url(),
                 ),
                 dataset_opened_counter,

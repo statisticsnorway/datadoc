@@ -75,16 +75,24 @@ def build_ssb_alert(
             ),
             html.P(
                 children=message,
+                className="alert_message",
             ),
             (
-                html.A(link["link_text"], href=link["link_href"], target="_blank")
+                html.A(
+                    link["link_text"],
+                    href=link["link_href"],
+                    target="_blank",
+                    className="alert_link",
+                )
                 if link is not None
                 else None
             ),
-            html.Ul([html.Li(i) for i in alert_list]),
+            html.Ul(
+                [html.Li(i, className="alert_list_item") for i in alert_list],
+                className="alert_list",
+            ),
         ],
-        style={"width": "70%"},
-        class_name="alert",
+        class_name="ssb-alert",
     )
 
 

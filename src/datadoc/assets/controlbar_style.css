@@ -87,3 +87,28 @@
         border-bottom: 4px solid #1a9d49;
     }
 }
+
+#alerts-section{
+  display: flex;
+  gap: 1rem;
+  padding-top: 1rem;
+  width: 100%;
+}
+
+#alerts-section > div.fade.ssb-alert.alert.alert-warning.alert-dismissible.show {
+  border: 6px solid #ffecb5;
+
+}
+#alerts-section > div.fade.ssb-alert.alert.alert-warning.alert-dismissible.show > .alert_link{
+  padding: 0;
+  margin: 0;
+  margin-bottom: 1rem;
+}
+#alerts-section > div.fade.ssb-alert.alert.alert-success.alert-dismissible.show{
+  border: 6px solid #badbcc;
+}
+
+#alerts-section > div.fade.ssb-alert.alert.alert-warning.alert-dismissible.show > .alert_list{
+  margin: 0;
+  margin-top: 1rem;
+}
