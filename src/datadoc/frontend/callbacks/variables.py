@@ -43,7 +43,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 CHECK_OBLIGATORY_METADATA_VARIABLES_MESSAGE = (
-    "Følgende variabler mangler metadata som kan være obligatorisk for ditt datasett: "
+    "Følgende variabler mangler metadata som kan være obligatorisk for ditt datasett:"
 )
 
 

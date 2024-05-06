@@ -54,9 +54,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE = (
-    "Følgende felt mangler metadata som kan være obligatorisk for ditt datasett:"
-)
+CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE = "Følgende datasett felt mangler metadata som kan være obligatorisk for ditt datasett:"
 
 
 def open_file(file_path: str | None = None) -> DataDocMetadata:
