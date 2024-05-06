@@ -210,11 +210,11 @@ def render_tabs(tab: str) -> html.Article | None:
     return None
 
 
-def filter_obligatory_metadata_list(field: str | tuple, filter_list: list) -> str:
+def get_metadata_field_display_name(field: str | tuple, filter_list: list) -> str:
     """Return field display name if tuple in list."""
     output = tuple(tup for tup in filter_list if any(field[0] == i for i in tup))
     tuple_result: tuple = _check_tuple_length(output)
-    return _get_metadata_field_display_name(tuple_result)
+    return _get_display_name_value(tuple_result)
 
 
 def _check_tuple_length(input_value: tuple) -> tuple:
@@ -222,8 +222,8 @@ def _check_tuple_length(input_value: tuple) -> tuple:
     return input_value[0] if len(input_value) == 1 else input_value
 
 
-def _get_metadata_field_display_name(field: tuple) -> str:
-    """Helper function for filter_obligatory_metadata_list().
+def _get_display_name_value(field: tuple) -> str:
+    """Get display name from tuple.
 
     Tuple contains identfifier and display name.
     """

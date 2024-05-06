@@ -28,6 +28,7 @@ DAPLA_SERVICE = "DAPLA_SERVICE"
 DAPLA_MANUAL_TEXT = "Dapla manual navnestandard"
 DATASET_INFO_TEXT = "Datadoc - obligatorisk og anbefalte metadata"
 VARIABLE_INFO_TEXT = "Variabelforekomst"
+
 env_loaded = False
 
 

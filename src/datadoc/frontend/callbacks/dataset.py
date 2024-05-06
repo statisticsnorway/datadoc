@@ -14,9 +14,9 @@ from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.frontend.callbacks.utils import MISSING_METADATA_WARNING
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
-from datadoc.frontend.callbacks.utils import filter_obligatory_metadata_list
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
+from datadoc.frontend.callbacks.utils import get_metadata_field_display_name
 from datadoc.frontend.callbacks.utils import obligatory_metadata
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.callbacks.variables import (
@@ -295,7 +295,7 @@ def dataset_metadata_control() -> dbc.Alert | None:
     dataset = state.metadata.dataset
     for field in dataset:
         if not obligatory_metadata(field, OBLIGATORY_DATASET_METADATA_IDENTIFIERS):
-            field_name = filter_obligatory_metadata_list(
+            field_name = get_metadata_field_display_name(
                 field,
                 OBLIGATORY_DATASET_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
             )
