@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING
 
 from pydantic import ValidationError
 
-from datadoc import config
 from datadoc import state
-from datadoc.frontend.callbacks.utils import MISSING_METADATA_WARNING
+from datadoc.constants import CHECK_OBLIGATORY_METADATA_VARIABLES_MESSAGE
+from datadoc.constants import MISSING_METADATA_WARNING
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_metadata_field_display_name
@@ -42,10 +42,6 @@ if TYPE_CHECKING:
 
 
 logger = logging.getLogger(__name__)
-
-CHECK_OBLIGATORY_METADATA_VARIABLES_MESSAGE = (
-    "Følgende variabler mangler metadata som kan være obligatorisk for ditt datasett:"
-)
 
 
 def populate_variables_workspace(
@@ -357,6 +353,6 @@ def variables_metadata_control() -> dbc.Alert | None:
         AlertTypes.WARNING,
         MISSING_METADATA_WARNING,
         CHECK_OBLIGATORY_METADATA_VARIABLES_MESSAGE,
-        config.get_variable_metadata_info(),
+        None,
         missing_metadata,
     )

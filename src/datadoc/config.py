@@ -11,6 +11,7 @@ from typing import Literal
 from dotenv import dotenv_values
 from dotenv import load_dotenv
 
+from datadoc.constants import DAPLA_MANUAL_TEXT
 from datadoc.enums import DaplaRegion
 from datadoc.enums import DaplaService
 from datadoc.frontend.components.builders import build_link_object
@@ -24,10 +25,6 @@ DOT_ENV_FILE_PATH = Path(__file__).parent.joinpath(".env")
 JUPYTERHUB_USER = "JUPYTERHUB_USER"
 DAPLA_REGION = "DAPLA_REGION"
 DAPLA_SERVICE = "DAPLA_SERVICE"
-
-DAPLA_MANUAL_TEXT = "Dapla manual navnestandard"
-DATASET_INFO_TEXT = "Datadoc - obligatorisk og anbefalte metadata"
-VARIABLE_INFO_TEXT = "Variabelforekomst"
 
 env_loaded = False
 
@@ -167,19 +164,3 @@ def get_dapla_manual_naming_standard_url() -> dict | None:
     if link_href is None:
         return None
     return build_link_object(DAPLA_MANUAL_TEXT, link_href)
-
-
-def get_dataset_metadata_info() -> dict | None:
-    """Get the URL to metadata dataset info."""
-    link_href = _get_config_item("METADATA_DATASET_INFO")
-    if link_href is None:
-        return None
-    return build_link_object(DATASET_INFO_TEXT, link_href)
-
-
-def get_variable_metadata_info() -> dict | None:
-    """Get the URL to metadata variable info."""
-    link_href = _get_config_item("METADATA_VARIABLE_INFO")
-    if link_href is None:
-        return None
-    return build_link_object(VARIABLE_INFO_TEXT, link_href)

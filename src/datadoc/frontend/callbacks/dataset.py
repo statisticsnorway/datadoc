@@ -12,7 +12,8 @@ from datadoc import config
 from datadoc import state
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.datadoc_metadata import DataDocMetadata
-from datadoc.frontend.callbacks.utils import MISSING_METADATA_WARNING
+from datadoc.constants import CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE
+from datadoc.constants import MISSING_METADATA_WARNING
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
@@ -53,8 +54,6 @@ if TYPE_CHECKING:
     from datadoc_model.model import LanguageStringType
 
 logger = logging.getLogger(__name__)
-
-CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE = "Følgende datasett felt mangler metadata som kan være obligatorisk for ditt datasett:"
 
 
 def open_file(file_path: str | None = None) -> DataDocMetadata:
@@ -306,6 +305,6 @@ def dataset_metadata_control() -> dbc.Alert | None:
         AlertTypes.WARNING,
         MISSING_METADATA_WARNING,
         CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE,
-        config.get_dataset_metadata_info(),
+        None,
         missing_metadata,
     )
