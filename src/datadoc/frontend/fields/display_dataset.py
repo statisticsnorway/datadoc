@@ -103,14 +103,14 @@ DISPLAY_DATASET: dict[
     DatasetIdentifiers.SHORT_NAME: MetadataInputField(
         identifier=DatasetIdentifiers.SHORT_NAME.value,
         display_name="Kortnavn",
-        description="Datasettes tekniske kortnavn (uten versjonsnummer og filendelse).",
+        description="Datasettets tekniske kortnavn (uten versjonsnummer og filendelse).",
         obligatory=True,
         editable=False,
     ),
     DatasetIdentifiers.ASSESSMENT: MetadataDropdownField(
         identifier=DatasetIdentifiers.ASSESSMENT.value,
         display_name="Verdivurdering",
-        description="Verdivurderingen utledes fra datatilstanden og kan ha verdiene sensitiv (kildedata), skjermet (inndata, klargjorte data og statistikk) og åpen (utdata).",
+        description="Verdivurderingen utledes fra datatilstanden og kan ha verdiene: sensitiv (kildedata), skjermet (inndata, klargjorte data og statistikk) og åpen (utdata).",
         obligatory=True,
         options_getter=functools.partial(
             get_enum_options,
@@ -120,7 +120,7 @@ DISPLAY_DATASET: dict[
     DatasetIdentifiers.DATASET_STATUS: MetadataDropdownField(
         identifier=DatasetIdentifiers.DATASET_STATUS.value,
         display_name="Status",
-        description="Oppgi om metadataene er under arbeid (utkast),  kan deles internt (intern), kan deles eksternt(ekstern) eller er avsluttet/erstattet (utgått). Det kan være restriksjoner knyttet til deling både internt og eksternt.",
+        description="Oppgi om metadataene er under arbeid (utkast), kan deles internt (intern), kan deles eksternt(ekstern) eller er avsluttet/erstattet (utgått). Det kan være restriksjoner knyttet til deling både internt og eksternt.",
         options_getter=functools.partial(
             get_enum_options,
             enums.DataSetStatus,
@@ -189,7 +189,7 @@ DISPLAY_DATASET: dict[
     DatasetIdentifiers.TEMPORALITY_TYPE: MetadataDropdownField(
         identifier=DatasetIdentifiers.TEMPORALITY_TYPE.value,
         display_name="Temporalitetstype",
-        description="Temporalitetstypen sier noe om tidsdimensjonen i datasettet. Fast er data med verdi som ikke endres over tid (f.eks. fødselsdato), tverrsnitt er data som er målt på et gitt tidspunkt, akkumulert er data som  er samlet over en viss tidsperiode (f.eks. inntekt gjennom et år) og  hendelse/forløp registrerer tidspunkt og tidsperiode for ulike hendelser /tilstander, f.eks. (skifte av) bosted.",
+        description="Temporalitetstypen sier noe om tidsdimensjonen i datasettet. Fast er data med verdi som ikke endres over tid (f.eks. fødselsdato), tverrsnitt er data som er målt på et gitt tidspunkt, akkumulert er data som er samlet over en viss tidsperiode (f.eks. inntekt gjennom et år) og hendelse/forløp registrerer tidspunkt og tidsperiode for ulike hendelser /tilstander, f.eks. (skifte av) bosted.",
         options_getter=functools.partial(
             get_enum_options,
             enums.TemporalityTypeType,
@@ -206,7 +206,7 @@ DISPLAY_DATASET: dict[
     DatasetIdentifiers.KEYWORD: MetadataInputField(
         identifier=DatasetIdentifiers.KEYWORD.value,
         display_name="Nøkkelord",
-        description="Her kan en oppgi nøkkelord som beskriver datasettet, og kan brukes i søk",
+        description="Her kan en oppgi nøkkelord som beskriver datasettet, og som kan brukes i søk",
         value_getter=get_comma_separated_string,
     ),
     DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION: MetadataMultiLanguageField(
@@ -248,7 +248,7 @@ DISPLAY_DATASET: dict[
     DatasetIdentifiers.METADATA_CREATED_BY: MetadataInputField(
         identifier=DatasetIdentifiers.METADATA_CREATED_BY.value,
         display_name="Opprettet av",
-        description=" Navnet på personen som opprettet metadatanes",
+        description=" Navnet på personen som opprettet metadataene",
         obligatory=True,
         editable=False,
     ),
@@ -294,7 +294,7 @@ DISPLAY_DATASET: dict[
     DatasetIdentifiers.USE_RESTRICTION_DATE: MetadataPeriodField(
         identifier=DatasetIdentifiers.USE_RESTRICTION_DATE.value,
         display_name="Bruksrestriksjonsdato",
-        description='Oppgi ev. "tiltaksdato" for bruksrestriksjoner, f.eks. frist for sletting/anonymisering. Noen bruksrestriksjoner vil ikke ha en slik dato, f.eks.  vil en behandlingsbegrensning normalt være permanent/tidsuavhengig.',
+        description='Oppgi ev. "tiltaksdato" for bruksrestriksjoner, f.eks. frist for sletting/anonymisering. Noen bruksrestriksjoner vil ikke ha en slik dato, f.eks. vil en behandlingsbegrensning normalt være permanent/tidsuavhengig.',
     ),
     DatasetIdentifiers.CONTAINS_PERSONAL_DATA: MetadataCheckboxField(
         identifier=DatasetIdentifiers.CONTAINS_PERSONAL_DATA.value,

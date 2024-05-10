@@ -115,7 +115,7 @@ DISPLAY_VARIABLES: dict[
     VariableIdentifiers.POPULATION_DESCRIPTION: MetadataMultiLanguageField(
         identifier=VariableIdentifiers.POPULATION_DESCRIPTION.value,
         display_name="Populasjonen",
-        description="Populasjonen settes på datasettnivå, men kan spesifiseres eller overskrives ( hvis variabelen har en annen populasjon enn de fleste andre variablene i datasettet) her.",
+        description="Populasjonen settes på datasettnivå, men kan spesifiseres eller overskrives (hvis variabelen har en annen populasjon enn de fleste andre variablene i datasettet) her.",
         id_type=VARIABLES_METADATA_MULTILANGUAGE_INPUT,
     ),
     VariableIdentifiers.COMMENT: MetadataMultiLanguageField(
