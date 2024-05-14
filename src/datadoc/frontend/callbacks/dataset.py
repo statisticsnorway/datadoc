@@ -135,7 +135,6 @@ def process_keyword(value: str) -> list[str]:
     return [item.strip() for item in value.split(",")]
 
 
-# legge inn population update her?
 def process_special_cases(
     value: MetadataInputTypes | LanguageStringType,
     metadata_identifier: str,
