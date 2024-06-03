@@ -1,4 +1,7 @@
 .ssb-header-wrapper.datadoc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     border-bottom: 1px solid #C3DCDC;
     padding: 0 4rem;
     height: 80px;
@@ -10,4 +13,8 @@
     color: #274247;
     padding: 0;
     margin-left: 1rem;
+}
+
+.ssb-link.with-icon .link-text{
+    font-size: 18px;
 }
