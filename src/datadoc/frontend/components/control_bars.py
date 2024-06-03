@@ -9,7 +9,13 @@ from datadoc.frontend.callbacks.utils import get_dataset_path
 from datadoc.utils import get_app_version
 
 header = ssb.Header(
-    [ssb.Title("Datadoc", size=1, id="main-title", className="main-title")],
+    [
+        ssb.Title("Datadoc", size=1, id="main-title", className="main-title"),
+        ssb.Link(
+            "Dokumentasjon",
+            href="https://manual.dapla.ssb.no/statistikkere/datadoc.html",
+        ),
+    ],
     className="datadoc-header",
 )
 
