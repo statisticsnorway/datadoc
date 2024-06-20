@@ -41,8 +41,6 @@ cloudpathlib = { extras = ["gs"], version = ">=0.17.0" }
 pyjwt = ">=2.8.0"
 ssb-klass-python = ">=0.0.9"
 ssb-dash-components = ">=0.8.1"
-# Workaround for outdated Pyarrow version in dapla-toolbelt ref: https://github.com/statisticsnorway/dapla-toolbelt/pull/109
-numpy = "<2"
 
 [tool.poetry.group.dev.dependencies]
 mypy = ">=0.950"
