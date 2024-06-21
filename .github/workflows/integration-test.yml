@@ -5,7 +5,7 @@ on:
     paths:
       - "src/datadoc/**"
       - "poetry.lock"
-      - ".nais/staging-pr.yaml"
+      - ".nais/test-pr.yaml"
       - ".github/workflows/integration-test.yml"
 
 env:
@@ -82,8 +82,8 @@ jobs:
       - uses: nais/deploy/actions/deploy@v2
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: staging
-          RESOURCE: .nais/staging-pr.yaml
+          CLUSTER: test
+          RESOURCE: .nais/test-pr.yaml
           VAR: image=${{ needs.docker-build.outputs.image-tag }},pr-number=${{github.event.number}}
           DEPLOY_SERVER: deploy.ssb.cloud.nais.io:443
 
@@ -102,6 +102,6 @@ jobs:
         with:
           application-id: ${{ secrets.DATADOC_MABL_APPLICATION_ID }}
           environment-id: ${{ secrets.DATADOC_MABL_ENVIRONMENT_ID }}
-          uri: https://datadoc-pr-${{github.event.number}}.external.staging.ssb.cloud.nais.io
+          uri: https://datadoc-pr-${{github.event.number}}.external.test.ssb.cloud.nais.io
           mabl-branch: ${{ github.head_ref }}
           plan-labels: Datadoc

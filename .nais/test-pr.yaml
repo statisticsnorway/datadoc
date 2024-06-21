@@ -1,4 +1,4 @@
-# Deploy to staging environment for an individual PR
+# Deploy to test environment for an individual PR
 
 apiVersion: nais.io/v1alpha1
 kind: Application
@@ -34,7 +34,7 @@ spec:
     enabled: false
 
   ingresses:
-    - https://datadoc-pr-{{ pr-number }}.external.staging.ssb.cloud.nais.io
+    - https://datadoc-pr-{{ pr-number }}.external.test.ssb.cloud.nais.io
 
   filesFrom:
     - configmap: integration-test-dataset
