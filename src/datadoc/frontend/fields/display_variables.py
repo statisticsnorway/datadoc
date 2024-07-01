@@ -98,7 +98,7 @@ DISPLAY_VARIABLES: dict[
         identifier=VariableIdentifiers.DEFINITION_URI.value,
         display_name="Definition URI",
         description="Oppgi lenke (URI) til tilhørende variabel i VarDef.",
-        obligatory=True,
+        obligatory=False,
     ),
     VariableIdentifiers.DIRECT_PERSON_IDENTIFYING: MetadataCheckboxField(
         identifier=VariableIdentifiers.DIRECT_PERSON_IDENTIFYING.value,
