@@ -16,13 +16,12 @@ from datadoc.backend.model_backwards_compatibility import (
     is_metadata_in_container_structure,
 )
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
+from datadoc.backend.utils import DEFAULT_SPATIAL_COVERAGE_DESCRIPTION
 from datadoc.backend.utils import calculate_percentage
 from datadoc.backend.utils import normalize_path
 from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
 from datadoc.enums import DataSetStatus
-from datadoc.enums import LanguageStringType
-from datadoc.enums import LanguageStringTypeItem
 from datadoc.frontend.fields.display_dataset import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
 )
@@ -173,7 +172,7 @@ class DataDocMetadata:
             file_path=str(self.dataset_path),
             metadata_created_by=user_info.get_user_info_for_current_platform().short_email,
             subject_field=subject_field,
-            spatial_coverage_description=self.set_default_spatial_coverage_description(),
+            spatial_coverage_description=DEFAULT_SPATIAL_COVERAGE_DESCRIPTION,
         )
         self.variables = self.ds_schema.get_fields()
 
@@ -250,22 +249,3 @@ class DataDocMetadata:
                 ],
             )
         return calculate_percentage(num_set_fields, num_all_fields)
-
-    def set_default_spatial_coverage_description(self) -> LanguageStringType:
-        """Returns the default value 'Norge'."""
-        return LanguageStringType(
-            [
-                LanguageStringTypeItem(
-                    languageCode="nb",
-                    languageText="Norge",
-                ),
-                LanguageStringTypeItem(
-                    languageCode="nn",
-                    languageText="Noreg",
-                ),
-                LanguageStringTypeItem(
-                    languageCode="en",
-                    languageText="Norway",
-                ),
-            ],
-        )
