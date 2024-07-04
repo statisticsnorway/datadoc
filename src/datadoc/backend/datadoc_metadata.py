@@ -69,27 +69,27 @@ class DataDocMetadata:
             self.metadata_document = self.dataset_path.parent / (
                 self.dataset_path.stem + METADATA_DOCUMENT_FILE_SUFFIX
             )
-        self.extract_metadata_from_files()
+        self._extract_metadata_from_files()
 
     def _set_variable_uuid(self) -> None:
         for v in self.variables:
             if v.id is None:
                 v.id = uuid.uuid4()
 
-    def extract_metadata_from_files(self) -> None:
+    def _extract_metadata_from_files(self) -> None:
         """Read metadata from an existing metadata document.
 
         If no metadata document exists, create one from scratch by extracting metadata
         from the dataset file.
         """
         if self.metadata_document is not None and self.metadata_document.exists():
-            self.extract_metadata_from_existing_document(self.metadata_document)
+            self._extract_metadata_from_existing_document(self.metadata_document)
         if (
             self.dataset_path is not None
             and self.dataset == model.Dataset()
             and len(self.variables) == 0
         ):
-            self.extract_metadata_from_dataset(self.dataset_path)
+            self._extract_metadata_from_dataset(self.dataset_path)
             self.dataset.id = uuid.uuid4()
             # Set default values for variables where appropriate
             v: model.Variable
@@ -105,7 +105,7 @@ class DataDocMetadata:
             self.dataset.contains_personal_data = False
         self.variables_lookup = {v.short_name: v for v in self.variables}
 
-    def extract_metadata_from_existing_document(
+    def _extract_metadata_from_existing_document(
         self,
         document: pathlib.Path | CloudPath,
     ) -> None:
@@ -144,7 +144,7 @@ class DataDocMetadata:
                 exc_info=True,
             )
 
-    def extract_metadata_from_dataset(
+    def _extract_metadata_from_dataset(
         self,
         dataset: pathlib.Path | CloudPath,
     ) -> None:
