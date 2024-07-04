@@ -1,0 +1,36 @@
+import os
+import pathlib
+
+import pytest
+from cloudpathlib.local import LocalGSClient
+from cloudpathlib.local import LocalGSPath
+
+from datadoc.backend.utils import normalize_path
+from tests.utils import TEST_BUCKET_PARQUET_FILEPATH
+from tests.utils import TEST_PARQUET_FILEPATH
+
+BACKEND_UTILS_MODULE = "datadoc.backend.utils"
+
+
+@pytest.mark.parametrize(
+    ("dataset_path", "expected_type"),
+    [
+        (TEST_BUCKET_PARQUET_FILEPATH, LocalGSPath),
+        (str(TEST_PARQUET_FILEPATH), pathlib.Path),
+    ],
+)
+def test_normalize_path(
+    dataset_path: str,
+    expected_type: type[os.PathLike],
+    mocker,
+):
+    mocker.patch(f"{BACKEND_UTILS_MODULE}.AuthClient", autospec=True)
+    mocker.patch(f"{BACKEND_UTILS_MODULE}.GSClient", LocalGSClient)
+    mocker.patch(
+        f"{BACKEND_UTILS_MODULE}.GSPath",
+        LocalGSPath,
+    )
+    file = normalize_path(  # for testing purposes
+        dataset_path,
+    )
+    assert isinstance(file, expected_type)

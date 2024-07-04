@@ -13,8 +13,6 @@ from uuid import UUID
 
 import arrow
 import pytest
-from cloudpathlib.local import LocalGSClient
-from cloudpathlib.local import LocalGSPath
 from datadoc_model.model import DatadocMetadata
 from datadoc_model.model import Dataset
 from datadoc_model.model import Variable
@@ -28,7 +26,6 @@ from datadoc.enums import DataSetState
 from datadoc.enums import DataSetStatus
 from datadoc.enums import DataType
 from datadoc.enums import VariableRole
-from tests.utils import TEST_BUCKET_PARQUET_FILEPATH
 from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
 from tests.utils import TEST_PARQUET_FILEPATH
@@ -36,7 +33,6 @@ from tests.utils import TEST_PROCESSED_DATA_POPULATION_DIRECTORY
 from tests.utils import TEST_RESOURCES_DIRECTORY
 
 if TYPE_CHECKING:
-    import os
     from collections.abc import Generator
     from datetime import datetime
 
@@ -244,30 +240,6 @@ def test_period_metadata_fields_saved(
     )
     assert metadata.dataset.contains_data_from == expected_from
     assert metadata.dataset.contains_data_until == expected_until
-
-
-@pytest.mark.parametrize(
-    ("dataset_path", "expected_type"),
-    [
-        (TEST_BUCKET_PARQUET_FILEPATH, LocalGSPath),
-        (str(TEST_PARQUET_FILEPATH), pathlib.Path),
-    ],
-)
-def test_open_file(
-    dataset_path: str,
-    expected_type: type[os.PathLike],
-    mocker,
-):
-    mocker.patch(f"{DATADOC_METADATA_MODULE}.AuthClient", autospec=True)
-    mocker.patch(f"{DATADOC_METADATA_MODULE}.GSClient", LocalGSClient)
-    mocker.patch(
-        f"{DATADOC_METADATA_MODULE}.GSPath",
-        LocalGSPath,
-    )
-    file = DataDocMetadata._open_path(  # noqa: SLF001 for testing purposes
-        dataset_path,
-    )
-    assert isinstance(file, expected_type)
 
 
 @pytest.mark.parametrize(

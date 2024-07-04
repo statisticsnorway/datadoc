@@ -4,14 +4,9 @@ from __future__ import annotations
 
 import json
 import logging
-import pathlib
 import uuid
 from typing import TYPE_CHECKING
 
-from cloudpathlib import CloudPath
-from cloudpathlib import GSClient
-from cloudpathlib import GSPath
-from dapla import AuthClient
 from datadoc_model import model
 
 from datadoc.backend import user_info
@@ -21,6 +16,7 @@ from datadoc.backend.model_backwards_compatibility import (
     is_metadata_in_container_structure,
 )
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
+from datadoc.backend.utils import normalize_path
 from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
 from datadoc.enums import DataSetStatus
@@ -37,7 +33,10 @@ from datadoc.utils import calculate_percentage
 from datadoc.utils import get_timestamp_now
 
 if TYPE_CHECKING:
+    import pathlib
     from datetime import datetime
+
+    from cloudpathlib import CloudPath
 
     from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 
@@ -64,26 +63,15 @@ class DataDocMetadata:
         if metadata_document_path:
             # In this case the user has specified an independent metadata document for editing
             # without a dataset.
-            self.metadata_document = self._open_path(metadata_document_path)
+            self.metadata_document = normalize_path(metadata_document_path)
         elif dataset_path:
-            self.dataset_path = self._open_path(dataset_path)
+            self.dataset_path = normalize_path(dataset_path)
             # Build the metadata document path based on the dataset path
             # Example: /path/to/dataset.parquet -> /path/to/dataset__DOC.json
             self.metadata_document = self.dataset_path.parent / (
                 self.dataset_path.stem + METADATA_DOCUMENT_FILE_SUFFIX
             )
         self.extract_metadata_from_files()
-
-    @staticmethod
-    def _open_path(path: str) -> pathlib.Path | CloudPath:
-        """Open a given path regardless of whether it is local or cloud.
-
-        The returned path may be treated just as if it's a pathlib.Path.
-        """
-        if path.startswith(GSPath.cloud_prefix):
-            client = GSClient(credentials=AuthClient.fetch_google_credentials())
-            return GSPath(path, client=client)
-        return pathlib.Path(path)
 
     def _set_variable_uuid(self) -> None:
         for v in self.variables:
