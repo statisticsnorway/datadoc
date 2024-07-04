@@ -4,14 +4,9 @@ from __future__ import annotations
 
 import json
 import logging
-import pathlib
 import uuid
 from typing import TYPE_CHECKING
 
-from cloudpathlib import CloudPath
-from cloudpathlib import GSClient
-from cloudpathlib import GSPath
-from dapla import AuthClient
 from datadoc_model import model
 
 from datadoc.backend import user_info
@@ -21,11 +16,11 @@ from datadoc.backend.model_backwards_compatibility import (
     is_metadata_in_container_structure,
 )
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
-from datadoc.enums import Assessment
-from datadoc.enums import DataSetState
+from datadoc.backend.utils import DEFAULT_SPATIAL_COVERAGE_DESCRIPTION
+from datadoc.backend.utils import calculate_percentage
+from datadoc.backend.utils import derive_assessment_from_state
+from datadoc.backend.utils import normalize_path
 from datadoc.enums import DataSetStatus
-from datadoc.enums import LanguageStringType
-from datadoc.enums import LanguageStringTypeItem
 from datadoc.frontend.fields.display_dataset import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
 )
@@ -33,11 +28,13 @@ from datadoc.frontend.fields.display_variables import (
     OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
 )
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
-from datadoc.utils import calculate_percentage
 from datadoc.utils import get_timestamp_now
 
 if TYPE_CHECKING:
+    import pathlib
     from datetime import datetime
+
+    from cloudpathlib import CloudPath
 
     from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 
@@ -64,46 +61,35 @@ class DataDocMetadata:
         if metadata_document_path:
             # In this case the user has specified an independent metadata document for editing
             # without a dataset.
-            self.metadata_document = self._open_path(metadata_document_path)
+            self.metadata_document = normalize_path(metadata_document_path)
         elif dataset_path:
-            self.dataset_path = self._open_path(dataset_path)
+            self.dataset_path = normalize_path(dataset_path)
             # Build the metadata document path based on the dataset path
             # Example: /path/to/dataset.parquet -> /path/to/dataset__DOC.json
             self.metadata_document = self.dataset_path.parent / (
                 self.dataset_path.stem + METADATA_DOCUMENT_FILE_SUFFIX
             )
-        self.extract_metadata_from_files()
-
-    @staticmethod
-    def _open_path(path: str) -> pathlib.Path | CloudPath:
-        """Open a given path regardless of whether it is local or cloud.
-
-        The returned path may be treated just as if it's a pathlib.Path.
-        """
-        if path.startswith(GSPath.cloud_prefix):
-            client = GSClient(credentials=AuthClient.fetch_google_credentials())
-            return GSPath(path, client=client)
-        return pathlib.Path(path)
+        self._extract_metadata_from_files()
 
     def _set_variable_uuid(self) -> None:
         for v in self.variables:
             if v.id is None:
                 v.id = uuid.uuid4()
 
-    def extract_metadata_from_files(self) -> None:
+    def _extract_metadata_from_files(self) -> None:
         """Read metadata from an existing metadata document.
 
         If no metadata document exists, create one from scratch by extracting metadata
         from the dataset file.
         """
         if self.metadata_document is not None and self.metadata_document.exists():
-            self.extract_metadata_from_existing_document(self.metadata_document)
+            self._extract_metadata_from_existing_document(self.metadata_document)
         if (
             self.dataset_path is not None
             and self.dataset == model.Dataset()
             and len(self.variables) == 0
         ):
-            self.extract_metadata_from_dataset(self.dataset_path)
+            self._extract_metadata_from_dataset(self.dataset_path)
             self.dataset.id = uuid.uuid4()
             # Set default values for variables where appropriate
             v: model.Variable
@@ -119,7 +105,7 @@ class DataDocMetadata:
             self.dataset.contains_personal_data = False
         self.variables_lookup = {v.short_name: v for v in self.variables}
 
-    def extract_metadata_from_existing_document(
+    def _extract_metadata_from_existing_document(
         self,
         document: pathlib.Path | CloudPath,
     ) -> None:
@@ -158,7 +144,7 @@ class DataDocMetadata:
                 exc_info=True,
             )
 
-    def extract_metadata_from_dataset(
+    def _extract_metadata_from_dataset(
         self,
         dataset: pathlib.Path | CloudPath,
     ) -> None:
@@ -176,8 +162,12 @@ class DataDocMetadata:
             short_name=dapla_dataset_path_info.dataset_short_name,
             dataset_state=dapla_dataset_path_info.dataset_state,
             dataset_status=DataSetStatus.DRAFT,
-            assessment=self.get_assessment_by_state(
-                dapla_dataset_path_info.dataset_state,
+            assessment=(
+                derive_assessment_from_state(
+                    dapla_dataset_path_info.dataset_state,
+                )
+                if dapla_dataset_path_info.dataset_state is not None
+                else None
             ),
             version=dapla_dataset_path_info.dataset_version,
             contains_data_from=dapla_dataset_path_info.contains_data_from,
@@ -185,26 +175,9 @@ class DataDocMetadata:
             file_path=str(self.dataset_path),
             metadata_created_by=user_info.get_user_info_for_current_platform().short_email,
             subject_field=subject_field,
-            spatial_coverage_description=self.set_default_spatial_coverage_description(),
+            spatial_coverage_description=DEFAULT_SPATIAL_COVERAGE_DESCRIPTION,
         )
         self.variables = self.ds_schema.get_fields()
-
-    @staticmethod
-    def get_assessment_by_state(state: DataSetState | None) -> Assessment | None:
-        """Find assessment derived by dataset state."""
-        if state is None:
-            return None
-        match (state):
-            case (
-                DataSetState.INPUT_DATA
-                | DataSetState.PROCESSED_DATA
-                | DataSetState.STATISTICS
-            ):
-                return Assessment.PROTECTED
-            case DataSetState.OUTPUT_DATA:
-                return Assessment.OPEN
-            case _:
-                return None
 
     def write_metadata_document(self) -> None:
         """Write all currently known metadata to file."""
@@ -262,22 +235,3 @@ class DataDocMetadata:
                 ],
             )
         return calculate_percentage(num_set_fields, num_all_fields)
-
-    def set_default_spatial_coverage_description(self) -> LanguageStringType:
-        """Returns the default value 'Norge'."""
-        return LanguageStringType(
-            [
-                LanguageStringTypeItem(
-                    languageCode="nb",
-                    languageText="Norge",
-                ),
-                LanguageStringTypeItem(
-                    languageCode="nn",
-                    languageText="Noreg",
-                ),
-                LanguageStringTypeItem(
-                    languageCode="en",
-                    languageText="Norway",
-                ),
-            ],
-        )
