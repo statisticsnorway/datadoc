@@ -21,3 +21,8 @@ def normalize_path(path: str) -> pathlib.Path | CloudPath:
         client = GSClient(credentials=AuthClient.fetch_google_credentials())
         return GSPath(path, client=client)
     return pathlib.Path(path)
+
+
+def calculate_percentage(completed: int, total: int) -> int:
+    """Calculate percentage as a rounded integer."""
+    return round((completed / total) * 100)

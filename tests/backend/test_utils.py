@@ -5,6 +5,7 @@ import pytest
 from cloudpathlib.local import LocalGSClient
 from cloudpathlib.local import LocalGSPath
 
+from datadoc.backend.utils import calculate_percentage
 from datadoc.backend.utils import normalize_path
 from tests.utils import TEST_BUCKET_PARQUET_FILEPATH
 from tests.utils import TEST_PARQUET_FILEPATH
@@ -34,3 +35,7 @@ def test_normalize_path(
         dataset_path,
     )
     assert isinstance(file, expected_type)
+
+
+def test_calculate_percentage():
+    assert calculate_percentage(1, 3) == 33  # noqa: PLR2004

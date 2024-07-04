@@ -16,6 +16,7 @@ from datadoc.backend.model_backwards_compatibility import (
     is_metadata_in_container_structure,
 )
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
+from datadoc.backend.utils import calculate_percentage
 from datadoc.backend.utils import normalize_path
 from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
@@ -29,7 +30,6 @@ from datadoc.frontend.fields.display_variables import (
     OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
 )
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
-from datadoc.utils import calculate_percentage
 from datadoc.utils import get_timestamp_now
 
 if TYPE_CHECKING:

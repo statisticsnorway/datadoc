@@ -20,11 +20,6 @@ def running_in_notebook() -> bool:
         return False
 
 
-def calculate_percentage(completed: int, total: int) -> int:
-    """Calculate percentage as a rounded integer."""
-    return round((completed / total) * 100)
-
-
 def pick_random_port() -> int:
     """Pick a random free port number.
 
