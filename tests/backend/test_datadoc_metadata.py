@@ -277,7 +277,7 @@ def test_dataset_status_default_value(
     [
         (
             "kildedata",
-            None,
+            Assessment.SENSITIVE.value,
         ),
         (
             "inndata",

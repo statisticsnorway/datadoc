@@ -7,6 +7,8 @@ from cloudpathlib import GSClient
 from cloudpathlib import GSPath
 from dapla import AuthClient
 
+from datadoc.enums import Assessment
+from datadoc.enums import DataSetState
 from datadoc.enums import LanguageStringType
 from datadoc.enums import LanguageStringTypeItem
 
@@ -46,3 +48,25 @@ def normalize_path(path: str) -> pathlib.Path | CloudPath:
 def calculate_percentage(completed: int, total: int) -> int:
     """Calculate percentage as a rounded integer."""
     return round((completed / total) * 100)
+
+
+def derive_assessment_from_state(state: DataSetState) -> Assessment:
+    """Derive assessment from dataset state.
+
+    Args:
+        state (DataSetState): The state of the dataset.
+
+    Returns:
+        Assessment: The derived assessment of the dataset.
+    """
+    match (state):
+        case (
+            DataSetState.INPUT_DATA
+            | DataSetState.PROCESSED_DATA
+            | DataSetState.STATISTICS
+        ):
+            return Assessment.PROTECTED
+        case DataSetState.OUTPUT_DATA:
+            return Assessment.OPEN
+        case DataSetState.SOURCE_DATA:
+            return Assessment.SENSITIVE

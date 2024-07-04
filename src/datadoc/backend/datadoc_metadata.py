@@ -18,9 +18,8 @@ from datadoc.backend.model_backwards_compatibility import (
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
 from datadoc.backend.utils import DEFAULT_SPATIAL_COVERAGE_DESCRIPTION
 from datadoc.backend.utils import calculate_percentage
+from datadoc.backend.utils import derive_assessment_from_state
 from datadoc.backend.utils import normalize_path
-from datadoc.enums import Assessment
-from datadoc.enums import DataSetState
 from datadoc.enums import DataSetStatus
 from datadoc.frontend.fields.display_dataset import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
@@ -163,8 +162,12 @@ class DataDocMetadata:
             short_name=dapla_dataset_path_info.dataset_short_name,
             dataset_state=dapla_dataset_path_info.dataset_state,
             dataset_status=DataSetStatus.DRAFT,
-            assessment=self.get_assessment_by_state(
-                dapla_dataset_path_info.dataset_state,
+            assessment=(
+                derive_assessment_from_state(
+                    dapla_dataset_path_info.dataset_state,
+                )
+                if dapla_dataset_path_info.dataset_state is not None
+                else None
             ),
             version=dapla_dataset_path_info.dataset_version,
             contains_data_from=dapla_dataset_path_info.contains_data_from,
@@ -175,23 +178,6 @@ class DataDocMetadata:
             spatial_coverage_description=DEFAULT_SPATIAL_COVERAGE_DESCRIPTION,
         )
         self.variables = self.ds_schema.get_fields()
-
-    @staticmethod
-    def get_assessment_by_state(state: DataSetState | None) -> Assessment | None:
-        """Find assessment derived by dataset state."""
-        if state is None:
-            return None
-        match (state):
-            case (
-                DataSetState.INPUT_DATA
-                | DataSetState.PROCESSED_DATA
-                | DataSetState.STATISTICS
-            ):
-                return Assessment.PROTECTED
-            case DataSetState.OUTPUT_DATA:
-                return Assessment.OPEN
-            case _:
-                return None
 
     def write_metadata_document(self) -> None:
         """Write all currently known metadata to file."""
