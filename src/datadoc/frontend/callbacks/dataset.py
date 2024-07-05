@@ -10,8 +10,8 @@ from pydantic import ValidationError
 
 from datadoc import config
 from datadoc import state
+from datadoc.backend.core import Datadoc
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
-from datadoc.backend.datadoc_metadata import DataDocMetadata
 from datadoc.constants import CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE
 from datadoc.constants import MISSING_METADATA_WARNING
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
@@ -56,21 +56,21 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def open_file(file_path: str | None = None) -> DataDocMetadata:
+def open_file(file_path: str | None = None) -> Datadoc:
     """Load the given dataset into a DataDocMetadata instance."""
     if file_path and file_path.endswith(METADATA_DOCUMENT_FILE_SUFFIX):
         logger.info("Opening existing metadata document %s", file_path)
-        return DataDocMetadata(
-            state.statistic_subject_mapping,
+        return Datadoc(
             metadata_document_path=file_path.strip(),
+            statistic_subject_mapping=state.statistic_subject_mapping,
         )
 
     dataset = file_path or get_dataset_path()
     if dataset:
         logger.info("Opening dataset %s", dataset)
-    return DataDocMetadata(
-        state.statistic_subject_mapping,
+    return Datadoc(
         dataset_path=str(dataset).strip() if dataset else None,
+        statistic_subject_mapping=state.statistic_subject_mapping,
     )
 
 

@@ -21,7 +21,7 @@ from datadoc_model import model
 
 from datadoc import state
 from datadoc.backend.code_list import CodeList
-from datadoc.backend.datadoc_metadata import DataDocMetadata
+from datadoc.backend.core import Datadoc
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.backend.user_info import TestUserInfo
 from tests.backend.test_statistic_subject_mapping import (
@@ -59,7 +59,7 @@ def dummy_timestamp() -> datetime:
 @pytest.fixture()
 def _mock_timestamp(mocker: MockerFixture, dummy_timestamp: datetime) -> None:
     mocker.patch(
-        "datadoc.backend.datadoc_metadata.get_timestamp_now",
+        "datadoc.backend.core.get_timestamp_now",
         return_value=dummy_timestamp,
     )
 
@@ -78,11 +78,11 @@ def metadata(
     _mock_user_info: None,
     subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
     tmp_path: Path,
-) -> DataDocMetadata:
+) -> Datadoc:
     shutil.copy(TEST_PARQUET_FILEPATH, tmp_path / TEST_PARQUET_FILE_NAME)
-    return DataDocMetadata(
-        subject_mapping_fake_statistical_structure,
+    return Datadoc(
         str(tmp_path / TEST_PARQUET_FILE_NAME),
+        statistic_subject_mapping=subject_mapping_fake_statistical_structure,
     )
 
 

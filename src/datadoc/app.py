@@ -17,7 +17,7 @@ from flask_healthz import healthz
 from datadoc import config
 from datadoc import state
 from datadoc.backend.code_list import CodeList
-from datadoc.backend.datadoc_metadata import DataDocMetadata
+from datadoc.backend.core import Datadoc
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.frontend.callbacks.register_callbacks import register_callbacks
 from datadoc.frontend.components.control_bars import build_controls_bar
@@ -91,9 +91,9 @@ def get_app(
     """Centralize all the ugliness around initializing the app."""
     logger.info("Datadoc version v%s", get_app_version())
     collect_data_from_external_sources(executor)
-    state.metadata = DataDocMetadata(
-        state.statistic_subject_mapping,
+    state.metadata = Datadoc(
         dataset_path=dataset_path,
+        statistic_subject_mapping=state.statistic_subject_mapping,
     )
 
     # The service prefix must be set to run correctly on Dapla Jupyter
