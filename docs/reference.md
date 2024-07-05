@@ -57,7 +57,7 @@ datadoc.backend package
 datadoc.backend.datadoc\_metadata module
 ----------------------------------------
 
-.. automodule:: datadoc.backend.datadoc_metadata
+.. automodule:: datadoc.backend.core
    :members:
    :undoc-members:
    :show-inheritance:

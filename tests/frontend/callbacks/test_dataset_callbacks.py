@@ -30,7 +30,7 @@ from datadoc.frontend.text import INVALID_DATE_ORDER
 from datadoc.frontend.text import INVALID_VALUE
 
 if TYPE_CHECKING:
-    from datadoc.backend.datadoc_metadata import DataDocMetadata
+    from datadoc.backend.core import Datadoc
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 DATASET_CALLBACKS_MODULE = "datadoc.frontend.callbacks.dataset"
@@ -175,7 +175,7 @@ def test_accept_dataset_metadata_input_valid_data(
     metadata_identifier: DatasetIdentifiers,
     provided_value: MetadataInputTypes,
     expected_model_value: str,
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     state.metadata = metadata
     output = accept_dataset_metadata_input(provided_value, metadata_identifier, "nb")
@@ -187,7 +187,7 @@ def test_accept_dataset_metadata_input_valid_data(
     )
 
 
-def test_accept_dataset_metadata_input_incorrect_data_type(metadata: DataDocMetadata):
+def test_accept_dataset_metadata_input_incorrect_data_type(metadata: Datadoc):
     state.metadata = metadata
     output = accept_dataset_metadata_input(
         3.1415,
@@ -224,7 +224,7 @@ later = str(datetime.date(2024, 1, 1))
     ],
 )
 def test_accept_dataset_metadata_input_date_validation(
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
     start_date: str | None,
     end_date: str | None,
     expect_error: bool,  # noqa: FBT001
@@ -345,7 +345,7 @@ def test_process_special_cases_keyword():
 @patch(f"{DATASET_CALLBACKS_MODULE}.find_existing_language_string")
 def test_process_special_cases_language_string(
     mock_find: Mock,
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     state.metadata = metadata
     language = "en"
@@ -376,14 +376,14 @@ def test_process_special_cases_no_change():
     assert process_special_cases(value, identifier) == value
 
 
-def test_dataset_metadata_control_return_alert(metadata: DataDocMetadata):
+def test_dataset_metadata_control_return_alert(metadata: Datadoc):
     """Return alert when obligatory metadata is missing."""
     state.metadata = metadata
     result = dataset_metadata_control()
     assert isinstance(result, dbc.Alert)
 
 
-def test_dataset_metadata_control_dont_return_alert(metadata: DataDocMetadata):
+def test_dataset_metadata_control_dont_return_alert(metadata: Datadoc):
     """Not return alert when all obligatory metadata has value."""
     state.metadata = metadata
     setattr(

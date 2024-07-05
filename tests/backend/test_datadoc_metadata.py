@@ -17,7 +17,7 @@ from datadoc_model.model import DatadocMetadata
 from datadoc_model.model import Dataset
 from datadoc_model.model import Variable
 
-from datadoc.backend.datadoc_metadata import DataDocMetadata
+from datadoc.backend.core import Datadoc
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.backend.user_info import PLACEHOLDER_EMAIL_ADDRESS
 from datadoc.backend.user_info import TestUserInfo
@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 
-DATADOC_METADATA_MODULE = "datadoc.backend.datadoc_metadata"
+DATADOC_METADATA_MODULE = "datadoc.backend.core"
 
 
 @pytest.fixture()
@@ -57,7 +57,7 @@ def generate_periodic_file(
 
 @pytest.mark.usefixtures("existing_metadata_file")
 def test_existing_metadata_file(
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     root = getattr(metadata.dataset.name, "root", [])
     if root:
@@ -67,7 +67,7 @@ def test_existing_metadata_file(
         raise AssertionError(msg)
 
 
-def test_metadata_document_percent_complete(metadata: DataDocMetadata):
+def test_metadata_document_percent_complete(metadata: Datadoc):
     dataset = Dataset(dataset_state=DataSetState.OUTPUT_DATA)
     variable_1 = Variable(data_type=DataType.BOOLEAN)
     variable_2 = Variable(data_type=DataType.INTEGER)
@@ -84,7 +84,7 @@ def test_metadata_document_percent_complete(metadata: DataDocMetadata):
 
 def test_write_metadata_document(
     dummy_timestamp: datetime,
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
     tmp_path: pathlib.Path,
 ):
     metadata.write_metadata_document()
@@ -125,7 +125,7 @@ def test_write_metadata_document(
 def test_write_metadata_document_existing_document(
     _mock_user_info: MagicMock,  # noqa: PT019 it's a patch, not a fixture
     dummy_timestamp: datetime,
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     original_created_date = metadata.dataset.metadata_created_date
     original_created_by = metadata.dataset.metadata_created_by
@@ -136,7 +136,7 @@ def test_write_metadata_document_existing_document(
     assert metadata.dataset.metadata_last_updated_date == dummy_timestamp
 
 
-def test_metadata_id(metadata: DataDocMetadata):
+def test_metadata_id(metadata: Datadoc):
     assert isinstance(metadata.dataset.id, UUID)
 
 
@@ -146,7 +146,7 @@ def test_metadata_id(metadata: DataDocMetadata):
 )
 def test_existing_metadata_none_id(
     existing_metadata_file: Path,
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     with existing_metadata_file.open() as f:
         pre_open_id: None = json.load(f)["datadoc"]["dataset"]["id"]
@@ -164,7 +164,7 @@ def test_existing_metadata_none_id(
 )
 def test_existing_metadata_valid_id(
     existing_metadata_file: Path,
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     pre_open_id = ""
     post_write_id = ""
@@ -179,27 +179,27 @@ def test_existing_metadata_valid_id(
     assert post_write_id == pre_open_id
 
 
-def test_dataset_short_name(metadata: DataDocMetadata):
+def test_dataset_short_name(metadata: Datadoc):
     assert metadata.dataset.short_name == "person_data"
 
 
-def test_dataset_file_path(metadata: DataDocMetadata):
+def test_dataset_file_path(metadata: Datadoc):
     assert metadata.dataset.file_path == str(metadata.dataset_path)
 
 
-def test_variable_role_default_value(metadata: DataDocMetadata):
+def test_variable_role_default_value(metadata: Datadoc):
     assert all(
         v.variable_role == VariableRole.MEASURE.value for v in metadata.variables
     )
 
 
-def test_direct_person_identifying_default_value(metadata: DataDocMetadata):
+def test_direct_person_identifying_default_value(metadata: Datadoc):
     assert all(not v.direct_person_identifying for v in metadata.variables)
 
 
 def test_save_file_path_metadata_field(
     existing_metadata_file: Path,
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     metadata.write_metadata_document()
     with existing_metadata_file.open() as f:
@@ -208,7 +208,7 @@ def test_save_file_path_metadata_field(
 
 
 def test_save_file_path_dataset_and_no_metadata(
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
     tmp_path: pathlib.Path,
 ):
     metadata.write_metadata_document()
@@ -234,7 +234,7 @@ def test_period_metadata_fields_saved(
     expected_from,
     expected_until,
 ):
-    metadata = DataDocMetadata(
+    metadata = Datadoc(
         subject_mapping_fake_statistical_structure,
         str(generate_periodic_file),
     )
@@ -265,7 +265,7 @@ def test_dataset_status_default_value(
     dataset_path: str,
     expected_type: DataSetStatus | None,
 ):
-    datadoc_metadata = DataDocMetadata(
+    datadoc_metadata = Datadoc(
         subject_mapping_fake_statistical_structure,
         str(dataset_path),
     )
@@ -306,7 +306,7 @@ def test_dataset_assessment_default_value(
     copy_dataset_to_path: Path,
     thread_pool_executor,
 ):
-    datadoc_metadata = DataDocMetadata(
+    datadoc_metadata = Datadoc(
         statistic_subject_mapping=StatisticSubjectMapping(
             thread_pool_executor,
             source_url="",
@@ -331,7 +331,7 @@ def test_extract_subject_field_value_from_statistic_structure_xml(
     expected_subject_code: str,
 ):
     subject_mapping_fake_statistical_structure.wait_for_external_result()
-    metadata = DataDocMetadata(
+    metadata = Datadoc(
         subject_mapping_fake_statistical_structure,
         str(copy_dataset_to_path),
     )
@@ -344,7 +344,7 @@ def test_extract_subject_field_value_from_statistic_structure_xml(
 )
 def test_existing_pseudo_metadata_file(
     existing_metadata_file: Path,
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     pre_open_metadata = json.loads(existing_metadata_file.read_text())
     metadata.write_metadata_document()
@@ -358,7 +358,7 @@ def test_existing_pseudo_metadata_file(
 
 
 def test_generate_variables_id(
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     assert all(isinstance(v.id, UUID) for v in metadata.variables)
 
@@ -369,7 +369,7 @@ def test_generate_variables_id(
 )
 def test_existing_metadata_variables_none_id(
     existing_metadata_file: Path,
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     with existing_metadata_file.open() as f:
         pre_open_id: list = [v["id"] for v in json.load(f)["datadoc"]["variables"]]
@@ -390,7 +390,7 @@ def test_existing_metadata_variables_none_id(
 )
 def test_existing_metadata_variables_valid_id(
     existing_metadata_file: Path,
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     with existing_metadata_file.open() as f:
         pre_open_id: list = [v["id"] for v in json.load(f)["datadoc"]["variables"]]
@@ -415,7 +415,7 @@ def test_existing_metadata_variables_valid_id(
     ],
 )
 def test_default_spatial_coverage_description(
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
     index: int,
     expected_text: str,
 ):

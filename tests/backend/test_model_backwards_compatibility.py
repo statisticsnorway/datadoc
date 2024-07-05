@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from datadoc.backend.datadoc_metadata import DataDocMetadata
+from datadoc.backend.core import Datadoc
 from datadoc.backend.model_backwards_compatibility import UnknownModelVersionError
 from datadoc.backend.model_backwards_compatibility import add_container
 from datadoc.backend.model_backwards_compatibility import handle_version_2_2_0
@@ -61,7 +61,7 @@ def test_existing_metadata_unknown_model_version():
 )
 def test_backwards_compatibility(
     existing_metadata_file: Path,
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     with existing_metadata_file.open() as f:
         file_metadata = json.loads(f.read())

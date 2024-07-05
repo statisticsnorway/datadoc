@@ -41,7 +41,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class DataDocMetadata:
+class Datadoc:
     """Handle reading, updating and writing of metadata."""
 
     def __init__(

@@ -37,7 +37,7 @@ from datadoc.frontend.text import INVALID_DATE_ORDER
 from datadoc.frontend.text import INVALID_VALUE
 
 if TYPE_CHECKING:
-    from datadoc.backend.datadoc_metadata import DataDocMetadata
+    from datadoc.backend.core import Datadoc
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 
@@ -145,7 +145,7 @@ if TYPE_CHECKING:
     ],
 )
 def test_accept_variable_metadata_input_valid(
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
     metadata_field: VariableIdentifiers,
     value: MetadataInputTypes,
     expected_model_value: Any,  # noqa: ANN401
@@ -167,7 +167,7 @@ def test_accept_variable_metadata_input_valid(
 
 
 def test_accept_variable_metadata_input_invalid(
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     state.metadata = metadata
     message = accept_variable_metadata_input(
@@ -242,7 +242,7 @@ def test_accept_variable_metadata_date_input(
     contains_data_from: str,
     contains_data_until: str,
     expected_result: tuple[bool, str, bool, str],
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     state.metadata = metadata
     chosen_short_name = metadata.variables[0].short_name
@@ -307,7 +307,7 @@ def test_accept_variable_metadata_date_input(
 def test_populate_variables_workspace_filter_variables(
     search_query: str,
     expected_length: int,
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     assert (
         len(
@@ -354,7 +354,7 @@ def test_variables_values_inherit_dataset_values(
     dataset_value,
     dataset_identifier,
     variable_identifier,
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     state.metadata = metadata
     setattr(
@@ -412,7 +412,7 @@ def test_variables_values_can_be_changed_after_inherit_dataset_value(
     dataset_identifier,
     variable_identifier,
     update_value,
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     state.metadata = metadata
     setattr(
@@ -445,7 +445,7 @@ def test_variables_values_can_be_changed_after_inherit_dataset_value(
 
 
 def test_variables_values_multilanguage_inherit_dataset_values(
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     state.metadata = metadata
     dataset_population_description = "Personer bosatt i Norge"
@@ -475,7 +475,7 @@ def test_variables_values_multilanguage_inherit_dataset_values(
 
 
 def test_variables_values_multilanguage_can_be_changed_after_inherit_dataset_value(
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     state.metadata = metadata
     dataset_population_description = "Persons in Norway"
@@ -519,7 +519,7 @@ def test_variables_values_multilanguage_can_be_changed_after_inherit_dataset_val
 
 
 def test_variables_values_inherit_dataset_date_values_derived_from_path(
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     state.metadata = metadata
     dataset_contains_data_from = "2021-10-10"
@@ -551,7 +551,7 @@ def test_variables_values_inherit_dataset_date_values_derived_from_path(
 
 
 def test_variables_values_inherit_dataset_date_values_not_when_variable_has_value(
-    metadata: DataDocMetadata,
+    metadata: Datadoc,
 ):
     state.metadata = metadata
     dataset_contains_data_until = "2024-01-01"
@@ -574,14 +574,14 @@ def test_variables_values_inherit_dataset_date_values_not_when_variable_has_valu
     )
 
 
-def test_variables_metadata_control_return_alert(metadata: DataDocMetadata):
+def test_variables_metadata_control_return_alert(metadata: Datadoc):
     """Return alert when obligatory metadata is missing."""
     state.metadata = metadata
     result = variables_metadata_control()
     assert isinstance(result, dbc.Alert)
 
 
-def test_variables_metadata_control_dont_return_alert(metadata: DataDocMetadata):
+def test_variables_metadata_control_dont_return_alert(metadata: Datadoc):
     state.metadata = metadata
     for val in state.metadata.variables:
         """Not return alert when all obligatory metadata has value."""

@@ -14,12 +14,12 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from datadoc.backend.code_list import CodeList
-    from datadoc.backend.datadoc_metadata import DataDocMetadata
+    from datadoc.backend.core import Datadoc
     from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 
 
 # Global metadata container
-metadata: DataDocMetadata
+metadata: Datadoc
 
 statistic_subject_mapping: StatisticSubjectMapping
 
