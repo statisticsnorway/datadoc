@@ -81,8 +81,8 @@ def metadata(
 ) -> Datadoc:
     shutil.copy(TEST_PARQUET_FILEPATH, tmp_path / TEST_PARQUET_FILE_NAME)
     return Datadoc(
-        subject_mapping_fake_statistical_structure,
         str(tmp_path / TEST_PARQUET_FILE_NAME),
+        statistic_subject_mapping=subject_mapping_fake_statistical_structure,
     )
 
 

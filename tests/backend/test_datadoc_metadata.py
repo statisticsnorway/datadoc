@@ -235,8 +235,8 @@ def test_period_metadata_fields_saved(
     expected_until,
 ):
     metadata = Datadoc(
-        subject_mapping_fake_statistical_structure,
         str(generate_periodic_file),
+        statistic_subject_mapping=subject_mapping_fake_statistical_structure,
     )
     assert metadata.dataset.contains_data_from == expected_from
     assert metadata.dataset.contains_data_until == expected_until
@@ -266,8 +266,8 @@ def test_dataset_status_default_value(
     expected_type: DataSetStatus | None,
 ):
     datadoc_metadata = Datadoc(
-        subject_mapping_fake_statistical_structure,
         str(dataset_path),
+        statistic_subject_mapping=subject_mapping_fake_statistical_structure,
     )
     assert datadoc_metadata.dataset.dataset_status == expected_type
 
@@ -307,11 +307,11 @@ def test_dataset_assessment_default_value(
     thread_pool_executor,
 ):
     datadoc_metadata = Datadoc(
+        dataset_path=str(copy_dataset_to_path),
         statistic_subject_mapping=StatisticSubjectMapping(
             thread_pool_executor,
             source_url="",
         ),
-        dataset_path=str(copy_dataset_to_path),
     )
     assert datadoc_metadata.dataset.assessment == expected_type
 
@@ -332,8 +332,8 @@ def test_extract_subject_field_value_from_statistic_structure_xml(
 ):
     subject_mapping_fake_statistical_structure.wait_for_external_result()
     metadata = Datadoc(
-        subject_mapping_fake_statistical_structure,
         str(copy_dataset_to_path),
+        statistic_subject_mapping=subject_mapping_fake_statistical_structure,
     )
     assert metadata.dataset.subject_field == expected_subject_code  # type: ignore [union-attr]
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import concurrent
 import json
 import logging
 import uuid
@@ -9,6 +10,7 @@ from typing import TYPE_CHECKING
 
 from datadoc_model import model
 
+from datadoc import config
 from datadoc.backend import user_info
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.dataset_parser import DatasetParser
@@ -16,6 +18,7 @@ from datadoc.backend.model_backwards_compatibility import (
     is_metadata_in_container_structure,
 )
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
+from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.backend.utils import DEFAULT_SPATIAL_COVERAGE_DESCRIPTION
 from datadoc.backend.utils import calculate_percentage
 from datadoc.backend.utils import derive_assessment_from_state
@@ -36,7 +39,6 @@ if TYPE_CHECKING:
 
     from cloudpathlib import CloudPath
 
-    from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 
 logger = logging.getLogger(__name__)
 
@@ -46,9 +48,9 @@ class Datadoc:
 
     def __init__(
         self,
-        statistic_subject_mapping: StatisticSubjectMapping,
         dataset_path: str | None = None,
         metadata_document_path: str | None = None,
+        statistic_subject_mapping: StatisticSubjectMapping | None = None,
     ) -> None:
         """Read in a dataset if supplied, otherwise naively instantiate the class."""
         self._statistic_subject_mapping = statistic_subject_mapping
@@ -144,6 +146,31 @@ class Datadoc:
                 exc_info=True,
             )
 
+    def _extract_subject_field_from_path(
+        self,
+        dapla_dataset_path_info: DaplaDatasetPathInfo,
+    ) -> str | None:
+        """Extract the statistic short name from the dataset file path and map it to its corresponding statistical subject.
+
+        Args:
+            dapla_dataset_path_info (DaplaDatasetPathInfo): The object representing the decomposed file path
+
+        Returns:
+            str | None: The code for the statistical subject or None if we couldn't map to one.
+        """
+        if self._statistic_subject_mapping is None:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=12) as executor:
+                return StatisticSubjectMapping(
+                    executor,
+                    config.get_statistical_subject_source_url(),
+                ).get_secondary_subject(
+                    dapla_dataset_path_info.statistic_short_name,
+                )
+        else:
+            return self._statistic_subject_mapping.get_secondary_subject(
+                dapla_dataset_path_info.statistic_short_name,
+            )
+
     def _extract_metadata_from_dataset(
         self,
         dataset: pathlib.Path | CloudPath,
@@ -155,9 +182,7 @@ class Datadoc:
         """
         self.ds_schema: DatasetParser = DatasetParser.for_file(dataset)
         dapla_dataset_path_info = DaplaDatasetPathInfo(dataset)
-        subject_field = self._statistic_subject_mapping.get_secondary_subject(
-            dapla_dataset_path_info.statistic_short_name,
-        )
+
         self.dataset = model.Dataset(
             short_name=dapla_dataset_path_info.dataset_short_name,
             dataset_state=dapla_dataset_path_info.dataset_state,
@@ -174,7 +199,9 @@ class Datadoc:
             contains_data_until=dapla_dataset_path_info.contains_data_until,
             file_path=str(self.dataset_path),
             metadata_created_by=user_info.get_user_info_for_current_platform().short_email,
-            subject_field=subject_field,
+            subject_field=self._extract_subject_field_from_path(
+                dapla_dataset_path_info,
+            ),
             spatial_coverage_description=DEFAULT_SPATIAL_COVERAGE_DESCRIPTION,
         )
         self.variables = self.ds_schema.get_fields()

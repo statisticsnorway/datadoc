@@ -61,16 +61,16 @@ def open_file(file_path: str | None = None) -> Datadoc:
     if file_path and file_path.endswith(METADATA_DOCUMENT_FILE_SUFFIX):
         logger.info("Opening existing metadata document %s", file_path)
         return Datadoc(
-            state.statistic_subject_mapping,
             metadata_document_path=file_path.strip(),
+            statistic_subject_mapping=state.statistic_subject_mapping,
         )
 
     dataset = file_path or get_dataset_path()
     if dataset:
         logger.info("Opening dataset %s", dataset)
     return Datadoc(
-        state.statistic_subject_mapping,
         dataset_path=str(dataset).strip() if dataset else None,
+        statistic_subject_mapping=state.statistic_subject_mapping,
     )
 
 

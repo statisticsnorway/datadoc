@@ -92,8 +92,8 @@ def get_app(
     logger.info("Datadoc version v%s", get_app_version())
     collect_data_from_external_sources(executor)
     state.metadata = Datadoc(
-        state.statistic_subject_mapping,
         dataset_path=dataset_path,
+        statistic_subject_mapping=state.statistic_subject_mapping,
     )
 
     # The service prefix must be set to run correctly on Dapla Jupyter
