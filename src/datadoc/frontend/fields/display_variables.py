@@ -112,6 +112,10 @@ DISPLAY_VARIABLES: dict[
         display_name="Er personopplysning",
         description="Dersom variabelen er en personopplysning, skal det oppgis om den er pseudonymisert/kryptert eller ikke. Dersom den ikke er en personopplysning, lar en bare defaultsvaret «Ikke personopplysning» bli stående. All informasjon som entydig kan knyttes til en fysisk person (f.eks. fødselsnummer eller adresse) er personopplysninger. Næringsdata om enkeltpersonforetak (ENK) skal imidlertid ikke regnes som personopplysninger.",
         obligatory=True,
+        options_getter=functools.partial(
+            get_enum_options,
+            enums.IsPersonalData,
+        ),
     ),
     VariableIdentifiers.DATA_SOURCE: MetadataDropdownField(
         identifier=VariableIdentifiers.DATA_SOURCE.value,

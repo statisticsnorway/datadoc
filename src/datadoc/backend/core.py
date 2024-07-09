@@ -98,6 +98,8 @@ class Datadoc:
             for v in self.variables:
                 if v.variable_role is None:
                     v.variable_role = model.VariableRole.MEASURE
+                if v.is_personal_data is None:
+                    v.is_personal_data = model.IsPersonalData.NOT_PERSONAL_DATA
         self._set_variable_uuid()
         if not self.dataset.id:
             self.dataset.id = uuid.uuid4()
