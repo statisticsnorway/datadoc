@@ -78,6 +78,11 @@ class Datadoc:
             if v.id is None:
                 v.id = uuid.uuid4()
 
+    def _set_default_value_variable_is_personal_data(self) -> None:
+        for v in self.variables:
+            if v.is_personal_data is None:
+                v.is_personal_data = model.IsPersonalData.NOT_PERSONAL_DATA
+
     def _extract_metadata_from_files(self) -> None:
         """Read metadata from an existing metadata document.
 
@@ -101,6 +106,7 @@ class Datadoc:
                 if v.is_personal_data is None:
                     v.is_personal_data = model.IsPersonalData.NOT_PERSONAL_DATA
         self._set_variable_uuid()
+        self._set_default_value_variable_is_personal_data()
         if not self.dataset.id:
             self.dataset.id = uuid.uuid4()
         if self.dataset.contains_personal_data is None:
