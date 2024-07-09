@@ -41,6 +41,7 @@ class VariableIdentifiers(str, Enum):
     VARIABLE_ROLE = "variable_role"
     DEFINITION_URI = "definition_uri"
     DIRECT_PERSON_IDENTIFYING = "direct_person_identifying"
+    IS_PERSONAL_DATA = "is_personal_data"
     DATA_SOURCE = "data_source"
     POPULATION_DESCRIPTION = "population_description"
     COMMENT = "comment"
@@ -104,6 +105,12 @@ DISPLAY_VARIABLES: dict[
         identifier=VariableIdentifiers.DIRECT_PERSON_IDENTIFYING.value,
         display_name="Direkte personidentifiserende informasjon",
         description="Oppgi om variabelen inneholder personopplysninger. All informasjon som entydig kan knyttes til en fysisk person, er personopplysninger. Pseudonymiserte personopplysninger er fortsatt personopplysninger. Næringsdata om enkeltpersonforetak (ENK) skal imidlertid ikke regnes som personopplysninger. Dersom variabelen inneholder personopplysninger, skal en registrere om opplysningene er direkte identifiserende (f.eks. fødselsnummer, og adresse) eller om de er pseudonymisert/kryptert.",
+        obligatory=True,
+    ),
+    VariableIdentifiers.IS_PERSONAL_DATA: MetadataDropdownField(
+        identifier=VariableIdentifiers.IS_PERSONAL_DATA.value,
+        display_name="Er personopplysning",
+        description="Dersom variabelen er en personopplysning, skal det oppgis om den er pseudonymisert/kryptert eller ikke. Dersom den ikke er en personopplysning, lar en bare defaultsvaret «Ikke personopplysning» bli stående. All informasjon som entydig kan knyttes til en fysisk person (f.eks. fødselsnummer eller adresse) er personopplysninger. Næringsdata om enkeltpersonforetak (ENK) skal imidlertid ikke regnes som personopplysninger.",
         obligatory=True,
     ),
     VariableIdentifiers.DATA_SOURCE: MetadataDropdownField(
