@@ -360,11 +360,11 @@ class IsPersonalData(LanguageStringsEnum):
             ),
             LanguageStringTypeItem(
                 languageCode="nn",
-                languageText="IKKE-PSEUDONYMISERT/-KRYPTERT PERSONOPPLYSNING",
+                languageText="IKKE PSEUDONYMISERT/KRYPTERT PERSONOPPLYSNING",
             ),
             LanguageStringTypeItem(
                 languageCode="nb",
-                languageText="IKKE-PSEUDONYMISERT/-KRYPTERT PERSONOPPLYSNING",
+                languageText="IKKE PSEUDONYMISERT/KRYPTERT PERSONOPPLYSNING",
             ),
         ],
     )
