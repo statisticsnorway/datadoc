@@ -143,7 +143,6 @@ def test_metadata_id(metadata: Datadoc):
     assert isinstance(metadata.dataset.id, UUID)
 
 
-# TODO(@tilen1976): fix test  # noqa: TD003
 @pytest.mark.parametrize(
     "existing_metadata_path",
     [TEST_EXISTING_METADATA_DIRECTORY / "invalid_id_field"],
@@ -162,7 +161,6 @@ def test_existing_metadata_none_id(
     assert post_write_id == str(metadata.dataset.id)
 
 
-# TODO(@tilen1976): fix test  # noqa: TD003
 @pytest.mark.parametrize(
     "existing_metadata_path",
     [TEST_EXISTING_METADATA_DIRECTORY / "valid_id_field"],
@@ -373,7 +371,6 @@ def test_generate_variables_id(
     assert all(isinstance(v.id, UUID) for v in metadata.variables)
 
 
-# TODO(@tilen1976): fix test  # noqa: TD003
 @pytest.mark.parametrize(
     "existing_metadata_path",
     [TEST_EXISTING_METADATA_DIRECTORY / "invalid_id_field"],
@@ -395,7 +392,6 @@ def test_existing_metadata_variables_none_id(
     assert post_write_id == [str(v.id) for v in metadata.variables]
 
 
-# TODO(@tilen1976): fix test  # noqa: TD003
 @pytest.mark.parametrize(
     "existing_metadata_path",
     [TEST_EXISTING_METADATA_DIRECTORY / "valid_variable_id_field"],

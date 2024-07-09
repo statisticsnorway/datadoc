@@ -23,9 +23,11 @@ BACKWARDS_COMPATIBLE_VERSION_NAMES = [
     d.stem for d in BACKWARDS_COMPATIBLE_VERSION_DIRECTORIES
 ]
 
+# TODO(@tilen1976): add test for 3.3.0  # noqa: TD003
+
 
 def test_existing_metadata_current_model_version():
-    current_model_version = "3.3.0"
+    current_model_version = "4.0.0"
     fresh_metadata = {"document_version": current_model_version}
     upgraded_metadata = upgrade_metadata(fresh_metadata)
     assert upgraded_metadata == fresh_metadata
@@ -54,7 +56,6 @@ def test_existing_metadata_unknown_model_version():
         upgrade_metadata(fresh_metadata)
 
 
-# TODO(@tilen1976): fix test  # noqa: TD003
 @pytest.mark.parametrize(
     "existing_metadata_path",
     BACKWARDS_COMPATIBLE_VERSION_DIRECTORIES,
