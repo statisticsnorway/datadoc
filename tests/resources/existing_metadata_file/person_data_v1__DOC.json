@@ -2,7 +2,7 @@
     "document_version": "0.0.1",
     "datadoc": {
         "percentage_complete": 98,
-        "document_version": "2.2.0",
+        "document_version": "4.0.0",
         "dataset": {
             "short_name": "person_data_v1",
             "assessment": "SENSITIVE",

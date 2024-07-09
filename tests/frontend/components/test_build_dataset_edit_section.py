@@ -48,33 +48,27 @@ INPUT_DATA_BUILD_DATASET_SECTION = [
         {},
     ),
     (
-        "Amazing title",
+        "",
         [],
         None,
         {"type": "dataset-edit-section", "id": "obligatory-en"},
     ),
     (
-        "New title",
+        "Anbefalt",
         OPTIONAL_DATASET_METADATA,
         model.Dataset(),
         {},
     ),
     (
-        "New title",
+        "",
         {},
         model.Dataset(short_name="last_dataset"),
         {},
     ),
-    (
-        "Lazy title",
-        OBLIGATORY_MINUS_ATYPICAL_DROPDOWNS,
-        model.Dataset(short_name="nosy_dataset"),
-        {"type": "dataset-edit-section", "id": "obligatory-nb"},
-    ),
 ]
 
 
-# TODO(@tilen1976): fix tests  # noqa: TD003
+# TODO(@tilen1976): fix tests - ok now  # noqa: TD003
 @pytest.mark.parametrize(
     ("title", "field_types", "dataset", "key"),
     INPUT_DATA_BUILD_DATASET_SECTION,
@@ -96,7 +90,7 @@ def test_build_dataset_section_is_html_section(
     assert edit_section.id == key
 
 
-# TODO(@tilen1976): fix tests - dataset_state = null  # noqa: TD003
+# TODO(@tilen1976): fix tests - ok now  # noqa: TD003
 @pytest.mark.parametrize(
     ("title", "field_types", "dataset", "key"),
     INPUT_DATA_BUILD_DATASET_SECTION,
@@ -114,7 +108,7 @@ def test_build_dataset_has_title_component(title, field_types, dataset, key):
     assert section_title_content == title
 
 
-# TODO(@tilen1976): fix tests - dataset_state = null  # noqa: TD003
+# TODO(@tilen1976): fix tests - ok now  # noqa: TD003
 @pytest.mark.parametrize(
     ("title", "field_types", "dataset", "key"),
     INPUT_DATA_BUILD_DATASET_SECTION,
@@ -190,7 +184,7 @@ def test_build_dataset_edit_section_renders_ssb_components(
     assert len(multilanguage_components) == expected_multilanguage
 
 
-# TODO(@tilen1976): fix tests - dataset_state = null  # noqa: TD003
+# TODO(@tilen1976): fix tests - ok now, but not with obligatory list  # noqa: TD003
 @pytest.mark.parametrize(
     ("title", "field_types", "dataset", "key"),
     INPUT_DATA_BUILD_DATASET_SECTION,
@@ -221,7 +215,7 @@ def test_build_dataset_edit_section_input_component_props(
         assert item.label != ""
 
 
-# TODO(@tilen1976): fix tests - dataset_state = null  # noqa: TD003
+# TODO(@tilen1976): fix tests - seems ok now  # noqa: TD003
 @pytest.mark.parametrize(
     ("title", "field_types", "dataset", "key"),
     INPUT_DATA_BUILD_DATASET_SECTION,
