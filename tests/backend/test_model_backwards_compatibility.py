@@ -54,6 +54,7 @@ def test_existing_metadata_unknown_model_version():
         upgrade_metadata(fresh_metadata)
 
 
+# TODO(@tilen1976): fix test  # noqa: TD003
 @pytest.mark.parametrize(
     "existing_metadata_path",
     BACKWARDS_COMPATIBLE_VERSION_DIRECTORIES,

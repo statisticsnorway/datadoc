@@ -27,6 +27,7 @@ OBLIGATORY_MINUS_ATYPICAL_DROPDOWNS = [
     and m.identifier != DatasetIdentifiers.OWNER.value
 ]
 
+# TODO(@tilen1976): fix tests  # noqa: TD003
 INPUT_DATA_BUILD_DATASET_SECTION = [
     (
         "Obligatorisk",

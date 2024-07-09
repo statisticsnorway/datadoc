@@ -56,6 +56,7 @@ def generate_periodic_file(
         new_path.unlink()
 
 
+# TODO(@tilen1976): fix test  # noqa: TD003
 @pytest.mark.usefixtures("existing_metadata_file")
 def test_existing_metadata_file(
     metadata: Datadoc,
@@ -118,6 +119,7 @@ def test_write_metadata_document(
     assert datadoc_metadata["metadata_last_updated_by"] == PLACEHOLDER_EMAIL_ADDRESS
 
 
+# TODO(@tilen1976): fix test  # noqa: TD003
 @pytest.mark.usefixtures("existing_metadata_file")
 @patch(
     "datadoc.backend.user_info.get_user_info_for_current_platform",
@@ -141,6 +143,7 @@ def test_metadata_id(metadata: Datadoc):
     assert isinstance(metadata.dataset.id, UUID)
 
 
+# TODO(@tilen1976): fix test  # noqa: TD003
 @pytest.mark.parametrize(
     "existing_metadata_path",
     [TEST_EXISTING_METADATA_DIRECTORY / "invalid_id_field"],
@@ -159,6 +162,7 @@ def test_existing_metadata_none_id(
     assert post_write_id == str(metadata.dataset.id)
 
 
+# TODO(@tilen1976): fix test  # noqa: TD003
 @pytest.mark.parametrize(
     "existing_metadata_path",
     [TEST_EXISTING_METADATA_DIRECTORY / "valid_id_field"],
@@ -194,7 +198,6 @@ def test_variable_role_default_value(metadata: Datadoc):
     )
 
 
-# TODO(@tilen1976): add test is personal data  # noqa: TD003
 def test_is_personal_data_value(metadata: Datadoc):
     assert all(
         v.is_personal_data == IsPersonalData.NOT_PERSONAL_DATA.value
@@ -202,6 +205,7 @@ def test_is_personal_data_value(metadata: Datadoc):
     )
 
 
+# TODO(@tilen1976): fix test  # noqa: TD003
 def test_save_file_path_metadata_field(
     existing_metadata_file: Path,
     metadata: Datadoc,
@@ -247,6 +251,7 @@ def test_period_metadata_fields_saved(
     assert metadata.dataset.contains_data_until == expected_until
 
 
+# TODO(@tilen1976): fix test  # noqa: TD003
 @pytest.mark.parametrize(
     ("dataset_path", "expected_type"),
     [
@@ -368,6 +373,7 @@ def test_generate_variables_id(
     assert all(isinstance(v.id, UUID) for v in metadata.variables)
 
 
+# TODO(@tilen1976): fix test  # noqa: TD003
 @pytest.mark.parametrize(
     "existing_metadata_path",
     [TEST_EXISTING_METADATA_DIRECTORY / "invalid_id_field"],
@@ -389,6 +395,7 @@ def test_existing_metadata_variables_none_id(
     assert post_write_id == [str(v.id) for v in metadata.variables]
 
 
+# TODO(@tilen1976): fix test  # noqa: TD003
 @pytest.mark.parametrize(
     "existing_metadata_path",
     [TEST_EXISTING_METADATA_DIRECTORY / "valid_variable_id_field"],
