@@ -25,6 +25,7 @@ from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
 from datadoc.enums import DataSetStatus
 from datadoc.enums import DataType
+from datadoc.enums import IsPersonalData
 from datadoc.enums import VariableRole
 from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
@@ -193,8 +194,12 @@ def test_variable_role_default_value(metadata: Datadoc):
     )
 
 
-def test_direct_person_identifying_default_value(metadata: Datadoc):
-    assert all(not v.direct_person_identifying for v in metadata.variables)
+# TODO(@tilen1976): add test is personal data  # noqa: TD003
+def test_is_personal_data_value(metadata: Datadoc):
+    assert all(
+        v.is_personal_data == IsPersonalData.NOT_PERSONAL_DATA.value
+        for v in metadata.variables
+    )
 
 
 def test_save_file_path_metadata_field(

@@ -70,7 +70,7 @@
             "data_type": "STRING",
             "variable_role": "IDENTIFIER",
             "definition_uri": "https://www.ssb.no/a/metadata/conceptvariable/vardok/26/nb",
-            "direct_person_identifying": true,
+            "is_personal_data": null,
             "data_source": null,
             "population_description": null,
             "comment": null,
