@@ -180,7 +180,6 @@ def test_build_dataset_edit_section_renders_ssb_components(
     assert len(multilanguage_components) == expected_multilanguage
 
 
-# TODO(@tilen1976): fix tests - ok now, but not with obligatory list  # noqa: TD003
 @pytest.mark.parametrize(
     ("title", "field_types", "dataset", "key"),
     INPUT_DATA_BUILD_DATASET_SECTION,

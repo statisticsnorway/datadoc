@@ -42,7 +42,6 @@ if TYPE_CHECKING:
 
 
 @pytest.mark.parametrize(
-    # TODO(@tilen1976): add is personal to test  # noqa: TD003
     ("metadata_field", "value", "expected_model_value"),
     [
         (
@@ -71,6 +70,11 @@ if TYPE_CHECKING:
             VariableIdentifiers.DEFINITION_URI,
             "https://www.example.com",
             Url("https://www.example.com"),
+        ),
+        (
+            VariableIdentifiers.IS_PERSONAL_DATA,
+            enums.IsPersonalData.NOT_PERSONAL_DATA,
+            enums.IsPersonalData.NOT_PERSONAL_DATA.value,
         ),
         (
             VariableIdentifiers.DATA_SOURCE,
@@ -603,6 +607,10 @@ def test_variables_metadata_control_dont_return_alert(metadata: Datadoc):
             VariableIdentifiers.DEFINITION_URI,
             "https://www.hat.com",
         )
-        # TODO(@tilen1976): add is personal data  # noqa: TD003
+        setattr(
+            state.metadata.variables_lookup[val.short_name],
+            VariableIdentifiers.IS_PERSONAL_DATA,
+            enums.IsPersonalData.NON_PSEUDONYMISED_ENCRYPTED_PERSONAL_DATA,
+        )
     result = variables_metadata_control()
     assert result is None
