@@ -110,7 +110,7 @@ def _cast_to_date_type(value_to_update: str | None) -> str | None:
 
 
 def handle_version_3_3_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
-    """Handle breaking changes in v4.0.0."""
+    """Handle breaking changes for v3.3.0."""
     for i in range(len(supplied_metadata["datadoc"]["variables"])):
         _remove_element_from_model(
             supplied_metadata["datadoc"]["variables"][i],

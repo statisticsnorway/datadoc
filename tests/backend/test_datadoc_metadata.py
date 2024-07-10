@@ -56,7 +56,7 @@ def generate_periodic_file(
         new_path.unlink()
 
 
-# TODO(@tilen1976): fix test  # noqa: TD003
+# TODO(@tilen1976): fix test: ok  # noqa: TD003
 @pytest.mark.usefixtures("existing_metadata_file")
 def test_existing_metadata_file(
     metadata: Datadoc,
@@ -119,7 +119,7 @@ def test_write_metadata_document(
     assert datadoc_metadata["metadata_last_updated_by"] == PLACEHOLDER_EMAIL_ADDRESS
 
 
-# TODO(@tilen1976): fix test  # noqa: TD003
+# TODO(@tilen1976): fix test: ok  # noqa: TD003
 @pytest.mark.usefixtures("existing_metadata_file")
 @patch(
     "datadoc.backend.user_info.get_user_info_for_current_platform",
@@ -203,7 +203,7 @@ def test_is_personal_data_value(metadata: Datadoc):
     )
 
 
-# TODO(@tilen1976): fix test  # noqa: TD003
+# TODO(@tilen1976): fix test : ok now # noqa: TD003
 def test_save_file_path_metadata_field(
     existing_metadata_file: Path,
     metadata: Datadoc,
