@@ -54,19 +54,14 @@ INPUT_DATA_BUILD_DATASET_SECTION = [
     ),
     (
         "Anbefalt",
-        OPTIONAL_DATASET_METADATA,
+        OBLIGATORY_MINUS_ATYPICAL_DROPDOWNS,
         model.Dataset(),
-        {},
-    ),
-    (
-        "",
-        {},
-        model.Dataset(short_name="last_dataset"),
         {},
     ),
 ]
 
 
+@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
 @pytest.mark.parametrize(
     ("title", "field_types", "dataset", "key"),
     INPUT_DATA_BUILD_DATASET_SECTION,
