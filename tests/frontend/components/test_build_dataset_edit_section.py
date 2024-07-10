@@ -53,10 +53,16 @@ INPUT_DATA_BUILD_DATASET_SECTION = [
         {"type": "dataset-edit-section", "id": "obligatory-en"},
     ),
     (
-        "Anbefalt",
+        "New title",
+        {},
+        model.Dataset(short_name="last_dataset"),
+        {},
+    ),
+    (
+        "Obligatorisk",
         OBLIGATORY_MINUS_ATYPICAL_DROPDOWNS,
         model.Dataset(),
-        {},
+        {"type": "dataset-edit-section", "id": "obligatory-nb"},
     ),
 ]
 
