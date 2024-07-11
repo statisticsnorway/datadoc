@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import pathlib
+import uuid
 
 from cloudpathlib import CloudPath
 from cloudpathlib import GSClient
 from cloudpathlib import GSPath
 from dapla import AuthClient
+from datadoc_model import model
 
 from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
@@ -70,3 +72,12 @@ def derive_assessment_from_state(state: DataSetState) -> Assessment:
             return Assessment.OPEN
         case DataSetState.SOURCE_DATA:
             return Assessment.SENSITIVE
+
+
+def set_default_values_variables(variables: list) -> None:
+    """Set default values on variables."""
+    for v in variables:
+        if v.id is None:
+            v.id = uuid.uuid4()
+        if v.is_personal_data is None:
+            v.is_personal_data = model.IsPersonalData.NOT_PERSONAL_DATA

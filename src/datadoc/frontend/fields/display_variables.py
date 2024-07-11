@@ -10,7 +10,6 @@ from datadoc import state
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_MULTILANGUAGE_INPUT
 from datadoc.frontend.fields.display_base import FieldTypes
-from datadoc.frontend.fields.display_base import MetadataCheckboxField
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import MetadataMultiLanguageField
@@ -40,7 +39,7 @@ class VariableIdentifiers(str, Enum):
     DATA_TYPE = "data_type"
     VARIABLE_ROLE = "variable_role"
     DEFINITION_URI = "definition_uri"
-    DIRECT_PERSON_IDENTIFYING = "direct_person_identifying"
+    IS_PERSONAL_DATA = "is_personal_data"
     DATA_SOURCE = "data_source"
     POPULATION_DESCRIPTION = "population_description"
     COMMENT = "comment"
@@ -100,11 +99,15 @@ DISPLAY_VARIABLES: dict[
         description="Oppgi lenke (URI) til tilhørende variabel i VarDef.",
         obligatory=False,
     ),
-    VariableIdentifiers.DIRECT_PERSON_IDENTIFYING: MetadataCheckboxField(
-        identifier=VariableIdentifiers.DIRECT_PERSON_IDENTIFYING.value,
-        display_name="Direkte personidentifiserende informasjon",
-        description="Oppgi om variabelen inneholder personopplysninger. All informasjon som entydig kan knyttes til en fysisk person, er personopplysninger. Pseudonymiserte personopplysninger er fortsatt personopplysninger. Næringsdata om enkeltpersonforetak (ENK) skal imidlertid ikke regnes som personopplysninger. Dersom variabelen inneholder personopplysninger, skal en registrere om opplysningene er direkte identifiserende (f.eks. fødselsnummer, og adresse) eller om de er pseudonymisert/kryptert.",
+    VariableIdentifiers.IS_PERSONAL_DATA: MetadataDropdownField(
+        identifier=VariableIdentifiers.IS_PERSONAL_DATA.value,
+        display_name="Er personopplysning",
+        description="Dersom variabelen er en personopplysning, skal det oppgis om den er pseudonymisert/kryptert eller ikke. Dersom den ikke er en personopplysning, lar en bare defaultsvaret «Ikke personopplysning» bli stående. All informasjon som entydig kan knyttes til en fysisk person (f.eks. fødselsnummer eller adresse) er personopplysninger. Næringsdata om enkeltpersonforetak (ENK) skal imidlertid ikke regnes som personopplysninger.",
         obligatory=True,
+        options_getter=functools.partial(
+            get_enum_options,
+            enums.IsPersonalData,
+        ),
     ),
     VariableIdentifiers.DATA_SOURCE: MetadataDropdownField(
         identifier=VariableIdentifiers.DATA_SOURCE.value,

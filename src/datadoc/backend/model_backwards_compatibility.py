@@ -109,6 +109,20 @@ def _cast_to_date_type(value_to_update: str | None) -> str | None:
     )
 
 
+def handle_version_3_3_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
+    """Handle breaking changes for v3.3.0.
+
+    Remove field 'direct person identifying'
+    """
+    for i in range(len(supplied_metadata["datadoc"]["variables"])):
+        _remove_element_from_model(
+            supplied_metadata["datadoc"]["variables"][i],
+            "direct_person_identifying",
+        )
+    supplied_metadata["datadoc"]["document_version"] = "4.0.0"
+    return supplied_metadata
+
+
 def handle_version_3_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Update the type of contains_data_* fields."""
     fields = ["contains_data_from", "contains_data_until"]
@@ -261,7 +275,8 @@ BackwardsCompatibleVersion(
 BackwardsCompatibleVersion(version="2.2.0", handler=handle_version_2_2_0)
 BackwardsCompatibleVersion(version="3.1.0", handler=handle_version_3_1_0)
 BackwardsCompatibleVersion(version="3.2.0", handler=handle_version_3_2_0)
-BackwardsCompatibleVersion(version="3.3.0", handler=handle_current_version)
+BackwardsCompatibleVersion(version="3.3.0", handler=handle_version_3_3_0)
+BackwardsCompatibleVersion(version="4.0.0", handler=handle_current_version)
 
 
 def upgrade_metadata(fresh_metadata: dict[str, Any]) -> dict[str, Any]:

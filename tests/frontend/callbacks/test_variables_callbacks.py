@@ -72,9 +72,9 @@ if TYPE_CHECKING:
             Url("https://www.example.com"),
         ),
         (
-            VariableIdentifiers.DIRECT_PERSON_IDENTIFYING,
-            True,
-            True,
+            VariableIdentifiers.IS_PERSONAL_DATA,
+            enums.IsPersonalData.NOT_PERSONAL_DATA,
+            enums.IsPersonalData.NOT_PERSONAL_DATA.value,
         ),
         (
             VariableIdentifiers.DATA_SOURCE,
@@ -609,8 +609,8 @@ def test_variables_metadata_control_dont_return_alert(metadata: Datadoc):
         )
         setattr(
             state.metadata.variables_lookup[val.short_name],
-            VariableIdentifiers.DIRECT_PERSON_IDENTIFYING,
-            True,
+            VariableIdentifiers.IS_PERSONAL_DATA,
+            enums.IsPersonalData.NON_PSEUDONYMISED_ENCRYPTED_PERSONAL_DATA,
         )
     result = variables_metadata_control()
     assert result is None

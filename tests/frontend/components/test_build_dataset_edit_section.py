@@ -47,16 +47,10 @@ INPUT_DATA_BUILD_DATASET_SECTION = [
         {},
     ),
     (
-        "Amazing title",
+        "",
         [],
         None,
         {"type": "dataset-edit-section", "id": "obligatory-en"},
-    ),
-    (
-        "New title",
-        OPTIONAL_DATASET_METADATA,
-        model.Dataset(),
-        {},
     ),
     (
         "New title",
@@ -65,14 +59,15 @@ INPUT_DATA_BUILD_DATASET_SECTION = [
         {},
     ),
     (
-        "Lazy title",
+        "Obligatorisk",
         OBLIGATORY_MINUS_ATYPICAL_DROPDOWNS,
-        model.Dataset(short_name="nosy_dataset"),
+        model.Dataset(),
         {"type": "dataset-edit-section", "id": "obligatory-nb"},
     ),
 ]
 
 
+@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
 @pytest.mark.parametrize(
     ("title", "field_types", "dataset", "key"),
     INPUT_DATA_BUILD_DATASET_SECTION,
