@@ -23,6 +23,7 @@ from datadoc.backend.utils import DEFAULT_SPATIAL_COVERAGE_DESCRIPTION
 from datadoc.backend.utils import calculate_percentage
 from datadoc.backend.utils import derive_assessment_from_state
 from datadoc.backend.utils import normalize_path
+from datadoc.backend.utils import set_variable_uuid
 from datadoc.enums import DataSetStatus
 from datadoc.frontend.fields.display_dataset import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
@@ -73,11 +74,6 @@ class Datadoc:
             )
         self._extract_metadata_from_files()
 
-    def _set_variable_uuid(self) -> None:
-        for v in self.variables:
-            if v.id is None:
-                v.id = uuid.uuid4()
-
     def _set_default_value_variable_is_personal_data(self) -> None:
         for v in self.variables:
             if v.is_personal_data is None:
@@ -105,7 +101,7 @@ class Datadoc:
                     v.variable_role = model.VariableRole.MEASURE
                 if v.is_personal_data is None:
                     v.is_personal_data = model.IsPersonalData.NOT_PERSONAL_DATA
-        self._set_variable_uuid()
+        set_variable_uuid(self)
         self._set_default_value_variable_is_personal_data()
         if not self.dataset.id:
             self.dataset.id = uuid.uuid4()
