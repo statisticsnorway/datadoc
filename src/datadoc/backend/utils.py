@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pathlib
 import uuid
-from typing import TYPE_CHECKING
 
 from cloudpathlib import CloudPath
 from cloudpathlib import GSClient
@@ -14,9 +13,6 @@ from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
 from datadoc.enums import LanguageStringType
 from datadoc.enums import LanguageStringTypeItem
-
-if TYPE_CHECKING:
-    from datadoc.backend.core import Datadoc
 
 DEFAULT_SPATIAL_COVERAGE_DESCRIPTION = LanguageStringType(
     [
@@ -78,15 +74,10 @@ def derive_assessment_from_state(state: DataSetState) -> Assessment:
             return Assessment.SENSITIVE
 
 
-def set_variable_uuid(self: Datadoc) -> None:
-    """Set a random id on variables."""
-    for v in self.variables:
+def set_default_values_variables(variables: list) -> None:
+    """Set default values on variables."""
+    for v in variables:
         if v.id is None:
             v.id = uuid.uuid4()
-
-
-def set_default_value_variable_is_personal_data(self: Datadoc) -> None:
-    """Set default value for 'is personal data'."""
-    for v in self.variables:
         if v.is_personal_data is None:
             v.is_personal_data = model.IsPersonalData.NOT_PERSONAL_DATA
