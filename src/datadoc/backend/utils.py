@@ -8,6 +8,7 @@ from cloudpathlib import CloudPath
 from cloudpathlib import GSClient
 from cloudpathlib import GSPath
 from dapla import AuthClient
+from datadoc_model import model
 
 from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
@@ -82,3 +83,10 @@ def set_variable_uuid(self: Datadoc) -> None:
     for v in self.variables:
         if v.id is None:
             v.id = uuid.uuid4()
+
+
+def set_default_value_variable_is_personal_data(self: Datadoc) -> None:
+    """Set default value for 'is personal data'."""
+    for v in self.variables:
+        if v.is_personal_data is None:
+            v.is_personal_data = model.IsPersonalData.NOT_PERSONAL_DATA
