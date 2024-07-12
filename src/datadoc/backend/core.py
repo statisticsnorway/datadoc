@@ -226,6 +226,13 @@ class Datadoc:
             self.metadata_document.write_text(content)
             logger.info("Saved metadata document %s", self.metadata_document)
             logger.info("Metadata content:\n%s", content)
+            # TODO(@tilen1976): remove  # noqa: TD003
+            if datadoc.dataset is not None:
+                logger.info(
+                    "Sjekke verdier for validering: dato fra %s, dato til %s",
+                    datadoc.dataset.contains_data_from,
+                    datadoc.dataset.contains_data_until,
+                )
         else:
             msg = "No metadata document to save"
             raise ValueError(msg)

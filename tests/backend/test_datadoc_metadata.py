@@ -17,6 +17,7 @@ from datadoc_model.model import DatadocMetadata
 from datadoc_model.model import Dataset
 from datadoc_model.model import Variable
 
+from datadoc import state
 from datadoc.backend.core import Datadoc
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.backend.user_info import PLACEHOLDER_EMAIL_ADDRESS
@@ -425,3 +426,8 @@ def test_default_spatial_coverage_description(
 ):
     ls = metadata.dataset.spatial_coverage_description
     assert ls.root[index].languageText == expected_text  # type: ignore[union-attr, index]
+
+
+def test_contains_data_until(metadata: Datadoc):
+    state.metadata = metadata
+    assert metadata.dataset.contains_data_until is None
