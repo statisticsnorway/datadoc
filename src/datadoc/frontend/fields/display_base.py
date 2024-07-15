@@ -66,7 +66,7 @@ def get_enum_options(
         }
         for i in get_language_strings_enum(enum)  # type: ignore [attr-defined]
     ]
-    dropdown_options.insert(0, {"title": "", "id": ""})
+    dropdown_options.insert(0, {"title": "-- Velg --", "id": ""})
     return dropdown_options
 
 
@@ -79,7 +79,7 @@ def get_data_source_options() -> list[dict[str, str]]:
         }
         for data_sources in state.data_sources.classifications
     ]
-    dropdown_options.insert(0, {"title": "", "id": ""})
+    dropdown_options.insert(0, {"title": "--Velg --", "id": ""})
     return dropdown_options
 
 
@@ -191,6 +191,7 @@ class MetadataDropdownField(DisplayMetadata):
             header=self.display_name,
             id=component_id,
             items=self.options_getter(),
+            placeholder="-- Velg --",
             value=get_metadata_and_stringify(metadata, self.identifier),
             className="dropdown-component",
             showDescription=True,
