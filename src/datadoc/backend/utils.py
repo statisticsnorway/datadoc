@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import pathlib
 import uuid
-from typing import TYPE_CHECKING
-from typing import Callable
 
 from cloudpathlib import CloudPath
 from cloudpathlib import GSClient
@@ -15,9 +13,6 @@ from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
 from datadoc.enums import LanguageStringType
 from datadoc.enums import LanguageStringTypeItem
-
-if TYPE_CHECKING:
-    from datetime import date
 
 DEFAULT_SPATIAL_COVERAGE_DESCRIPTION = LanguageStringType(
     [
@@ -86,33 +81,6 @@ def set_default_values_variables(variables: list) -> None:
             v.id = uuid.uuid4()
         if v.is_personal_data is None:
             v.is_personal_data = model.IsPersonalData.NOT_PERSONAL_DATA
-
-
-# TODO(@tilen1976): Use as decorators - evaluate   # noqa: TD003
-def validate_date(func: Callable) -> Callable:
-    """Decorator for."""
-
-    def wrapper(value: date | None) -> Callable:
-        """."""
-        if value is None:
-            msg = "Date is null"
-            raise ValueError(msg)
-        return func(value)
-
-    return wrapper
-
-
-def validate_date_order(func: Callable) -> Callable:
-    """Decorator for checking correct order dates."""
-
-    def wrapper(value1: date | None, value2: date | None) -> Callable:
-        """Function returns value error if date num 2 is before date num 1.."""
-        if value1 is not None and value2 is not None and value2 < value1:
-            msg = "Date until must be equal or later than date from"
-            raise ValueError(msg)
-        return func(value1, value2)
-
-    return wrapper
 
 
 # error messages
