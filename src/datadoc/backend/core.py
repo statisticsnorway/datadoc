@@ -13,6 +13,7 @@ from datadoc_model import model
 from datadoc import config
 from datadoc.backend import user_info
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
+from datadoc.backend.datadoc_subclass import ValidateDatadocMetadata
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import (
     is_metadata_in_container_structure,
@@ -211,8 +212,8 @@ class Datadoc:
             user_info.get_user_info_for_current_platform().short_email
         )
         self.dataset.file_path = str(self.dataset_path)
-
-        datadoc: model.DatadocMetadata = model.DatadocMetadata(
+        # TODO(@tilen1976): changed -> datadoc: model.DatadocMetadata = model.DatadocMetadata(  # noqa: TD003
+        datadoc: ValidateDatadocMetadata = ValidateDatadocMetadata(
             percentage_complete=self.percent_complete,
             dataset=self.dataset,
             variables=self.variables,
@@ -226,13 +227,6 @@ class Datadoc:
             self.metadata_document.write_text(content)
             logger.info("Saved metadata document %s", self.metadata_document)
             logger.info("Metadata content:\n%s", content)
-            # TODO(@tilen1976): remove  # noqa: TD003
-            if datadoc.dataset is not None:
-                logger.info(
-                    "Sjekke verdier for validering: dato fra %s, dato til %s",
-                    datadoc.dataset.contains_data_from,
-                    datadoc.dataset.contains_data_until,
-                )
         else:
             msg = "No metadata document to save"
             raise ValueError(msg)
