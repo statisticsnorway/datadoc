@@ -30,6 +30,7 @@ from tests.backend.test_statistic_subject_mapping import (
 
 from .utils import TEST_EXISTING_METADATA_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_FILE_NAME
+from .utils import TEST_EXISTING_METADATA_FILEPATH
 from .utils import TEST_PARQUET_FILE_NAME
 from .utils import TEST_PARQUET_FILEPATH
 from .utils import TEST_RESOURCES_DIRECTORY
@@ -82,6 +83,21 @@ def metadata(
     shutil.copy(TEST_PARQUET_FILEPATH, tmp_path / TEST_PARQUET_FILE_NAME)
     return Datadoc(
         str(tmp_path / TEST_PARQUET_FILE_NAME),
+        statistic_subject_mapping=subject_mapping_fake_statistical_structure,
+    )
+
+
+@pytest.fixture()
+def datadoc_dataset_and_metadata(
+    _mock_timestamp: None,
+    _mock_user_info: None,
+    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
+    tmp_path: Path,
+) -> Datadoc:
+    shutil.copy(TEST_PARQUET_FILEPATH, tmp_path / TEST_PARQUET_FILE_NAME)
+    return Datadoc(
+        str(tmp_path / TEST_PARQUET_FILE_NAME),
+        str(TEST_EXISTING_METADATA_FILEPATH),
         statistic_subject_mapping=subject_mapping_fake_statistical_structure,
     )
 

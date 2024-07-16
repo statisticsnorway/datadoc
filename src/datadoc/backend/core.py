@@ -63,15 +63,15 @@ class Datadoc:
         self.variables_lookup: dict[str, model.Variable] = {}
         if metadata_document_path:
             # In this case the user has specified an independent metadata document for editing
-            # without a dataset.
             self.metadata_document = normalize_path(metadata_document_path)
-        elif dataset_path:
+        if dataset_path:
             self.dataset_path = normalize_path(dataset_path)
-            # Build the metadata document path based on the dataset path
+            # Build the metadata document path based on the dataset path if no metadata document is supplied
             # Example: /path/to/dataset.parquet -> /path/to/dataset__DOC.json
-            self.metadata_document = self.dataset_path.parent / (
-                self.dataset_path.stem + METADATA_DOCUMENT_FILE_SUFFIX
-            )
+            if not metadata_document_path:
+                self.metadata_document = self.dataset_path.parent / (
+                    self.dataset_path.stem + METADATA_DOCUMENT_FILE_SUFFIX
+                )
         self._extract_metadata_from_files()
 
     def _extract_metadata_from_files(self) -> None:
@@ -105,7 +105,11 @@ class Datadoc:
         self,
         document: pathlib.Path | CloudPath,
     ) -> None:
-        """There's an existing metadata document, so read in the metadata from that."""
+        """There's an existing metadata document, so read in the metadata from that.
+
+        Args:
+            document: A path to the existing metadata document
+        """
         fresh_metadata = {}
         try:
             with document.open(mode="r", encoding="utf-8") as file:
