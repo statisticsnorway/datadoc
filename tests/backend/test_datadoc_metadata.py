@@ -425,3 +425,11 @@ def test_default_spatial_coverage_description(
 ):
     ls = metadata.dataset.spatial_coverage_description
     assert ls.root[index].languageText == expected_text  # type: ignore[union-attr, index]
+
+
+def test_datadoc_dataset_and_metadata(datadoc_dataset_and_metadata: Datadoc):
+    assert (
+        str(datadoc_dataset_and_metadata.metadata_document)
+        == "tests/resources/existing_metadata_file/person_data_v1__DOC.json"
+    )
+    assert str(datadoc_dataset_and_metadata.dataset_path) is not None
