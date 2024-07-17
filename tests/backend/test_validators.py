@@ -13,6 +13,7 @@ from datadoc_model.model import Dataset
 from pydantic import ValidationError
 
 from datadoc import state
+from datadoc.backend.datadoc_subclass import ValidationWarning
 from datadoc.enums import TemporalityTypeType
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
 
@@ -142,3 +143,17 @@ def test_value(metadata: Datadoc, tmp_path: pathlib.Path):
         ).temporality_type
         == TemporalityTypeType.FIXED.value
     )
+
+
+# TODO(@tilen1976): In progress  # noqa: TD003
+def test_obligatory_metadata_warning(metadata: Datadoc):
+    state.metadata = metadata
+    with pytest.warns(
+        ValidationWarning,
+        match="All obligatory metadata is not filled in",
+    ) as record:
+        metadata.write_metadata_document()
+    assert metadata.percent_complete != 100  # noqa: PLR2004
+    assert len(record) == 1
+    assert issubclass(record[0].category, ValidationWarning)
+    assert str(record[0].message) == "All obligatory metadata is not filled in"
