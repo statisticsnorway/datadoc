@@ -45,3 +45,15 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
         if self.dataset is not None and self.dataset.metadata_created_date is None:
             self.dataset.metadata_created_date = timestamp
         return self
+
+    @model_validator(mode="after")
+    def inherit_variables_dates(self) -> Self:
+        """."""
+        if self.variables and self.dataset is not None:
+            v: model.Variable
+            for v in self.variables:
+                if v.contains_data_from is None:
+                    v.contains_data_from = self.dataset.contains_data_from
+                if v.contains_data_until is None:
+                    v.contains_data_until = self.dataset.contains_data_until
+        return self
