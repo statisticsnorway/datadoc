@@ -12,6 +12,12 @@ from pydantic import model_validator
 
 from datadoc.backend.utils import DATE_VALIDATION_MESSAGE
 from datadoc.backend.utils import incorrect_date_order
+from datadoc.backend.utils import missing_obligatory_dataset_fields
+from datadoc.backend.utils import missing_obligatory_variables_fields
+from datadoc.backend.utils import num_obligatory_dataset_fields
+from datadoc.backend.utils import num_obligatory_variables_fields
+from datadoc.backend.utils import set_obligatory_dataset_fields
+from datadoc.backend.utils import set_obligatory_variables_fields
 from datadoc.backend.utils import set_variables_inherit_from_dataset
 from datadoc.utils import get_timestamp_now
 
@@ -96,11 +102,36 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
 
     @model_validator(mode="after")
     def check_obligatory_dataset_metadata(self) -> Self:
+        # TODO(@tilen1976): add docstring   # noqa: TD003
+        """."""
+        if (
+            self.dataset is not None
+            and num_obligatory_dataset_fields()
+            != set_obligatory_dataset_fields(
+                self.dataset,
+            )
+        ):
+            warnings.warn(
+                f"All obligatory metadata is not filled in for dataset {missing_obligatory_dataset_fields(self.dataset)}",
+                ValidationWarning,
+                stacklevel=2,
+            )
+
+        return self
+
+    @model_validator(mode="after")
+    def check_obligatory_variables_metadata(self) -> Self:
         # TODO(@tilen1976): add docstring - consider warning on which fields missing  # noqa: TD003
         """."""
-        if self.percentage_complete != 100:  # noqa: PLR2004
+        if (
+            self.variables is not None
+            and num_obligatory_variables_fields()
+            != set_obligatory_variables_fields(
+                self.variables,
+            )
+        ):
             warnings.warn(
-                "All obligatory metadata is not filled in",
+                f"All obligatory metadata is not filled in for variables {missing_obligatory_variables_fields(self.variables)}",
                 ValidationWarning,
                 stacklevel=2,
             )

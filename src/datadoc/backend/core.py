@@ -24,14 +24,12 @@ from datadoc.backend.utils import DEFAULT_SPATIAL_COVERAGE_DESCRIPTION
 from datadoc.backend.utils import calculate_percentage
 from datadoc.backend.utils import derive_assessment_from_state
 from datadoc.backend.utils import normalize_path
+from datadoc.backend.utils import num_obligatory_dataset_fields
+from datadoc.backend.utils import num_obligatory_variables_fields
 from datadoc.backend.utils import set_default_values_variables
+from datadoc.backend.utils import set_obligatory_dataset_fields
+from datadoc.backend.utils import set_obligatory_variables_fields
 from datadoc.enums import DataSetStatus
-from datadoc.frontend.fields.display_dataset import (
-    OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
-)
-from datadoc.frontend.fields.display_variables import (
-    OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
-)
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
 from datadoc.utils import get_timestamp_now
 
@@ -239,21 +237,10 @@ class Datadoc:
         assigned. Used for a live progress bar in the UI, as well as being
         saved in the datadoc as a simple quality indicator.
         """
-        num_all_fields = len(OBLIGATORY_DATASET_METADATA_IDENTIFIERS)
-        num_set_fields = len(
-            [
-                k
-                for k, v in self.dataset.model_dump().items()
-                if k in OBLIGATORY_DATASET_METADATA_IDENTIFIERS and v is not None
-            ],
-        )
-        for variable in self.variables:
-            num_all_fields += len(OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS)
-            num_set_fields += len(
-                [
-                    k
-                    for k, v in variable.model_dump().items()
-                    if k in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS and v is not None
-                ],
-            )
+        num_all_fields = num_obligatory_dataset_fields()
+        num_set_fields = set_obligatory_dataset_fields(self.dataset)
+        for _i in range(len(self.variables)):
+            num_all_fields += num_obligatory_variables_fields()
+            num_set_fields += set_obligatory_variables_fields(self.variables)
+        logger.info("num fields %s %s", num_all_fields, num_set_fields)
         return calculate_percentage(num_set_fields, num_all_fields)

@@ -154,6 +154,8 @@ def test_obligatory_metadata_warning(metadata: Datadoc):
     ) as record:
         metadata.write_metadata_document()
     assert metadata.percent_complete != 100  # noqa: PLR2004
-    assert len(record) == 1
+    assert len(record) == 2  # noqa: PLR2004
     assert issubclass(record[0].category, ValidationWarning)
-    assert str(record[0].message) == "All obligatory metadata is not filled in"
+    assert "All obligatory metadata is not filled in for variables" in str(
+        record[1].message,
+    )

@@ -21,10 +21,32 @@ if TYPE_CHECKING:
 # error messages
 VALIDATION_ERROR = "Validation error: "
 DATE_VALIDATION_MESSAGE = f"{VALIDATION_ERROR}contains_data_from must be the same or earlier date than contains_data_until"
-# short_name, ASSESSMENT, DATASET_STATE, NAME, DESCRIPTION, DATA_SOURCE, POPULATION_DESCRIPTION, VERSION, VERSION_DESCRIPTION
-# UNIT_TYPE, TEMPORALITY_TYPE, SUBJECT_FIELD, SPATIAL_COVERAGE_DESCRIPTION, ID, OWNER, ILE_PATH, METADATA_CREATED_DATE, METADATA_CREATED_BY, METADATA_LAST_UPDATED_DATE
-# METADATA_LAST_UPDATED_BY, CONTAINS_DATA_FROMCONTAINS_DATA_UNTIL, CONTAINS_PERSONAL_DATA
-OBLIGATORY_DATASET_METADATA_IDENTIFIERS: list = []
+
+OBLIGATORY_DATASET_METADATA_IDENTIFIERS: list = [
+    "assessment",
+    "dataset_state",
+    "name",
+    "description",
+    "data_source",
+    "population_description",
+    "version",
+    "version_description",
+    "unit_type",
+    "temporality_type",
+    "subject_field",
+    "spatial_coverage_description",
+    "owner",
+    "contains_data_from",
+    "contains_data_until",
+    "contains_personal_data",
+]
+
+OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS = [
+    "name",
+    "data_type",
+    "variable_role",
+    "is_personal_data",
+]
 
 DEFAULT_SPATIAL_COVERAGE_DESCRIPTION = LanguageStringType(
     [
@@ -143,3 +165,61 @@ def incorrect_date_order(
         bool: True if incorrect date order.
     """
     return date_from is not None and date_until is not None and date_until < date_from
+
+
+def num_obligatory_dataset_fields() -> int:
+    """."""
+    return len(OBLIGATORY_DATASET_METADATA_IDENTIFIERS)
+
+
+def num_obligatory_variables_fields() -> int:
+    """."""
+    return len(OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS)
+
+
+def set_obligatory_dataset_fields(dataset: model.Dataset) -> int:
+    """."""
+    return len(
+        [
+            k
+            for k, v in dataset.model_dump().items()
+            if k in OBLIGATORY_DATASET_METADATA_IDENTIFIERS and v is not None
+        ],
+    )
+
+
+def set_obligatory_variables_fields(variables: list) -> int:
+    """."""
+    num_variables = 0
+    for variable in variables:
+        num_variables = len(
+            [
+                k
+                for k, v in variable.model_dump().items()
+                if k in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS and v is not None
+            ],
+        )
+    return num_variables
+
+
+def missing_obligatory_dataset_fields(dataset) -> list:  # noqa: ANN001
+    """."""
+    return [
+        k
+        for k, v in dataset.model_dump().items()
+        if k in OBLIGATORY_DATASET_METADATA_IDENTIFIERS and v is None
+    ]
+
+
+def missing_obligatory_variables_fields(variables) -> list:  # noqa: ANN001
+    """."""
+    return [
+        {
+            variable.short_name: [
+                k
+                for k, v in variable.model_dump().items()
+                if k in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS and v is not None
+            ],
+        }
+        for variable in variables
+    ]
