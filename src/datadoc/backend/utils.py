@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pathlib
 import uuid
+from typing import TYPE_CHECKING
 
 from cloudpathlib import CloudPath
 from cloudpathlib import GSClient
@@ -13,6 +14,9 @@ from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
 from datadoc.enums import LanguageStringType
 from datadoc.enums import LanguageStringTypeItem
+
+if TYPE_CHECKING:
+    import datetime
 
 # error messages
 VALIDATION_ERROR = "Validation error: "
@@ -111,3 +115,8 @@ def set_variables_inherit_from_dataset(
         v.contains_data_until = v.contains_data_until or dataset.contains_data_until
         v.temporality_type = v.temporality_type or dataset.temporality_type
         v.data_source = v.data_source or dataset.data_source
+
+
+def incorrect_date_order(date_from: datetime.date, date_until: datetime.date) -> bool:
+    """Evaluate date until before date from."""
+    return date_from is not None and date_until is not None and date_until < date_from

@@ -9,6 +9,7 @@ from datadoc_model import model
 from pydantic import model_validator
 
 from datadoc.backend.utils import DATE_VALIDATION_MESSAGE
+from datadoc.backend.utils import incorrect_date_order
 from datadoc.backend.utils import set_variables_inherit_from_dataset
 from datadoc.utils import get_timestamp_now
 
@@ -28,15 +29,15 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
         Mode:
             after: This validator runs after other validation.
         """
-        if self.dataset is not None:
-            contains_date_from = self.dataset.contains_data_from
-            contains_date_until = self.dataset.contains_data_until
-            if (
-                contains_date_from is not None
-                and contains_date_until is not None
-                and contains_date_until < contains_date_from
-            ):
-                raise ValueError(DATE_VALIDATION_MESSAGE)
+        if self.dataset is not None and incorrect_date_order(
+            self.dataset.contains_data_from,
+            self.dataset.contains_data_until,
+        ):
+            raise ValueError(DATE_VALIDATION_MESSAGE)
+        if self.variables is not None:
+            for v in self.variables:
+                if incorrect_date_order(v.contains_data_from, v.contains_data_until):
+                    raise ValueError(DATE_VALIDATION_MESSAGE)
         return self
 
     @model_validator(mode="after")
