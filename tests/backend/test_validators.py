@@ -33,3 +33,29 @@ def test_write_metadata_document_valid_date(
         metadata.write_metadata_document()
     except ValidationError as exc:
         pytest.fail(str(exc))
+
+
+def test_write_metadata_document_created_date_is_none(
+    metadata: Datadoc,
+):
+    assert metadata.dataset.metadata_created_date is None
+    metadata.write_metadata_document()
+    assert metadata.dataset.metadata_created_date is not None
+
+
+def test_write_metadata_document_created_date_is_set(
+    metadata: Datadoc,
+):
+    metadata.dataset.metadata_created_date = datetime.datetime(
+        2022,
+        1,
+        1,
+        tzinfo=datetime.timezone.utc,
+    )
+    metadata.write_metadata_document()
+    assert metadata.dataset.metadata_created_date == datetime.datetime(
+        2022,
+        1,
+        1,
+        tzinfo=datetime.timezone.utc,
+    )

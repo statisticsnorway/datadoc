@@ -39,7 +39,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
         return self
 
     @model_validator(mode="after")
-    def set_created_date(self) -> Self:
+    def check_metadata_created_date(self) -> Self:
         """."""
         timestamp: datetime = get_timestamp_now()  # --check-untyped-defs
         if self.dataset is not None and self.dataset.metadata_created_date is None:
