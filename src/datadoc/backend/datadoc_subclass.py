@@ -29,24 +29,23 @@ if TYPE_CHECKING:
 class ValidationWarning(UserWarning):
     """Custom warning for validation purposes."""
 
+    # TODO(@tilen1976): fix issue  # noqa: TD003
+    def custom_warning_handler(  # noqa: PLR0913
+        message: Warning | str,  # noqa: N805
+        category: type[Warning],
+        filename: str,
+        lineno: int,
+        file: TextIO | None = None,  # noqa: ARG002
+        line: str | None = None,  # noqa: ARG002
+    ) -> None:
+        """."""
+        print(  # noqa: T201
+            f"Warning: {message}, Category: {category.__name__}, Filename: {filename}, Line: {lineno}",
+        )
 
-# TODO(@tilen1976): fix issue  # noqa: TD003
-def custom_warning_handler(  # noqa: D103, PLR0913
-    message: Warning | str,
-    category: type[Warning],
-    filename: str,
-    lineno: int,
-    file: TextIO | None = None,  # noqa: ARG001
-    line: str | None = None,  # noqa: ARG001
-) -> None:
-    print(  # noqa: T201
-        f"Warning: {message}, Category: {category.__name__}, Filename: {filename}, Line: {lineno}",
-    )
-
-
-# Override the default warning handler
-# TODO(@tilen1976): fix issue incompatible types  # noqa: TD003
-warnings.showwarning = custom_warning_handler
+    # Override the default warning handler
+    # TODO(@tilen1976): fix issue incompatible types  # noqa: TD003
+    warnings.showwarning = custom_warning_handler
 
 
 class ValidateDatadocMetadata(model.DatadocMetadata):
@@ -93,8 +92,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
         Set values on variables if None inherit from dataset values.
 
         Mode:
-            after:
-
+            after: This validator runs after other validation.
         """
         if self.variables and self.dataset is not None:
             set_variables_inherit_from_dataset(self.dataset, self.variables)
@@ -103,7 +101,11 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
     @model_validator(mode="after")
     def check_obligatory_dataset_metadata(self) -> Self:
         # TODO(@tilen1976): add docstring   # noqa: TD003
-        """."""
+        """.
+
+        Mode:
+            after: This validator runs after other validation.
+        """
         if (
             self.dataset is not None
             and num_obligatory_dataset_fields()
@@ -121,8 +123,13 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
 
     @model_validator(mode="after")
     def check_obligatory_variables_metadata(self) -> Self:
-        # TODO(@tilen1976): add docstring - consider warning on which fields missing  # noqa: TD003
-        """."""
+        # TODO(@tilen1976): add docstring   # noqa: TD003
+        """.
+
+        Mode:
+            after: This validator runs after other validation.
+
+        """
         if (
             self.variables is not None
             and num_obligatory_variables_fields()
