@@ -230,7 +230,7 @@ def get_missing_obligatory_variables_fields(variables) -> list:  # noqa: ANN001
         variables (list): All variables.
 
     Returns:
-        list with dict
+        list with dict(s)
     """
     return [
         {
