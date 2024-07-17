@@ -104,11 +104,21 @@ def set_variables_inherit_from_dataset(
 ) -> None:
     """Set dataset values on variables.
 
-    If variables attributes are None they will inherit from dataset value.
+    Handles values on these variable fields:
+        'contains data from',
+        'contains data from',
+        'contains data until',
+        'temporality type',
+        'data source'
+
+    If either of values in list are None they will inherit from dataset value.
 
     Args:
         dataset (model.Dataset): the dataset
         variables (list): list of variables
+
+    Returns:
+        None
     """
     for v in variables:
         v.contains_data_from = v.contains_data_from or dataset.contains_data_from
@@ -117,7 +127,10 @@ def set_variables_inherit_from_dataset(
         v.data_source = v.data_source or dataset.data_source
 
 
-def incorrect_date_order(date_from: datetime.date, date_until: datetime.date) -> bool:
+def incorrect_date_order(
+    date_from: datetime.date | None,
+    date_until: datetime.date | None,
+) -> bool:
     """Evaluate date order of two dates.
 
     If date until is before date from it is incorrect date order.
