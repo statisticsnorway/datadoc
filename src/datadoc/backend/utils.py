@@ -118,5 +118,11 @@ def set_variables_inherit_from_dataset(
 
 
 def incorrect_date_order(date_from: datetime.date, date_until: datetime.date) -> bool:
-    """Evaluate date until before date from."""
+    """Evaluate date order of two dates.
+
+    If date until is before date from it is incorrect date order.
+
+    Returns:
+        bool: True if incorrect date order.
+    """
     return date_from is not None and date_until is not None and date_until < date_from
