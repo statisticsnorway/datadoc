@@ -208,9 +208,8 @@ class Datadoc:
     def write_metadata_document(self) -> None:
         """Write all currently known metadata to file."""
         timestamp: datetime = get_timestamp_now()
-
-        if self.dataset.metadata_created_date is None:
-            self.dataset.metadata_created_date = timestamp
+        # if self.dataset.metadata_created_date is None:
+        #    self.dataset.metadata_created_date = timestamp  # noqa: ERA001
         self.dataset.metadata_last_updated_date = timestamp
         self.dataset.metadata_last_updated_by = (
             user_info.get_user_info_for_current_platform().short_email

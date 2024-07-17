@@ -2,12 +2,17 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from typing import Self
 
 from datadoc_model import model
 from pydantic import model_validator
 
 from datadoc.backend.utils import DATE_VALIDATION_MESSAGE
+from datadoc.utils import get_timestamp_now
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class ValidateDatadocMetadata(model.DatadocMetadata):
@@ -31,4 +36,12 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
                 and contains_date_until < contains_date_from
             ):
                 raise ValueError(DATE_VALIDATION_MESSAGE)
+        return self
+
+    @model_validator(mode="after")
+    def set_created_date(self) -> Self:
+        """."""
+        timestamp: datetime = get_timestamp_now()  # --check-untyped-defs
+        if self.dataset is not None and self.dataset.metadata_created_date is None:
+            self.dataset.metadata_created_date = timestamp
         return self

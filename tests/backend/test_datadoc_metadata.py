@@ -88,6 +88,9 @@ def test_write_metadata_document(
     metadata: Datadoc,
     tmp_path: pathlib.Path,
 ):
+    metadata.dataset.metadata_created_date = (
+        dummy_timestamp  # added for testing new validator
+    )
     metadata.write_metadata_document()
     written_document = tmp_path / TEST_EXISTING_METADATA_FILE_NAME
     assert Path.exists(written_document)
