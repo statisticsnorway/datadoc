@@ -48,7 +48,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
         return self
 
     @model_validator(mode="after")
-    def set_inherit_values(self) -> Self:
+    def check_inherit_values(self) -> Self:
         """Set values on variables if None inherit from dataset."""
         if self.variables and self.dataset is not None:
             set_variables_inherit_from_dataset(self.dataset, self.variables)

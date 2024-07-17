@@ -91,7 +91,7 @@ def set_variables_inherit_from_dataset(
     dataset: model.Dataset,
     variables: list,
 ) -> None:
-    """Set values on variables which inherits from dataset if None."""
+    """Set values on variables if None."""
     for v in variables:
         v.contains_data_from = v.contains_data_from or dataset.contains_data_from
         v.contains_data_until = v.contains_data_until or dataset.contains_data_until
