@@ -25,10 +25,10 @@ from datadoc.backend.utils import calculate_percentage
 from datadoc.backend.utils import derive_assessment_from_state
 from datadoc.backend.utils import normalize_path
 from datadoc.backend.utils import num_obligatory_dataset_fields
+from datadoc.backend.utils import num_obligatory_dataset_fields_completed
 from datadoc.backend.utils import num_obligatory_variables_fields
+from datadoc.backend.utils import num_obligatory_variables_fields_completed
 from datadoc.backend.utils import set_default_values_variables
-from datadoc.backend.utils import set_obligatory_dataset_fields
-from datadoc.backend.utils import set_obligatory_variables_fields
 from datadoc.enums import DataSetStatus
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
 from datadoc.utils import get_timestamp_now
@@ -238,9 +238,8 @@ class Datadoc:
         saved in the datadoc as a simple quality indicator.
         """
         num_all_fields = num_obligatory_dataset_fields()
-        num_set_fields = set_obligatory_dataset_fields(self.dataset)
+        num_set_fields = num_obligatory_dataset_fields_completed(self.dataset)
         for _i in range(len(self.variables)):
             num_all_fields += num_obligatory_variables_fields()
-            num_set_fields += set_obligatory_variables_fields(self.variables)
-        logger.info("num fields %s %s", num_all_fields, num_set_fields)
+            num_set_fields += num_obligatory_variables_fields_completed(self.variables)
         return calculate_percentage(num_set_fields, num_all_fields)

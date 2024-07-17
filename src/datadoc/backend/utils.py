@@ -18,7 +18,6 @@ from datadoc.enums import LanguageStringTypeItem
 if TYPE_CHECKING:
     import datetime
 
-# error messages
 VALIDATION_ERROR = "Validation error: "
 DATE_VALIDATION_MESSAGE = f"{VALIDATION_ERROR}contains_data_from must be the same or earlier date than contains_data_until"
 
@@ -116,6 +115,9 @@ def set_default_values_variables(variables: list) -> None:
 
     Args:
         variables (list): A list of variables
+
+    Returns:
+        None
     """
     for v in variables:
         if v.id is None:
@@ -140,8 +142,8 @@ def set_variables_inherit_from_dataset(
     If either of values in list are None they will inherit from dataset value.
 
     Args:
-        dataset (model.Dataset): the dataset
-        variables (list): list of variables
+        dataset (model.Dataset): the dataset to inherit from
+        variables (list): list of variables which may inherit from dataset
 
     Returns:
         None
@@ -159,8 +161,11 @@ def incorrect_date_order(
 ) -> bool:
     """Evaluate date order of two dates.
 
-    If date until is before date from it is incorrect date order.
+    If 'date until' is before 'date from' it is incorrect date order.
 
+    Args:
+        date_from (datetime.date): start date
+        date_until (datetime.date): end date
     Returns:
         bool: True if incorrect date order.
     """
@@ -168,17 +173,17 @@ def incorrect_date_order(
 
 
 def num_obligatory_dataset_fields() -> int:
-    """."""
+    """Return the number of obligatory dataset fields."""
     return len(OBLIGATORY_DATASET_METADATA_IDENTIFIERS)
 
 
 def num_obligatory_variables_fields() -> int:
-    """."""
+    """Return the number of obligatory variable fields for one variable."""
     return len(OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS)
 
 
-def set_obligatory_dataset_fields(dataset: model.Dataset) -> int:
-    """."""
+def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
+    """Return the number of obligatory dataset fields with value."""
     return len(
         [
             k
@@ -188,8 +193,8 @@ def set_obligatory_dataset_fields(dataset: model.Dataset) -> int:
     )
 
 
-def set_obligatory_variables_fields(variables: list) -> int:
-    """."""
+def num_obligatory_variables_fields_completed(variables: list) -> int:
+    """Return the number of obligatory variable fields for one variable with value."""
     num_variables = 0
     for variable in variables:
         num_variables = len(
@@ -202,8 +207,15 @@ def set_obligatory_variables_fields(variables: list) -> int:
     return num_variables
 
 
-def missing_obligatory_dataset_fields(dataset) -> list:  # noqa: ANN001
-    """."""
+def get_missing_obligatory_dataset_fields(dataset) -> list:  # noqa: ANN001
+    """Get all obligatory dataset fields with no value.
+
+    Args:
+        dataset (Any): The dataset examined.
+
+    Returns:
+        list
+    """
     return [
         k
         for k, v in dataset.model_dump().items()
@@ -211,14 +223,21 @@ def missing_obligatory_dataset_fields(dataset) -> list:  # noqa: ANN001
     ]
 
 
-def missing_obligatory_variables_fields(variables) -> list:  # noqa: ANN001
-    """."""
+def get_missing_obligatory_variables_fields(variables) -> list:  # noqa: ANN001
+    """Get all obligatory variable fields for with no value for all variables.
+
+    Args:
+        variables (list): All variables.
+
+    Returns:
+        list with dict
+    """
     return [
         {
             variable.short_name: [
                 k
                 for k, v in variable.model_dump().items()
-                if k in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS and v is not None
+                if k in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS and v is None
             ],
         }
         for variable in variables
