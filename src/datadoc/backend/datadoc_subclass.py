@@ -5,6 +5,7 @@ from __future__ import annotations
 import warnings
 from typing import TYPE_CHECKING
 from typing import Self
+from typing import TextIO
 
 from datadoc_model import model
 from pydantic import model_validator
@@ -25,14 +26,14 @@ class ValidationWarning(UserWarning):
 
 # TODO(@tilen1976): fix issue  # noqa: TD003
 def custom_warning_handler(  # noqa: D103, PLR0913
-    message,  # noqa: ANN001
-    category,  # noqa: ANN001
-    filename,  # noqa: ANN001
-    lineno,  # noqa: ANN001
-    file=None,  # noqa: ARG001, ANN001
-    line=None,  # noqa: ANN001, ARG001
-) -> tuple[str]:
-    return (
+    message: Warning | str,
+    category: type[Warning],
+    filename: str,
+    lineno: int,
+    file: TextIO | None = None,  # noqa: ARG001
+    line: str | None = None,  # noqa: ARG001
+) -> None:
+    print(  # noqa: T201
         f"Warning: {message}, Category: {category.__name__}, Filename: {filename}, Line: {lineno}",
     )
 
