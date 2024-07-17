@@ -15,11 +15,12 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
 
     @model_validator(mode="after")
     def check_date_order(self) -> Self:
-        """Runs validation check on fields contains_data_from and contains_data_until to ensure contains_data_until is equal or after contains_data_from.
+        """Runs validation check on fields contains_data_from and contains_data_until.
 
         Raises:
-            ValueError
-        Mode: After...
+            ValueError: If contains_data_until date is earlier than contains_data_from date.
+        Mode:
+            after: This validator runs after other validation.
         """
         if self.dataset is not None:
             contains_date_from = self.dataset.contains_data_from
