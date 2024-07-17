@@ -3,14 +3,18 @@
 from __future__ import annotations
 
 import datetime
+import json
+import pathlib
 from typing import TYPE_CHECKING
 
 import datadoc_model
 import pytest
+from datadoc_model.model import Dataset
 from pydantic import ValidationError
 
 from datadoc import state
 from datadoc.enums import TemporalityTypeType
+from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
 
 if TYPE_CHECKING:
     from datadoc.backend.core import Datadoc
@@ -90,4 +94,25 @@ def test_temporality_type_value(metadata: Datadoc):
     assert all(
         v.temporality_type == metadata.dataset.temporality_type
         for v in metadata.variables
+    )
+
+
+def test_value(metadata: Datadoc, tmp_path: pathlib.Path):
+    assert all(v.temporality_type is None for v in metadata.variables)
+    metadata.dataset.temporality_type = datadoc_model.model.TemporalityTypeType(
+        TemporalityTypeType.FIXED.value,
+    )
+    assert metadata.dataset.temporality_type is not None
+    metadata.write_metadata_document()
+    written_document = tmp_path / TEST_EXISTING_METADATA_FILE_NAME
+    assert pathlib.Path.exists(written_document)
+    with pathlib.Path.open(written_document) as f:
+        written_metadata = json.loads(f.read())
+        datadoc_metadata = written_metadata["datadoc"]["dataset"]
+    assert (
+        # Use our pydantic model to read in the datetime string so we get the correct format
+        Dataset(
+            temporality_type=datadoc_metadata["temporality_type"],
+        ).temporality_type
+        == TemporalityTypeType.FIXED.value
     )

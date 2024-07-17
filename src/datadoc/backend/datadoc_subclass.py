@@ -9,6 +9,7 @@ from datadoc_model import model
 from pydantic import model_validator
 
 from datadoc.backend.utils import DATE_VALIDATION_MESSAGE
+from datadoc.backend.utils import set_variables_inherit_from_dataset
 from datadoc.utils import get_timestamp_now
 
 if TYPE_CHECKING:
@@ -46,14 +47,9 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             self.dataset.metadata_created_date = timestamp
         return self
 
-
-""" @model_validator(mode="after")
-    def inherit_variables_dates(self) -> Self:
+    @model_validator(mode="after")
+    def set_inherit_values(self) -> Self:
+        """Set values on variables if None inherit from dataset."""
         if self.variables and self.dataset is not None:
-            v: model.Variable
-            for v in self.variables:
-                if v.contains_data_from is None:
-                    v.contains_data_from = self.dataset.contains_data_from
-                if v.contains_data_until is None:
-                    v.contains_data_until = self.dataset.contains_data_until
-        return self"""
+            set_variables_inherit_from_dataset(self.dataset, self.variables)
+        return self

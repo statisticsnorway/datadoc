@@ -25,7 +25,6 @@ from datadoc.backend.utils import calculate_percentage
 from datadoc.backend.utils import derive_assessment_from_state
 from datadoc.backend.utils import normalize_path
 from datadoc.backend.utils import set_default_values_variables
-from datadoc.backend.utils import set_variables_inherit_from_dataset
 from datadoc.enums import DataSetStatus
 from datadoc.frontend.fields.display_dataset import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
@@ -209,20 +208,16 @@ class Datadoc:
     def write_metadata_document(self) -> None:
         """Write all currently known metadata to file."""
         timestamp: datetime = get_timestamp_now()
-        # if self.dataset.metadata_created_date is None:
-        #    self.dataset.metadata_created_date = timestamp  # noqa: ERA001
         self.dataset.metadata_last_updated_date = timestamp
         self.dataset.metadata_last_updated_by = (
             user_info.get_user_info_for_current_platform().short_email
         )
         self.dataset.file_path = str(self.dataset_path)
-        # TODO(@tilen1976): changed -> datadoc: model.DatadocMetadata = model.DatadocMetadata(  # noqa: TD003
         datadoc: ValidateDatadocMetadata = ValidateDatadocMetadata(
             percentage_complete=self.percent_complete,
             dataset=self.dataset,
             variables=self.variables,
         )
-        set_variables_inherit_from_dataset(self.dataset, self.variables)
         if self.container:
             self.container.datadoc = datadoc
         else:
