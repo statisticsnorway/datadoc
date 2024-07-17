@@ -104,7 +104,7 @@ def set_variables_inherit_from_dataset(
 ) -> None:
     """Set dataset values on variables.
 
-    Handles values on these variable fields:
+    Handles variable values for these fields:
         'contains data from',
         'contains data from',
         'contains data until',
