@@ -25,7 +25,7 @@ from datadoc.backend.utils import calculate_percentage
 from datadoc.backend.utils import derive_assessment_from_state
 from datadoc.backend.utils import normalize_path
 from datadoc.backend.utils import set_default_values_variables
-from datadoc.backend.utils import set_variables_dates_inherit_from_dataset
+from datadoc.backend.utils import set_variables_inherit_from_dataset
 from datadoc.enums import DataSetStatus
 from datadoc.frontend.fields.display_dataset import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
@@ -97,7 +97,6 @@ class Datadoc:
                 if v.variable_role is None:
                     v.variable_role = model.VariableRole.MEASURE
         set_default_values_variables(self.variables)
-        set_variables_dates_inherit_from_dataset(self.dataset, self.variables)
         if not self.dataset.id:
             self.dataset.id = uuid.uuid4()
         if self.dataset.contains_personal_data is None:
@@ -223,6 +222,7 @@ class Datadoc:
             dataset=self.dataset,
             variables=self.variables,
         )
+        set_variables_inherit_from_dataset(self.dataset, self.variables)
         if self.container:
             self.container.datadoc = datadoc
         else:

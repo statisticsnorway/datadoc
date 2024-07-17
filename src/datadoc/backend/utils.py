@@ -87,13 +87,13 @@ def set_default_values_variables(variables: list) -> None:
             v.is_personal_data = model.IsPersonalData.NOT_PERSONAL_DATA
 
 
-def set_variables_dates_inherit_from_dataset(
+def set_variables_inherit_from_dataset(
     dataset: model.Dataset,
     variables: list,
 ) -> None:
-    """."""
+    """Set values on variables which inherits from dataset if None."""
     for v in variables:
-        if v.contains_data_from is None:
-            v.contains_data_from = dataset.contains_data_from
-        if v.contains_data_until is None:
-            v.contains_data_until = dataset.contains_data_until
+        v.contains_data_from = v.contains_data_from or dataset.contains_data_from
+        v.contains_data_until = v.contains_data_until or dataset.contains_data_until
+        v.temporality_type = v.temporality_type or dataset.temporality_type
+        v.data_source = v.data_source or dataset.data_source
