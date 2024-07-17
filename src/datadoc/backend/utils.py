@@ -14,6 +14,10 @@ from datadoc.enums import DataSetState
 from datadoc.enums import LanguageStringType
 from datadoc.enums import LanguageStringTypeItem
 
+# error messages
+VALIDATION_ERROR = "Validation error: "
+DATE_VALIDATION_MESSAGE = f"{VALIDATION_ERROR}contains_data_from must be the same or earlier date than contains_data_until"
+
 DEFAULT_SPATIAL_COVERAGE_DESCRIPTION = LanguageStringType(
     [
         LanguageStringTypeItem(
@@ -83,6 +87,13 @@ def set_default_values_variables(variables: list) -> None:
             v.is_personal_data = model.IsPersonalData.NOT_PERSONAL_DATA
 
 
-# error messages
-VALIDATION_ERROR = "Validation error: "
-DATE_VALIDATION_MESSAGE = f"{VALIDATION_ERROR}contains_data_from must be the same or earlier date than contains_data_until"
+def set_variables_dates_inherit_from_dataset(
+    dataset: model.Dataset,
+    variables: list,
+) -> None:
+    """."""
+    for v in variables:
+        if v.contains_data_from is None:
+            v.contains_data_from = dataset.contains_data_from
+        if v.contains_data_until is None:
+            v.contains_data_until = dataset.contains_data_until
