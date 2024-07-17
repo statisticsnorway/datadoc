@@ -79,7 +79,14 @@ def derive_assessment_from_state(state: DataSetState) -> Assessment:
 
 
 def set_default_values_variables(variables: list) -> None:
-    """Set default values on variables."""
+    """Set default values on variables.
+
+    If variables attributes 'id' is None set a unique uuid4 value.
+    If 'is personal data' is None set default value of 'not personal data'.
+
+    Args:
+        variables (list): A list of variables
+    """
     for v in variables:
         if v.id is None:
             v.id = uuid.uuid4()
@@ -91,7 +98,14 @@ def set_variables_inherit_from_dataset(
     dataset: model.Dataset,
     variables: list,
 ) -> None:
-    """Set dataset values on variables if None."""
+    """Set dataset values on variables.
+
+    If variables attributes are None they will inherit from dataset value.
+
+    Args:
+        dataset (model.Dataset): the dataset
+        variables (list): list of variables
+    """
     for v in variables:
         v.contains_data_from = v.contains_data_from or dataset.contains_data_from
         v.contains_data_until = v.contains_data_until or dataset.contains_data_until

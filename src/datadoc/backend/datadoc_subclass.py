@@ -1,4 +1,4 @@
-"""Classes which inherit from model to extend validation."""
+"""Subclass DatadocMetadata.."""
 
 from __future__ import annotations
 
@@ -17,11 +17,11 @@ if TYPE_CHECKING:
 
 
 class ValidateDatadocMetadata(model.DatadocMetadata):
-    """Inherits from DatadocMetadata and provides additional functionality for validation of DatadocMetadata."""
+    """Inherit from DatadocMetadata and provide additional validation."""
 
     @model_validator(mode="after")
     def check_date_order(self) -> Self:
-        """Runs validation check on fields contains_data_from and contains_data_until.
+        """Run validation check on fields contains_data_from and contains_data_until.
 
         Raises:
             ValueError: If contains_data_until date is earlier than contains_data_from date.
@@ -49,7 +49,14 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
 
     @model_validator(mode="after")
     def check_inherit_values(self) -> Self:
-        """Set values on variables if None inherit from dataset."""
+        """Check certain variables values for None value.
+
+        Set values on variables if None inherit from dataset values.
+
+        Mode:
+            after:
+
+        """
         if self.variables and self.dataset is not None:
             set_variables_inherit_from_dataset(self.dataset, self.variables)
         return self
