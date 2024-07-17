@@ -11,11 +11,16 @@ from datadoc.backend.utils import DATE_VALIDATION_MESSAGE
 
 
 class ValidateDatadocMetadata(model.DatadocMetadata):
-    """."""
+    """Inherits from DatadocMetadata and provides additional functionality for validation of DatadocMetadata."""
 
     @model_validator(mode="after")
     def check_date_order(self) -> Self:
-        """."""
+        """Runs validation check on fields contains_data_from and contains_data_until to ensure contains_data_until is equal or after contains_data_from.
+
+        Raises:
+            ValueError
+        Mode: After...
+        """
         if self.dataset is not None:
             contains_date_from = self.dataset.contains_data_from
             contains_date_until = self.dataset.contains_data_until
