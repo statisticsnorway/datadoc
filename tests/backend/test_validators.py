@@ -23,7 +23,7 @@ def test_incorrect_date_order(metadata: Datadoc):
     dataset = metadata.dataset
     assert variables is not None
     variables[0].contains_data_from = datetime.date(2024, 1, 1)
-    variables[0].contains_data_until = datetime.date(1960, 1, 1)
+    variables[0].contains_data_until = "1960-01-01"
     result_incorrect_dates = incorrect_date_order(
         variables[0].contains_data_from,
         variables[0].contains_data_until,
@@ -42,7 +42,7 @@ def test_write_metadata_document_invalid_date(
     metadata: Datadoc,
 ):
     metadata.dataset.contains_data_from = datetime.date(2024, 1, 1)
-    metadata.dataset.contains_data_until = datetime.date(1980, 1, 1)
+    metadata.dataset.contains_data_until = "1980-10-01"
     with pytest.raises(
         ValueError,
         match="contains_data_from must be the same or earlier date than contains_data_until",
