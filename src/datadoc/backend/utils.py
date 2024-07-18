@@ -100,7 +100,7 @@ def set_default_values_dataset(dataset: model.Dataset) -> None:
         True
 
     Args:
-        dataset (model.Dataset): current dataset
+        dataset (model.Dataset): The model for dataset metadata
 
     Returns:
         None
