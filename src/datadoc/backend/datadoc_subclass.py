@@ -59,6 +59,9 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             ValueError: If contains_data_until date is earlier than contains_data_from date.
         Mode:
             after: This validator runs after other validation.
+
+        Returns:
+            Self: The instance of the model after validation.
         """
         if self.dataset is not None and incorrect_date_order(
             self.dataset.contains_data_from,
@@ -71,7 +74,6 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
                     raise ValueError(DATE_VALIDATION_MESSAGE)
         return self
 
-    # TODO(@tilen1976): check return value   # noqa: TD003
     @model_validator(mode="after")
     def check_metadata_created_date(self) -> Self:
         """Run validation check on metadata created date.
@@ -80,34 +82,46 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
 
         Mode:
             after: This validator runs after other validation.
+
+        Returns:
+            Self: The instance of the model after validation.
         """
         timestamp: datetime = get_timestamp_now()  # --check-untyped-defs
         if self.dataset is not None and self.dataset.metadata_created_date is None:
             self.dataset.metadata_created_date = timestamp
         return self
 
-    # TODO(@tilen1976): check return value   # noqa: TD003
     @model_validator(mode="after")
     def check_inherit_values(self) -> Self:
-        """Check predefined variables values and set value if None.
+        """Check predefined variables and set value if None.
 
-        Set values inherit from dataset on variables on 'data source','temporality type','contains data from' and 'contains data until'.
+        Set values inherit from dataset on variables 'data source','temporality type','contains data from' and 'contains data until'.
 
         Mode:
             after: This validator runs after other validation.
+
+        Returns:
+            Self: The instance of the model after validation.
         """
         if self.variables and self.dataset is not None:
             set_variables_inherit_from_dataset(self.dataset, self.variables)
         return self
 
-    # TODO(@tilen1976): check return value   # noqa: TD003
     @model_validator(mode="after")
     def check_obligatory_dataset_metadata(self) -> Self:
-        # TODO(@tilen1976): add docstring   # noqa: TD003
-        """.
+        """Check obligatory dataset fields and return warning if values are missing.
+
+        Raises:
+            ValidationWarning: If not all obligatory dataset metadata fields are filled in.
+
+        Stacklevel:
+            2: The warning is issued at stack level 2. It will point to this validation function when triggered.
 
         Mode:
             after: This validator runs after other validation.
+
+        Returns:
+            Self: The instance of the model after validation.
         """
         if (
             self.dataset is not None
@@ -124,15 +138,21 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
 
         return self
 
-    # TODO(@tilen1976): check return value   # noqa: TD003
     @model_validator(mode="after")
     def check_obligatory_variables_metadata(self) -> Self:
-        # TODO(@tilen1976): add docstring   # noqa: TD003
-        """.
+        """Check obligatory variable fields and return warning if values are missing.
+
+        Raises:
+            ValidationWarning: If not all obligatory variable metadata fields are filled in.
+
+        Stacklevel:
+            2: The warning is issued at stack level 2. It will point to this validation function when triggered.
 
         Mode:
             after: This validator runs after other validation.
 
+        Returns:
+            Self: The instance of the model after validation.
         """
         if (
             self.variables is not None
