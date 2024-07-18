@@ -25,29 +25,6 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 
-# TODO(@tilen1976): improve these warnings - consider moving to utils or separate warning class  # noqa: TD003
-class ValidationWarning(UserWarning):
-    """Custom warning for validation purposes."""
-
-    # TODO(@tilen1976): fix issue  # noqa: TD003
-    def custom_warning_handler(  # noqa: PLR0913
-        message: Warning | str,  # noqa: N805
-        category: type[Warning],
-        filename: str,
-        lineno: int,
-        file: TextIO | None = None,  # noqa: ARG002
-        line: str | None = None,  # noqa: ARG002
-    ) -> None:
-        """."""
-        print(  # noqa: T201
-            f"Warning: {message}, Category: {category.__name__}, Filename: {filename}, Line: {lineno}",
-        )
-
-    # Override the default warning handler
-    # TODO(@tilen1976): fix issue incompatible types  # noqa: TD003
-    warnings.showwarning = custom_warning_handler
-
-
 class ValidateDatadocMetadata(model.DatadocMetadata):
     """Class inherits from DatadocMetadata providing additional validation."""
 
@@ -168,3 +145,24 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             )
 
         return self
+
+
+class ValidationWarning(UserWarning):
+    """Custom warning for validation purposes."""
+
+
+def custom_warning_handler(  # noqa: PLR0913 remove fields causes incompatible types
+    message: Warning | str,
+    category: type[Warning],
+    filename: str,
+    lineno: int,
+    file: TextIO | None = None,  # noqa: ARG001 remove causes incompatible types
+    line: str | None = None,  # noqa: ARG001 remove causes incompatible types
+) -> None:
+    """Handle warnings."""
+    print(  # noqa: T201
+        f"Warning: {message}, Category: {category.__name__}, Filename: {filename}, Line: {lineno}",
+    )
+
+
+warnings.showwarning = custom_warning_handler
