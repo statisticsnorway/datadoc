@@ -86,6 +86,31 @@ def set_default_values_variables(variables: list) -> None:
             v.is_personal_data = model.IsPersonalData.NOT_PERSONAL_DATA
 
 
+def set_default_values_dataset(dataset: model.Dataset) -> None:
+    """Set default values on dataset.
+
+    For dataset fields 'id' and 'contains personal data'
+
+    Example:
+        >>> dataset = model.Dataset(id=None, contains_personal_data=None)
+        >>> set_default_values_dataset(dataset)
+        >>> dataset.id is not None
+        True
+        >>> dataset.contains_personal_data == False
+        True
+
+    Args:
+        dataset (model.Dataset): current dataset
+
+    Returns:
+        None
+    """
+    if not dataset.id:
+        dataset.id = uuid.uuid4()
+    if dataset.contains_personal_data is None:
+        dataset.contains_personal_data = False
+
+
 def set_variables_inherit_from_dataset(
     dataset: model.Dataset,
     variables: list,

@@ -28,6 +28,7 @@ from datadoc.backend.utils import derive_assessment_from_state
 from datadoc.backend.utils import normalize_path
 from datadoc.backend.utils import num_obligatory_dataset_fields_completed
 from datadoc.backend.utils import num_obligatory_variables_fields_completed
+from datadoc.backend.utils import set_default_values_dataset
 from datadoc.backend.utils import set_default_values_variables
 from datadoc.enums import DataSetStatus
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
@@ -94,10 +95,7 @@ class Datadoc:
                 if v.variable_role is None:
                     v.variable_role = model.VariableRole.MEASURE
         set_default_values_variables(self.variables)
-        if not self.dataset.id:
-            self.dataset.id = uuid.uuid4()
-        if self.dataset.contains_personal_data is None:
-            self.dataset.contains_personal_data = False
+        set_default_values_dataset(self.dataset)
         self.variables_lookup = {v.short_name: v for v in self.variables}
 
     def _extract_metadata_from_existing_document(
