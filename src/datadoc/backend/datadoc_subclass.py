@@ -49,15 +49,7 @@ class ValidationWarning(UserWarning):
 
 
 class ValidateDatadocMetadata(model.DatadocMetadata):
-    """Class inherits from DatadocMetadata providing additional validation.
-
-    Methods:
-        check_date_order:
-        check_metadata_created_date(self):
-        check_inherit_values(self):
-        check_obligatory_dataset_metadata(self):
-        check_obligatory_variables_metadata(self):
-    """
+    """Class inherits from DatadocMetadata providing additional validation."""
 
     @model_validator(mode="after")
     def check_date_order(self) -> Self:
