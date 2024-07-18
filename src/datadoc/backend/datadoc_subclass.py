@@ -10,13 +10,13 @@ from typing import TextIO
 from datadoc_model import model
 from pydantic import model_validator
 
-from datadoc.backend.utils import DATE_VALIDATION_MESSAGE
+from datadoc.backend.constants import DATE_VALIDATION_MESSAGE
+from datadoc.backend.constants import NUM_OBLIGATORY_DATASET_FIELDS
+from datadoc.backend.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
 from datadoc.backend.utils import get_missing_obligatory_dataset_fields
 from datadoc.backend.utils import get_missing_obligatory_variables_fields
 from datadoc.backend.utils import incorrect_date_order
-from datadoc.backend.utils import num_obligatory_dataset_fields
 from datadoc.backend.utils import num_obligatory_dataset_fields_completed
-from datadoc.backend.utils import num_obligatory_variables_fields
 from datadoc.backend.utils import num_obligatory_variables_fields_completed
 from datadoc.backend.utils import set_variables_inherit_from_dataset
 from datadoc.utils import get_timestamp_now
@@ -49,7 +49,7 @@ class ValidationWarning(UserWarning):
 
 
 class ValidateDatadocMetadata(model.DatadocMetadata):
-    """Class inherited from DatadocMetadata providing additional validation."""
+    """Class inherits from DatadocMetadata providing additional validation."""
 
     @model_validator(mode="after")
     def check_date_order(self) -> Self:
@@ -108,10 +108,10 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
         """
         if (
             self.dataset is not None
-            and num_obligatory_dataset_fields()
-            != num_obligatory_dataset_fields_completed(
+            and num_obligatory_dataset_fields_completed(
                 self.dataset,
             )
+            != NUM_OBLIGATORY_DATASET_FIELDS
         ):
             warnings.warn(
                 f"All obligatory metadata is not filled in for dataset {get_missing_obligatory_dataset_fields(self.dataset)}",
@@ -132,10 +132,10 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
         """
         if (
             self.variables is not None
-            and num_obligatory_variables_fields()
-            != num_obligatory_variables_fields_completed(
+            and num_obligatory_variables_fields_completed(
                 self.variables,
             )
+            != NUM_OBLIGATORY_VARIABLES_FIELDS
         ):
             warnings.warn(
                 f"All obligatory metadata is not filled in for variables {get_missing_obligatory_variables_fields(self.variables)}",

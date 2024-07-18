@@ -111,6 +111,7 @@ def test_variables_inherit_dates(
         assert v.contains_data_until == metadata.dataset.contains_data_until
 
 
+# TODO(@tilen1976): In progress hva tester jeg her?  # noqa: TD003
 def test_temporality_type_value(metadata: Datadoc):
     assert all(v.temporality_type is None for v in metadata.variables)
     metadata.dataset.temporality_type = datadoc_model.model.TemporalityTypeType(
@@ -124,6 +125,7 @@ def test_temporality_type_value(metadata: Datadoc):
     )
 
 
+# TODO(@tilen1976): In progress?? Hva tester jeg her  # noqa: TD003
 def test_value(metadata: Datadoc, tmp_path: pathlib.Path):
     assert all(v.temporality_type is None for v in metadata.variables)
     metadata.dataset.temporality_type = datadoc_model.model.TemporalityTypeType(

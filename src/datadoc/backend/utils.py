@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import datetime  # noqa: TCH003 import is needed in xdoctest
 import pathlib
 import uuid
-from typing import TYPE_CHECKING
 
 from cloudpathlib import CloudPath
 from cloudpathlib import GSClient
@@ -10,59 +10,10 @@ from cloudpathlib import GSPath
 from dapla import AuthClient
 from datadoc_model import model
 
+from datadoc.backend.constants import OBLIGATORY_DATASET_METADATA_IDENTIFIERS
+from datadoc.backend.constants import OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
 from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
-from datadoc.enums import LanguageStringType
-from datadoc.enums import LanguageStringTypeItem
-
-if TYPE_CHECKING:
-    import datetime
-
-VALIDATION_ERROR = "Validation error: "
-DATE_VALIDATION_MESSAGE = f"{VALIDATION_ERROR}contains_data_from must be the same or earlier date than contains_data_until"
-
-OBLIGATORY_DATASET_METADATA_IDENTIFIERS: list = [
-    "assessment",
-    "dataset_state",
-    "name",
-    "description",
-    "data_source",
-    "population_description",
-    "version",
-    "version_description",
-    "unit_type",
-    "temporality_type",
-    "subject_field",
-    "spatial_coverage_description",
-    "owner",
-    "contains_data_from",
-    "contains_data_until",
-    "contains_personal_data",
-]
-
-OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS = [
-    "name",
-    "data_type",
-    "variable_role",
-    "is_personal_data",
-]
-
-DEFAULT_SPATIAL_COVERAGE_DESCRIPTION = LanguageStringType(
-    [
-        LanguageStringTypeItem(
-            languageCode="nb",
-            languageText="Norge",
-        ),
-        LanguageStringTypeItem(
-            languageCode="nn",
-            languageText="Noreg",
-        ),
-        LanguageStringTypeItem(
-            languageCode="en",
-            languageText="Norway",
-        ),
-    ],
-)
 
 
 def normalize_path(path: str) -> pathlib.Path | CloudPath:
@@ -163,6 +114,12 @@ def incorrect_date_order(
 
     If 'date until' is before 'date from' it is incorrect date order.
 
+    Example:
+        >>> incorrect_date_order(datetime.date(1980, 1, 1), datetime.date(1967, 1, 1))
+        True
+        >>> incorrect_date_order(datetime.date(1967, 1, 1), datetime.date(1980, 1, 1))
+        False
+
     Args:
         date_from (datetime.date): start date
         date_until (datetime.date): end date
@@ -170,16 +127,6 @@ def incorrect_date_order(
         bool: True if incorrect date order.
     """
     return date_from is not None and date_until is not None and date_until < date_from
-
-
-def num_obligatory_dataset_fields() -> int:
-    """Return the number of obligatory dataset fields."""
-    return len(OBLIGATORY_DATASET_METADATA_IDENTIFIERS)
-
-
-def num_obligatory_variables_fields() -> int:
-    """Return the number of obligatory variable fields for one variable."""
-    return len(OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS)
 
 
 def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
@@ -223,14 +170,16 @@ def get_missing_obligatory_dataset_fields(dataset) -> list:  # noqa: ANN001
     ]
 
 
-def get_missing_obligatory_variables_fields(variables) -> list:  # noqa: ANN001
+def get_missing_obligatory_variables_fields(variables) -> list[dict]:  # noqa: ANN001
     """Get all obligatory variable fields for with no value for all variables.
+
+    Each dict has variable shortname as key and a list of missing fields.
 
     Args:
         variables (list): All variables.
 
     Returns:
-        list with dict(s)
+        list[dict]
     """
     return [
         {

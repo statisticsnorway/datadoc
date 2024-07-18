@@ -12,6 +12,9 @@ from datadoc_model import model
 
 from datadoc import config
 from datadoc.backend import user_info
+from datadoc.backend.constants import DEFAULT_SPATIAL_COVERAGE_DESCRIPTION
+from datadoc.backend.constants import NUM_OBLIGATORY_DATASET_FIELDS
+from datadoc.backend.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.datadoc_subclass import ValidateDatadocMetadata
 from datadoc.backend.dataset_parser import DatasetParser
@@ -20,13 +23,10 @@ from datadoc.backend.model_backwards_compatibility import (
 )
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-from datadoc.backend.utils import DEFAULT_SPATIAL_COVERAGE_DESCRIPTION
 from datadoc.backend.utils import calculate_percentage
 from datadoc.backend.utils import derive_assessment_from_state
 from datadoc.backend.utils import normalize_path
-from datadoc.backend.utils import num_obligatory_dataset_fields
 from datadoc.backend.utils import num_obligatory_dataset_fields_completed
-from datadoc.backend.utils import num_obligatory_variables_fields
 from datadoc.backend.utils import num_obligatory_variables_fields_completed
 from datadoc.backend.utils import set_default_values_variables
 from datadoc.enums import DataSetStatus
@@ -237,9 +237,9 @@ class Datadoc:
         assigned. Used for a live progress bar in the UI, as well as being
         saved in the datadoc as a simple quality indicator.
         """
-        num_all_fields = num_obligatory_dataset_fields()
+        num_all_fields = NUM_OBLIGATORY_DATASET_FIELDS
         num_set_fields = num_obligatory_dataset_fields_completed(self.dataset)
         for _i in range(len(self.variables)):
-            num_all_fields += num_obligatory_variables_fields()
+            num_all_fields += NUM_OBLIGATORY_VARIABLES_FIELDS
             num_set_fields += num_obligatory_variables_fields_completed(self.variables)
         return calculate_percentage(num_set_fields, num_all_fields)
