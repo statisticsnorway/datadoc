@@ -14,6 +14,10 @@ from datadoc.backend.constants import OBLIGATORY_DATASET_METADATA_IDENTIFIERS
 from datadoc.backend.constants import OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
 from datadoc.enums import Assessment, IsPersonalData  # noqa: F401
 from datadoc.enums import DataSetState
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from datadoc.backend.datadoc_subclass import ValidateDataset
 
 
 def normalize_path(path: str) -> pathlib.Path | CloudPath:
@@ -86,7 +90,7 @@ def set_default_values_variables(variables: list) -> None:
             v.is_personal_data = model.IsPersonalData.NOT_PERSONAL_DATA
 
 
-def set_default_values_dataset(dataset: model.Dataset) -> None:
+def set_default_values_dataset(dataset: ValidateDataset) -> None:
     """Set default values on dataset.
 
     For dataset fields 'id' and 'contains personal data'
@@ -112,7 +116,7 @@ def set_default_values_dataset(dataset: model.Dataset) -> None:
 
 
 def set_variables_inherit_from_dataset(
-    dataset: model.Dataset,
+    dataset: ValidateDataset | model.Dataset,
     variables: list,
 ) -> None:
     """Set dataset values on variables.
@@ -175,7 +179,9 @@ def incorrect_date_order(
     return date_from is not None and date_until is not None and date_until < date_from
 
 
-def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
+def num_obligatory_dataset_fields_completed(
+    dataset: ValidateDataset | model.Dataset,
+) -> int:
     """Return the number of obligatory dataset fields with value."""
     return len(
         [
@@ -200,7 +206,9 @@ def num_obligatory_variables_fields_completed(variables: list) -> int:
     return num_variables
 
 
-def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
+def get_missing_obligatory_dataset_fields(
+    dataset: ValidateDataset | model.Dataset,
+) -> list:
     """Get all obligatory dataset fields with no value.
 
     Args:
