@@ -91,11 +91,10 @@ def set_variables_inherit_from_dataset(
     """Set dataset values on variables.
 
     Handles variable values for these fields:
-        'contains data from',
+        'data source'
+        'temporality type',
         'contains data from',
         'contains data until',
-        'temporality type',
-        'data source'
 
     Example:
         >>> dataset = model.Dataset(short_name='person_data_v1',data_source='01',temporality_type='STATUS',id='9662875c-c245-41de-b667-12ad2091a1ee',contains_data_from="2010-09-05",contains_data_until="2022-09-05")

@@ -52,7 +52,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
     """Class inherits from DatadocMetadata providing additional validation.
 
     Methods:
-        check_datae_order:
+        check_date_order:
         check_metadata_created_date(self):
         check_inherit_values(self):
         check_obligatory_dataset_metadata(self):
@@ -84,7 +84,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
     def check_metadata_created_date(self) -> Self:
         """Run validation check on metadata created date.
 
-        Set timestamp value now if value is None value is set by timestamp now.
+        Set timestamp value if value is None.
 
         Mode:
             after: This validator runs after other validation.
@@ -97,9 +97,9 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
     # TODO(@tilen1976): check return value   # noqa: TD003
     @model_validator(mode="after")
     def check_inherit_values(self) -> Self:
-        """Check certain variables values for None value.
+        """Check predefined variables values and set value if None.
 
-        Set values on variables if None inherit from dataset values.
+        Set values inherit from dataset on variables on 'data source','temporality type','contains data from' and 'contains data until'.
 
         Mode:
             after: This validator runs after other validation.
