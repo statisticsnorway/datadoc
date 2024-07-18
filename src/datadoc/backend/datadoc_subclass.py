@@ -49,7 +49,15 @@ class ValidationWarning(UserWarning):
 
 
 class ValidateDatadocMetadata(model.DatadocMetadata):
-    """Class inherits from DatadocMetadata providing additional validation."""
+    """Class inherits from DatadocMetadata providing additional validation.
+
+    Methods:
+        check_datae_order:
+        check_metadata_created_date(self):
+        check_inherit_values(self):
+        check_obligatory_dataset_metadata(self):
+        check_obligatory_variables_metadata(self):
+    """
 
     @model_validator(mode="after")
     def check_date_order(self) -> Self:
@@ -71,6 +79,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
                     raise ValueError(DATE_VALIDATION_MESSAGE)
         return self
 
+    # TODO(@tilen1976): check return value   # noqa: TD003
     @model_validator(mode="after")
     def check_metadata_created_date(self) -> Self:
         """Run validation check on metadata created date.
@@ -85,6 +94,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             self.dataset.metadata_created_date = timestamp
         return self
 
+    # TODO(@tilen1976): check return value   # noqa: TD003
     @model_validator(mode="after")
     def check_inherit_values(self) -> Self:
         """Check certain variables values for None value.
@@ -98,6 +108,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             set_variables_inherit_from_dataset(self.dataset, self.variables)
         return self
 
+    # TODO(@tilen1976): check return value   # noqa: TD003
     @model_validator(mode="after")
     def check_obligatory_dataset_metadata(self) -> Self:
         # TODO(@tilen1976): add docstring   # noqa: TD003
@@ -121,6 +132,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
 
         return self
 
+    # TODO(@tilen1976): check return value   # noqa: TD003
     @model_validator(mode="after")
     def check_obligatory_variables_metadata(self) -> Self:
         # TODO(@tilen1976): add docstring   # noqa: TD003

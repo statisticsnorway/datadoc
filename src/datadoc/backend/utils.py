@@ -174,7 +174,7 @@ def num_obligatory_variables_fields_completed(variables: list) -> int:
     return num_variables
 
 
-def get_missing_obligatory_dataset_fields(dataset) -> list:  # noqa: ANN001
+def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
     """Get all obligatory dataset fields with no value.
 
     Args:
