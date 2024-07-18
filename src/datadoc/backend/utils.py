@@ -1,4 +1,4 @@
-from __future__ import annotations
+from __future__ import annotations  # noqa: I001
 
 import datetime  # noqa: TCH003 import is needed in xdoctest
 import pathlib
@@ -12,7 +12,7 @@ from datadoc_model import model
 
 from datadoc.backend.constants import OBLIGATORY_DATASET_METADATA_IDENTIFIERS
 from datadoc.backend.constants import OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
-from datadoc.enums import Assessment
+from datadoc.enums import Assessment, IsPersonalData  # noqa: F401
 from datadoc.enums import DataSetState
 
 
@@ -61,8 +61,15 @@ def derive_assessment_from_state(state: DataSetState) -> Assessment:
 def set_default_values_variables(variables: list) -> None:
     """Set default values on variables.
 
-    If variables attributes 'id' is None set a unique uuid4 value.
-    If 'is personal data' is None set default value of 'not personal data'.
+    Example:
+        >>> variables = [model.Variable(short_name="pers",id=None, is_personal_data = None), model.Variable(short_name="fnr",id='9662875c-c245-41de-b667-12ad2091a1ee', is_personal_data='PSEUDONYMISED_ENCRYPTED_PERSONAL_DATA')]
+        >>> set_default_values_variables(variables)
+        >>> isinstance(variables[0].id, uuid.UUID)
+        True
+        >>> variables[1].is_personal_data == 'PSEUDONYMISED_ENCRYPTED_PERSONAL_DATA'
+        True
+        >>> variables[0].is_personal_data == 'NOT_PERSONAL_DATA'
+        True
 
     Args:
         variables (list): A list of variables
