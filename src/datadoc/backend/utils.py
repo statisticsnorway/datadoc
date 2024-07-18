@@ -97,6 +97,19 @@ def set_variables_inherit_from_dataset(
         'temporality type',
         'data source'
 
+    Example:
+        >>> dataset = model.Dataset(short_name='person_data_v1',data_source='01',temporality_type='STATUS',id='9662875c-c245-41de-b667-12ad2091a1ee',contains_data_from="2010-09-05",contains_data_until="2022-09-05")
+        >>> variables = [model.Variable(short_name="pers",data_source =None,temporality_type = None, contains_data_from = None,contains_data_until = None)]
+        >>> set_variables_inherit_from_dataset(dataset, variables)
+        >>> variables[0].data_source == dataset.data_source
+        True
+        >>> variables[0].temporality_type is None
+        False
+        >>> variables[0].contains_data_from == dataset.contains_data_from
+        True
+        >>> variables[0].contains_data_until == dataset.contains_data_until
+        True
+
     If either of values in list are None they will inherit from dataset value.
 
     Args:
@@ -131,7 +144,7 @@ def incorrect_date_order(
         date_from (datetime.date): start date
         date_until (datetime.date): end date
     Returns:
-        bool: True if incorrect date order.
+        bool
     """
     return date_from is not None and date_until is not None and date_until < date_from
 
