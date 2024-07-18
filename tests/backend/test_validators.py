@@ -14,11 +14,31 @@ from pydantic import ValidationError
 
 from datadoc import state
 from datadoc.backend.datadoc_subclass import ValidationWarning
+from datadoc.backend.utils import incorrect_date_order
 from datadoc.enums import TemporalityTypeType
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
 
 if TYPE_CHECKING:
     from datadoc.backend.core import Datadoc
+
+
+def test_incorrect_date_order(metadata: Datadoc):
+    variables = metadata.variables
+    assert variables is not None
+    variables[0].contains_data_from = datetime.date(2024, 1, 1)
+    variables[0].contains_data_until = datetime.date(1960, 1, 1)
+    result_incorrect_dates = incorrect_date_order(
+        variables[0].contains_data_from,
+        variables[0].contains_data_until,
+    )
+    assert result_incorrect_dates is True
+    variables[0].contains_data_from = datetime.date(1980, 1, 1)
+    variables[0].contains_data_until = datetime.date(2000, 6, 5)
+    result_correct_dates = incorrect_date_order(
+        variables[0].contains_data_from,
+        variables[0].contains_data_until,
+    )
+    assert result_correct_dates is False
 
 
 def test_write_metadata_document_invalid_date(
