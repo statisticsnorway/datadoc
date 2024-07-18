@@ -109,7 +109,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
         ):
             warnings.warn(
                 f"All obligatory metadata is not filled in for dataset {get_missing_obligatory_dataset_fields(self.dataset)}",
-                ValidationWarning,
+                ObligatoryDatasetWarning,
                 stacklevel=2,
             )
 
@@ -140,7 +140,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
         ):
             warnings.warn(
                 f"All obligatory metadata is not filled in for variables {get_missing_obligatory_variables_fields(self.variables)}",
-                ValidationWarning,
+                ObligatoryVariableWarning,
                 stacklevel=2,
             )
 
@@ -149,6 +149,14 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
 
 class ValidationWarning(UserWarning):
     """Custom warning for validation purposes."""
+
+
+class ObligatoryDatasetWarning(UserWarning):
+    """Custom warning for checking obligatory metadata for dataset."""
+
+
+class ObligatoryVariableWarning(UserWarning):
+    """Custom warning for checking obligatory metadata for dataset."""
 
 
 def custom_warning_handler(  # noqa: PLR0913 remove fields causes incompatible types

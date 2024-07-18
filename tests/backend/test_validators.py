@@ -10,7 +10,8 @@ import pytest
 from pydantic import ValidationError
 
 from datadoc import state
-from datadoc.backend.datadoc_subclass import ValidationWarning
+from datadoc.backend.datadoc_subclass import ObligatoryDatasetWarning
+from datadoc.backend.datadoc_subclass import ObligatoryVariableWarning
 from datadoc.backend.utils import incorrect_date_order
 from datadoc.enums import TemporalityTypeType
 
@@ -123,18 +124,35 @@ def test_variables_inherit_temporality_type_value(metadata: Datadoc):
     )
 
 
-def test_obligatory_metadata_warning(metadata: Datadoc):
+def test_obligatory_metadata_dataset_warning(metadata: Datadoc):
     state.metadata = metadata
     with pytest.warns(
-        ValidationWarning,
-        match="All obligatory metadata is not filled in",
+        ObligatoryDatasetWarning,
+        match="All obligatory metadata is not filled in for dataset",
     ) as record:
         metadata.write_metadata_document()
     all_obligatory_completed = 100
     num_warnings = 2
     if metadata.percent_complete != all_obligatory_completed:
         assert len(record) == num_warnings
-        assert issubclass(record[0].category, ValidationWarning)
+        assert issubclass(record[0].category, ObligatoryDatasetWarning)
+        assert "All obligatory metadata is not filled in for dataset" in str(
+            record[0].message,
+        )
+
+
+def test_obligatory_metadata_variables_warning(metadata: Datadoc):
+    state.metadata = metadata
+    with pytest.warns(
+        ObligatoryVariableWarning,
+        match="All obligatory metadata is not filled in for variable",
+    ) as record:
+        metadata.write_metadata_document()
+    all_obligatory_completed = 100
+    num_warnings = 2
+    if metadata.percent_complete != all_obligatory_completed:
+        assert len(record) == num_warnings
+        assert issubclass(record[1].category, ObligatoryVariableWarning)
         if (
             metadata.variables_lookup["pers_id"]
             and metadata.variables_lookup["pers_id"].name is None
