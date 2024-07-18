@@ -61,6 +61,8 @@ def derive_assessment_from_state(state: DataSetState) -> Assessment:
 def set_default_values_variables(variables: list) -> None:
     """Set default values on variables.
 
+    For variable fields 'id' and 'is personal data'
+
     Example:
         >>> variables = [model.Variable(short_name="pers",id=None, is_personal_data = None), model.Variable(short_name="fnr",id='9662875c-c245-41de-b667-12ad2091a1ee', is_personal_data='PSEUDONYMISED_ENCRYPTED_PERSONAL_DATA')]
         >>> set_default_values_variables(variables)
@@ -90,11 +92,13 @@ def set_variables_inherit_from_dataset(
 ) -> None:
     """Set dataset values on variables.
 
-    Handles variable values for these fields:
+    For variable fields:
         'data source'
         'temporality type',
         'contains data from',
         'contains data until',
+
+    If a variable field from list has no value it will inherit from dataset value.
 
     Example:
         >>> dataset = model.Dataset(short_name='person_data_v1',data_source='01',temporality_type='STATUS',id='9662875c-c245-41de-b667-12ad2091a1ee',contains_data_from="2010-09-05",contains_data_until="2022-09-05")
@@ -109,11 +113,9 @@ def set_variables_inherit_from_dataset(
         >>> variables[0].contains_data_until == dataset.contains_data_until
         True
 
-    If either of values in list are None they will inherit from dataset value.
-
     Args:
-        dataset (model.Dataset): the dataset to inherit from
-        variables (list): list of variables which may inherit from dataset
+        dataset (model.Dataset): current dataset
+        variables (list): current list of variables
 
     Returns:
         None
@@ -177,7 +179,7 @@ def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
     """Get all obligatory dataset fields with no value.
 
     Args:
-        dataset (Any): The dataset examined.
+        dataset (model.Dataset): The dataset examined.
 
     Returns:
         list

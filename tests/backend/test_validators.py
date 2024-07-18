@@ -95,22 +95,6 @@ def test_write_metadata_document_created_date(
     assert metadata.dataset.metadata_created_date is not None
 
 
-# TODO(@tilen1976): remove??  # noqa: TD003
-"""def test_write_metadata_document_created_date_is_set(
-    metadata: Datadoc,
-):
-    created_date = datetime.datetime(
-        2022,
-        1,
-        1,
-        tzinfo=datetime.timezone.utc,
-    )
-    metadata.dataset.metadata_created_date = created_date
-    metadata.write_metadata_document()
-    assert metadata.dataset.metadata_created_date == created_date
-"""
-
-
 def test_variables_inherit_dates(
     metadata: Datadoc,
 ):
@@ -151,7 +135,10 @@ def test_obligatory_metadata_warning(metadata: Datadoc):
     if metadata.percent_complete != all_obligatory_completed:
         assert len(record) == num_warnings
         assert issubclass(record[0].category, ValidationWarning)
-        if metadata.variables_lookup["pers_id"]:
+        if (
+            metadata.variables_lookup["pers_id"]
+            and metadata.variables_lookup["pers_id"].name is None
+        ):
             assert (
                 "All obligatory metadata is not filled in for variables [{'pers_id': ['name']},"
                 in str(
