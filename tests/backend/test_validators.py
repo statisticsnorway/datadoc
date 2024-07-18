@@ -24,6 +24,7 @@ if TYPE_CHECKING:
 
 def test_incorrect_date_order(metadata: Datadoc):
     variables = metadata.variables
+    dataset = metadata.dataset
     assert variables is not None
     variables[0].contains_data_from = datetime.date(2024, 1, 1)
     variables[0].contains_data_until = datetime.date(1960, 1, 1)
@@ -32,11 +33,11 @@ def test_incorrect_date_order(metadata: Datadoc):
         variables[0].contains_data_until,
     )
     assert result_incorrect_dates is True
-    variables[0].contains_data_from = datetime.date(1980, 1, 1)
-    variables[0].contains_data_until = datetime.date(2000, 6, 5)
+    dataset.contains_data_from = datetime.date(1980, 1, 1)
+    dataset.contains_data_until = datetime.date(2000, 6, 5)
     result_correct_dates = incorrect_date_order(
-        variables[0].contains_data_from,
-        variables[0].contains_data_until,
+        dataset.contains_data_from,
+        dataset.contains_data_until,
     )
     assert result_correct_dates is False
 
