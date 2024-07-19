@@ -22,10 +22,8 @@ class CodeListItem:
     """Data structure for a code list item.
 
     Attributes:
-        titles:
-            A dictionary mapping language codes to titles.
-        code:
-            The code associated with the item.
+        titles: A dictionary mapping language codes to titles.
+        code: The code associated with the item.
     """
 
     titles: dict[str, str]
@@ -35,13 +33,11 @@ class CodeListItem:
         """Gets the title in the given language.
 
         Args:
-            language:
-                The language code for which to get the title.
+            language: The language code for which to get the title.
 
         Returns:
-            str:
-                The title in the specified language. If the title is not available in the specified language,
-                it defaults to Norwegian Bokmål ("nb") or English ("en").
+            The title in the specified language. If the title is not available in the specified language.
+            It defaults to Norwegian Bokmål ("nb") or English ("en").
         """
         try:
             return self.titles[language]
@@ -82,11 +78,8 @@ class CodeList(GetExternalSource):
         """Initializes the CodeList with the given classification ID and executor.
 
         Args:
-            executor:
-                An instance of ThreadPoolExecutor to manage the asynchronous execution of data fetching.
-            classification_id:
-                The ID of the classification to retrieve.
-
+            executor: An instance of ThreadPoolExecutor to manage the asynchronous execution of data fetching.
+            classification_id: The ID of the classification to retrieve.
         """
         self.supported_languages = [
             SupportedLanguages.NORSK_BOKMÅL.value,
@@ -103,9 +96,8 @@ class CodeList(GetExternalSource):
         """Fetches the classifications from Klass by classification ID.
 
         Returns:
-            dict:
-                A dictionary mapping language codes to pandas DataFrames containing the classification
-                data for the given classification ID.
+            A dictionary mapping language codes to pandas DataFrames containing the classification
+            data for the given classification ID.
         """
         classifications_dataframes = {}
         for i in self.supported_languages:
@@ -134,12 +126,10 @@ class CodeList(GetExternalSource):
         """Extracts titles from the dataframes for each supported language.
 
         Args:
-            dataframes:
-                A dictionary mapping language codes to pandas DataFrames containing classification data.
+            dataframes: A dictionary mapping language codes to pandas DataFrames containing classification data.
 
         Returns:
-            list:
-                A list of dictionaries mapping language codes to titles.
+            A list of dictionaries mapping language codes to titles.
         """
         list_of_titles = []
         languages = list(dataframes)
@@ -160,12 +150,10 @@ class CodeList(GetExternalSource):
         """Method that finds the name column in the dataframe, and returns all values in a list.
 
         Args:
-            classifications_dataframes:
-                A dictionary mapping language codes to pandas DataFrames containing classification data.
+            classifications_dataframes: A dictionary mapping language codes to pandas DataFrames containing classification data.
 
         Returns:
-            list:
-                A list of CodeListItem objects.
+            A list of CodeListItem objects.
         """
         classification_names = self._extract_titles(classifications_dataframes)
         classification_codes: list
@@ -188,8 +176,7 @@ class CodeList(GetExternalSource):
         """Checks if the data from Klass is loaded, then gets the classifications from the dataframe.
 
         Returns:
-            bool:
-                True if the data is loaded and classifications are extracted, False otherwise.
+            True if the data is loaded and classifications are extracted, False otherwise.
         """
         if not self._classifications:
             self.classifications_dataframes = self.retrieve_external_data()
@@ -212,8 +199,7 @@ class CodeList(GetExternalSource):
         """Gets the list of classifications.
 
         Returns:
-            list:
-                A list of CodeListItem objects.
+            A list of CodeListItem objects.
         """
         self._get_classification_dataframe_if_loaded()
         logger.debug("Got %s classifications subjects", len(self._classifications))

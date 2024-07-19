@@ -32,8 +32,7 @@ class GetExternalSource(ABC, Generic[T]):
         data fetching operation from external source.
 
         Args:
-            executor:
-                An instance of ThreadPoolExecutor to manage the asynchronous execution of data fetching.
+            executor: An instance of ThreadPoolExecutor to manage the asynchronous execution of data fetching.
         """
         self.future = executor.submit(
             self._fetch_data_from_external_source,
@@ -53,8 +52,7 @@ class GetExternalSource(ABC, Generic[T]):
         """Method to check if the thread getting the external data has finished running.
 
         Returns:
-            bool:
-                True if the data fetching operation is complete, False otherwise.
+            bool: True if the data fetching operation is complete, False otherwise.
         """
         if self.future:
             return self.future.done()
