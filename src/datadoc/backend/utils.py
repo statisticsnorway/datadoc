@@ -174,9 +174,9 @@ def incorrect_date_order(
 
     Args:
         date_from (datetime.date):
-            start date
+            start date of time period
         date_until (datetime.date):
-            end date
+            end date of time period
 
     Returns:
         True if it is incorrect date order.
