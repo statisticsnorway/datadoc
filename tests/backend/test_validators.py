@@ -92,6 +92,8 @@ def test_write_metadata_document_created_date(
     metadata: Datadoc,
 ):
     metadata.dataset.metadata_created_date = None
+    assert metadata.dataset.metadata_created_date is None
+    metadata.write_metadata_document()
     assert metadata.dataset.metadata_created_date is not None
 
 

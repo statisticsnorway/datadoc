@@ -8,7 +8,6 @@ from typing import Self
 from typing import TextIO
 
 from datadoc_model import model
-from pydantic import field_validator
 from pydantic import model_validator
 
 from datadoc.backend.constants import DATE_VALIDATION_MESSAGE
@@ -28,8 +27,6 @@ if TYPE_CHECKING:
 
 class ValidateDatadocMetadata(model.DatadocMetadata):
     """Class inherits from DatadocMetadata providing additional validation."""
-
-    dataset: ValidateDataset | model.Dataset
 
     @model_validator(mode="after")
     def check_date_order(self) -> Self:
@@ -55,10 +52,26 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
         return self
 
     @model_validator(mode="after")
-    def check_inherit_values(self) -> Self:
-        """Check predefined variables and set value if None.
+    def check_metadata_created_date(self) -> Self:
+        """Run validation check on metadata created date.
 
-        Set values inherit from dataset on variables 'data source','temporality type','contains data from' and 'contains data until'.
+        Set timestamp value if value is None.
+        Mode:
+            after: This validator runs after other validation.
+
+        Returns:
+            Self: The instance of the model after validation.
+        """
+        timestamp: datetime = get_timestamp_now()  # --check-untyped-defs
+        if self.dataset is not None and self.dataset.metadata_created_date is None:
+            self.dataset.metadata_created_date = timestamp
+        return self
+
+    @model_validator(mode="after")
+    def check_inherit_values(self) -> Self:
+        """Check variables eligible for inheritence from dataset.
+
+        Set values inherit from dataset on variables 'data source','temporality type','contains data from' and 'contains data until' if values are None.
 
         Mode:
             after: This validator runs after other validation.
@@ -135,21 +148,6 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
 
 class ValidateDataset(model.Dataset):
     """Class inherits from model.Dataset providing additional validation."""
-
-    @field_validator("metadata_created_date")
-    @classmethod
-    def check_metadata_created_date(
-        cls,
-        metadata_created_date: datetime | None,
-    ) -> datetime:
-        """Run validation check on metadata created date.
-
-        Set timestamp value if value is None.
-        """
-        timestamp: datetime = get_timestamp_now()  # --check-untyped-defs
-        if metadata_created_date is None:
-            metadata_created_date = timestamp
-        return metadata_created_date
 
 
 class ValidationWarning(UserWarning):
