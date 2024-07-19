@@ -105,7 +105,8 @@ class Datadoc:
         """There's an existing metadata document, so read in the metadata from that.
 
         Args:
-            document: A path to the existing metadata document
+            document:
+                A path to the existing metadata document
         """
         fresh_metadata = {}
         try:
@@ -145,13 +146,17 @@ class Datadoc:
         self,
         dapla_dataset_path_info: DaplaDatasetPathInfo,
     ) -> str | None:
-        """Extract the statistic short name from the dataset file path and map it to its corresponding statistical subject.
+        """Extract the statistic short name from the dataset file path.
+
+        Map the extracted statistic short name to its corresponding statistical subject.
 
         Args:
-            dapla_dataset_path_info (DaplaDatasetPathInfo): The object representing the decomposed file path
+            dapla_dataset_path_info (DaplaDatasetPathInfo):
+                The object representing the decomposed file path
 
         Returns:
-            str | None: The code for the statistical subject or None if we couldn't map to one.
+            str | None:
+                The code for the statistical subject or None if we couldn't map to one.
         """
         if self._statistic_subject_mapping is None:
             with concurrent.futures.ThreadPoolExecutor(max_workers=12) as executor:

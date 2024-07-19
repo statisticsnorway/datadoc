@@ -32,13 +32,17 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
     def check_date_order(self) -> Self:
         """Run validation check on fields contains_data_from and contains_data_until.
 
-        Raises:
-            ValueError: If contains_data_until date is earlier than contains_data_from date.
         Mode:
-            after: This validator runs after other validation.
+            after:
+                This validator runs after other validation.
 
         Returns:
-            Self: The instance of the model after validation.
+            Self:
+                The instance of the model after validation.
+
+        Raises:
+            ValueError:
+                If contains_data_until date is earlier than contains_data_from date.
         """
         if self.dataset is not None and incorrect_date_order(
             self.dataset.contains_data_from,
@@ -56,11 +60,14 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
         """Run validation check on metadata created date.
 
         Set timestamp value if value is None.
+
         Mode:
-            after: This validator runs after other validation.
+            after:
+                This validator runs after other validation.
 
         Returns:
-            Self: The instance of the model after validation.
+            Self:
+                The instance of the model after validation.
         """
         timestamp: datetime = get_timestamp_now()  # --check-untyped-defs
         if self.dataset is not None and self.dataset.metadata_created_date is None:
@@ -74,10 +81,12 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
         Set values inherit from dataset on variables 'data source','temporality type','contains data from' and 'contains data until' if values are None.
 
         Mode:
-            after: This validator runs after other validation.
+            after:
+                This validator runs after other validation.
 
         Returns:
-            Self: The instance of the model after validation.
+            Self:
+                The instance of the model after validation.
         """
         if self.variables and self.dataset is not None:
             set_variables_inherit_from_dataset(self.dataset, self.variables)
@@ -87,17 +96,20 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
     def check_obligatory_dataset_metadata(self) -> Self:
         """Check obligatory dataset fields and return warning if values are missing.
 
-        Raises:
-            ValidationWarning: If not all obligatory dataset metadata fields are filled in.
-
         Stacklevel:
-            2: The warning is issued at stack level 2. It will point to this validation function when triggered.
+            2:
+                The warning is issued at stack level 2. It will point to this validation function when triggered.
 
         Mode:
-            after: This validator runs after other validation.
+            after:
+                This validator runs after other validation.
 
         Returns:
-            Self: The instance of the model after validation.
+            Self:
+                The instance of the model after validation.
+
+        Raises:
+            ValidationWarning: If not all obligatory dataset metadata fields are filled in.
         """
         if (
             self.dataset is not None
@@ -118,17 +130,21 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
     def check_obligatory_variables_metadata(self) -> Self:
         """Check obligatory variable fields and return warning if values are missing.
 
-        Raises:
-            ValidationWarning: If not all obligatory variable metadata fields are filled in.
-
         Stacklevel:
-            2: The warning is issued at stack level 2. It will point to this validation function when triggered.
+            2:
+                The warning is issued at stack level 2. It will point to this validation function when triggered.
 
         Mode:
-            after: This validator runs after other validation.
+            after:
+                This validator runs after other validation.
 
         Returns:
-            Self: The instance of the model after validation.
+            Self:
+                The instance of the model after validation.
+
+        Raises:
+            ValidationWarning:
+                If not all obligatory variable metadata fields are filled in.
         """
         if (
             self.variables is not None

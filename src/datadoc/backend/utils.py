@@ -20,10 +20,12 @@ def normalize_path(path: str) -> pathlib.Path | CloudPath:
     """Obtain a pathlib compatible Path regardless of whether the file is on a filesystem or in GCS.
 
     Args:
-        path (str): Path on a filesystem or in cloud storage
+        path (str):
+            Path on a filesystem or in cloud storage
 
     Returns:
-        pathlib.Path | CloudPath: Pathlib compatible object
+        pathlib.Path | CloudPath:
+            Pathlib compatible object
     """
     if path.startswith(GSPath.cloud_prefix):
         client = GSClient(credentials=AuthClient.fetch_google_credentials())
@@ -40,10 +42,12 @@ def derive_assessment_from_state(state: DataSetState) -> Assessment:
     """Derive assessment from dataset state.
 
     Args:
-        state (DataSetState): The state of the dataset.
+        state (DataSetState):
+            The state of the dataset.
 
     Returns:
-        Assessment: The derived assessment of the dataset.
+        Assessment:
+            The derived assessment of the dataset.
     """
     match (state):
         case (
@@ -68,16 +72,16 @@ def set_default_values_variables(variables: list) -> None:
         >>> set_default_values_variables(variables)
         >>> isinstance(variables[0].id, uuid.UUID)
         True
+
         >>> variables[1].is_personal_data == 'PSEUDONYMISED_ENCRYPTED_PERSONAL_DATA'
         True
+
         >>> variables[0].is_personal_data == 'NOT_PERSONAL_DATA'
         True
 
     Args:
-        variables (list): A list of variables
-
-    Returns:
-        None
+        variables (list):
+            A list of variables
     """
     for v in variables:
         if v.id is None:
@@ -96,14 +100,13 @@ def set_default_values_dataset(dataset: model.Dataset) -> None:
         >>> set_default_values_dataset(dataset)
         >>> dataset.id is not None
         True
+
         >>> dataset.contains_personal_data == False
         True
 
     Args:
-        dataset (model.Dataset): The model for dataset metadata
-
-    Returns:
-        None
+        dataset (model.Dataset):
+            The model for dataset metadata
     """
     if not dataset.id:
         dataset.id = uuid.uuid4()
@@ -131,19 +134,21 @@ def set_variables_inherit_from_dataset(
         >>> set_variables_inherit_from_dataset(dataset, variables)
         >>> variables[0].data_source == dataset.data_source
         True
+
         >>> variables[0].temporality_type is None
         False
+
         >>> variables[0].contains_data_from == dataset.contains_data_from
         True
+
         >>> variables[0].contains_data_until == dataset.contains_data_until
         True
 
     Args:
-        dataset (model.Dataset): current dataset
-        variables (list): current list of variables
-
-    Returns:
-        None
+        dataset (model.Dataset):
+            current dataset
+        variables (list):
+            current list of variables
     """
     for v in variables:
         v.contains_data_from = v.contains_data_from or dataset.contains_data_from
@@ -163,14 +168,18 @@ def incorrect_date_order(
     Example:
         >>> incorrect_date_order(datetime.date(1980, 1, 1), datetime.date(1967, 1, 1))
         True
+
         >>> incorrect_date_order(datetime.date(1967, 1, 1), datetime.date(1980, 1, 1))
         False
 
     Args:
-        date_from (datetime.date): start date
-        date_until (datetime.date): end date
+        date_from (datetime.date):
+            start date
+        date_until (datetime.date):
+            end date
+
     Returns:
-        bool
+        True if it is incorrect date order.
     """
     return date_from is not None and date_until is not None and date_until < date_from
 
@@ -204,10 +213,11 @@ def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
     """Get all obligatory dataset fields with no value.
 
     Args:
-        dataset (model.Dataset): The dataset examined.
+        dataset (model.Dataset):
+            The dataset examined.
 
     Returns:
-        list
+        List of obligatory dataset fields who are missing value.
     """
     return [
         k
@@ -222,10 +232,11 @@ def get_missing_obligatory_variables_fields(variables) -> list[dict]:  # noqa: A
     Each dict has variable shortname as key and a list of missing fields.
 
     Args:
-        variables (list): All variables.
+        variables (list):
+            List of variables in.
 
     Returns:
-        list[dict]
+        List of dicts with variables obligatory variable fields who are missing value.
     """
     return [
         {
