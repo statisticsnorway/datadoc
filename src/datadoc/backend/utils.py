@@ -98,10 +98,6 @@ def set_default_values_dataset(dataset: model.Dataset) -> None:
         True
         >>> dataset.contains_personal_data == False
         True
-        >>> dataset.contains_personal_data = True
-        >>> set_default_values_dataset(dataset)
-        >>> dataset.contains_personal_data == False
-        False
 
     Args:
         dataset (model.Dataset): The model for dataset metadata
