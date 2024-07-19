@@ -73,7 +73,6 @@ class GetExternalSource(ABC, Generic[T]):
             return self.future.result()
         return None
 
-    # TODO(@tilen1976): abstract private method??  # noqa: TD003
     @abstractmethod
     def _fetch_data_from_external_source(self) -> T | None:
         """Abstract method implemented in the child class to handle the external data.
