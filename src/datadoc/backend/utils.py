@@ -20,12 +20,10 @@ def normalize_path(path: str) -> pathlib.Path | CloudPath:
     """Obtain a pathlib compatible Path regardless of whether the file is on a filesystem or in GCS.
 
     Args:
-        path (str):
-            Path on a filesystem or in cloud storage
+        path (str): Path on a filesystem or in cloud storage
 
     Returns:
-        pathlib.Path | CloudPath:
-            Pathlib compatible object
+        pathlib.Path | CloudPath: Pathlib compatible object
     """
     if path.startswith(GSPath.cloud_prefix):
         client = GSClient(credentials=AuthClient.fetch_google_credentials())
@@ -42,12 +40,10 @@ def derive_assessment_from_state(state: DataSetState) -> Assessment:
     """Derive assessment from dataset state.
 
     Args:
-        state (DataSetState):
-            The state of the dataset.
+        state (DataSetState): The state of the dataset.
 
     Returns:
-        Assessment:
-            The derived assessment of the dataset.
+        Assessment: The derived assessment of the dataset.
     """
     match (state):
         case (
@@ -63,9 +59,14 @@ def derive_assessment_from_state(state: DataSetState) -> Assessment:
 
 
 def set_default_values_variables(variables: list) -> None:
-    """Set default values on variables.
+    """Set default values on variables for variable fields 'id' and 'is personal data'.
 
-    For variable fields 'id' and 'is personal data'
+    This function assigns default values to the 'id' and 'is personal data' fields of each variable.
+    If a variable's 'id' is None, it will be set to a new UUID. If 'is personal data' is None,
+    it will be set to NOT_PERSONAL_DATA.
+
+    Args:
+        variables (list): A list of variable objects to set default values on.
 
     Example:
         >>> variables = [model.Variable(short_name="pers",id=None, is_personal_data = None), model.Variable(short_name="fnr",id='9662875c-c245-41de-b667-12ad2091a1ee', is_personal_data='PSEUDONYMISED_ENCRYPTED_PERSONAL_DATA')]
@@ -78,10 +79,6 @@ def set_default_values_variables(variables: list) -> None:
 
         >>> variables[0].is_personal_data == 'NOT_PERSONAL_DATA'
         True
-
-    Args:
-        variables (list):
-            A list of variables
     """
     for v in variables:
         if v.id is None:
@@ -91,9 +88,14 @@ def set_default_values_variables(variables: list) -> None:
 
 
 def set_default_values_dataset(dataset: model.Dataset) -> None:
-    """Set default values on dataset.
+    """Set default values on dataset for dataset fields 'id' and 'contains personal data'.
 
-    For dataset fields 'id' and 'contains personal data'
+    This function assigns default values to the 'id' and 'contains personal data' fields of the dataset.
+    If the dataset's 'id' is None, it will be set to a new UUID. If 'contains personal data' is None,
+    it will be set to False.
+
+    Args:
+        dataset (model.Dataset): The dataset object to set default values on.
 
     Example:
         >>> dataset = model.Dataset(id=None, contains_personal_data=None)
@@ -103,10 +105,6 @@ def set_default_values_dataset(dataset: model.Dataset) -> None:
 
         >>> dataset.contains_personal_data == False
         True
-
-    Args:
-        dataset (model.Dataset):
-            The model for dataset metadata
     """
     if not dataset.id:
         dataset.id = uuid.uuid4()
@@ -118,15 +116,16 @@ def set_variables_inherit_from_dataset(
     dataset: model.Dataset,
     variables: list,
 ) -> None:
-    """Set dataset values on variables.
+    """Set specific dataset values on a list of variable objects.
 
-    For variable fields:
-        'data source'
-        'temporality type',
-        'contains data from',
-        'contains data until',
+    This function populates 'data source', 'temporality type', 'contains data from', and
+    'contains data until' fields in each variable if they are not set (None). The values
+    are inherited from the corresponding fields in the dataset.
 
-    If a variable field from list has no value it will inherit from dataset value.
+    Args:
+        dataset (model.Dataset): The dataset object from which to inherit values.
+        variables (list): A list of variable objects to update with dataset values.
+
 
     Example:
         >>> dataset = model.Dataset(short_name='person_data_v1',data_source='01',temporality_type='STATUS',id='9662875c-c245-41de-b667-12ad2091a1ee',contains_data_from="2010-09-05",contains_data_until="2022-09-05")
@@ -143,12 +142,6 @@ def set_variables_inherit_from_dataset(
 
         >>> variables[0].contains_data_until == dataset.contains_data_until
         True
-
-    Args:
-        dataset (model.Dataset):
-            current dataset
-        variables (list):
-            current list of variables
     """
     for v in variables:
         v.contains_data_from = v.contains_data_from or dataset.contains_data_from
@@ -161,9 +154,17 @@ def incorrect_date_order(
     date_from: datetime.date | None,
     date_until: datetime.date | None,
 ) -> bool:
-    """Evaluate date order of two dates.
+    """Evaluate the chronological order of two dates.
 
-    If 'date until' is before 'date from' it is incorrect date order.
+    This function checks if 'date until' is earlier than 'date from'. If so, it indicates
+    an incorrect date order.
+
+    Args:
+        date_from (datetime.date | None): The start date of the time period.
+        date_until (datetime.date | None): The end date of the time period.
+
+    Returns:
+        bool: True if 'date until' is earlier than 'date from'; False otherwise.
 
     Example:
         >>> incorrect_date_order(datetime.date(1980, 1, 1), datetime.date(1967, 1, 1))
@@ -171,21 +172,21 @@ def incorrect_date_order(
 
         >>> incorrect_date_order(datetime.date(1967, 1, 1), datetime.date(1980, 1, 1))
         False
-
-    Args:
-        date_from (datetime.date):
-            start date of time period
-        date_until (datetime.date):
-            end date of time period
-
-    Returns:
-        True if it is incorrect date order.
     """
     return date_from is not None and date_until is not None and date_until < date_from
 
 
 def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
-    """Return the number of obligatory dataset fields with value."""
+    """Count the number of obligatory dataset fields that have values.
+
+    This function returns the total count of obligatory fields in the dataset that are not None.
+
+    Args:
+        dataset (model.Dataset): The dataset object for which to count the fields.
+
+    Returns:
+        int: The number of obligatory dataset fields that have been completed (not None).
+    """
     return len(
         [
             k
@@ -196,7 +197,18 @@ def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
 
 
 def num_obligatory_variables_fields_completed(variables: list) -> int:
-    """Return the number of obligatory variable fields for one variable with value."""
+    """Count the number of obligatory fields completed for each variable.
+
+    This function calculates the total number of obligatory fields that have values
+    for each variable in the list.
+
+    Args:
+        variables (list): A list of variable objects to count obligatory fields for.
+
+    Returns:
+        int: The total number of obligatory variable fields that have been completed
+        (not None) across all variables.
+    """
     num_variables = 0
     for variable in variables:
         num_variables = len(
@@ -210,14 +222,13 @@ def num_obligatory_variables_fields_completed(variables: list) -> int:
 
 
 def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
-    """Get all obligatory dataset fields with no value.
+    """Identify all obligatory dataset fields that are missing values.
 
     Args:
-        dataset (model.Dataset):
-            The dataset examined.
+        dataset (model.Dataset): The dataset object being examined.
 
     Returns:
-        List of obligatory dataset fields who are missing value.
+        list: A list of obligatory dataset fields that are missing values (None).
     """
     return [
         k
@@ -227,16 +238,14 @@ def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
 
 
 def get_missing_obligatory_variables_fields(variables) -> list[dict]:  # noqa: ANN001
-    """Get all obligatory variable fields for with no value for all variables.
-
-    Each dict has variable shortname as key and a list of missing fields.
+    """Identify obligatory variable fields that are missing values for each variable.
 
     Args:
-        variables (list):
-            List of variables in.
+        variables (list): A list of variable objects to check for missing obligatory fields.
 
     Returns:
-        List of dicts with variables obligatory variable fields who are missing value.
+        list: A list of dictionaries with variable short names as keys and lists of missing
+        obligatory variable fields as values.
     """
     return [
         {
