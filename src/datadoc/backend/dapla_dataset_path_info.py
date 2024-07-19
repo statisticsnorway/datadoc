@@ -36,11 +36,21 @@ class DateFormat(ABC):
 
     @abstractmethod
     def get_floor(self, period_string: str) -> date | None:
-        """Return first date of timeframe period."""
+        """Return first date of timeframe period.
+
+        Args:
+            period_string (str): A string representing the timeframe period.
+
+        """
 
     @abstractmethod
     def get_ceil(self, period_string: str) -> date | None:
-        """Return last date of timeframe period."""
+        """Return last date of timeframe period.
+
+        Args:
+            period_string (str): A string representing the timeframe period.
+
+        """
 
 
 @dataclass
@@ -106,17 +116,29 @@ ISO_YEAR_WEEK = IsoDateFormat(
 
 @dataclass
 class SsbDateFormat(DateFormat):
-    """A subclass of Dateformat with relevant patterns for SSB unique dates."""
+    """A subclass of Dateformat with relevant patterns for SSB unique dates.
+
+    Attributes:
+        ssb_dates (dict): A dictionary where keys are date format strings and values
+                        are corresponding date patterns specific to SSB.
+
+    """
 
     ssb_dates: dict
 
     def get_floor(self, period_string: str) -> date | None:
         """Convert SSB format to date-string and return first date.
 
-        If not existing SSB format, return None
+        Args:
+            period_string (str): A string representing the timeframe period in SSB format.
 
-        >>> SSB_BIMESTER.get_floor("2003B8")
-        None
+        Returns:
+            date | None: The first date of the period if the period_string is a valid SSB format,
+                    otherwise None.
+
+        Example:
+            >>> SSB_BIMESTER.get_floor("2003B8")
+            None
 
         """
         try:
@@ -131,10 +153,16 @@ class SsbDateFormat(DateFormat):
     def get_ceil(self, period_string: str) -> date | None:
         """Convert SSB format to date-string and return last date.
 
-        If not excisting SSB format, return None
+        Args:
+            period_string (str): A string representing the timeframe period in SSB format.
 
-        >>> SSB_TRIANNUAL.get_ceil("1999T11")
-        None
+        Returns:
+            date | None: The last date of the period if the period_string is a valid SSB format,
+                        otherwise None.
+
+        Example:
+            >>> SSB_TRIANNUAL.get_ceil("1999T11")
+            None
 
         """
         try:
@@ -256,21 +284,29 @@ SUPPORTED_DATE_FORMATS: list[IsoDateFormat | SsbDateFormat] = [
 def categorize_period_string(period: str) -> IsoDateFormat | SsbDateFormat:
     """Categorize a period string into one of the supported date formats.
 
-    If the period string is not recognized, a NotImplementedError is raised.
+    Args:
+        period (str): A string representing the period to be categorized.
+
+    Returns:
+        IsoDateFormat | SsbDateFormat: An instance of either IsoDateFormat or SsbDateFormat
+                                        depending on the format of the input period string.
+
+    Raises:
+        NotImplementedError: If the period string is not recognized as either an ISO or SSB date format.
 
     Examples:
-    >>> date_format = categorize_period_string('2022-W01')
-    >>> date_format.name
-    ISO_YEAR_WEEK
+        >>> date_format = categorize_period_string('2022-W01')
+        >>> date_format.name
+        ISO_YEAR_WEEK
 
-    >>> date_format = categorize_period_string('1954T2')
-    >>> date_format.name
-    SSB_TRIANNUAL
+        >>> date_format = categorize_period_string('1954T2')
+        >>> date_format.name
+        SSB_TRIANNUAL
 
-    >>> categorize_period_string('unknown format')
-    Traceback (most recent call last):
-    ...
-    NotImplementedError: Period format unknown format is not supported
+        >>> categorize_period_string('unknown format')
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: Period format unknown format is not supported
     """
     for date_format in SUPPORTED_DATE_FORMATS:
         if re.match(date_format.regex_pattern, period):
@@ -293,28 +329,45 @@ class DaplaDatasetPathInfo:
 
     @staticmethod
     def _get_period_string_indices(dataset_name_sections: list[str]) -> list[int]:
+        # TODO(@tilen1976): choose  # noqa: TD003
         """Get all the indices at which period strings are found.
 
+        Get all the indices at which period strings are found in the given list of dataset name sections.
+
+        Args:
+            dataset_name_sections (list[str]): A list of strings representing sections of a dataset name.
+
+        Returns:
+            list[int]: A list of indices where period strings are found within the dataset_name_sections.
+
+
         Examples:
-        >>> DaplaDatasetPathInfo._get_period_string_indices(['kommune', 'p2022', 'v1'])
-        [1]
+            >>> DaplaDatasetPathInfo._get_period_string_indices(['kommune', 'p2022', 'v1'])
+            [1]
 
-        >>> DaplaDatasetPathInfo._get_period_string_indices(['kommune', 'p2022-01', 'p2023-06', 'v1'])
-        [1, 2]
+            >>> DaplaDatasetPathInfo._get_period_string_indices(['kommune', 'p2022-01', 'p2023-06', 'v1'])
+            [1, 2]
 
-        >>> DaplaDatasetPathInfo._get_period_string_indices(['kommune', 'p1990Q1', 'v1'])
-        [1]
+            >>> DaplaDatasetPathInfo._get_period_string_indices(['kommune', 'p1990Q1', 'v1'])
+            [1]
 
-        >>> DaplaDatasetPathInfo._get_period_string_indices(['varehandel','v1'])
-        []
+            >>> DaplaDatasetPathInfo._get_period_string_indices(['varehandel','v1'])
+            []
         """
 
         def insert_p(regex: str) -> str:
+            # TODO(@tilen1976): r?  # noqa: TD003
             r"""Insert a p as the second character.
 
+            Args:
+                regex (str): A string representing the regular expression pattern to be modified.
+
+            Returns:
+                str: The modified regular expression pattern with 'p' inserted as the second character.
+
             Examples:
-            >>> insert_p(r"^\d{4}[H]\d{1}$")
-            '^p\d{4}[H]\d{1}$'
+                >>> insert_p(r"^\d{4}[H]\d{1}$")
+                '^p\d{4}[H]\d{1}$'
             """
             return regex[:1] + "p" + regex[1:]
 
@@ -335,18 +388,25 @@ class DaplaDatasetPathInfo:
         that match the year regex, stripping the first character. This extracts
         the year periods from the dataset name.
 
+        Args:
+            dataset_name_sections (list[str]): A list of strings representing sections of a dataset name.
+
+        Returns:
+            list[str]: A list of extracted period strings, with the first character stripped from each match.
+
+
         Examples:
-        >>> DaplaDatasetPathInfo._extract_period_strings(['p2022', 'kommune', 'v1'])
-        ['2022']
+            >>> DaplaDatasetPathInfo._extract_period_strings(['p2022', 'kommune', 'v1'])
+            ['2022']
 
-        >>> DaplaDatasetPathInfo._extract_period_strings(['p2022-01', 'p2023-06', 'kommune', 'v1'])
-        ['2022-01', '2023-06']
+            >>> DaplaDatasetPathInfo._extract_period_strings(['p2022-01', 'p2023-06', 'kommune', 'v1'])
+            ['2022-01', '2023-06']
 
-        >>> DaplaDatasetPathInfo._extract_period_strings(['p1990Q1', 'kommune', 'v1'])
-        ['1990Q1']
+            >>> DaplaDatasetPathInfo._extract_period_strings(['p1990Q1', 'kommune', 'v1'])
+            ['1990Q1']
 
-        >>> DaplaDatasetPathInfo._extract_period_strings(['varehandel','v1'])
-        []
+            >>> DaplaDatasetPathInfo._extract_period_strings(['varehandel','v1'])
+            []
 
         """
         return [
@@ -387,13 +447,17 @@ class DaplaDatasetPathInfo:
         The dataset short name is defined as the first section of the stem, up to the period information,
         or the version information if no period information is present.
 
+        Returns:
+            str | None: The extracted dataset short name if it can be determined, otherwise None.
+
+
         Examples:
-        >>> DaplaDatasetPathInfo('prosjekt/befolkning/klargjorte_data/person_data_v1.parquet').dataset_short_name
-        person_data
-        >>> DaplaDatasetPathInfo('befolkning/inndata/sykepenger_p2022Q1_p2022Q2_v23.parquet').dataset_short_name
-        sykepenger
-        >>> DaplaDatasetPathInfo('my_data/simple_dataset_name.parquet').dataset_short_name
-        simple_dataset_name
+            >>> DaplaDatasetPathInfo('prosjekt/befolkning/klargjorte_data/person_data_v1.parquet').dataset_short_name
+            person_data
+            >>> DaplaDatasetPathInfo('befolkning/inndata/sykepenger_p2022Q1_p2022Q2_v23.parquet').dataset_short_name
+            sykepenger
+            >>> DaplaDatasetPathInfo('my_data/simple_dataset_name.parquet').dataset_short_name
+            simple_dataset_name
         """
         if self.contains_data_from or self.contains_data_until:
             short_name_sections = self.dataset_name_sections[
@@ -412,7 +476,11 @@ class DaplaDatasetPathInfo:
 
     @property
     def contains_data_from(self) -> datetime.date | None:
-        """The earliest date from which data in the dataset is relevant for."""
+        """The earliest date from which data in the dataset is relevant for.
+
+        Returns:
+            datetime.date | None: The earliest relevant date for the dataset if available, otherwise None.
+        """
         period_string = self._extract_period_string_from_index(0)
         if not period_string or (
             len(self._period_strings) > 1 and period_string > self._period_strings[1]
@@ -423,7 +491,11 @@ class DaplaDatasetPathInfo:
 
     @property
     def contains_data_until(self) -> datetime.date | None:
-        """The latest date until which data in the dataset is relevant for."""
+        """The latest date until which data in the dataset is relevant for.
+
+        Returns:
+            datetime.date | None: The latest relevant date for the dataset if available, otherwise None.
+        """
         first_period_string = self._extract_period_string_from_index(0)
         second_period_string = self._extract_period_string_from_index(1)
         period_string = second_period_string or first_period_string
@@ -442,13 +514,17 @@ class DaplaDatasetPathInfo:
     ) -> DataSetState | None:
         """Extract the dataset state from the path.
 
+        Returns:
+            DataSetState | None: The extracted dataset state if it can be determined from the path,
+                            otherwise None.
+
         Examples:
-        >>> DaplaDatasetPathInfo('klargjorte_data/person_data_v1.parquet').dataset_state
-        <DataSetState.PROCESSED_DATA: 'PROCESSED_DATA'>
-        >>> DaplaDatasetPathInfo('utdata/min_statistikk/person_data_v1.parquet').dataset_state
-        <DataSetState.OUTPUT_DATA: 'OUTPUT_DATA'>
-        >>> DaplaDatasetPathInfo('my_special_data/person_data_v1.parquet').dataset_state
-        None
+            >>> DaplaDatasetPathInfo('klargjorte_data/person_data_v1.parquet').dataset_state
+            <DataSetState.PROCESSED_DATA: 'PROCESSED_DATA'>
+            >>> DaplaDatasetPathInfo('utdata/min_statistikk/person_data_v1.parquet').dataset_state
+            <DataSetState.OUTPUT_DATA: 'OUTPUT_DATA'>
+            >>> DaplaDatasetPathInfo('my_special_data/person_data_v1.parquet').dataset_state
+            None
         """
         dataset_path_parts = set(self.dataset_path.parts)
         for s in DataSetState:
@@ -469,13 +545,16 @@ class DaplaDatasetPathInfo:
     ) -> str | None:
         """Extract version information if exists in filename.
 
+        Returns:
+            str | None: The extracted version information if available in the filename, otherwise None.
+
         Examples:
-        >>> DaplaDatasetPathInfo('person_data_v1.parquet').dataset_version
-        '1'
-        >>> DaplaDatasetPathInfo('person_data_v20.parquet').dataset_version
-        '20'
-        >>> DaplaDatasetPathInfo('person_data.parquet').dataset_version
-        None
+            >>> DaplaDatasetPathInfo('person_data_v1.parquet').dataset_version
+            '1'
+            >>> DaplaDatasetPathInfo('person_data_v20.parquet').dataset_version
+            '20'
+            >>> DaplaDatasetPathInfo('person_data.parquet').dataset_version
+            None
         """
         minimum_elements_in_file_name: Final[int] = 2
         minimum_characters_in_version_string: Final[int] = 2
@@ -493,15 +572,21 @@ class DaplaDatasetPathInfo:
     def statistic_short_name(
         self,
     ) -> str | None:
-        """Extract the statistical short name from the filepath right before the dataset_state, based on the Dapla filepath naming convention.
+        """Extract the statistical short name from the filepath.
+
+        Extract the statistical short name from the filepath right before the dataset state,
+        based on the Dapla filepath naming convention.
+
+        Returns:
+            str | None: The extracted statistical short name if it can be determined, otherwise None.
 
         Examples:
-        >>> DaplaDatasetPathInfo('prosjekt/befolkning/klargjorte_data/person_data_v1.parquet').statistic_short_name
-        befolkning
-        >>> DaplaDatasetPathInfo('befolkning/inndata/person_data_v1.parquet').statistic_short_name
-        befolkning
-        >>> DaplaDatasetPathInfo('befolkning/person_data.parquet').statistic_short_name
-        None
+            >>> DaplaDatasetPathInfo('prosjekt/befolkning/klargjorte_data/person_data_v1.parquet').statistic_short_name
+            befolkning
+            >>> DaplaDatasetPathInfo('befolkning/inndata/person_data_v1.parquet').statistic_short_name
+            befolkning
+            >>> DaplaDatasetPathInfo('befolkning/person_data.parquet').statistic_short_name
+            None
         """
         dataset_state = self.dataset_state
         if dataset_state is not None:
@@ -515,7 +600,13 @@ class DaplaDatasetPathInfo:
         return None
 
     def path_complies_with_naming_standard(self) -> bool:
-        """Checks if path is valid according to SSB standard."""
+        # TODO(@tilen1976): extend explanation ssb standard  # noqa: TD003
+        """Checks if path is valid according to SSB standard.
+
+        Returns:
+            bool: True if the path conforms to the SSB naming standard, otherwise False.
+
+        """
         if (
             self.dataset_state
             and self.statistic_short_name
