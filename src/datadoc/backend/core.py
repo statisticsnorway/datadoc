@@ -45,7 +45,13 @@ logger = logging.getLogger(__name__)
 
 
 class Datadoc:
-    """Handle reading, updating and writing of metadata."""
+    """Handle reading, updating and writing of metadata.
+
+    Attributes:
+        dataset_path:
+        metadata_document_path:
+        statistic_subject_mapping:
+    """
 
     def __init__(
         self,
@@ -105,8 +111,7 @@ class Datadoc:
         """There's an existing metadata document, so read in the metadata from that.
 
         Args:
-            document:
-                A path to the existing metadata document
+            document: A path to the existing metadata document
         """
         fresh_metadata = {}
         try:
@@ -151,12 +156,10 @@ class Datadoc:
         Map the extracted statistic short name to its corresponding statistical subject.
 
         Args:
-            dapla_dataset_path_info (DaplaDatasetPathInfo):
-                The object representing the decomposed file path
+            dapla_dataset_path_info (DaplaDatasetPathInfo): The object representing the decomposed file path.
 
         Returns:
-            str | None:
-                The code for the statistical subject or None if we couldn't map to one.
+            str | None: The code for the statistical subject or None if we couldn't map to one.
         """
         if self._statistic_subject_mapping is None:
             with concurrent.futures.ThreadPoolExecutor(max_workers=12) as executor:
@@ -179,6 +182,15 @@ class Datadoc:
 
         This makes it easier for the user by 'pre-filling' certain fields.
         Certain elements are dependent on the dataset being saved according to SSB's standard.
+
+        Args:
+            dataset (pathlib.Path | CloudPath): The path to the dataset file, which can be a local or cloud path.
+
+        Side Effects:
+        Updates the following instance attributes:
+        - ds_schema: An instance of DatasetParser initialized for the given dataset file.
+        - dataset: An instance of model.Dataset with pre-filled metadata fields.
+        - variables: A list of fields extracted from the dataset schema.
         """
         self.ds_schema: DatasetParser = DatasetParser.for_file(dataset)
         dapla_dataset_path_info = DaplaDatasetPathInfo(dataset)
