@@ -218,7 +218,18 @@ class Datadoc:
         self.variables = self.ds_schema.get_fields()
 
     def write_metadata_document(self) -> None:
-        """Write all currently known metadata to file."""
+        """Write all currently known metadata to file.
+
+        Side Effects:
+        - Updates the dataset's metadata_last_updated_date and metadata_last_updated_by attributes.
+        - Updates the dataset's file_path attribute.
+        - Validates the metadata model and stores it in a MetadataContainer.
+        - Writes the validated metadata to a file if the metadata_document attribute is set.
+        - Logs the action and the content of the metadata document.
+
+        Raises:
+            ValueError: If no metadata document is specified for saving.
+        """
         timestamp: datetime = get_timestamp_now()
         self.dataset.metadata_last_updated_date = timestamp
         self.dataset.metadata_last_updated_by = (
