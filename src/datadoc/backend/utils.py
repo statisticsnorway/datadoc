@@ -228,7 +228,7 @@ def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
     """Identify all obligatory dataset fields that are missing values.
 
     This function checks for obligatory fields that are either directly missing (i.e., set to `None`) or have
-    multilanguage values with empty content. It considers both standard and multilanguage obligatory fields.
+    multilanguage values with empty content.
 
     Args:
         dataset (model.Dataset): The dataset object to examine. This object must support the `model_dump()` method which returns a dictionary of field names and values.
