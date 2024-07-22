@@ -296,10 +296,13 @@ def get_missing_obligatory_variables_fields(variables: list) -> list[dict]:
                 for k, value in variable.model_dump().items()
                 if (
                     k in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE
-                    and value
-                    and value[0]
-                    and len(value[0]) > 0
+                    and value is not None
+                    and len(value) > 0
                     and not value[0]["languageText"]
+                    and (len(value) <= 1 or not value[1]["languageText"])
+                    and (
+                        len(value) <= 2 or not value[2]["languageText"]  # noqa: PLR2004
+                    )
                 )
             ],
         }

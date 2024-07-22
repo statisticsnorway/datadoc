@@ -361,11 +361,24 @@ def variables_metadata_control() -> dbc.Alert | None:
 
 
 def variables_control(error_message: str) -> dbc.Alert | None:
-    """Check obligatory metadata fro variables."""
+    """Check obligatory metadata for variables."""
+    missing_metadata: list = []
+    for variable in state.metadata.variables:
+        if variable.short_name in error_message:
+            missing_metadata_field = [
+                f[1]
+                for f in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME
+                if error_message and f[0] in error_message
+            ]
+            if missing_metadata_field is not None:
+                missing_metadata_fields_to_string = ", ".join(missing_metadata_field)
+                missing_metadata.append(
+                    f"{variable.short_name}: {missing_metadata_fields_to_string}",
+                )
     return build_ssb_alert(
         AlertTypes.WARNING,
         MISSING_METADATA_WARNING,
-        error_message,
+        CHECK_OBLIGATORY_METADATA_VARIABLES_MESSAGE,
         None,
-        None,
+        missing_metadata,
     )
