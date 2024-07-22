@@ -574,6 +574,7 @@ def test_variables_values_inherit_dataset_date_values_not_when_variable_has_valu
     )
 
 
+# TODO(@tilen1976): change tests after new check in backend  # noqa: TD003
 def test_variables_metadata_control_return_alert(metadata: Datadoc):
     """Return alert when obligatory metadata is missing."""
     state.metadata = metadata

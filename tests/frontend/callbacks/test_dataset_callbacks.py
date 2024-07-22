@@ -376,6 +376,7 @@ def test_process_special_cases_no_change():
     assert process_special_cases(value, identifier) == value
 
 
+# TODO(@tilen1976): change tests after new check in backend  # noqa: TD003
 def test_dataset_metadata_control_return_alert(metadata: Datadoc):
     """Return alert when obligatory metadata is missing."""
     state.metadata = metadata

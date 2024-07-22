@@ -169,6 +169,7 @@ def test_obligatory_metadata_variables_warning(metadata: Datadoc):
             )
 
 
+# TODO(@tilen1976): refactor tests  # noqa: TD003
 def test_obligatory_metadata_dataset_warning_name(metadata: Datadoc):
     state.metadata = metadata
     missing_obligatory_dataset = ""
