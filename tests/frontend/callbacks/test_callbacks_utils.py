@@ -1,9 +1,14 @@
+import warnings
 from enum import Enum
 
 import pytest
 from dash import html
 from datadoc_model import model
 
+from datadoc import state
+from datadoc.backend.core import Datadoc
+from datadoc.backend.model_validation import ObligatoryDatasetWarning
+from datadoc.backend.model_validation import ObligatoryVariableWarning
 from datadoc.enums import LanguageStringsEnum
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
@@ -94,3 +99,27 @@ def test_render_tabs(tab, content):
     result = render_tabs(tab)
     assert isinstance(result, html.Article)
     assert result.children[0].children[0].children == content
+
+
+def test_write_metadata_document_with_warnings(metadata: Datadoc):
+    state.metadata = metadata
+    missing_obligatory_dataset = None
+    missing_obligatory_variables = None
+
+    # Use catch_warnings to capture the warnings during the test
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        state.metadata.write_metadata_document()
+        for warning in w:
+            if warning is not None:
+                if issubclass(warning.category, ObligatoryDatasetWarning):
+                    missing_obligatory_dataset = str(warning.message)
+                elif issubclass(warning.category, ObligatoryVariableWarning):
+                    missing_obligatory_variables = str(warning.message)
+
+    assert (
+        missing_obligatory_dataset is not None
+    ), "Expected ObligatoryDatasetWarning was not raised."
+    assert (
+        missing_obligatory_variables is not None
+    ), "Expected ObligatoryVariableWarning was not raised."
