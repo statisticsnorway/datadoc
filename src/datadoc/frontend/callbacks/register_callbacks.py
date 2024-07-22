@@ -89,7 +89,6 @@ def register_callbacks(app: Dash) -> None:
         """Update the progress bar label when progress bar is updated."""
         return f"{state.metadata.percent_complete}%"
 
-    # TODO(@tilen1976) # TODO(@tilen1976) Refactor this function to reduce its Cognitive Complexity from 22 to the 15 allowed  # noqa: TD004, TD003
     @app.callback(
         Output("alerts-section", "children", allow_duplicate=True),
         Input("save-button", "n_clicks"),
