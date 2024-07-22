@@ -10,7 +10,6 @@ from pydantic import ValidationError
 
 from datadoc import config
 from datadoc import state
-from datadoc.backend.constants import OBLIGATORY_DATASET_METADATA_IDENTIFIERS
 from datadoc.backend.core import Datadoc
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.constants import CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE
@@ -18,8 +17,6 @@ from datadoc.constants import MISSING_METADATA_WARNING
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
-from datadoc.frontend.callbacks.utils import get_metadata_field_display_name
-from datadoc.frontend.callbacks.utils import obligatory_metadata
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.callbacks.variables import (
     set_variables_value_multilanguage_inherit_dataset_values,
@@ -285,30 +282,8 @@ def accept_dataset_metadata_date_input(
     )
 
 
-def dataset_metadata_control() -> dbc.Alert | None:
-    """Check obligatory metadata values for dataset."""
-    missing_metadata: list = []
-    dataset = state.metadata.dataset
-    for field in dataset:
-        if not obligatory_metadata(field, OBLIGATORY_DATASET_METADATA_IDENTIFIERS):
-            field_name = get_metadata_field_display_name(
-                field,
-                OBLIGATORY_DATASET_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
-            )
-            missing_metadata.append(field_name)
-    if len(missing_metadata) == 0:
-        return None
-    return build_ssb_alert(
-        AlertTypes.WARNING,
-        MISSING_METADATA_WARNING,
-        CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE,
-        None,
-        missing_metadata,
-    )
-
-
 def dataset_control(error_message: str | None) -> dbc.Alert | None:
-    """."""
+    """Check obligatory metadata values for dataset."""
     missing_metadata = [
         f[1]
         for f in OBLIGATORY_DATASET_METADATA_IDENTIFIERS_AND_DISPLAY_NAME

@@ -8,13 +8,10 @@ from typing import TYPE_CHECKING
 from pydantic import ValidationError
 
 from datadoc import state
-from datadoc.backend.constants import OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
 from datadoc.constants import CHECK_OBLIGATORY_METADATA_VARIABLES_MESSAGE
 from datadoc.constants import MISSING_METADATA_WARNING
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
-from datadoc.frontend.callbacks.utils import get_metadata_field_display_name
-from datadoc.frontend.callbacks.utils import obligatory_metadata
 from datadoc.frontend.callbacks.utils import parse_and_validate_dates
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_edit_section
@@ -326,43 +323,11 @@ def set_variables_values_inherit_dataset_derived_date_values() -> None:
             )
 
 
-def variables_metadata_control() -> dbc.Alert | None:
-    """Check obligatory metadata values for dataset."""
-    missing_metadata: list = []
-    for variable in state.metadata.variables:
-        missing_metadata_fields = []
-        for field in variable:
-            if not obligatory_metadata(
-                field,
-                OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
-            ):
-                field_name = get_metadata_field_display_name(
-                    field,
-                    OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
-                )
-                missing_metadata_fields.append(field_name)
-        if len(missing_metadata_fields) == 0:
-            continue
-        missing_metadata_fields_to_string = ", ".join(missing_metadata_fields)
-        missing_metadata.append(
-            f"{variable.short_name}: {missing_metadata_fields_to_string}",
-        )
-    if len(missing_metadata) == 0:
-        return None
-    return build_ssb_alert(
-        AlertTypes.WARNING,
-        MISSING_METADATA_WARNING,
-        CHECK_OBLIGATORY_METADATA_VARIABLES_MESSAGE,
-        None,
-        missing_metadata,
-    )
-
-
-def variables_control(error_message: str) -> dbc.Alert | None:
+def variables_control(error_message: str | None) -> dbc.Alert | None:
     """Check obligatory metadata for variables."""
     missing_metadata: list = []
     for variable in state.metadata.variables:
-        if variable.short_name in error_message:
+        if error_message is not None and variable.short_name in error_message:
             missing_metadata_field = [
                 f[1]
                 for f in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME
@@ -373,6 +338,8 @@ def variables_control(error_message: str) -> dbc.Alert | None:
                 missing_metadata.append(
                     f"{variable.short_name}: {missing_metadata_fields_to_string}",
                 )
+    if len(missing_metadata) == 0:
+        return None
     return build_ssb_alert(
         AlertTypes.WARNING,
         MISSING_METADATA_WARNING,

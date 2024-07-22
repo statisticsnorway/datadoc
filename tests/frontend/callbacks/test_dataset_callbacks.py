@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 import random
+import warnings
 from typing import TYPE_CHECKING
 from unittest.mock import Mock
 from unittest.mock import patch
@@ -11,14 +12,13 @@ import dash
 import dash_bootstrap_components as dbc
 import pytest
 from datadoc_model import model
-from datadoc_model.model import LanguageStringType
-from datadoc_model.model import LanguageStringTypeItem
 
 from datadoc import enums
 from datadoc import state
+from datadoc.backend.model_validation import ObligatoryDatasetWarning
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
-from datadoc.frontend.callbacks.dataset import dataset_metadata_control
+from datadoc.frontend.callbacks.dataset import dataset_control
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.dataset import process_special_cases
 from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET
@@ -376,57 +376,20 @@ def test_process_special_cases_no_change():
     assert process_special_cases(value, identifier) == value
 
 
-# TODO(@tilen1976): change tests after new check in backend  # noqa: TD003
 def test_dataset_metadata_control_return_alert(metadata: Datadoc):
     """Return alert when obligatory metadata is missing."""
     state.metadata = metadata
-    result = dataset_metadata_control()
+    missing_metadata: str
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        state.metadata.write_metadata_document()
+        if issubclass(w[0].category, ObligatoryDatasetWarning):
+            missing_metadata = str(w[0].message)
+    result = dataset_control(missing_metadata)
     assert isinstance(result, dbc.Alert)
 
 
-def test_dataset_metadata_control_dont_return_alert(metadata: Datadoc):
-    """Not return alert when all obligatory metadata has value."""
-    state.metadata = metadata
-    setattr(
-        state.metadata.dataset,
-        DatasetIdentifiers.NAME,
-        LanguageStringType(
-            [LanguageStringTypeItem(languageCode="nb", languageText="Test")],
-        ),
-    )
-    setattr(
-        state.metadata.dataset,
-        DatasetIdentifiers.DATASET_STATUS,
-        enums.DataSetStatus.DRAFT,
-    )
-    setattr(
-        state.metadata.dataset,
-        DatasetIdentifiers.DATASET_STATE,
-        enums.DataSetState.INPUT_DATA,
-    )
-    setattr(
-        state.metadata.dataset,
-        DatasetIdentifiers.VERSION,
-        "1",
-    )
-    setattr(
-        state.metadata.dataset,
-        DatasetIdentifiers.ASSESSMENT,
-        enums.Assessment.OPEN,
-    )
-    setattr(
-        state.metadata.dataset,
-        DatasetIdentifiers.DESCRIPTION,
-        LanguageStringType(
-            [LanguageStringTypeItem(languageCode="nb", languageText="Test")],
-        ),
-    )
-    setattr(
-        state.metadata.dataset,
-        DatasetIdentifiers.VERSION_DESCRIPTION,
-        LanguageStringType(
-            [LanguageStringTypeItem(languageCode="nb", languageText="Test")],
-        ),
-    )
-    result = dataset_metadata_control()
-    assert result is not None
+def test_dataset_metadata_control_not_return_alert():
+    missing_metadata = None
+    result = dataset_control(missing_metadata)
+    assert result is None
