@@ -189,7 +189,7 @@ def test_obligatory_metadata_dataset_warning_name(metadata: Datadoc):
         metadata.write_metadata_document()
         if issubclass(w[0].category, ObligatoryDatasetWarning):
             missing_obligatory_dataset = str(w[0].message)
-    # assert metadata.dataset.name is not None
+    assert metadata.dataset.name is not None
     assert "name" not in missing_obligatory_dataset
     metadata.dataset.name = model.LanguageStringType(
         [
