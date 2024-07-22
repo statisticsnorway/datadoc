@@ -286,6 +286,9 @@ def get_missing_obligatory_variables_fields(variables: list) -> list[dict]:
         }
         for variable in variables
     ]
+    missing_variables_fields = [
+        item for item in missing_variables_fields if next(iter(item.values()))
+    ]
     missing_variables_multi_language_fields = [
         {
             variable.short_name: [
@@ -302,5 +305,9 @@ def get_missing_obligatory_variables_fields(variables: list) -> list[dict]:
         }
         for variable in variables
     ]
-
+    missing_variables_multi_language_fields = [
+        item
+        for item in missing_variables_multi_language_fields
+        if next(iter(item.values()))
+    ]
     return missing_variables_fields + missing_variables_multi_language_fields

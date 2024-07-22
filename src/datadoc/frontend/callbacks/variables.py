@@ -358,3 +358,14 @@ def variables_metadata_control() -> dbc.Alert | None:
         None,
         missing_metadata,
     )
+
+
+def variables_control(error_message: str) -> dbc.Alert | None:
+    """Check obligatory metadata fro variables."""
+    return build_ssb_alert(
+        AlertTypes.WARNING,
+        MISSING_METADATA_WARNING,
+        error_message,
+        None,
+        None,
+    )

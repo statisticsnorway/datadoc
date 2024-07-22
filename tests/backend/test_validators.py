@@ -315,6 +315,7 @@ def test_obligatory_metadata_variables_warning_name(metadata: Datadoc):
         if issubclass(w[1].category, ObligatoryVariableWarning):
             missing_obligatory_variables = str(w[1].message)
     assert variable_with_name not in missing_obligatory_variables
+    assert "pers_id" not in missing_obligatory_variables
     metadata.variables_lookup["pers_id"].name = model.LanguageStringType(
         [
             model.LanguageStringTypeItem(languageCode="nb", languageText=""),

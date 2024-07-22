@@ -307,3 +307,21 @@ def dataset_metadata_control() -> dbc.Alert | None:
         None,
         missing_metadata,
     )
+
+
+def dataset_control(error_message: str | None) -> dbc.Alert | None:
+    """."""
+    missing_metadata = [
+        f[1]
+        for f in OBLIGATORY_DATASET_METADATA_IDENTIFIERS_AND_DISPLAY_NAME
+        if error_message and f[0] in error_message
+    ]
+    if not missing_metadata:
+        return None
+    return build_ssb_alert(
+        AlertTypes.WARNING,
+        MISSING_METADATA_WARNING,
+        CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE,
+        None,
+        missing_metadata,
+    )

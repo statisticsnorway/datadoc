@@ -6,6 +6,7 @@ Implementations of the callback functionality should be in other functions (in o
 from __future__ import annotations
 
 import logging
+import warnings
 from typing import TYPE_CHECKING
 
 from dash import ALL
@@ -19,15 +20,17 @@ from dash import html
 from dash import no_update
 
 from datadoc import state
+from datadoc.backend.model_validation import ObligatoryDatasetWarning
+from datadoc.backend.model_validation import ObligatoryVariableWarning
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
-from datadoc.frontend.callbacks.dataset import dataset_metadata_control
+from datadoc.frontend.callbacks.dataset import dataset_control
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.utils import render_tabs
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
-from datadoc.frontend.callbacks.variables import variables_metadata_control
+from datadoc.frontend.callbacks.variables import variables_control
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_dataset_edit_section
 from datadoc.frontend.components.builders import build_ssb_alert
@@ -94,18 +97,26 @@ def register_callbacks(app: Dash) -> None:
     )
     def callback_save_metadata_file(n_clicks: int, alerts: list) -> list:
         """Save the metadata document to disk and check obligatory metadata."""
+        missing_obligatory_dataset = ""
+        missing_obligatory_variables = ""
         if alerts:
             alerts = []
         if n_clicks and n_clicks > 0:
-            state.metadata.write_metadata_document()
-            save = build_ssb_alert(
-                AlertTypes.SUCCESS,
-                "Lagret metadata",
-            )
+            with warnings.catch_warnings(record=True) as w:
+                warnings.simplefilter("always")
+                state.metadata.write_metadata_document()
+                save = build_ssb_alert(
+                    AlertTypes.SUCCESS,
+                    "Lagret metadata",
+                )
+                if issubclass(w[0].category, ObligatoryDatasetWarning):
+                    missing_obligatory_dataset = str(w[0].message)
+                if issubclass(w[1].category, ObligatoryVariableWarning):
+                    missing_obligatory_variables = str(w[1].message)
             return [
                 save,
-                dataset_metadata_control(),
-                variables_metadata_control(),
+                dataset_control(missing_obligatory_dataset),
+                variables_control(missing_obligatory_variables),
             ]
 
         return no_update
