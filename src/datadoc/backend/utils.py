@@ -15,6 +15,9 @@ from datadoc.backend.constants import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS_MULTILANGUAGE,
 )
 from datadoc.backend.constants import OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
+from datadoc.backend.constants import (
+    OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE,
+)
 from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
 
@@ -258,17 +261,22 @@ def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
     return missing_dataset_fields + missing_multilanguage_fields
 
 
-def get_missing_obligatory_variables_fields(variables) -> list[dict]:  # noqa: ANN001
+def get_missing_obligatory_variables_fields(variables: list) -> list[dict]:
     """Identify obligatory variable fields that are missing values for each variable.
+
+    This function checks for obligatory fields that are either directly missing (i.e., set to `None`) or have
+    multilanguage values with empty content.
 
     Args:
         variables (list): A list of variable objects to check for missing obligatory fields.
 
     Returns:
         list: A list of dictionaries with variable short names as keys and lists of missing
-        obligatory variable fields as values.
+        obligatory variable fields as values. This includes:OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS`.
+            - Multilanguage fields (identified by `OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE`) where
+            the value exists but the primary language text is empty.
     """
-    return [
+    missing_variables_fields = [
         {
             variable.short_name: [
                 k
@@ -278,3 +286,21 @@ def get_missing_obligatory_variables_fields(variables) -> list[dict]:  # noqa: A
         }
         for variable in variables
     ]
+    missing_variables_multi_language_fields = [
+        {
+            variable.short_name: [
+                k
+                for k, value in variable.model_dump().items()
+                if (
+                    k in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE
+                    and value
+                    and value[0]
+                    and len(value[0]) > 0
+                    and not value[0]["languageText"]
+                )
+            ],
+        }
+        for variable in variables
+    ]
+
+    return missing_variables_fields + missing_variables_multi_language_fields

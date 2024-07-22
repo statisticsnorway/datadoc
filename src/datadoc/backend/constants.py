@@ -41,6 +41,10 @@ OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS = [
     "is_personal_data",
 ]
 
+OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE = [
+    "name",
+]
+
 DEFAULT_SPATIAL_COVERAGE_DESCRIPTION = LanguageStringType(
     [
         LanguageStringTypeItem(
