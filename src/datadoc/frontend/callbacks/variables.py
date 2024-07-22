@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from pydantic import ValidationError
 
 from datadoc import state
+from datadoc.backend.constants import OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
 from datadoc.constants import CHECK_OBLIGATORY_METADATA_VARIABLES_MESSAGE
 from datadoc.constants import MISSING_METADATA_WARNING
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
@@ -24,9 +25,6 @@ from datadoc.frontend.fields.display_variables import (
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,
 )
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
-from datadoc.frontend.fields.display_variables import (
-    OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
-)
 from datadoc.frontend.fields.display_variables import (
     OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
 )

@@ -10,6 +10,7 @@ from pydantic import ValidationError
 
 from datadoc import config
 from datadoc import state
+from datadoc.backend.constants import OBLIGATORY_DATASET_METADATA_IDENTIFIERS
 from datadoc.backend.core import Datadoc
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.constants import CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE
@@ -37,9 +38,6 @@ from datadoc.frontend.fields.display_dataset import (
 )
 from datadoc.frontend.fields.display_dataset import (
     MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS,
-)
-from datadoc.frontend.fields.display_dataset import (
-    OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
 )
 from datadoc.frontend.fields.display_dataset import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
