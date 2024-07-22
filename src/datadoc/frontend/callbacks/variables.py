@@ -333,11 +333,10 @@ def variables_control(error_message: str | None) -> dbc.Alert | None:
                 for f in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME
                 if error_message and f[0] in error_message
             ]
-            if missing_metadata_field is not None:
-                missing_metadata_fields_to_string = ", ".join(missing_metadata_field)
-                missing_metadata.append(
-                    f"{variable.short_name}: {missing_metadata_fields_to_string}",
-                )
+            missing_metadata_fields_to_string = ", ".join(missing_metadata_field)
+            missing_metadata.append(
+                f"{variable.short_name}: {missing_metadata_fields_to_string}",
+            )
     if len(missing_metadata) == 0:
         return None
     return build_ssb_alert(
