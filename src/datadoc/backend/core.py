@@ -54,9 +54,9 @@ class Datadoc:
     Example: /path/to/dataset.parquet -> /path/to/dataset__DOC.json
 
     Attributes:
-    dataset_path: A file path to the path to where the dataset is stored.
-    metadata_document_path: A path to a metadata document if it exists.
-    statistic_subject_mapping: An URL to.
+        dataset_path: A file path to the path to where the dataset is stored.
+        metadata_document_path: A path to a metadata document if it exists.
+        statistic_subject_mapping: An URL to.
     """
 
     def __init__(
@@ -65,7 +65,7 @@ class Datadoc:
         metadata_document_path: str | None = None,
         statistic_subject_mapping: StatisticSubjectMapping | None = None,
     ) -> None:
-        """Initializes the Datadoc instance.
+        """Initialize the Datadoc instance.
 
         If a dataset path is supplied, it attempts to locate and load the corresponding
         metadata document. If no dataset path is provided, the class is instantiated
@@ -218,10 +218,10 @@ class Datadoc:
             dataset (pathlib.Path | CloudPath): The path to the dataset file, which can be a local or cloud path.
 
         Side Effects:
-        Updates the following instance attributes:
-        - ds_schema: An instance of DatasetParser initialized for the given dataset file.
-        - dataset: An instance of model.Dataset with pre-filled metadata fields.
-        - variables: A list of fields extracted from the dataset schema.
+            Updates the following instance attributes:
+                - ds_schema: An instance of DatasetParser initialized for the given dataset file.
+                - dataset: An instance of model.Dataset with pre-filled metadata fields.
+                - variables: A list of fields extracted from the dataset schema.
         """
         self.ds_schema: DatasetParser = DatasetParser.for_file(dataset)
         dapla_dataset_path_info = DaplaDatasetPathInfo(dataset)
@@ -253,11 +253,11 @@ class Datadoc:
         """Write all currently known metadata to file.
 
         Side Effects:
-        - Updates the dataset's metadata_last_updated_date and metadata_last_updated_by attributes.
-        - Updates the dataset's file_path attribute.
-        - Validates the metadata model and stores it in a MetadataContainer.
-        - Writes the validated metadata to a file if the metadata_document attribute is set.
-        - Logs the action and the content of the metadata document.
+            - Updates the dataset's metadata_last_updated_date and metadata_last_updated_by attributes.
+            - Updates the dataset's file_path attribute.
+            - Validates the metadata model and stores it in a MetadataContainer.
+            - Writes the validated metadata to a file if the metadata_document attribute is set.
+            - Logs the action and the content of the metadata document.
 
         Raises:
             ValueError: If no metadata document is specified for saving.
