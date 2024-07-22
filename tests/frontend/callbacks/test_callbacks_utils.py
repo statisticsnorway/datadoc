@@ -106,7 +106,6 @@ def test_write_metadata_document_with_warnings(metadata: Datadoc):
     missing_obligatory_dataset = None
     missing_obligatory_variables = None
 
-    # Use catch_warnings to capture the warnings during the test
     with warnings.catch_warnings(record=True) as w:
         warnings.simplefilter("always")
         state.metadata.write_metadata_document()
