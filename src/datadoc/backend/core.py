@@ -16,12 +16,12 @@ from datadoc.backend.constants import DEFAULT_SPATIAL_COVERAGE_DESCRIPTION
 from datadoc.backend.constants import NUM_OBLIGATORY_DATASET_FIELDS
 from datadoc.backend.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
-from datadoc.backend.datadoc_subclass import ValidateDatadocMetadata
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import (
     is_metadata_in_container_structure,
 )
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
+from datadoc.backend.model_validation import ValidateDatadocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.backend.utils import calculate_percentage
 from datadoc.backend.utils import derive_assessment_from_state

@@ -13,8 +13,8 @@ from datadoc_model import model
 from pydantic import ValidationError
 
 from datadoc import state
-from datadoc.backend.datadoc_subclass import ObligatoryDatasetWarning
-from datadoc.backend.datadoc_subclass import ObligatoryVariableWarning
+from datadoc.backend.model_validation import ObligatoryDatasetWarning
+from datadoc.backend.model_validation import ObligatoryVariableWarning
 from datadoc.backend.utils import incorrect_date_order
 from datadoc.enums import TemporalityTypeType
 
