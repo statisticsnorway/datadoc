@@ -96,12 +96,13 @@ def register_callbacks(app: Dash) -> None:
         State("alerts-section", "children"),
         prevent_initial_call=True,
     )
-    def callback_save_metadata_file(n_clicks: int, alerts: list) -> list:
+    def callback_save_metadata_file(
+        n_clicks: int,
+        alerts: list,  # noqa: ARG001  argument required by Dash
+    ) -> list:
         """Save the metadata document to disk and check obligatory metadata."""
         missing_obligatory_dataset = ""
         missing_obligatory_variables = ""
-        if alerts:
-            alerts = []
         if n_clicks and n_clicks > 0:
             with warnings.catch_warnings(record=True) as w:
                 warnings.simplefilter("always")
