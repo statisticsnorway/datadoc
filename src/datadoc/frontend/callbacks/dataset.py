@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from typing import TYPE_CHECKING
 
 from dash import no_update
@@ -287,7 +288,15 @@ def dataset_control(error_message: str | None) -> dbc.Alert | None:
     missing_metadata = [
         f[1]
         for f in OBLIGATORY_DATASET_METADATA_IDENTIFIERS_AND_DISPLAY_NAME
-        if error_message and f[0] in error_message
+        if (
+            (
+                f[1] == "Beskrivelse"
+                and error_message
+                # and r"\bdescription\b" in error_message
+                and re.search(r"\bdescription\b", error_message)
+            )
+            or (error_message and f[0] in error_message)
+        )
     ]
     if not missing_metadata:
         return None

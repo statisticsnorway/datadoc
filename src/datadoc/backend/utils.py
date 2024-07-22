@@ -256,6 +256,8 @@ def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
             and value[0]
             and len(value[0]) > 0
             and not value[0]["languageText"]
+            and (len(value) <= 1 or not value[1]["languageText"])
+            and (len(value) <= 2 or not value[2]["languageText"])  # noqa: PLR2004
         )
     ]
     return missing_dataset_fields + missing_multilanguage_fields
