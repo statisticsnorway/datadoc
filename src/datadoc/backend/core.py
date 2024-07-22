@@ -45,13 +45,7 @@ logger = logging.getLogger(__name__)
 
 
 class Datadoc:
-    """Handle reading, updating and writing of metadata.
-
-    Attributes:
-        dataset_path:
-        metadata_document_path:
-        statistic_subject_mapping:
-    """
+    """Handle reading, updating and writing of metadata."""
 
     def __init__(
         self,
