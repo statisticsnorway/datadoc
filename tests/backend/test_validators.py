@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import datetime
+import re
+import warnings
 from typing import TYPE_CHECKING
 
 import datadoc_model
 import pytest
+from datadoc_model import model
 from pydantic import ValidationError
 
 from datadoc import state
@@ -164,3 +167,126 @@ def test_obligatory_metadata_variables_warning(metadata: Datadoc):
                     record[1].message,
                 )
             )
+
+
+def test_obligatory_metadata_dataset_warning_name(metadata: Datadoc):
+    state.metadata = metadata
+    missing_obligatory_dataset = ""
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        metadata.write_metadata_document()
+        if issubclass(w[0].category, ObligatoryDatasetWarning):
+            missing_obligatory_dataset = str(w[0].message)
+    assert metadata.dataset.name is None
+    assert "name" in missing_obligatory_dataset
+    metadata.dataset.name = model.LanguageStringType(
+        [
+            model.LanguageStringTypeItem(languageCode="nb", languageText="Navnet"),
+        ],
+    )
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        metadata.write_metadata_document()
+        if issubclass(w[0].category, ObligatoryDatasetWarning):
+            missing_obligatory_dataset = str(w[0].message)
+    # assert metadata.dataset.name is not None
+    assert "name" not in missing_obligatory_dataset
+    metadata.dataset.name = model.LanguageStringType(
+        [
+            model.LanguageStringTypeItem(languageCode="nb", languageText=""),
+        ],
+    )
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        metadata.write_metadata_document()
+        if issubclass(w[0].category, ObligatoryDatasetWarning):
+            missing_obligatory_dataset = str(w[0].message)
+    assert "name" in missing_obligatory_dataset
+    metadata.dataset.name = model.LanguageStringType(
+        [
+            model.LanguageStringTypeItem(languageCode="nb", languageText=""),
+        ],
+    )
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        metadata.write_metadata_document()
+        if issubclass(w[0].category, ObligatoryDatasetWarning):
+            missing_obligatory_dataset = str(w[0].message)
+    assert "name" in missing_obligatory_dataset
+
+
+def test_obligatory_metadata_dataset_warning_description(metadata: Datadoc):
+    state.metadata = metadata
+    missing_obligatory_dataset = ""
+
+    def find_description(text) -> list:
+        pattern = r"\bdescription\b"
+        return re.findall(pattern, text)
+
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        metadata.write_metadata_document()
+        if issubclass(w[0].category, ObligatoryDatasetWarning):
+            missing_obligatory_dataset = str(w[0].message)
+
+    first_result = find_description(missing_obligatory_dataset)
+    assert len(first_result) > 0
+    metadata.dataset.description = model.LanguageStringType(
+        [
+            model.LanguageStringTypeItem(languageCode="nb", languageText="Beskrivelse"),
+        ],
+    )
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        metadata.write_metadata_document()
+        if issubclass(w[0].category, ObligatoryDatasetWarning):
+            missing_obligatory_dataset = str(w[0].message)
+    second_result = find_description(missing_obligatory_dataset)
+    assert len(second_result) == 0
+
+
+def test_obligatory_metadata_dataset_warning_description_multiple_languages(
+    metadata: Datadoc,
+):
+    state.metadata = metadata
+    missing_obligatory_dataset = ""
+
+    def find_description(text) -> list:
+        pattern = r"\bdescription\b"
+        return re.findall(pattern, text)
+
+    metadata.dataset.description = model.LanguageStringType(
+        [
+            model.LanguageStringTypeItem(languageCode="nb", languageText="Beskrivelse"),
+        ],
+    )
+    metadata.dataset.description = model.LanguageStringType(
+        [
+            model.LanguageStringTypeItem(languageCode="en", languageText="Description"),
+        ],
+    )
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        metadata.write_metadata_document()
+        if issubclass(w[0].category, ObligatoryDatasetWarning):
+            missing_obligatory_dataset = str(w[0].message)
+
+    first_result = find_description(missing_obligatory_dataset)
+    assert len(first_result) == 0
+    metadata.dataset.description = model.LanguageStringType(
+        [
+            model.LanguageStringTypeItem(languageCode="nb", languageText=""),
+        ],
+    )
+    metadata.dataset.description = model.LanguageStringType(
+        [
+            model.LanguageStringTypeItem(languageCode="en", languageText=""),
+        ],
+    )
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        metadata.write_metadata_document()
+        if issubclass(w[0].category, ObligatoryDatasetWarning):
+            missing_obligatory_dataset = str(w[0].message)
+    second_result = find_description(missing_obligatory_dataset)
+    assert len(second_result) > 0

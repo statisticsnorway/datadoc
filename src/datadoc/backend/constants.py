@@ -26,6 +26,14 @@ OBLIGATORY_DATASET_METADATA_IDENTIFIERS: list = [
     "contains_personal_data",
 ]
 
+OBLIGATORY_DATASET_METADATA_IDENTIFIERS_MULTILANGUAGE = [
+    "name",
+    "description",
+    "population_description",
+    "version_description",
+    "spatial_coverage_description",
+]
+
 OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS = [
     "name",
     "data_type",

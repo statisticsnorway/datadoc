@@ -11,6 +11,9 @@ from dapla import AuthClient
 from datadoc_model import model
 
 from datadoc.backend.constants import OBLIGATORY_DATASET_METADATA_IDENTIFIERS
+from datadoc.backend.constants import (
+    OBLIGATORY_DATASET_METADATA_IDENTIFIERS_MULTILANGUAGE,
+)
 from datadoc.backend.constants import OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
 from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
@@ -224,17 +227,35 @@ def num_obligatory_variables_fields_completed(variables: list) -> int:
 def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
     """Identify all obligatory dataset fields that are missing values.
 
+    This function checks for obligatory fields that are either directly missing (i.e., set to `None`) or have
+    multilanguage values with empty content. It considers both standard and multilanguage obligatory fields.
+
     Args:
-        dataset (model.Dataset): The dataset object being examined.
+        dataset (model.Dataset): The dataset object to examine. This object must support the `model_dump()` method which returns a dictionary of field names and values.
 
     Returns:
-        list: A list of obligatory dataset fields that are missing values (None).
+        list: A list of field names (as strings) that are missing values. This includes:
+            - Fields that are directly `None` and are listed in `OBLIGATORY_DATASET_METADATA_IDENTIFIERS`.
+            - Multilanguage fields (identified by `OBLIGATORY_DATASET_METADATA_IDENTIFIERS_MULTILANGUAGE`) where
+                the value exists but the primary language text is empty.
     """
-    return [
+    missing_dataset_fields = [
         k
         for k, v in dataset.model_dump().items()
         if k in OBLIGATORY_DATASET_METADATA_IDENTIFIERS and v is None
     ]
+    missing_multilanguage_fields = [
+        k
+        for k, value in dataset.model_dump().items()
+        if (
+            k in OBLIGATORY_DATASET_METADATA_IDENTIFIERS_MULTILANGUAGE
+            and value
+            and value[0]
+            and len(value[0]) > 0
+            and not value[0]["languageText"]
+        )
+    ]
+    return missing_dataset_fields + missing_multilanguage_fields
 
 
 def get_missing_obligatory_variables_fields(variables) -> list[dict]:  # noqa: ANN001
