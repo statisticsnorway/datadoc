@@ -290,3 +290,39 @@ def test_obligatory_metadata_dataset_warning_description_multiple_languages(
             missing_obligatory_dataset = str(w[0].message)
     second_result = find_description(missing_obligatory_dataset)
     assert len(second_result) > 0
+
+
+def test_obligatory_metadata_variables_warning_name(metadata: Datadoc):
+    state.metadata = metadata
+    missing_obligatory_variables = ""
+    variable_with_name = "{'pers_id': ['name']}"
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        metadata.write_metadata_document()
+        if issubclass(w[1].category, ObligatoryVariableWarning):
+            missing_obligatory_variables = str(w[1].message)
+    assert metadata.variables_lookup["pers_id"] is not None
+    assert metadata.variables_lookup["pers_id"].name is None
+    assert variable_with_name in missing_obligatory_variables
+    metadata.variables_lookup["pers_id"].name = model.LanguageStringType(
+        [
+            model.LanguageStringTypeItem(languageCode="nb", languageText="Navnet"),
+        ],
+    )
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        metadata.write_metadata_document()
+        if issubclass(w[1].category, ObligatoryVariableWarning):
+            missing_obligatory_variables = str(w[1].message)
+    assert variable_with_name not in missing_obligatory_variables
+    metadata.variables_lookup["pers_id"].name = model.LanguageStringType(
+        [
+            model.LanguageStringTypeItem(languageCode="nb", languageText=""),
+        ],
+    )
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        metadata.write_metadata_document()
+        if issubclass(w[1].category, ObligatoryVariableWarning):
+            missing_obligatory_variables = str(w[1].message)
+    assert variable_with_name in missing_obligatory_variables
