@@ -99,7 +99,13 @@ def register_callbacks(app: Dash) -> None:
         n_clicks: int,
         alerts: list,  # argument required by Dash  # noqa: ARG001
     ) -> list:
-        """Save the metadata document to disk and check obligatory metadata."""
+        """Save the metadata document to disk and check obligatory metadata.
+
+        Returns:
+            List of alerts. Obligatory metadata alert warning if there is obligatory metadata missing.
+            And success alert if metadata is saved correctly.
+            If none return no_update.
+        """
         missing_obligatory_dataset = ""
         missing_obligatory_variables = ""
         if n_clicks and n_clicks > 0:
