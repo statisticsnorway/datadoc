@@ -227,6 +227,7 @@ def _is_missing_metadata(
     value,  # noqa: ANN001
     obligatory_list: list,
 ) -> bool:
+    """Obligatory fields without value."""
     if key in obligatory_list and value is None:
         return True
     return False
@@ -237,7 +238,7 @@ def _is_missing_multilanguage_value(
     value,  # noqa: ANN001
     obligatory_list: list,
 ) -> bool:
-    """Filter a list of multilanguage metadata fields."""
+    """Return True if no value in any languages."""
     if (
         key in obligatory_list
         and value
@@ -263,8 +264,8 @@ def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
 
     Returns:
         list: A list of field names (as strings) that are missing values. This includes:
-            - Fields that are directly `None` and are listed in `OBLIGATORY_DATASET_METADATA_IDENTIFIERS`.
-            - Multilanguage fields (identified by `OBLIGATORY_DATASET_METADATA_IDENTIFIERS_MULTILANGUAGE`) where
+            - Fields that are directly `None` and are listed as obligatory metadata.
+            - Multilanguage fields (listed as obligatory metadata`) where
             the value exists but the primary language text is empty.
     """
     return [
@@ -295,8 +296,8 @@ def get_missing_obligatory_variables_fields(variables: list) -> list[dict]:
     Returns:
         list: A list of dictionaries with variable short names as keys and list of missing
         obligatory variable fields as values. This includes:
-        - Fields that are directly `None` and are listed in `OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS`.
-        - Multilanguage fields (identified by `OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE`) where
+        - Fields that are directly `None` and are llisted as obligatory metadata.
+        - Multilanguage fields (listed as obligatory metadata) where
         the value exists but the primary language text is empty.
     """
     missing_variables_fields = [
