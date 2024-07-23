@@ -65,11 +65,7 @@ def derive_assessment_from_state(state: DataSetState) -> Assessment:
 
 
 def set_default_values_variables(variables: list) -> None:
-    """Set default values on variables for variable fields 'id' and 'is personal data'.
-
-    This function assigns default values to the 'id' and 'is personal data' fields of each variable.
-    If a variable's 'id' is None, it will be set to a new UUID. If 'is personal data' is None,
-    it will be set to NOT_PERSONAL_DATA.
+    """Set default values on variables.
 
     Args:
         variables (list): A list of variable objects to set default values on.
@@ -94,11 +90,7 @@ def set_default_values_variables(variables: list) -> None:
 
 
 def set_default_values_dataset(dataset: model.Dataset) -> None:
-    """Set default values on dataset for dataset fields 'id' and 'contains personal data'.
-
-    This function assigns default values to the 'id' and 'contains personal data' fields of the dataset.
-    If the dataset's 'id' is None, it will be set to a new UUID. If 'contains personal data' is None,
-    it will be set to False.
+    """Set default values on dataset.
 
     Args:
         dataset (model.Dataset): The dataset object to set default values on.
