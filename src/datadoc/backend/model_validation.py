@@ -13,6 +13,7 @@ from pydantic import model_validator
 from datadoc.backend.constants import DATE_VALIDATION_MESSAGE
 from datadoc.backend.constants import NUM_OBLIGATORY_DATASET_FIELDS
 from datadoc.backend.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
+from datadoc.backend.constants import OBLIGATORY_METADATA_WARNING
 from datadoc.backend.utils import get_missing_obligatory_dataset_fields
 from datadoc.backend.utils import get_missing_obligatory_variables_fields
 from datadoc.backend.utils import incorrect_date_order
@@ -106,7 +107,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             != NUM_OBLIGATORY_DATASET_FIELDS
         ):
             warnings.warn(
-                f"All obligatory metadata is not filled in for dataset {get_missing_obligatory_dataset_fields(self.dataset)}",
+                f"{OBLIGATORY_METADATA_WARNING} {get_missing_obligatory_dataset_fields(self.dataset)}",
                 ObligatoryDatasetWarning,
                 stacklevel=2,
             )
@@ -134,7 +135,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             != NUM_OBLIGATORY_VARIABLES_FIELDS
         ):
             warnings.warn(
-                f"All obligatory metadata is not filled in for variables {get_missing_obligatory_variables_fields(self.variables)}",
+                f"{OBLIGATORY_METADATA_WARNING} {get_missing_obligatory_variables_fields(self.variables)}",
                 ObligatoryVariableWarning,
                 stacklevel=2,
             )

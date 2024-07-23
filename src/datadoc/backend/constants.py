@@ -7,6 +7,8 @@ VALIDATION_ERROR = "Validation error: "
 
 DATE_VALIDATION_MESSAGE = f"{VALIDATION_ERROR}contains_data_from must be the same or earlier date than contains_data_until"
 
+OBLIGATORY_METADATA_WARNING = "Obligatory metadata is missing: "
+
 OBLIGATORY_DATASET_METADATA_IDENTIFIERS: list = [
     "assessment",
     "dataset_state",

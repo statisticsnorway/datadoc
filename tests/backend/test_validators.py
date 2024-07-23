@@ -13,6 +13,7 @@ from datadoc_model import model
 from pydantic import ValidationError
 
 from datadoc import state
+from datadoc.backend.constants import OBLIGATORY_METADATA_WARNING
 from datadoc.backend.model_validation import ObligatoryDatasetWarning
 from datadoc.backend.model_validation import ObligatoryVariableWarning
 from datadoc.backend.utils import incorrect_date_order
@@ -126,7 +127,7 @@ def test_obligatory_metadata_dataset_warning(metadata: Datadoc):
     state.metadata = metadata
     with pytest.warns(
         ObligatoryDatasetWarning,
-        match="All obligatory metadata is not filled in for dataset",
+        match=OBLIGATORY_METADATA_WARNING,
     ) as record:
         metadata.write_metadata_document()
     all_obligatory_completed = 100
@@ -134,7 +135,7 @@ def test_obligatory_metadata_dataset_warning(metadata: Datadoc):
     if metadata.percent_complete != all_obligatory_completed:
         assert len(record) == num_warnings
         assert issubclass(record[0].category, ObligatoryDatasetWarning)
-        assert "All obligatory metadata is not filled in for dataset" in str(
+        assert OBLIGATORY_METADATA_WARNING in str(
             record[0].message,
         )
 
@@ -143,7 +144,7 @@ def test_obligatory_metadata_variables_warning(metadata: Datadoc):
     state.metadata = metadata
     with pytest.warns(
         ObligatoryVariableWarning,
-        match="All obligatory metadata is not filled in for variable",
+        match=OBLIGATORY_METADATA_WARNING,
     ) as record:
         metadata.write_metadata_document()
     all_obligatory_completed = 100
@@ -153,11 +154,8 @@ def test_obligatory_metadata_variables_warning(metadata: Datadoc):
             metadata.variables_lookup["pers_id"]
             and metadata.variables_lookup["pers_id"].name is None
         ):
-            assert (
-                "All obligatory metadata is not filled in for variables [{'pers_id': ['name']},"
-                in str(
-                    record[1].message,
-                )
+            assert "[{'pers_id': ['name']}," in str(
+                record[1].message,
             )
 
 
@@ -165,7 +163,7 @@ def test_obligatory_metadata_dataset_warning_name(metadata: Datadoc):
     state.metadata = metadata
     with pytest.warns(
         ObligatoryDatasetWarning,
-        match="All obligatory metadata is not filled in for dataset",
+        match=OBLIGATORY_METADATA_WARNING,
     ) as record:
         metadata.write_metadata_document()
     assert metadata.dataset.name is None
@@ -180,7 +178,7 @@ def test_obligatory_metadata_dataset_warning_name(metadata: Datadoc):
     )
     with pytest.warns(
         ObligatoryDatasetWarning,
-        match="All obligatory metadata is not filled in for dataset",
+        match=OBLIGATORY_METADATA_WARNING,
     ) as record2:
         metadata.write_metadata_document()
     assert metadata.dataset.name is not None
@@ -193,7 +191,7 @@ def test_obligatory_metadata_dataset_warning_name(metadata: Datadoc):
     )
     with pytest.warns(
         ObligatoryDatasetWarning,
-        match="All obligatory metadata is not filled in for dataset",
+        match=OBLIGATORY_METADATA_WARNING,
     ) as record3:
         metadata.write_metadata_document()
     assert "name" in str(record3[0].message)
@@ -269,7 +267,7 @@ def test_obligatory_metadata_variables_warning_name(metadata: Datadoc):
     variable_with_name = "{'pers_id': ['name']}"
     with pytest.warns(
         ObligatoryVariableWarning,
-        match="All obligatory metadata is not filled in for variables",
+        match=OBLIGATORY_METADATA_WARNING,
     ) as record:
         metadata.write_metadata_document()
     assert metadata.variables_lookup["pers_id"] is not None
@@ -283,7 +281,7 @@ def test_obligatory_metadata_variables_warning_name(metadata: Datadoc):
     )
     with pytest.warns(
         ObligatoryVariableWarning,
-        match="All obligatory metadata is not filled in for variables",
+        match=OBLIGATORY_METADATA_WARNING,
     ) as record2:
         metadata.write_metadata_document()
     assert variable_with_name not in str(record2[1].message)
