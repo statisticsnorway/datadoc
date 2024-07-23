@@ -227,6 +227,24 @@ def num_obligatory_variables_fields_completed(variables: list) -> int:
     return num_variables
 
 
+def _filter_multilanguage_fields(
+    key: str,
+    value,  # noqa: ANN001
+    obligatory_list: list,
+) -> bool:
+    """Filter a list of multilanguage metadata fields."""
+    if (
+        key in obligatory_list
+        and value
+        and len(value[0]) > 0
+        and not value[0]["languageText"]
+        and (len(value) <= 1 or not value[1]["languageText"])
+        and (len(value) <= 2 or not value[2]["languageText"])  # noqa: PLR2004
+    ):
+        return True
+    return False
+
+
 def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
     """Identify all obligatory dataset fields that are missing values.
 
@@ -240,27 +258,19 @@ def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
         list: A list of field names (as strings) that are missing values. This includes:
             - Fields that are directly `None` and are listed in `OBLIGATORY_DATASET_METADATA_IDENTIFIERS`.
             - Multilanguage fields (identified by `OBLIGATORY_DATASET_METADATA_IDENTIFIERS_MULTILANGUAGE`) where
-                the value exists but the primary language text is empty.
+            the value exists but the primary language text is empty.
     """
-    missing_dataset_fields = [
-        k
-        for k, v in dataset.model_dump().items()
-        if k in OBLIGATORY_DATASET_METADATA_IDENTIFIERS and v is None
-    ]
-    missing_multilanguage_fields = [
-        k
-        for k, value in dataset.model_dump().items()
-        if (
-            k in OBLIGATORY_DATASET_METADATA_IDENTIFIERS_MULTILANGUAGE
-            and value
-            and value[0]
-            and len(value[0]) > 0
-            and not value[0]["languageText"]
-            and (len(value) <= 1 or not value[1]["languageText"])
-            and (len(value) <= 2 or not value[2]["languageText"])  # noqa: PLR2004
+    return [
+        key
+        for key, value in dataset.model_dump().items()
+        if key in OBLIGATORY_DATASET_METADATA_IDENTIFIERS
+        and value is None
+        or _filter_multilanguage_fields(
+            key,
+            value,
+            OBLIGATORY_DATASET_METADATA_IDENTIFIERS_MULTILANGUAGE,
         )
     ]
-    return missing_dataset_fields + missing_multilanguage_fields
 
 
 def get_missing_obligatory_variables_fields(variables: list) -> list[dict]:
@@ -273,46 +283,26 @@ def get_missing_obligatory_variables_fields(variables: list) -> list[dict]:
         variables (list): A list of variable objects to check for missing obligatory fields.
 
     Returns:
-        list: A list of dictionaries with variable short names as keys and lists of missing
-        obligatory variable fields as values. This includes:OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS`.
-            - Multilanguage fields (identified by `OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE`) where
-            the value exists but the primary language text is empty.
+        list: A list of dictionaries with variable short names as keys and list of missing
+        obligatory variable fields as values. This includes:
+        - Fields that are directly `None` and are listed in `OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS`.
+        - Multilanguage fields (identified by `OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE`) where
+        the value exists but the primary language text is empty.
     """
     missing_variables_fields = [
         {
             variable.short_name: [
-                k
-                for k, v in variable.model_dump().items()
-                if k in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS and v is None
-            ],
-        }
-        for variable in variables
-    ]
-    missing_variables_fields = [
-        item for item in missing_variables_fields if next(iter(item.values()))
-    ]
-    missing_variables_multi_language_fields = [
-        {
-            variable.short_name: [
-                k
-                for k, value in variable.model_dump().items()
-                if (
-                    k in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE
-                    and value is not None
-                    and len(value) > 0
-                    and not value[0]["languageText"]
-                    and (len(value) <= 1 or not value[1]["languageText"])
-                    and (
-                        len(value) <= 2 or not value[2]["languageText"]  # noqa: PLR2004
-                    )
+                key
+                for key, value in variable.model_dump().items()
+                if key in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
+                and value is None
+                or _filter_multilanguage_fields(
+                    key,
+                    value,
+                    OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE,
                 )
             ],
         }
         for variable in variables
     ]
-    missing_variables_multi_language_fields = [
-        item
-        for item in missing_variables_multi_language_fields
-        if next(iter(item.values()))
-    ]
-    return missing_variables_fields + missing_variables_multi_language_fields
+    return [item for item in missing_variables_fields if next(iter(item.values()))]
