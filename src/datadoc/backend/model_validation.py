@@ -32,7 +32,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
     def check_date_order(self) -> Self:
         """Validate the order of date fields.
 
-        Check that dataset and variable date fields `contains_data_from` and `contains_data_until
+        Check that dataset and variable date fields `contains_data_from` and `contains_data_until`
         are in chronological order.
 
         Mode: This validator runs after other validation.
@@ -41,7 +41,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             Self: The instance of the model after validation.
 
         Raises:
-            ValueError: If contains_data_until date is earlier than contains_data_from date.
+            ValueError: If `contains_data_until` date is earlier than `contains_data_from date`.
         """
         if self.dataset is not None and incorrect_date_order(
             self.dataset.contains_data_from,
