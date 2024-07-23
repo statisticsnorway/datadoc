@@ -283,6 +283,11 @@ def accept_dataset_metadata_date_input(
     )
 
 
+def _has_exact_word(word: str, text: str) -> bool:
+    """Return True if excact word matches text."""
+    return bool(re.search(rf"\b{word}\b", text))
+
+
 def dataset_control(error_message: str | None) -> dbc.Alert | None:
     """Check obligatory metadata values for dataset.
 
@@ -292,15 +297,7 @@ def dataset_control(error_message: str | None) -> dbc.Alert | None:
     missing_metadata = [
         f[1]
         for f in OBLIGATORY_DATASET_METADATA_IDENTIFIERS_AND_DISPLAY_NAME
-        if (
-            (
-                f[1] == "Beskrivelse"
-                and error_message
-                # and r"\bdescription\b" in error_message
-                and re.search(r"\bdescription\b", error_message)
-            )
-            or (error_message and f[0] in error_message)
-        )
+        if (error_message and _has_exact_word(f[0], error_message))
     ]
     if not missing_metadata:
         return None
