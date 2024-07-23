@@ -106,6 +106,12 @@ def register_callbacks(app: Dash) -> None:
             with warnings.catch_warnings(record=True) as w:
                 warnings.simplefilter("always")
                 state.metadata.write_metadata_document()
+                save = (
+                    build_ssb_alert(
+                        AlertTypes.SUCCESS,
+                        "Lagret metadata",
+                    ),
+                )
                 for warning in w:
                     if warning is not None:
                         if issubclass(warning.category, ObligatoryDatasetWarning):
@@ -113,10 +119,7 @@ def register_callbacks(app: Dash) -> None:
                         elif issubclass(warning.category, ObligatoryVariableWarning):
                             missing_obligatory_variables = str(warning.message)
             return [
-                build_ssb_alert(
-                    AlertTypes.SUCCESS,
-                    "Lagret metadata",
-                ),
+                save,
                 dataset_control(missing_obligatory_dataset),
                 variables_control(missing_obligatory_variables),
             ]
