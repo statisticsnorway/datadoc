@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import concurrent
+import copy
 import json
 import logging
 import uuid
@@ -43,6 +44,18 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+OVERWRITE_ON_MERGE_DATASET_FIELDS = [
+    "name",
+    "description",
+    "data_source",
+    "population_description",
+    "unit_type",
+    "temporality_type",
+    "subject_field",
+    "keyword",
+    "spatial_coverage_description",
+]
+
 
 class Datadoc:
     """Handle reading, updating and writing of metadata."""
@@ -80,20 +93,22 @@ class Datadoc:
         If no metadata document exists, create one from scratch by extracting metadata
         from the dataset file.
         """
+        extracted_metadata: model.DatadocMetadata | None = None
+        existing_metadata: model.DatadocMetadata | None = None
         if self.metadata_document is not None and self.metadata_document.exists():
-            self._extract_metadata_from_existing_document(self.metadata_document)
+            existing_metadata = self._extract_metadata_from_existing_document(
+                self.metadata_document,
+            )
         if (
             self.dataset_path is not None
             and self.dataset == model.Dataset()
             and len(self.variables) == 0
         ):
-            self._extract_metadata_from_dataset(self.dataset_path)
-            self.dataset.id = uuid.uuid4()
-            # Set default values for variables where appropriate
-            v: model.Variable
-            for v in self.variables:
-                if v.variable_role is None:
-                    v.variable_role = model.VariableRole.MEASURE
+            extracted_metadata = self._extract_metadata_from_dataset(self.dataset_path)
+
+        merged_metadata = self._merge_metadata(extracted_metadata, existing_metadata)
+        self.dataset = merged_metadata.dataset
+        self.variables = merged_metadata.variables
         set_default_values_variables(self.variables)
         if not self.dataset.id:
             self.dataset.id = uuid.uuid4()
@@ -101,10 +116,36 @@ class Datadoc:
             self.dataset.contains_personal_data = False
         self.variables_lookup = {v.short_name: v for v in self.variables}
 
+    @staticmethod
+    def _merge_metadata(
+        extracted_metadata: model.DatadocMetadata,
+        existing_metadata: model.DatadocMetadata | None,
+    ) -> model.DatadocMetadata:
+        # Use the extracted metadata as a base
+        merged_metadata = copy.deepcopy(extracted_metadata)
+        if not existing_metadata:
+            logger.warning(
+                "No existing metadata found, can't merge. Continuing with extracted metadata.",
+            )
+            return extracted_metadata
+        if not merged_metadata:
+            return existing_metadata
+        if (
+            merged_metadata.dataset is not None
+            and existing_metadata.dataset is not None
+        ):
+            for field in OVERWRITE_ON_MERGE_DATASET_FIELDS:
+                setattr(
+                    merged_metadata.dataset,
+                    field,
+                    getattr(existing_metadata.dataset, field),
+                )
+        return merged_metadata
+
     def _extract_metadata_from_existing_document(
         self,
         document: pathlib.Path | CloudPath,
-    ) -> None:
+    ) -> model.DatadocMetadata | None:
         """There's an existing metadata document, so read in the metadata from that.
 
         Args:
@@ -128,14 +169,10 @@ class Datadoc:
             if datadoc_metadata is None:
                 # In this case we've read in a file with an empty "datadoc" structure.
                 # A typical example of this is a file produced from a pseudonymization process.
-                return
-            meta = model.DatadocMetadata.model_validate_json(
+                return None
+            return model.DatadocMetadata.model_validate_json(
                 json.dumps(datadoc_metadata),
             )
-            if meta.dataset is not None:
-                self.dataset = meta.dataset
-            if meta.variables is not None:
-                self.variables = meta.variables
         except json.JSONDecodeError:
             logger.warning(
                 "Could not open existing metadata file %s. \
@@ -143,6 +180,7 @@ class Datadoc:
                 document,
                 exc_info=True,
             )
+            return None
 
     def _extract_subject_field_from_path(
         self,
@@ -172,16 +210,16 @@ class Datadoc:
     def _extract_metadata_from_dataset(
         self,
         dataset: pathlib.Path | CloudPath,
-    ) -> None:
+    ) -> model.DatadocMetadata:
         """Obtain what metadata we can from the dataset itself.
 
         This makes it easier for the user by 'pre-filling' certain fields.
         Certain elements are dependent on the dataset being saved according to SSB's standard.
         """
-        self.ds_schema: DatasetParser = DatasetParser.for_file(dataset)
         dapla_dataset_path_info = DaplaDatasetPathInfo(dataset)
+        metadata = model.DatadocMetadata()
 
-        self.dataset = model.Dataset(
+        metadata.dataset = model.Dataset(
             short_name=dapla_dataset_path_info.dataset_short_name,
             dataset_state=dapla_dataset_path_info.dataset_state,
             dataset_status=DataSetStatus.DRAFT,
@@ -202,7 +240,8 @@ class Datadoc:
             ),
             spatial_coverage_description=DEFAULT_SPATIAL_COVERAGE_DESCRIPTION,
         )
-        self.variables = self.ds_schema.get_fields()
+        metadata.variables = DatasetParser.for_file(dataset).get_fields()
+        return metadata
 
     def write_metadata_document(self) -> None:
         """Write all currently known metadata to file."""

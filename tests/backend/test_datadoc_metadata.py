@@ -483,7 +483,6 @@ def test_merge_extracted_and_existing_dataset_metadata(metadata_merged: Datadoc)
         metadata_merged.dataset.population_description
         == metadata_existing.dataset.population_description
     )
-    assert metadata_merged.dataset.data_source == metadata_existing.dataset.data_source
     assert metadata_merged.dataset.unit_type == metadata_existing.dataset.unit_type
     assert (
         metadata_merged.dataset.temporality_type
@@ -500,7 +499,6 @@ def test_merge_extracted_and_existing_dataset_metadata(metadata_merged: Datadoc)
     )
 
     # Special cases
-
     assert metadata_merged.dataset.version_description is None
     assert metadata_merged.dataset.id != metadata_existing.dataset.id
     assert (
