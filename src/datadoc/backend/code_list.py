@@ -22,8 +22,8 @@ class CodeListItem:
     """Data structure for a code list item.
 
     Attributes:
-        titles: A dictionary mapping language codes to titles.
-        code: The code associated with the item.
+        titles (dict[str, str]): A dictionary mapping language codes to titles.
+        code (str): The code associated with the item.
     """
 
     titles: dict[str, str]
@@ -33,14 +33,13 @@ class CodeListItem:
         """Return the title in the specified language.
 
         Args:
-            language: The language code for which to get the title.
+            language (SupportedLanguages): The language code for which to get the title.
 
         Returns:
-            str: The title in the specified language. If the title is not available in
-            the specified language, it returns the title in Norwegian Bokmål ("nb")
-            if the language is either Norwegian Bokmål or Norwegian Nynorsk, otherwise
-            it returns the title in English ("en"). If none of these are available, it
-            returns an empty string and logs an exception.
+            str: The title in the specified language. It returns the title in Norwegian Bokmål ("nb")
+                if the language is either Norwegian Bokmål or Norwegian Nynorsk,
+                otherwise it returns the title in English ("en"). If none of these are
+                available, it returns an empty string and logs an exception.
         """
         try:
             return self.titles[language]
@@ -147,7 +146,7 @@ class CodeList(GetExternalSource):
 
         Returns:
             list[dict[str, str]]: A list of dictionaries, each mapping language codes to titles. If a title
-        is not available in a dataframe, the corresponding dictionary value will be None.
+            is not available in a dataframe, the corresponding dictionary value will be None.
         """
         list_of_titles = []
         languages = list(dataframes)
