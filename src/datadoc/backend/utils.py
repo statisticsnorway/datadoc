@@ -305,4 +305,5 @@ def get_missing_obligatory_variables_fields(variables: list) -> list[dict]:
         }
         for variable in variables
     ]
+    # Filtering out variable keys with empty values list
     return [item for item in missing_variables_fields if next(iter(item.values()))]
