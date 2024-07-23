@@ -97,7 +97,7 @@ def register_callbacks(app: Dash) -> None:
     )
     def callback_save_metadata_file(
         n_clicks: int,
-        alerts: list,  # noqa: ARG001  argument required by Dash
+        alerts: list,  # argument required by Dash  # noqa: ARG001
     ) -> list:
         """Save the metadata document to disk and check obligatory metadata."""
         missing_obligatory_dataset = ""
@@ -106,11 +106,9 @@ def register_callbacks(app: Dash) -> None:
             with warnings.catch_warnings(record=True) as w:
                 warnings.simplefilter("always")
                 state.metadata.write_metadata_document()
-                save = (
-                    build_ssb_alert(
-                        AlertTypes.SUCCESS,
-                        "Lagret metadata",
-                    ),
+                save = build_ssb_alert(
+                    AlertTypes.SUCCESS,
+                    "Lagret metadata",
                 )
                 for warning in w:
                     if warning is not None:
