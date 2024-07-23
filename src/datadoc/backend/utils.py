@@ -174,6 +174,17 @@ def incorrect_date_order(
     return date_from is not None and date_until is not None and date_until < date_from
 
 
+def _has_metadata_value(
+    metadata: model.Dataset | model.Variable,
+    obligatory_list: list,
+) -> list:
+    return [
+        k
+        for k, v in metadata.model_dump().items()
+        if k in obligatory_list and v is not None
+    ]
+
+
 def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
     """Count the number of obligatory dataset fields that have values.
 
@@ -186,11 +197,7 @@ def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
         int: The number of obligatory dataset fields that have been completed (not None).
     """
     return len(
-        [
-            k
-            for k, v in dataset.model_dump().items()
-            if k in OBLIGATORY_DATASET_METADATA_IDENTIFIERS and v is not None
-        ],
+        _has_metadata_value(dataset, OBLIGATORY_DATASET_METADATA_IDENTIFIERS),
     )
 
 
@@ -210,16 +217,22 @@ def num_obligatory_variables_fields_completed(variables: list) -> int:
     num_variables = 0
     for variable in variables:
         num_variables = len(
-            [
-                k
-                for k, v in variable.model_dump().items()
-                if k in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS and v is not None
-            ],
+            _has_metadata_value(variable, OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS),
         )
     return num_variables
 
 
-def _filter_multilanguage_fields(
+def _is_missing_metadata(
+    key: str,
+    value,  # noqa: ANN001
+    obligatory_list: list,
+) -> bool:
+    if key in obligatory_list and value is None:
+        return True
+    return False
+
+
+def _is_missing_multilanguage_value(
     key: str,
     value,  # noqa: ANN001
     obligatory_list: list,
@@ -228,10 +241,12 @@ def _filter_multilanguage_fields(
     if (
         key in obligatory_list
         and value
-        and len(value[0]) > 0
-        and not value[0]["languageText"]
-        and (len(value) <= 1 or not value[1]["languageText"])
-        and (len(value) <= 2 or not value[2]["languageText"])  # noqa: PLR2004
+        and (
+            len(value[0]) > 0
+            and not value[0]["languageText"]
+            and (len(value) <= 1 or not value[1]["languageText"])
+            and (len(value) <= 2 or not value[2]["languageText"])  # noqa: PLR2004
+        )
     ):
         return True
     return False
@@ -255,9 +270,12 @@ def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
     return [
         key
         for key, value in dataset.model_dump().items()
-        if key in OBLIGATORY_DATASET_METADATA_IDENTIFIERS
-        and value is None
-        or _filter_multilanguage_fields(
+        if _is_missing_metadata(
+            key,
+            value,
+            OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
+        )
+        or _is_missing_multilanguage_value(
             key,
             value,
             OBLIGATORY_DATASET_METADATA_IDENTIFIERS_MULTILANGUAGE,
@@ -286,9 +304,12 @@ def get_missing_obligatory_variables_fields(variables: list) -> list[dict]:
             variable.short_name: [
                 key
                 for key, value in variable.model_dump().items()
-                if key in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
-                and value is None
-                or _filter_multilanguage_fields(
+                if _is_missing_metadata(
+                    key,
+                    value,
+                    OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
+                )
+                or _is_missing_multilanguage_value(
                     key,
                     value,
                     OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE,
