@@ -143,10 +143,6 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
         return self
 
 
-class ValidateDataset(model.Dataset):
-    """Class inherits from model.Dataset providing additional validation."""
-
-
 class ValidationWarning(UserWarning):
     """Custom warning for validation purposes."""
 
