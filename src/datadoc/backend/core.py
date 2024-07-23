@@ -45,7 +45,6 @@ logger = logging.getLogger(__name__)
 
 
 class Datadoc:
-    # TODO(@tilen1976): find best explanation to attribute   # noqa: TD003
     """Handle reading, updating and writing of metadata.
 
     If a metadata document exists, it is this information that is loaded. Nothing is inferred from the dataset.
@@ -56,7 +55,7 @@ class Datadoc:
     Attributes:
         dataset_path: A file path to the path to where the dataset is stored.
         metadata_document_path: A path to a metadata document if it exists.
-        statistic_subject_mapping: An URL to.
+        statistic_subject_mapping: An instance of StatisticSubjectMapping.
     """
 
     def __init__(
@@ -105,8 +104,8 @@ class Datadoc:
         - If metadata is not available, it is extracted from the dataset file.
         - The dataset ID is set if not already present.
         - Default values are set for variables, particularly the variable role on creation.
-        - Default values for variables ID and 'is personal data' is set ID is set regardless if they are None.
-        - The `contains_personal_data` attribute is set to False if not specified.
+        - Default values for variables ID and 'is_personal_data' are set if the values are None.
+        - The 'contains_personal_data' attribute is set to False if not specified.
         - A lookup dictionary for variables is created based on their short names.
         """
         if self.metadata_document is not None and self.metadata_document.exists():
@@ -141,7 +140,7 @@ class Datadoc:
         A typical example causing a empty datadoc is a file produced from a pseudonymization process.
 
         Args:
-            document: A path to the existing metadata document
+            document: A path to the existing metadata document.
 
         Raises:
             json.JSONDecodeError: If the metadata document cannot be parsed.
@@ -187,7 +186,7 @@ class Datadoc:
         Map the extracted statistic short name to its corresponding statistical subject.
 
         Args:
-            dapla_dataset_path_info (DaplaDatasetPathInfo): The object representing the decomposed file path
+            dapla_dataset_path_info (DaplaDatasetPathInfo): The object representing the decomposed file path.
 
         Returns:
             str | None: The code for the statistical subject or None if we couldn't map to one.
