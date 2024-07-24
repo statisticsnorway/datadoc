@@ -243,7 +243,7 @@ def num_obligatory_variables_fields_completed(variables: list) -> int:
 
 def _is_missing_metadata(
     field_name: str,
-    field_value,  # noqa: ANN001
+    field_value,  # noqa: ANN001 Skip type hint because method '_is_missing_multilanguage_value'
     obligatory_list: list,
     obligatory_multi_language_list: list,
 ) -> bool:
@@ -251,7 +251,7 @@ def _is_missing_metadata(
 
     Args:
         field_name (str): The field name.
-        field_value: The field value.
+        field_value: The field value. Can be of type str, or LanguageStringType for multilanguage fields.
         obligatory_list (list): List of obligatory fields.
         obligatory_multi_language_list (list): List of obligatory fields with multilanguage values.
 
