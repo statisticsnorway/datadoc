@@ -44,7 +44,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-OVERWRITE_ON_MERGE_DATASET_FIELDS = [
+DATASET_FIELDS_FROM_EXISTING_METADATA = [
     "name",
     "description",
     "data_source",
@@ -107,34 +107,37 @@ class Datadoc:
             extracted_metadata = self._extract_metadata_from_dataset(self.dataset_path)
 
         merged_metadata = self._merge_metadata(extracted_metadata, existing_metadata)
-        self.dataset = merged_metadata.dataset
-        self.variables = merged_metadata.variables
+        self.dataset = merged_metadata.dataset or model.Dataset()
+        self.variables = merged_metadata.variables or []
         set_default_values_variables(self.variables)
         if not self.dataset.id:
             self.dataset.id = uuid.uuid4()
         if self.dataset.contains_personal_data is None:
             self.dataset.contains_personal_data = False
-        self.variables_lookup = {v.short_name: v for v in self.variables}
+        self.variables_lookup = {
+            v.short_name: v for v in self.variables if v.short_name
+        }
 
     @staticmethod
     def _merge_metadata(
-        extracted_metadata: model.DatadocMetadata,
+        extracted_metadata: model.DatadocMetadata | None,
         existing_metadata: model.DatadocMetadata | None,
     ) -> model.DatadocMetadata:
-        # Use the extracted metadata as a base
-        merged_metadata = copy.deepcopy(extracted_metadata)
+        # Use the extracted metadata as a base or an empty structure if extracted_metadata is None
+        merged_metadata = copy.deepcopy(extracted_metadata) or model.DatadocMetadata()
         if not existing_metadata:
             logger.warning(
                 "No existing metadata found, can't merge. Continuing with extracted metadata.",
             )
-            return extracted_metadata
+            return merged_metadata
         if not merged_metadata:
             return existing_metadata
         if (
             merged_metadata.dataset is not None
             and existing_metadata.dataset is not None
         ):
-            for field in OVERWRITE_ON_MERGE_DATASET_FIELDS:
+            # Override the fields as defined
+            for field in DATASET_FIELDS_FROM_EXISTING_METADATA:
                 setattr(
                     merged_metadata.dataset,
                     field,
