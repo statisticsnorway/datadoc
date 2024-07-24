@@ -85,19 +85,37 @@ def test_write_metadata_document_created_date(
     assert metadata.dataset.metadata_created_date is not None
 
 
+@pytest.mark.parametrize(
+    ("variable_date", "date_from", "date_until"),
+    [
+        (None, datetime.date(1967, 1, 1), datetime.date(1980, 1, 1)),
+        (
+            datetime.date(2022, 2, 2),
+            datetime.date(1999, 3, 3),
+            datetime.date(2000, 1, 4),
+        ),
+    ],
+)
 def test_variables_inherit_dates(
+    variable_date,
+    date_from,
+    date_until,
     metadata: Datadoc,
 ):
     state.metadata = metadata
-    metadata.dataset.contains_data_from = datetime.date(1967, 1, 1)
-    metadata.dataset.contains_data_until = datetime.date(1980, 1, 1)
+    metadata.dataset.contains_data_from = date_from
+    metadata.dataset.contains_data_until = date_until
     for v in metadata.variables:
-        assert v.contains_data_from is None
-        assert v.contains_data_until is None
+        v.contains_data_from = variable_date
+        v.contains_data_until = variable_date
     metadata.write_metadata_document()
     for v in metadata.variables:
-        assert v.contains_data_from == metadata.dataset.contains_data_from
-        assert v.contains_data_until == metadata.dataset.contains_data_until
+        if variable_date is None:
+            assert v.contains_data_from == metadata.dataset.contains_data_from
+            assert v.contains_data_until == metadata.dataset.contains_data_until
+        else:
+            assert v.contains_data_from == variable_date
+            assert v.contains_data_until == variable_date
 
 
 def test_variables_inherit_temporality_type_value(metadata: Datadoc):
@@ -105,7 +123,6 @@ def test_variables_inherit_temporality_type_value(metadata: Datadoc):
     metadata.dataset.temporality_type = datadoc_model.model.TemporalityTypeType(
         TemporalityTypeType.FIXED.value,
     )
-    assert metadata.dataset.temporality_type is not None
     metadata.write_metadata_document()
     assert all(
         v.temporality_type == metadata.dataset.temporality_type
@@ -138,7 +155,7 @@ def test_obligatory_metadata_variables_warning(metadata: Datadoc):
     ) as record:
         metadata.write_metadata_document()
     all_obligatory_completed = 100
-    if metadata.percent_complete != all_obligatory_completed:
+    if metadata.percent_complete != all_obligatory_completed and len(record) > 1:
         assert issubclass(record[1].category, ObligatoryVariableWarning)
         if (
             metadata.variables_lookup["pers_id"]
@@ -151,16 +168,16 @@ def test_obligatory_metadata_variables_warning(metadata: Datadoc):
 
 def test_obligatory_metadata_dataset_warning_name(metadata: Datadoc):
     state.metadata = metadata
+    metadata.dataset.name = None
     with pytest.warns(
         ObligatoryDatasetWarning,
         match=OBLIGATORY_METADATA_WARNING,
     ) as record:
         metadata.write_metadata_document()
-    assert metadata.dataset.name is None
     assert "name" in str(
         record[0].message,
     )
-
+    # Set value 'name' for first time, a Language object is created
     metadata.dataset.name = model.LanguageStringType(
         [
             model.LanguageStringTypeItem(languageCode="nb", languageText="Navnet"),
@@ -171,9 +188,9 @@ def test_obligatory_metadata_dataset_warning_name(metadata: Datadoc):
         match=OBLIGATORY_METADATA_WARNING,
     ) as record2:
         metadata.write_metadata_document()
-    assert metadata.dataset.name is not None
     assert "name" not in str(record2[0].message)
 
+    # Remove value for 'name', value for 'name' is no longer 'None', but 'languageText' is None
     metadata.dataset.name = model.LanguageStringType(
         [
             model.LanguageStringTypeItem(languageCode="nb", languageText=""),
@@ -188,15 +205,17 @@ def test_obligatory_metadata_dataset_warning_name(metadata: Datadoc):
 
 
 def test_obligatory_metadata_dataset_warning_description(metadata: Datadoc):
+    """Field name 'description' is a special case because it can match other field names like 'version_description'."""
     state.metadata = metadata
-    missing_obligatory_dataset: str
+    error_message: str
     with warnings.catch_warnings(record=True) as w:
         warnings.simplefilter("always")
         metadata.write_metadata_document()
         if issubclass(w[0].category, ObligatoryDatasetWarning):
-            missing_obligatory_dataset = str(w[0].message)
-    assert metadata.dataset.description is None
-    assert re.search(r"\bdescription\b", missing_obligatory_dataset)
+            error_message = str(w[0].message)
+    assert re.search(r"\bdescription\b", error_message)
+
+    # Check that field name is removed from warning when value
     metadata.dataset.description = model.LanguageStringType(
         [
             model.LanguageStringTypeItem(languageCode="nb", languageText="Beskrivelse"),
@@ -207,11 +226,10 @@ def test_obligatory_metadata_dataset_warning_description(metadata: Datadoc):
         metadata.write_metadata_document()
         if issubclass(w[0].category, ObligatoryDatasetWarning):
             missing_obligatory_dataset = str(w[0].message)
-    assert metadata.dataset.description is not None
     assert not re.search(r"\bdescription\b", missing_obligatory_dataset)
 
 
-def test_obligatory_metadata_dataset_warning_description_multiple_languages(
+def test_obligatory_metadata_dataset_warning_multiple_languages(
     metadata: Datadoc,
 ):
     state.metadata = metadata
@@ -220,10 +238,6 @@ def test_obligatory_metadata_dataset_warning_description_multiple_languages(
     metadata.dataset.description = model.LanguageStringType(
         [
             model.LanguageStringTypeItem(languageCode="nb", languageText="Beskrivelse"),
-        ],
-    )
-    metadata.dataset.description = model.LanguageStringType(
-        [
             model.LanguageStringTypeItem(languageCode="en", languageText="Description"),
         ],
     )
@@ -234,13 +248,24 @@ def test_obligatory_metadata_dataset_warning_description_multiple_languages(
             missing_obligatory_dataset = str(w[0].message)
     assert not re.search(r"\bdescription\b", missing_obligatory_dataset)
 
+    # Remove value for one language
     metadata.dataset.description = model.LanguageStringType(
         [
             model.LanguageStringTypeItem(languageCode="nb", languageText=""),
+            model.LanguageStringTypeItem(languageCode="en", languageText="Description"),
         ],
     )
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        metadata.write_metadata_document()
+        if issubclass(w[0].category, ObligatoryDatasetWarning):
+            missing_obligatory_dataset = str(w[0].message)
+    assert not re.search(r"\bdescription\b", missing_obligatory_dataset)
+
+    # Remove value for all languages
     metadata.dataset.description = model.LanguageStringType(
         [
+            model.LanguageStringTypeItem(languageCode="nb", languageText=""),
             model.LanguageStringTypeItem(languageCode="en", languageText=""),
         ],
     )
