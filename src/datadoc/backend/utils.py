@@ -171,6 +171,8 @@ def incorrect_date_order(
         >>> incorrect_date_order(datetime.date(1967, 1, 1), datetime.date(1980, 1, 1))
         False
     """
+    if date_from is None and date_until is not None:
+        return True
     return date_from is not None and date_until is not None and date_until < date_from
 
 
