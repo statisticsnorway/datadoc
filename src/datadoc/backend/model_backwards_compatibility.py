@@ -27,14 +27,22 @@ VERSION_FIELD_NAME = "document_version"
 
 
 class UnknownModelVersionError(Exception):
-    """Throw this error if we haven't seen the version before."""
+    """Exception raised for unknown model versions.
+
+    This error is thrown when an unrecognized model version is encountered.
+    """
 
     def __init__(
         self,
         supplied_version: str,
         *args: tuple[Any, ...],
     ) -> None:
-        """Initialize class."""
+        """Initialize the exception with the supplied version.
+
+        Args:
+            supplied_version (str): The version of the model that was not recognized.
+            *args (tuple[Any, ...]): Additional arguments for the Exception base class.
+        """
         super().__init__(args)
         self.supplied_version = supplied_version
 
@@ -48,22 +56,52 @@ SUPPORTED_VERSIONS: OrderedDict[str, BackwardsCompatibleVersion] = OrderedDict()
 
 @dataclass()
 class BackwardsCompatibleVersion:
-    """A version which we support with backwards compatibility."""
+    """A version which we support with backwards compatibility.
+
+    This class registers a version and its corresponding handler function for backwards compatibility.
+    """
 
     version: str
     handler: Callable[[dict[str, Any]], dict[str, Any]]
 
     def __post_init__(self) -> None:
-        """Register this version in the supported versions map."""
+        """Register this version in the supported versions map.
+
+        This method adds the instance to the `SUPPORTED_VERSIONS` dictionary using the version as the key.
+        """
         SUPPORTED_VERSIONS[self.version] = self
 
 
 def handle_current_version(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
-    """Nothing to do here."""
+    """Handle the current version of the metadata.
+
+    This function returns the supplied metadata unmodified.
+
+    Args:
+        supplied_metadata (dict[str, Any]): The metadata for the current version.
+
+    Returns:
+        dict[str, Any]: The unmodified supplied metadata.
+    """
     return supplied_metadata
 
 
 def _find_and_update_language_strings(supplied_metadata: dict | None) -> dict | None:
+    """Find and update language-specific strings in the supplied metadata.
+
+    This function iterates through the supplied metadata dictionary. For each key-value pair, if the value is
+    a dictionary containing the key "en", it is passed to the `_convert_language_string_type` function to
+    potentially update its format. The function then returns the modified metadata dictionary. If the supplied
+    metadata is not a dictionary, it returns `None`.
+
+    Args:
+        supplied_metadata (Optional[dict | None]): A dictionary where values may
+            include nested dictionaries with language-specific strings.
+
+    Returns:
+        Optional[dict | None]: The updated metadata dictionary with modified language
+            strings, or `None` if the input is not a dictionary.
+    """
     if isinstance(supplied_metadata, dict):
         for key, value in supplied_metadata.items():
             if isinstance(value, dict) and "en" in value:

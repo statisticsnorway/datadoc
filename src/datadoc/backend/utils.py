@@ -26,7 +26,7 @@ def normalize_path(path: str) -> pathlib.Path | CloudPath:
     """Obtain a pathlib compatible Path regardless of whether the file is on a filesystem or in GCS.
 
     Args:
-        path (str): Path on a filesystem or in cloud storage
+        path: Path on a filesystem or in cloud storage
 
     Returns:
         pathlib.Path | CloudPath: Pathlib compatible object
@@ -41,8 +41,8 @@ def calculate_percentage(completed: int, total: int) -> int:
     """Calculate percentage as a rounded integer.
 
     Args:
-        completed (int): The number of completed items.
-        total (int): The total number of items.
+        completed: The number of completed items.
+        total: The total number of items.
 
     Returns:
         int: The rounded percentage of completed items out of the total.
@@ -54,7 +54,7 @@ def derive_assessment_from_state(state: DataSetState) -> Assessment:
     """Derive assessment from dataset state.
 
     Args:
-        state (DataSetState): The state of the dataset.
+        state: The state of the dataset.
 
     Returns:
         Assessment: The derived assessment of the dataset.
@@ -76,7 +76,7 @@ def set_default_values_variables(variables: list) -> None:
     """Set default values on variables.
 
     Args:
-        variables (list): A list of variable objects to set default values on.
+        variables: A list of variable objects to set default values on.
 
     Example:
         >>> variables = [model.Variable(short_name="pers",id=None, is_personal_data = None), model.Variable(short_name="fnr",id='9662875c-c245-41de-b667-12ad2091a1ee', is_personal_data='PSEUDONYMISED_ENCRYPTED_PERSONAL_DATA')]
@@ -101,7 +101,7 @@ def set_default_values_dataset(dataset: model.Dataset) -> None:
     """Set default values on dataset.
 
     Args:
-        dataset (model.Dataset): The dataset object to set default values on.
+        dataset: The dataset object to set default values on.
 
     Example:
         >>> dataset = model.Dataset(id=None, contains_personal_data=None)
@@ -129,8 +129,8 @@ def set_variables_inherit_from_dataset(
     are inherited from the corresponding fields in the dataset.
 
     Args:
-        dataset (model.Dataset): The dataset object from which to inherit values.
-        variables (list): A list of variable objects to update with dataset values.
+        dataset: The dataset object from which to inherit values.
+        variables: A list of variable objects to update with dataset values.
 
 
     Example:
@@ -166,8 +166,8 @@ def incorrect_date_order(
     an incorrect date order.
 
     Args:
-        date_from (datetime.date | None): The start date of the time period.
-        date_until (datetime.date | None): The end date of the time period.
+        date_from: The start date of the time period.
+        date_until: The end date of the time period.
 
     Returns:
         bool: True if 'date until' is earlier than 'date from'; False otherwise.
@@ -191,8 +191,8 @@ def _has_metadata_value(
     """Return metadata fields with value.
 
     Args:
-        metadata (model.Dataset | model.Variable): The metadata object to check.
-        obligatory_list (list): A list of obligatory fields.
+        metadata: The metadata object to check.
+        obligatory_list: A list of obligatory fields.
 
     Returns:
         list: List of metadata fields that have values.
@@ -210,7 +210,7 @@ def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
     This function returns the total count of obligatory fields in the dataset that are not None.
 
     Args:
-        dataset (model.Dataset): The dataset object for which to count the fields.
+        dataset: The dataset object for which to count the fields.
 
     Returns:
         int: The number of obligatory dataset fields that have been completed (not None).
@@ -227,7 +227,7 @@ def num_obligatory_variables_fields_completed(variables: list) -> int:
     for each variable in the list.
 
     Args:
-        variables (list): A list of variable objects to count obligatory fields for.
+        variables: A list of variable objects to count obligatory fields for.
 
     Returns:
         int: The total number of obligatory variable fields that have been completed
@@ -250,10 +250,10 @@ def _is_missing_metadata(
     """Check obligatory fields without value.
 
     Args:
-        field_name (str): The field name.
+        field_name: The field name.
         field_value: The field value. Can be of type str, or LanguageStringType for multilanguage fields.
-        obligatory_list (list): List of obligatory fields.
-        obligatory_multi_language_list (list): List of obligatory fields with multilanguage values.
+        obligatory_list: List of obligatory fields.
+        obligatory_multi_language_list: List of obligatory fields with multilanguage values.
 
     Returns:
         bool: True if field doesn't have value.
@@ -279,9 +279,9 @@ def _is_missing_multilanguage_value(
     """Check obligatory fields with multilanguage value.
 
     Args:
-        field_name (str): The field name.
-        field_value: The field value.
-        obligatory_list (list): List of obligatory fields with multilanguage values.
+        field_name: The field name.
+        field_value: The field value. model.LanguageStringType
+        obligatory_list: List of obligatory fields with multilanguage values.
 
     Returns:
         bool: True if no value in any languages.
@@ -310,7 +310,7 @@ def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
     multilanguage values with empty content.
 
     Args:
-        dataset (model.Dataset): The dataset object to examine. This object must support the `model_dump()` method which returns a dictionary of field names and values.
+        dataset: The dataset object to examine. This object must support the `model_dump()` method which returns a dictionary of field names and values.
 
     Returns:
         list: A list of field names (as strings) that are missing values. This includes:
@@ -337,7 +337,7 @@ def get_missing_obligatory_variables_fields(variables: list) -> list[dict]:
     multilanguage values with empty content.
 
     Args:
-        variables (list): A list of variable objects to check for missing obligatory fields.
+        variables: A list of variable objects to check for missing obligatory fields.
 
     Returns:
         list: A list of dictionaries with variable short names as keys and list of missing
