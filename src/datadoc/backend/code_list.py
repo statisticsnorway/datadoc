@@ -68,7 +68,7 @@ class CodeListItem:
 class CodeList(GetExternalSource):
     """Class for retrieving classifications from Klass.
 
-    This class fetches a list of classifications given a classification ID
+    This class fetches a classification given a classification ID
     and supports multiple languages.
 
     Attributes:
