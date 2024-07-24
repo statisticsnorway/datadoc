@@ -38,53 +38,41 @@ def test_incorrect_date_order(date_from, date_until, expected):
     assert result == expected
 
 
-def test_write_metadata_document_invalid_date(
+@pytest.mark.parametrize(
+    ("model_type", "date_from", "date_until", "raises_exception"),
+    [
+        ("dataset", datetime.date(2024, 1, 1), datetime.date(1980, 10, 1), True),
+        ("dataset", datetime.date(1967, 1, 1), datetime.date(1980, 1, 1), False),
+        ("variable", datetime.date(1999, 10, 5), datetime.date(1925, 3, 12), True),
+        ("variable", datetime.date(2022, 7, 24), datetime.date(2023, 2, 19), False),
+        ("dataset", datetime.date(1967, 1, 1), None, False),
+    ],
+)
+def test_write_metadata_document_validate_date_order(
+    model_type,
+    date_from,
+    date_until,
+    raises_exception,
     metadata: Datadoc,
 ):
-    metadata.dataset.contains_data_from = datetime.date(2024, 1, 1)
-    metadata.dataset.contains_data_until = datetime.date(1980, 10, 1)
-    with pytest.raises(
-        ValueError,
-        match="contains_data_from must be the same or earlier date than contains_data_until",
-    ):
-        metadata.write_metadata_document()
-
-
-def test_write_metadata_document_valid_date(
-    metadata: Datadoc,
-):
-    metadata.dataset.contains_data_from = datetime.date(1967, 1, 1)
-    metadata.dataset.contains_data_until = datetime.date(1980, 1, 1)
-    try:
-        metadata.write_metadata_document()
-    except ValidationError as exc:
-        pytest.fail(str(exc))
-
-
-def test_write_metadata_document_invalid_date_variables(
-    metadata: Datadoc,
-):
-    for v in metadata.variables:
-        v.contains_data_from = datetime.date(2024, 1, 1)
-        v.contains_data_until = datetime.date(1980, 1, 1)
-    assert all(v.contains_data_from is not None for v in metadata.variables)
-    assert all(v.contains_data_until is not None for v in metadata.variables)
-    with pytest.raises(
-        ValueError,
-        match="contains_data_from must be the same or earlier date than contains_data_until",
-    ):
-        metadata.write_metadata_document()
-
-
-def test_write_metadata_document_variables_valid_date(
-    metadata: Datadoc,
-):
-    metadata.variables_lookup["pers_id"].contains_data_from = datetime.date(1967, 1, 1)
-    metadata.variables_lookup["pers_id"].contains_data_until = datetime.date(1980, 1, 1)
-    try:
-        metadata.write_metadata_document()
-    except ValidationError as exc:
-        pytest.fail(str(exc))
+    if model_type == "dataset":
+        metadata.dataset.contains_data_from = date_from
+        metadata.dataset.contains_data_until = date_until
+    if model_type == "variable":
+        for v in metadata.variables:
+            v.contains_data_from = date_from
+            v.contains_data_until = date_until
+    if raises_exception:
+        with pytest.raises(
+            ValueError,
+            match="contains_data_from must be the same or earlier date than contains_data_until",
+        ):
+            metadata.write_metadata_document()
+    else:
+        try:
+            metadata.write_metadata_document()
+        except ValidationError as exc:
+            pytest.fail(str(exc))
 
 
 def test_write_metadata_document_created_date(
