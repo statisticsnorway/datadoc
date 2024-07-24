@@ -12,25 +12,25 @@ from datadoc_model import model
 
 from datadoc import config
 from datadoc.backend import user_info
+from datadoc.backend.constants import DEFAULT_SPATIAL_COVERAGE_DESCRIPTION
+from datadoc.backend.constants import NUM_OBLIGATORY_DATASET_FIELDS
+from datadoc.backend.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.dataset_parser import DatasetParser
 from datadoc.backend.model_backwards_compatibility import (
     is_metadata_in_container_structure,
 )
 from datadoc.backend.model_backwards_compatibility import upgrade_metadata
+from datadoc.backend.model_validation import ValidateDatadocMetadata
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-from datadoc.backend.utils import DEFAULT_SPATIAL_COVERAGE_DESCRIPTION
 from datadoc.backend.utils import calculate_percentage
 from datadoc.backend.utils import derive_assessment_from_state
 from datadoc.backend.utils import normalize_path
+from datadoc.backend.utils import num_obligatory_dataset_fields_completed
+from datadoc.backend.utils import num_obligatory_variables_fields_completed
+from datadoc.backend.utils import set_default_values_dataset
 from datadoc.backend.utils import set_default_values_variables
 from datadoc.enums import DataSetStatus
-from datadoc.frontend.fields.display_dataset import (
-    OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
-)
-from datadoc.frontend.fields.display_variables import (
-    OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
-)
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
 from datadoc.utils import get_timestamp_now
 
@@ -122,10 +122,7 @@ class Datadoc:
                 if v.variable_role is None:
                     v.variable_role = model.VariableRole.MEASURE
         set_default_values_variables(self.variables)
-        if not self.dataset.id:
-            self.dataset.id = uuid.uuid4()
-        if self.dataset.contains_personal_data is None:
-            self.dataset.contains_personal_data = False
+        set_default_values_dataset(self.dataset)
         self.variables_lookup = {v.short_name: v for v in self.variables}
 
     def _extract_metadata_from_existing_document(
@@ -224,7 +221,6 @@ class Datadoc:
         """
         self.ds_schema: DatasetParser = DatasetParser.for_file(dataset)
         dapla_dataset_path_info = DaplaDatasetPathInfo(dataset)
-
         self.dataset = model.Dataset(
             short_name=dapla_dataset_path_info.dataset_short_name,
             dataset_state=dapla_dataset_path_info.dataset_state,
@@ -262,16 +258,12 @@ class Datadoc:
             ValueError: If no metadata document is specified for saving.
         """
         timestamp: datetime = get_timestamp_now()
-
-        if self.dataset.metadata_created_date is None:
-            self.dataset.metadata_created_date = timestamp
         self.dataset.metadata_last_updated_date = timestamp
         self.dataset.metadata_last_updated_by = (
             user_info.get_user_info_for_current_platform().short_email
         )
         self.dataset.file_path = str(self.dataset_path)
-
-        datadoc: model.DatadocMetadata = model.DatadocMetadata(
+        datadoc: ValidateDatadocMetadata = ValidateDatadocMetadata(
             percentage_complete=self.percent_complete,
             dataset=self.dataset,
             variables=self.variables,
@@ -297,21 +289,9 @@ class Datadoc:
         assigned. Used for a live progress bar in the UI, as well as being
         saved in the datadoc as a simple quality indicator.
         """
-        num_all_fields = len(OBLIGATORY_DATASET_METADATA_IDENTIFIERS)
-        num_set_fields = len(
-            [
-                k
-                for k, v in self.dataset.model_dump().items()
-                if k in OBLIGATORY_DATASET_METADATA_IDENTIFIERS and v is not None
-            ],
-        )
-        for variable in self.variables:
-            num_all_fields += len(OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS)
-            num_set_fields += len(
-                [
-                    k
-                    for k, v in variable.model_dump().items()
-                    if k in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS and v is not None
-                ],
-            )
+        num_all_fields = NUM_OBLIGATORY_DATASET_FIELDS
+        num_set_fields = num_obligatory_dataset_fields_completed(self.dataset)
+        for _i in range(len(self.variables)):
+            num_all_fields += NUM_OBLIGATORY_VARIABLES_FIELDS
+            num_set_fields += num_obligatory_variables_fields_completed(self.variables)
         return calculate_percentage(num_set_fields, num_all_fields)
