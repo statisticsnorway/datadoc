@@ -180,6 +180,7 @@ def _has_metadata_value(
     metadata: model.Dataset | model.Variable,
     obligatory_list: list,
 ) -> list:
+    """Return metadata fields with value."""
     return [
         k
         for k, v in metadata.model_dump().items()
@@ -228,9 +229,18 @@ def _is_missing_metadata(
     key: str,
     value,  # noqa: ANN001
     obligatory_list: list,
+    obligatory_multi_language_list: list,
 ) -> bool:
-    """Obligatory fields without value."""
-    if key in obligatory_list and value is None:
+    """Check obligatory fields without value.
+
+    Returns:
+        bool: True if field doesn't have value.
+    """
+    if (
+        key in obligatory_list
+        and value is None
+        or _is_missing_multilanguage_value(key, value, obligatory_multi_language_list)
+    ):
         return True
     return False
 
@@ -240,7 +250,11 @@ def _is_missing_multilanguage_value(
     value,  # noqa: ANN001
     obligatory_list: list,
 ) -> bool:
-    """Return True if no value in any languages."""
+    """Check obligatory fields with multilanguage value.
+
+    Returns:
+        bool: True if no value in any languages.
+    """
     if (
         key in obligatory_list
         and value
@@ -277,10 +291,6 @@ def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
             key,
             value,
             OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
-        )
-        or _is_missing_multilanguage_value(
-            key,
-            value,
             OBLIGATORY_DATASET_METADATA_IDENTIFIERS_MULTILANGUAGE,
         )
     ]
@@ -311,10 +321,6 @@ def get_missing_obligatory_variables_fields(variables: list) -> list[dict]:
                     key,
                     value,
                     OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
-                )
-                or _is_missing_multilanguage_value(
-                    key,
-                    value,
                     OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE,
                 )
             ],
