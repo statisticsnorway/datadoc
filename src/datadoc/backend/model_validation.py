@@ -39,7 +39,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
         Mode: This validator runs after other validation.
 
         Returns:
-            Self: The instance of the model after validation.
+            The instance of the model after validation.
 
         Raises:
             ValueError: If `contains_data_until` date is earlier than `contains_data_from date`.
@@ -64,7 +64,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
         Mode: This validator runs after other validation.
 
         Returns:
-            Self: The instance of the model after validation.
+            The instance of the model after validation.
         """
         timestamp: datetime = get_timestamp_now()  # --check-untyped-defs
         if self.dataset is not None and self.dataset.metadata_created_date is None:
@@ -80,7 +80,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
         Mode: This validator runs after other validation.
 
         Returns:
-            Self: The instance of the model after validation.
+            The instance of the model after validation.
         """
         if self.variables and self.dataset is not None:
             set_variables_inherit_from_dataset(self.dataset, self.variables)
@@ -94,7 +94,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             This validator runs after other validation.
 
         Returns:
-            Self: The instance of the model after validation.
+            The instance of the model after validation.
 
         Raises:
             ObligatoryDatasetWarning: If not all obligatory dataset metadata fields are filled in.
@@ -122,7 +122,7 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             This validator runs after other validation.
 
         Returns:
-            Self: The instance of the model after validation.
+            The instance of the model after validation.
 
         Raises:
             ObligatoryVariableWarning: If not all obligatory variable metadata fields are filled in.

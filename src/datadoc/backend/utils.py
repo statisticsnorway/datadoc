@@ -26,10 +26,10 @@ def normalize_path(path: str) -> pathlib.Path | CloudPath:
     """Obtain a pathlib compatible Path regardless of whether the file is on a filesystem or in GCS.
 
     Args:
-        path: Path on a filesystem or in cloud storage
+        path: Path on a filesystem or in cloud storage.
 
     Returns:
-        pathlib.Path | CloudPath: Pathlib compatible object
+        Pathlib compatible object.
     """
     if path.startswith(GSPath.cloud_prefix):
         client = GSClient(credentials=AuthClient.fetch_google_credentials())
@@ -45,7 +45,7 @@ def calculate_percentage(completed: int, total: int) -> int:
         total: The total number of items.
 
     Returns:
-        int: The rounded percentage of completed items out of the total.
+        The rounded percentage of completed items out of the total.
     """
     return round((completed / total) * 100)
 
@@ -57,7 +57,7 @@ def derive_assessment_from_state(state: DataSetState) -> Assessment:
         state: The state of the dataset.
 
     Returns:
-        Assessment: The derived assessment of the dataset.
+        The derived assessment of the dataset.
     """
     match (state):
         case (
@@ -132,7 +132,6 @@ def set_variables_inherit_from_dataset(
         dataset: The dataset object from which to inherit values.
         variables: A list of variable objects to update with dataset values.
 
-
     Example:
         >>> dataset = model.Dataset(short_name='person_data_v1',data_source='01',temporality_type='STATUS',id='9662875c-c245-41de-b667-12ad2091a1ee',contains_data_from="2010-09-05",contains_data_until="2022-09-05")
         >>> variables = [model.Variable(short_name="pers",data_source =None,temporality_type = None, contains_data_from = None,contains_data_until = None)]
@@ -170,7 +169,7 @@ def incorrect_date_order(
         date_until: The end date of the time period.
 
     Returns:
-        bool: True if 'date until' is earlier than 'date from'; False otherwise.
+        True if 'date until' is earlier than 'date from', False otherwise.
 
     Example:
         >>> incorrect_date_order(datetime.date(1980, 1, 1), datetime.date(1967, 1, 1))
@@ -195,7 +194,7 @@ def _has_metadata_value(
         obligatory_list: A list of obligatory fields.
 
     Returns:
-        list: List of metadata fields that have values.
+        List of metadata fields that have values.
     """
     return [
         k
@@ -213,7 +212,7 @@ def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
         dataset: The dataset object for which to count the fields.
 
     Returns:
-        int: The number of obligatory dataset fields that have been completed (not None).
+        The number of obligatory dataset fields that have been completed (not None).
     """
     return len(
         _has_metadata_value(dataset, OBLIGATORY_DATASET_METADATA_IDENTIFIERS),
@@ -230,7 +229,7 @@ def num_obligatory_variables_fields_completed(variables: list) -> int:
         variables: A list of variable objects to count obligatory fields for.
 
     Returns:
-        int: The total number of obligatory variable fields that have been completed
+        The total number of obligatory variable fields that have been completed
         (not None) across all variables.
     """
     num_variables = 0
@@ -256,7 +255,7 @@ def _is_missing_metadata(
         obligatory_multi_language_list: List of obligatory fields with multilanguage values.
 
     Returns:
-        bool: True if field doesn't have value.
+        True if field doesn't have value, False otherwise.
     """
     if (
         field_name in obligatory_list
@@ -280,11 +279,11 @@ def _is_missing_multilanguage_value(
 
     Args:
         field_name: The field name.
-        field_value: The field value. model.LanguageStringType
+        field_value: The field value. LanguageStringType.
         obligatory_list: List of obligatory fields with multilanguage values.
 
     Returns:
-        bool: True if no value in any languages.
+        True if no value in any languages, False otherwise.
     """
     if (
         field_name in obligatory_list
@@ -313,7 +312,7 @@ def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
         dataset: The dataset object to examine. This object must support the `model_dump()` method which returns a dictionary of field names and values.
 
     Returns:
-        list: A list of field names (as strings) that are missing values. This includes:
+        A list of field names (as strings) that are missing values. This includes:
             - Fields that are directly `None` and are listed as obligatory metadata.
             - Multilanguage fields (listed as obligatory metadata`) where
             the value exists but the primary language text is empty.
@@ -340,11 +339,9 @@ def get_missing_obligatory_variables_fields(variables: list) -> list[dict]:
         variables: A list of variable objects to check for missing obligatory fields.
 
     Returns:
-        list: A list of dictionaries with variable short names as keys and list of missing
-        obligatory variable fields as values. This includes:
-        - Fields that are directly `None` and are llisted as obligatory metadata.
-        - Multilanguage fields (listed as obligatory metadata) where
-        the value exists but the primary language text is empty.
+        A list of dictionaries with variable short names as keys and list of missing obligatory variable fields as values. This includes:
+            - Fields that are directly `None` and are llisted as obligatory metadata.
+            - Multilanguage fields (listed as obligatory metadata) where the value exists but the primary language text is empty.
     """
     missing_variables_fields = [
         {
