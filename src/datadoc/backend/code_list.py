@@ -33,7 +33,7 @@ class CodeListItem:
         """Return the title in the specified language.
 
         Args:
-            language (SupportedLanguages): The language code for which to get the title.
+            language: The language code for which to get the title.
 
         Returns:
             str: The title in the specified language. It returns the title in Norwegian Bokmål ("nb")
@@ -142,7 +142,7 @@ class CodeList(GetExternalSource):
         creating a list of dictionaries where each dictionary maps language codes to titles.
 
         Args:
-            dataframes(dict[SupportedLanguages, pd.DataFrame]): A dictionary mapping language codes to pandas DataFrames containing classification data.
+            dataframes: A dictionary mapping language codes to pandas DataFrames containing classification data.
 
         Returns:
             list[dict[str, str]]: A list of dictionaries, each mapping language codes to titles. If a title
@@ -169,8 +169,7 @@ class CodeList(GetExternalSource):
         This method extracts titles from the provided dataframes and pairs them with their corresponding classification codes to create a list of CodeListItem objects.
 
         Args:
-            classifications_dataframes (dict[SupportedLanguages, pd.DataFrame]): A dictionary mapping language codes to
-            pandas DataFrames containing classification data.
+            classifications_dataframes: A dictionary mapping language codes to pandas DataFrames containing classification data.
 
         Returns:
             list[CodeListItem]: A list of CodeListItem objects containing classification titles and codes.

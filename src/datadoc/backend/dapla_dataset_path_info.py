@@ -126,7 +126,7 @@ class SsbDateFormat(DateFormat):
         Convert SSB format to date-string and return the first date.
 
         Args:
-            period_string (str): A string representing the timeframe period in SSB format.
+            period_string: A string representing the timeframe period in SSB format.
 
         Returns:
             date | None: The first date of the period if the period_string is a valid SSB format, otherwise None.
@@ -153,7 +153,7 @@ class SsbDateFormat(DateFormat):
         Convert SSB format to date-string and return the last date.
 
         Args:
-            period_string (str): A string representing the timeframe period in SSB format.
+            period_string: A string representing the timeframe period in SSB format.
 
         Returns:
             date | None: The last date of the period if the period_string is a valid SSB format, otherwise None.
@@ -285,7 +285,7 @@ def categorize_period_string(period: str) -> IsoDateFormat | SsbDateFormat:
     """Categorize a period string into one of the supported date formats.
 
     Args:
-        period (str): A string representing the period to be categorized.
+        period: A string representing the period to be categorized.
 
     Returns:
         IsoDateFormat | SsbDateFormat: An instance of either IsoDateFormat or SsbDateFormat depending on the format
@@ -355,7 +355,7 @@ class DaplaDatasetPathInfo:
             r"""Insert a 'p' as the second character.
 
             Args:
-                regex (str): A string representing the regular expression pattern to be modified.
+                regex: A string representing the regular expression pattern to be modified.
 
             Returns:
                 str: The modified regular expression pattern with 'p' inserted as the second character.
@@ -384,7 +384,7 @@ class DaplaDatasetPathInfo:
         the year periods from the dataset name.
 
         Args:
-            dataset_name_sections (list[str]): A list of strings representing sections of a dataset name.
+            dataset_name_sections: A list of strings representing sections of a dataset name.
 
         Returns:
             list[str]: A list of extracted period strings, with the first character stripped from each match.
@@ -413,7 +413,7 @@ class DaplaDatasetPathInfo:
         """Extract a period string by its index from the list of period strings.
 
         Args:
-            index (int): The index of the period string to extract.
+            index: The index of the period string to extract.
 
         Returns:
             str | None: The extracted period string if it exists, otherwise None.
@@ -430,7 +430,7 @@ class DaplaDatasetPathInfo:
         """Extract the Norwegian dataset state path part.
 
         Args:
-            dataset_state (DataSetState): The dataset state.
+            dataset_state: The dataset state.
 
         Returns:
             set[str]: A set of variations of the Norwegian dataset state path part.

@@ -71,9 +71,9 @@ class Datadoc:
         without loading any metadata.
 
         Args:
-            dataset_path (Optional): The file path to the dataset.
-            metadata_document_path (Optional): The file path to the metadata document.
-            statistic_subject_mapping (Optional): An instance of StatisticSubjectMapping.
+            dataset_path: The file path to the dataset. Defaults to None.
+            metadata_document_path: The file path to the metadata document. Defaults to None.
+            statistic_subject_mapping: An instance of StatisticSubjectMapping. Defaults to None.
         """
         self._statistic_subject_mapping = statistic_subject_mapping
         self.metadata_document: pathlib.Path | CloudPath | None = None
@@ -183,7 +183,7 @@ class Datadoc:
         Map the extracted statistic short name to its corresponding statistical subject.
 
         Args:
-            dapla_dataset_path_info (DaplaDatasetPathInfo): The object representing the decomposed file path.
+            dapla_dataset_path_info: The object representing the decomposed file path.
 
         Returns:
             str | None: The code for the statistical subject or None if we couldn't map to one.
@@ -211,7 +211,7 @@ class Datadoc:
         Certain elements are dependent on the dataset being saved according to SSB's standard.
 
         Args:
-            dataset (pathlib.Path | CloudPath): The path to the dataset file, which can be a local or cloud path.
+            dataset: The path to the dataset file, which can be a local or cloud path.
 
         Side Effects:
             Updates the following instance attributes:
