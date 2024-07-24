@@ -51,7 +51,7 @@ class GetExternalSource(ABC, Generic[T]):
         """Check if the thread getting the external data has finished running.
 
         Returns:
-            bool: True if the data fetching operation is complete, False otherwise.
+            True if the data fetching operation is complete, False otherwise.
         """
         if self.future:
             return self.future.done()
@@ -64,13 +64,13 @@ class GetExternalSource(ABC, Generic[T]):
         If the operation is finished, it returns the result. Otherwise, it returns None.
 
         Returns:
-            T | None: The result of the data fetching operation if it is complete,
-                or None if the operation has not yet finished.
+            The result of the data fetching operation if it is complete or None if the operation has not yet finished.
         """
         if self.future:
             return self.future.result()
         return None
 
+    # TODO(@tilen1976) check return value  # noqa: TD004, TD003
     @abstractmethod
     def _fetch_data_from_external_source(self) -> T | None:
         """Abstract method to be implemented in the subclass to handle external data retrieval.

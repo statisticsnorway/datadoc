@@ -186,7 +186,7 @@ class Datadoc:
             dapla_dataset_path_info: The object representing the decomposed file path.
 
         Returns:
-            str | None: The code for the statistical subject or None if we couldn't map to one.
+            The code for the statistical subject or None if we couldn't map to one.
         """
         if self._statistic_subject_mapping is None:
             with concurrent.futures.ThreadPoolExecutor(max_workers=12) as executor:
