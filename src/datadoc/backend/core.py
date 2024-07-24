@@ -124,6 +124,8 @@ class Datadoc:
         - The 'contains_personal_data' attribute is set to False if not specified.
         - A lookup dictionary for variables is created based on their short names.
         """
+        extracted_metadata: model.DatadocMetadata | None = None
+        existing_metadata: model.DatadocMetadata | None = None
         if self.metadata_document is not None and self.metadata_document.exists():
             existing_metadata = self._extract_metadata_from_existing_document(
                 self.metadata_document,
