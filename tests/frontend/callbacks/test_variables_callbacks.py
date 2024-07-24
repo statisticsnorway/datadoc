@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import warnings
 from typing import TYPE_CHECKING
 from typing import Any
 from uuid import UUID
@@ -9,12 +10,13 @@ from uuid import UUID
 import arrow
 import dash_bootstrap_components as dbc
 import pytest
-from datadoc_model.model import LanguageStringType
+from datadoc_model import model
 from datadoc_model.model import LanguageStringTypeItem
 from pydantic_core import Url
 
 from datadoc import enums
 from datadoc import state
+from datadoc.backend.model_validation import ObligatoryVariableWarning
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
@@ -27,7 +29,7 @@ from datadoc.frontend.callbacks.variables import (
 from datadoc.frontend.callbacks.variables import (
     set_variables_values_inherit_dataset_values,
 )
-from datadoc.frontend.callbacks.variables import variables_metadata_control
+from datadoc.frontend.callbacks.variables import variables_control
 from datadoc.frontend.fields.display_base import get_metadata_and_stringify
 from datadoc.frontend.fields.display_base import get_standard_metadata
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
@@ -577,18 +579,25 @@ def test_variables_values_inherit_dataset_date_values_not_when_variable_has_valu
 def test_variables_metadata_control_return_alert(metadata: Datadoc):
     """Return alert when obligatory metadata is missing."""
     state.metadata = metadata
-    result = variables_metadata_control()
+    missing_metadata: str
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        state.metadata.write_metadata_document()
+        if issubclass(w[1].category, ObligatoryVariableWarning):
+            missing_metadata = str(w[1].message)
+    result = variables_control(missing_metadata)
     assert isinstance(result, dbc.Alert)
 
 
 def test_variables_metadata_control_dont_return_alert(metadata: Datadoc):
     state.metadata = metadata
+    missing_metadata: str | None = None
     for val in state.metadata.variables:
         """Not return alert when all obligatory metadata has value."""
         setattr(
             state.metadata.variables_lookup[val.short_name],
             VariableIdentifiers.NAME,
-            LanguageStringType(
+            model.LanguageStringType(
                 [LanguageStringTypeItem(languageCode="nb", languageText="Test")],
             ),
         )
@@ -612,5 +621,10 @@ def test_variables_metadata_control_dont_return_alert(metadata: Datadoc):
             VariableIdentifiers.IS_PERSONAL_DATA,
             enums.IsPersonalData.NON_PSEUDONYMISED_ENCRYPTED_PERSONAL_DATA,
         )
-    result = variables_metadata_control()
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        state.metadata.write_metadata_document()
+        if issubclass(w[0].category, ObligatoryVariableWarning):
+            missing_metadata = str(w[0].message)
+    result = variables_control(missing_metadata)
     assert result is None

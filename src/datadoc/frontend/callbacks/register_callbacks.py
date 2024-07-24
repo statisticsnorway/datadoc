@@ -6,6 +6,7 @@ Implementations of the callback functionality should be in other functions (in o
 from __future__ import annotations
 
 import logging
+import warnings
 from typing import TYPE_CHECKING
 
 from dash import ALL
@@ -19,15 +20,17 @@ from dash import html
 from dash import no_update
 
 from datadoc import state
+from datadoc.backend.model_validation import ObligatoryDatasetWarning
+from datadoc.backend.model_validation import ObligatoryVariableWarning
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
-from datadoc.frontend.callbacks.dataset import dataset_metadata_control
+from datadoc.frontend.callbacks.dataset import dataset_control
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.utils import render_tabs
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
-from datadoc.frontend.callbacks.variables import variables_metadata_control
+from datadoc.frontend.callbacks.variables import variables_control
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_dataset_edit_section
 from datadoc.frontend.components.builders import build_ssb_alert
@@ -92,20 +95,41 @@ def register_callbacks(app: Dash) -> None:
         State("alerts-section", "children"),
         prevent_initial_call=True,
     )
-    def callback_save_metadata_file(n_clicks: int, alerts: list) -> list:
-        """Save the metadata document to disk and check obligatory metadata."""
-        if alerts:
-            alerts = []
+    def callback_save_metadata_file(
+        n_clicks: int,
+        alerts: list,  # argument required by Dash  # noqa: ARG001
+    ) -> list:
+        """Save the metadata document to disk and check obligatory metadata.
+
+        Returns:
+            List of alerts. Obligatory metadata alert warning if there is obligatory metadata missing.
+            And success alert if metadata is saved correctly.
+            If none return no_update.
+        """
+        missing_obligatory_dataset = ""
+        missing_obligatory_variables = ""
         if n_clicks and n_clicks > 0:
-            state.metadata.write_metadata_document()
-            save = build_ssb_alert(
-                AlertTypes.SUCCESS,
-                "Lagret metadata",
-            )
+            with warnings.catch_warnings(record=True) as w:
+                warnings.simplefilter("always")
+                state.metadata.write_metadata_document()
+                save = build_ssb_alert(
+                    AlertTypes.SUCCESS,
+                    "Lagret metadata",
+                )
+                for warning in w:
+                    if issubclass(warning.category, ObligatoryDatasetWarning):
+                        missing_obligatory_dataset = str(warning.message)
+                    elif issubclass(warning.category, ObligatoryVariableWarning):
+                        missing_obligatory_variables = str(warning.message)
+                    else:
+                        logger.warning(
+                            "An unexpected warning was caught: %s",
+                            warning.message,
+                        )
             return [
                 save,
-                dataset_metadata_control(),
-                variables_metadata_control(),
+                dataset_control(missing_obligatory_dataset),
+                variables_control(missing_obligatory_variables),
             ]
 
         return no_update
