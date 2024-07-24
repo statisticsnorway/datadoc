@@ -448,10 +448,6 @@ def test_merge_extracted_and_existing_dataset_metadata(metadata_merged: Datadoc)
     assert metadata_merged.dataset.short_name == metadata_extracted.dataset.short_name
     assert metadata_merged.dataset.assessment == metadata_extracted.dataset.assessment
     assert (
-        metadata_merged.dataset.dataset_status
-        == metadata_extracted.dataset.dataset_status
-    )
-    assert (
         metadata_merged.dataset.dataset_state
         == metadata_extracted.dataset.dataset_state
     )
@@ -477,6 +473,10 @@ def test_merge_extracted_and_existing_dataset_metadata(metadata_merged: Datadoc)
 
     # Should match existing metadata
     assert metadata_merged.dataset.name == metadata_existing.dataset.name
+    assert (
+        metadata_merged.dataset.dataset_status
+        == metadata_existing.dataset.dataset_status
+    )
     assert metadata_merged.dataset.description == metadata_existing.dataset.description
     assert metadata_merged.dataset.data_source == metadata_existing.dataset.data_source
     assert (

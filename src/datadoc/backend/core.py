@@ -47,6 +47,7 @@ logger = logging.getLogger(__name__)
 DATASET_FIELDS_FROM_EXISTING_METADATA = [
     "name",
     "description",
+    "dataset_status",
     "data_source",
     "population_description",
     "unit_type",
@@ -74,9 +75,11 @@ class Datadoc:
         self.dataset = model.Dataset()
         self.variables: list = []
         self.variables_lookup: dict[str, model.Variable] = {}
+        self.explicitly_defined_metadata_document = False
         if metadata_document_path:
             # In this case the user has specified an independent metadata document for editing
             self.metadata_document = normalize_path(metadata_document_path)
+            self.explicitly_defined_metadata_document = True
         if dataset_path:
             self.dataset_path = normalize_path(dataset_path)
             # Build the metadata document path based on the dataset path if no metadata document is supplied
@@ -85,7 +88,8 @@ class Datadoc:
                 self.metadata_document = self.dataset_path.parent / (
                     self.dataset_path.stem + METADATA_DOCUMENT_FILE_SUFFIX
                 )
-        self._extract_metadata_from_files()
+        if metadata_document_path or dataset_path:
+            self._extract_metadata_from_files()
 
     def _extract_metadata_from_files(self) -> None:
         """Read metadata from an existing metadata document.
@@ -106,9 +110,22 @@ class Datadoc:
         ):
             extracted_metadata = self._extract_metadata_from_dataset(self.dataset_path)
 
-        merged_metadata = self._merge_metadata(extracted_metadata, existing_metadata)
-        self.dataset = merged_metadata.dataset or model.Dataset()
-        self.variables = merged_metadata.variables or []
+        if self.dataset_path and self.explicitly_defined_metadata_document:
+            merged_metadata = self._merge_metadata(
+                extracted_metadata,
+                existing_metadata,
+            )
+            self.dataset = merged_metadata.dataset
+            self.variables = merged_metadata.variables
+        elif existing_metadata:
+            self.dataset = existing_metadata.dataset
+            self.variables = existing_metadata.variables
+        elif extracted_metadata:
+            self.dataset = extracted_metadata.dataset
+            self.variables = extracted_metadata.variables
+        else:
+            msg = "Could not read metadata"
+            raise ValueError(msg)
         set_default_values_variables(self.variables)
         if not self.dataset.id:
             self.dataset.id = uuid.uuid4()
@@ -124,12 +141,12 @@ class Datadoc:
         existing_metadata: model.DatadocMetadata | None,
     ) -> model.DatadocMetadata:
         # Use the extracted metadata as a base or an empty structure if extracted_metadata is None
-        merged_metadata = copy.deepcopy(extracted_metadata) or model.DatadocMetadata()
+        merged_metadata = copy.deepcopy(extracted_metadata)
         if not existing_metadata:
             logger.warning(
-                "No existing metadata found, can't merge. Continuing with extracted metadata.",
+                "No existing metadata found, no merge to perform. Continuing with extracted metadata.",
             )
-            return merged_metadata
+            return merged_metadata or model.DatadocMetadata()
         if not merged_metadata:
             return existing_metadata
         if (
