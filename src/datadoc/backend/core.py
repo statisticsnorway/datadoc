@@ -115,12 +115,24 @@ class Datadoc:
                 extracted_metadata,
                 existing_metadata,
             )
-            self.dataset = merged_metadata.dataset
-            self.variables = merged_metadata.variables
-        elif existing_metadata:
+            if merged_metadata.dataset and merged_metadata.variables:
+                self.dataset = merged_metadata.dataset
+                self.variables = merged_metadata.variables
+            else:
+                msg = "Could not read metadata"
+                raise ValueError(msg)
+        elif (
+            existing_metadata
+            and existing_metadata.dataset
+            and existing_metadata.variables
+        ):
             self.dataset = existing_metadata.dataset
             self.variables = existing_metadata.variables
-        elif extracted_metadata:
+        elif (
+            extracted_metadata
+            and extracted_metadata.dataset
+            and extracted_metadata.variables
+        ):
             self.dataset = extracted_metadata.dataset
             self.variables = extracted_metadata.variables
         else:
