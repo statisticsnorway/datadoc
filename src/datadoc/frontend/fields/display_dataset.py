@@ -34,7 +34,7 @@ def get_statistical_subject_options() -> list[dict[str, str]]:
         for primary in state.statistic_subject_mapping.primary_subjects
         for secondary in primary.secondary_subjects
     ]
-    dropdown_options.insert(0, {"title": "", "id": ""})
+    dropdown_options.insert(0, {"title": "-- Velg --", "id": ""})
     return dropdown_options
 
 
@@ -47,7 +47,7 @@ def get_unit_type_options() -> list[dict[str, str]]:
         }
         for unit_type in state.unit_types.classifications
     ]
-    dropdown_options.insert(0, {"title": "", "id": ""})
+    dropdown_options.insert(0, {"title": "-- Velg --", "id": ""})
     return dropdown_options
 
 
@@ -60,7 +60,7 @@ def get_owner_options() -> list[dict[str, str]]:
         }
         for option in state.organisational_units.classifications
     ]
-    dropdown_options.insert(0, {"title": "", "id": ""})
+    dropdown_options.insert(0, {"title": "-- Velg --", "id": ""})
     return dropdown_options
 
 
