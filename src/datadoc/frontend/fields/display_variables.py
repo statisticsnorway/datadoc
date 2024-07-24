@@ -16,6 +16,7 @@ from datadoc.frontend.fields.display_base import MetadataMultiLanguageField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
 from datadoc.frontend.fields.display_base import get_data_source_options
 from datadoc.frontend.fields.display_base import get_enum_options
+from datadoc.frontend.fields.display_base import get_enum_options_for_required_field
 
 
 def get_measurement_unit_options() -> list[dict[str, str]]:
@@ -105,7 +106,7 @@ DISPLAY_VARIABLES: dict[
         description="Dersom variabelen er en personopplysning, skal det oppgis om den er pseudonymisert/kryptert eller ikke. Dersom den ikke er en personopplysning, lar en bare defaultsvaret «Ikke personopplysning» bli stående. All informasjon som entydig kan knyttes til en fysisk person (f.eks. fødselsnummer eller adresse) er personopplysninger. Næringsdata om enkeltpersonforetak (ENK) skal imidlertid ikke regnes som personopplysninger.",
         obligatory=True,
         options_getter=functools.partial(
-            get_enum_options,
+            get_enum_options_for_required_field,
             enums.IsPersonalData,
         ),
     ),
