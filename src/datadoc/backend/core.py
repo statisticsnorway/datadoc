@@ -45,7 +45,18 @@ logger = logging.getLogger(__name__)
 
 
 class Datadoc:
-    """Handle reading, updating and writing of metadata."""
+    """Handle reading, updating and writing of metadata.
+
+    If a metadata document exists, it is this information that is loaded. Nothing is inferred from the dataset.
+    If only a dataset path is supplied the metadata document path is build based on the dataset path.
+
+    Example: /path/to/dataset.parquet -> /path/to/dataset__DOC.json
+
+    Attributes:
+        dataset_path: A file path to the path to where the dataset is stored.
+        metadata_document_path: A path to a metadata document if it exists.
+        statistic_subject_mapping: An instance of StatisticSubjectMapping.
+    """
 
     def __init__(
         self,
@@ -53,7 +64,17 @@ class Datadoc:
         metadata_document_path: str | None = None,
         statistic_subject_mapping: StatisticSubjectMapping | None = None,
     ) -> None:
-        """Read in a dataset if supplied, otherwise naively instantiate the class."""
+        """Initialize the Datadoc instance.
+
+        If a dataset path is supplied, it attempts to locate and load the corresponding
+        metadata document. If no dataset path is provided, the class is instantiated
+        without loading any metadata.
+
+        Args:
+            dataset_path (Optional): The file path to the dataset.
+            metadata_document_path (Optional): The file path to the metadata document.
+            statistic_subject_mapping (Optional): An instance of StatisticSubjectMapping.
+        """
         self._statistic_subject_mapping = statistic_subject_mapping
         self.metadata_document: pathlib.Path | CloudPath | None = None
         self.container: model.MetadataContainer | None = None
@@ -62,12 +83,9 @@ class Datadoc:
         self.variables: list = []
         self.variables_lookup: dict[str, model.Variable] = {}
         if metadata_document_path:
-            # In this case the user has specified an independent metadata document for editing
             self.metadata_document = normalize_path(metadata_document_path)
         if dataset_path:
             self.dataset_path = normalize_path(dataset_path)
-            # Build the metadata document path based on the dataset path if no metadata document is supplied
-            # Example: /path/to/dataset.parquet -> /path/to/dataset__DOC.json
             if not metadata_document_path:
                 self.metadata_document = self.dataset_path.parent / (
                     self.dataset_path.stem + METADATA_DOCUMENT_FILE_SUFFIX
@@ -75,10 +93,20 @@ class Datadoc:
         self._extract_metadata_from_files()
 
     def _extract_metadata_from_files(self) -> None:
-        """Read metadata from an existing metadata document.
+        """Read metadata from an existing metadata document or create one.
 
-        If no metadata document exists, create one from scratch by extracting metadata
-        from the dataset file.
+        If a metadata document exists, it reads and extracts metadata from it.
+        If no metadata document is found, it creates metadata from scratch by
+        extracting information from the dataset file.
+
+        This method ensures that:
+        - Metadata is extracted from an existing document if available.
+        - If metadata is not available, it is extracted from the dataset file.
+        - The dataset ID is set if not already present.
+        - Default values are set for variables, particularly the variable role on creation.
+        - Default values for variables ID and 'is_personal_data' are set if the values are None.
+        - The 'contains_personal_data' attribute is set to False if not specified.
+        - A lookup dictionary for variables is created based on their short names.
         """
         if self.metadata_document is not None and self.metadata_document.exists():
             self._extract_metadata_from_existing_document(self.metadata_document)
@@ -89,7 +117,6 @@ class Datadoc:
         ):
             self._extract_metadata_from_dataset(self.dataset_path)
             self.dataset.id = uuid.uuid4()
-            # Set default values for variables where appropriate
             v: model.Variable
             for v in self.variables:
                 if v.variable_role is None:
@@ -102,10 +129,18 @@ class Datadoc:
         self,
         document: pathlib.Path | CloudPath,
     ) -> None:
-        """There's an existing metadata document, so read in the metadata from that.
+        """Read metadata from an existing metadata document.
+
+        If an existing metadata document is available, this method reads and loads the metadata from it.
+        It validates and upgrades the metadata as necessary.
+        If we have read in a file with an empty "datadoc" structure the process ends.
+        A typical example causing a empty datadoc is a file produced from a pseudonymization process.
 
         Args:
-            document: A path to the existing metadata document
+            document: A path to the existing metadata document.
+
+        Raises:
+            json.JSONDecodeError: If the metadata document cannot be parsed.
         """
         fresh_metadata = {}
         try:
@@ -123,8 +158,6 @@ class Datadoc:
             else:
                 datadoc_metadata = fresh_metadata
             if datadoc_metadata is None:
-                # In this case we've read in a file with an empty "datadoc" structure.
-                # A typical example of this is a file produced from a pseudonymization process.
                 return
             meta = model.DatadocMetadata.model_validate_json(
                 json.dumps(datadoc_metadata),
@@ -181,10 +214,10 @@ class Datadoc:
             dataset (pathlib.Path | CloudPath): The path to the dataset file, which can be a local or cloud path.
 
         Side Effects:
-        Updates the following instance attributes:
-        - ds_schema: An instance of DatasetParser initialized for the given dataset file.
-        - dataset: An instance of model.Dataset with pre-filled metadata fields.
-        - variables: A list of fields extracted from the dataset schema.
+            Updates the following instance attributes:
+                - ds_schema: An instance of DatasetParser initialized for the given dataset file.
+                - dataset: An instance of model.Dataset with pre-filled metadata fields.
+                - variables: A list of fields extracted from the dataset schema.
         """
         self.ds_schema: DatasetParser = DatasetParser.for_file(dataset)
         dapla_dataset_path_info = DaplaDatasetPathInfo(dataset)
@@ -215,11 +248,11 @@ class Datadoc:
         """Write all currently known metadata to file.
 
         Side Effects:
-        - Updates the dataset's metadata_last_updated_date and metadata_last_updated_by attributes.
-        - Updates the dataset's file_path attribute.
-        - Validates the metadata model and stores it in a MetadataContainer.
-        - Writes the validated metadata to a file if the metadata_document attribute is set.
-        - Logs the action and the content of the metadata document.
+            - Updates the dataset's metadata_last_updated_date and metadata_last_updated_by attributes.
+            - Updates the dataset's file_path attribute.
+            - Validates the metadata model and stores it in a MetadataContainer.
+            - Writes the validated metadata to a file if the metadata_document attribute is set.
+            - Logs the action and the content of the metadata document.
 
         Raises:
             ValueError: If no metadata document is specified for saving.
