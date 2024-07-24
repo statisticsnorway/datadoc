@@ -31,6 +31,7 @@ if TYPE_CHECKING:
         (None, None, False),
         (datetime.date(2024, 1, 1), None, False),
         (None, datetime.date(2024, 1, 1), True),
+        (datetime.date(2024, 1, 1), datetime.date(2024, 1, 1), False),
     ],
 )
 def test_incorrect_date_order(date_from, date_until, expected):
@@ -46,6 +47,7 @@ def test_incorrect_date_order(date_from, date_until, expected):
         ("variable", datetime.date(1999, 10, 5), datetime.date(1925, 3, 12), True),
         ("variable", datetime.date(2022, 7, 24), datetime.date(2023, 2, 19), False),
         ("dataset", datetime.date(1967, 1, 1), None, False),
+        ("variable", datetime.date(1999, 2, 2), datetime.date(1999, 2, 2), False),
     ],
 )
 def test_write_metadata_document_validate_date_order(
