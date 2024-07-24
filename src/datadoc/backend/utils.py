@@ -38,7 +38,15 @@ def normalize_path(path: str) -> pathlib.Path | CloudPath:
 
 
 def calculate_percentage(completed: int, total: int) -> int:
-    """Calculate percentage as a rounded integer."""
+    """Calculate percentage as a rounded integer.
+
+    Args:
+        completed (int): The number of completed items.
+        total (int): The total number of items.
+
+    Returns:
+        int: The rounded percentage of completed items out of the total.
+    """
     return round((completed / total) * 100)
 
 
@@ -180,7 +188,15 @@ def _has_metadata_value(
     metadata: model.Dataset | model.Variable,
     obligatory_list: list,
 ) -> list:
-    """Return metadata fields with value."""
+    """Return metadata fields with value.
+
+    Args:
+        metadata (model.Dataset | model.Variable): The metadata object to check.
+        obligatory_list (list): A list of obligatory fields.
+
+    Returns:
+        list: List of metadata fields that have values.
+    """
     return [
         k
         for k, v in metadata.model_dump().items()
@@ -226,43 +242,61 @@ def num_obligatory_variables_fields_completed(variables: list) -> int:
 
 
 def _is_missing_metadata(
-    key: str,
-    value,  # noqa: ANN001
+    field_name: str,
+    field_value,  # noqa: ANN001
     obligatory_list: list,
     obligatory_multi_language_list: list,
 ) -> bool:
     """Check obligatory fields without value.
 
+    Args:
+        field_name (str): The field name.
+        field_value: The field value.
+        obligatory_list (list): List of obligatory fields.
+        obligatory_multi_language_list (list): List of obligatory fields with multilanguage values.
+
     Returns:
         bool: True if field doesn't have value.
     """
     if (
-        key in obligatory_list
-        and value is None
-        or _is_missing_multilanguage_value(key, value, obligatory_multi_language_list)
+        field_name in obligatory_list
+        and field_value is None
+        or _is_missing_multilanguage_value(
+            field_name,
+            field_value,
+            obligatory_multi_language_list,
+        )
     ):
         return True
     return False
 
 
 def _is_missing_multilanguage_value(
-    key: str,
-    value,  # noqa: ANN001
+    field_name: str,
+    field_value,  # noqa: ANN001 Skip type hint to enable dynamically handling value for LanguageStringType not indexable
     obligatory_list: list,
 ) -> bool:
     """Check obligatory fields with multilanguage value.
+
+    Args:
+        field_name (str): The field name.
+        field_value: The field value.
+        obligatory_list (list): List of obligatory fields with multilanguage values.
 
     Returns:
         bool: True if no value in any languages.
     """
     if (
-        key in obligatory_list
-        and value
+        field_name in obligatory_list
+        and field_value
         and (
-            len(value[0]) > 0
-            and not value[0]["languageText"]
-            and (len(value) <= 1 or not value[1]["languageText"])
-            and (len(value) <= 2 or not value[2]["languageText"])  # noqa: PLR2004
+            len(field_value[0]) > 0
+            and not field_value[0]["languageText"]
+            and (len(field_value) <= 1 or not field_value[1]["languageText"])
+            and (
+                len(field_value) <= 2  # noqa: PLR2004 approve magic value
+                or not field_value[2]["languageText"]
+            )
         )
     ):
         return True
