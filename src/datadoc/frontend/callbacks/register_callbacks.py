@@ -117,11 +117,15 @@ def register_callbacks(app: Dash) -> None:
                     "Lagret metadata",
                 )
                 for warning in w:
-                    if warning is not None:
-                        if issubclass(warning.category, ObligatoryDatasetWarning):
-                            missing_obligatory_dataset = str(warning.message)
-                        elif issubclass(warning.category, ObligatoryVariableWarning):
-                            missing_obligatory_variables = str(warning.message)
+                    if issubclass(warning.category, ObligatoryDatasetWarning):
+                        missing_obligatory_dataset = str(warning.message)
+                    elif issubclass(warning.category, ObligatoryVariableWarning):
+                        missing_obligatory_variables = str(warning.message)
+                    else:
+                        logger.warning(
+                            "An unexpected warning was caught: %s",
+                            warning.message,
+                        )
             return [
                 save,
                 dataset_control(missing_obligatory_dataset),
