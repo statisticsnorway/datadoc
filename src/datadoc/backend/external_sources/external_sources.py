@@ -31,7 +31,8 @@ class GetExternalSource(ABC, Generic[T]):
         asynchronous data fetching operation from an external source.
 
         Args:
-            executor: An instance of ThreadPoolExecutor to manage the asynchronous execution of data fetching.
+            executor: An instance of ThreadPoolExecutor to manage the asynchronous
+                execution of data fetching.
         """
         self.future = executor.submit(
             self._fetch_data_from_external_source,
@@ -51,7 +52,7 @@ class GetExternalSource(ABC, Generic[T]):
         """Check if the thread getting the external data has finished running.
 
         Returns:
-            bool: True if the data fetching operation is complete, False otherwise.
+            True if the data fetching operation is complete, False otherwise.
         """
         if self.future:
             return self.future.done()
@@ -60,12 +61,13 @@ class GetExternalSource(ABC, Generic[T]):
     def retrieve_external_data(self) -> T | None:
         """Retrieve the result of the data fetching operation.
 
-        This method checks if the asynchronous data fetching operation has completed.
-        If the operation is finished, it returns the result. Otherwise, it returns None.
+        This method checks if the asynchronous data fetching operation has
+        completed. If the operation is finished, it returns the result.
+        Otherwise, it returns None.
 
         Returns:
-            T | None: The result of the data fetching operation if it is complete,
-                or None if the operation has not yet finished.
+            The result of the data fetching operation if it is complete or None
+            if the operation has not yet finished.
         """
         if self.future:
             return self.future.result()
@@ -73,11 +75,13 @@ class GetExternalSource(ABC, Generic[T]):
 
     @abstractmethod
     def _fetch_data_from_external_source(self) -> T | None:
-        """Abstract method to be implemented in the subclass to handle external data retrieval.
+        """Handle external data retrieval.
 
-        This method should define the logic for retrieving data from the specific external source.
+        Abstract method to be implemented in the subclass.
+        This method should define the logic for retrieving data from the specific
+        external source.
 
         Returns:
-            T | None: The data retrieved from the external source.
+            The data retrieved from the external source.
         """
         raise NotImplementedError
