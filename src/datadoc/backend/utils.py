@@ -20,6 +20,7 @@ from datadoc.backend.constants import (
 )
 from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
+from datadoc.enums import VariableRole
 
 
 def normalize_path(path: str) -> pathlib.Path | CloudPath:
@@ -87,6 +88,8 @@ def set_default_values_variables(variables: list) -> None:
             v.id = uuid.uuid4()
         if v.is_personal_data is None:
             v.is_personal_data = model.IsPersonalData.NOT_PERSONAL_DATA
+        if v.variable_role is None:
+            v.variable_role = VariableRole.MEASURE
 
 
 def set_default_values_dataset(dataset: model.Dataset) -> None:

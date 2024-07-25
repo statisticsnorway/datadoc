@@ -67,3 +67,16 @@ DEFAULT_SPATIAL_COVERAGE_DESCRIPTION = LanguageStringType(
 NUM_OBLIGATORY_DATASET_FIELDS = len(OBLIGATORY_DATASET_METADATA_IDENTIFIERS)
 
 NUM_OBLIGATORY_VARIABLES_FIELDS = len(OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS)
+
+DATASET_FIELDS_FROM_EXISTING_METADATA = [
+    "name",
+    "description",
+    "dataset_status",
+    "data_source",
+    "population_description",
+    "unit_type",
+    "temporality_type",
+    "subject_field",
+    "keyword",
+    "spatial_coverage_description",
+]

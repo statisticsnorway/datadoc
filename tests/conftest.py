@@ -28,9 +28,11 @@ from tests.backend.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
 )
 
+from .utils import TEST_DATASETS_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_FILE_NAME
 from .utils import TEST_EXISTING_METADATA_FILEPATH
+from .utils import TEST_NAMING_STANDARD_COMPATIBLE_DATASET
 from .utils import TEST_PARQUET_FILE_NAME
 from .utils import TEST_PARQUET_FILEPATH
 from .utils import TEST_RESOURCES_DIRECTORY
@@ -88,15 +90,20 @@ def metadata(
 
 
 @pytest.fixture()
-def datadoc_dataset_and_metadata(
+def metadata_merged(
     _mock_timestamp: None,
     _mock_user_info: None,
     subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
     tmp_path: Path,
 ) -> Datadoc:
-    shutil.copy(TEST_PARQUET_FILEPATH, tmp_path / TEST_PARQUET_FILE_NAME)
+    target = tmp_path / TEST_NAMING_STANDARD_COMPATIBLE_DATASET
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy(
+        TEST_DATASETS_DIRECTORY / TEST_NAMING_STANDARD_COMPATIBLE_DATASET,
+        target,
+    )
     return Datadoc(
-        str(tmp_path / TEST_PARQUET_FILE_NAME),
+        str(target),
         str(TEST_EXISTING_METADATA_FILEPATH),
         statistic_subject_mapping=subject_mapping_fake_statistical_structure,
     )
