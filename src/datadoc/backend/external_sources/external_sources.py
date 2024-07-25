@@ -75,9 +75,9 @@ class GetExternalSource(ABC, Generic[T]):
 
     @abstractmethod
     def _fetch_data_from_external_source(self) -> T | None:
-        """Abstract method to handle external data retrieval.
+        """Handle external data retrieval.
 
-        to be implemented in the subclass
+        Abstract method to be implemented in the subclass.
         This method should define the logic for retrieving data from the specific
         external source.
 

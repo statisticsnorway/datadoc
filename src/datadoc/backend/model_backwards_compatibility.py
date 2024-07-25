@@ -1,12 +1,12 @@
 """Upgrade old metadata files to be compatible with new versions.
 
 An important principle of Datadoc is that we ALWAYS guarantee backwards
-compatibility of existing metadata documents. This means that we guarantee that
-a user will never lose data, even if their document is decades old.
+compatibility of existing metadata documents. This means that we guarantee
+that a user will never lose data, even if their document is decades old.
 
-For each document version we release with breaking changes, we implement a handler
-and register the version by defining a BackwardsCompatibleVersion instance.
-These documents will then be upgraded when they're opened in Datadoc.
+For each document version we release with breaking changes, we implement a
+handler and register the version by defining a BackwardsCompatibleVersion
+instance. These documents will then be upgraded when they're opened in Datadoc.
 
 A test must also be implemented for each new version.
 """
@@ -61,7 +61,7 @@ class BackwardsCompatibleVersion:
     """A version which we support with backwards compatibility.
 
     This class registers a version and its corresponding handler function
-    for backwardscompatibility.
+    for backwards compatibility.
     """
 
     version: str
@@ -90,6 +90,7 @@ def handle_current_version(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     return supplied_metadata
 
 
+# TODO(@tilen1976) fix text  # noqa: TD004, TD003
 def _find_and_update_language_strings(supplied_metadata: dict | None) -> dict | None:
     """Find and update language-specific strings in the supplied metadata.
 
@@ -119,8 +120,8 @@ def _convert_language_string_type(supplied_value: dict) -> list[dict[str, str]]:
     """Convert a dictionary of language-specific strings to a list of dictionaries.
 
     This function takes a dictionary with language codes as keys and
-    corresponding language-specific strings as values, and converts it to a list of
-    dictionaries with 'languageCode' and 'languageText' keys.
+    corresponding language-specific strings as values, and converts it to a list
+    of dictionaries with 'languageCode' and 'languageText' keys.
 
     Args:
         supplied_value: A dictionary containing language codes as keys and
@@ -219,7 +220,8 @@ def handle_version_3_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     changes introduced in version 3.3.0. Specifically, it updates the
     'contains_data_from' and 'contains_data_until' fields in both the 'dataset'
     and 'variables' sections of the supplied metadata dictionary to ensure they
-    are stored as date strings. It also updates the 'document_version' field to "3.3.0".
+    are stored as date strings.
+    It also updates the 'document_version' field to "3.3.0".
 
     Args:
         supplied_metadata: The metadata dictionary to be updated.
@@ -362,6 +364,7 @@ def handle_version_2_1_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     return add_container(supplied_metadata)
 
 
+# TODO(@tilen1976) fix text  # noqa: TD004, TD003
 def handle_version_1_0_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Handle breaking changes for v1.0.0.
 

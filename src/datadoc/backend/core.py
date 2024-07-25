@@ -197,9 +197,10 @@ class Datadoc:
     ) -> model.DatadocMetadata | None:
         """Read metadata from an existing metadata document.
 
-        If an existing metadata document is available, this method reads and loads
-        the metadata from it. It validates and upgrades the metadata as necessary.
-        If we have read in a file with an empty "datadoc" structure the process ends.
+        If an existing metadata document is available, this method reads and
+        loads the metadata from it. It validates and upgrades the metadata as
+        necessary. If we have read in a file with an empty "datadoc" structure
+        the process ends.
         A typical example causing a empty datadoc is a file produced from a
         pseudonymization process.
 
