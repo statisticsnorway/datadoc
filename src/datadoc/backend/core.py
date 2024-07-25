@@ -12,6 +12,7 @@ from datadoc_model import model
 
 from datadoc import config
 from datadoc.backend import user_info
+from datadoc.backend.constants import DATASET_FIELDS_FROM_EXISTING_METADATA
 from datadoc.backend.constants import DEFAULT_SPATIAL_COVERAGE_DESCRIPTION
 from datadoc.backend.constants import NUM_OBLIGATORY_DATASET_FIELDS
 from datadoc.backend.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
@@ -42,19 +43,6 @@ if TYPE_CHECKING:
 
 
 logger = logging.getLogger(__name__)
-
-DATASET_FIELDS_FROM_EXISTING_METADATA = [
-    "name",
-    "description",
-    "dataset_status",
-    "data_source",
-    "population_description",
-    "unit_type",
-    "temporality_type",
-    "subject_field",
-    "keyword",
-    "spatial_coverage_description",
-]
 
 
 class Datadoc:
