@@ -6,6 +6,8 @@ import concurrent
 import copy
 import json
 import logging
+import warnings
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from datadoc_model import model
@@ -14,6 +16,7 @@ from datadoc import config
 from datadoc.backend import user_info
 from datadoc.backend.constants import DATASET_FIELDS_FROM_EXISTING_METADATA
 from datadoc.backend.constants import DEFAULT_SPATIAL_COVERAGE_DESCRIPTION
+from datadoc.backend.constants import INCONSISTENCIES_MESSAGE
 from datadoc.backend.constants import NUM_OBLIGATORY_DATASET_FIELDS
 from datadoc.backend.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
@@ -45,6 +48,14 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+class InconsistentDatasetsWarning(UserWarning):
+    """Existing and new datasets differ significantly from one another."""
+
+
+class InconsistentDatasetsError(ValueError):
+    """Existing and new datasets differ significantly from one another."""
+
+
 class Datadoc:
     """Handle reading, updating and writing of metadata.
 
@@ -65,6 +76,8 @@ class Datadoc:
         dataset_path: str | None = None,
         metadata_document_path: str | None = None,
         statistic_subject_mapping: StatisticSubjectMapping | None = None,
+        *,
+        errors_as_warnings: bool = False,
     ) -> None:
         """Initialize the Datadoc instance.
 
@@ -77,9 +90,12 @@ class Datadoc:
             metadata_document_path: The file path to the metadata document.
                 Defaults to None.
             statistic_subject_mapping: An instance of StatisticSubjectMapping.
-                Defaults to None.
+                Defaults to None
+            errors_as_warnings: Disable raising exceptions if inconsistencies 
+                are found between existing and extracted metadata.
         """
         self._statistic_subject_mapping = statistic_subject_mapping
+        self.errors_as_warnings = errors_as_warnings
         self.metadata_document: pathlib.Path | CloudPath | None = None
         self.container: model.MetadataContainer | None = None
         self.dataset_path: pathlib.Path | CloudPath | None = None
@@ -131,6 +147,20 @@ class Datadoc:
             extracted_metadata = self._extract_metadata_from_dataset(self.dataset_path)
 
         if self.dataset_path and self.explicitly_defined_metadata_document:
+            if (
+                extracted_metadata is not None
+                and extracted_metadata.dataset is not None
+                and extracted_metadata.dataset.file_path is not None
+            ):
+                existing_file_path = extracted_metadata.dataset.file_path
+            else:
+                msg = "Could not access existing dataset file path"
+                raise ValueError(msg)
+            self._check_ready_to_merge(
+                self.dataset_path,
+                Path(existing_file_path),
+                errors_as_warnings=self.errors_as_warnings,
+            )
             merged_metadata = self._merge_metadata(
                 extracted_metadata,
                 existing_metadata,
@@ -163,6 +193,68 @@ class Datadoc:
         self.variables_lookup = {
             v.short_name: v for v in self.variables if v.short_name
         }
+
+    @staticmethod
+    def _check_ready_to_merge(
+        new_dataset_path: Path | CloudPath,
+        existing_dataset_path: Path,
+        *,
+        errors_as_warnings: bool,
+    ) -> None:
+        """Check if the datasets are consistent enough to make a successful merge of metadata.
+
+        Args:
+            new_dataset_path: Path to the dataset to be documented.
+            existing_dataset_path: Path stored in the existing metadata.
+            errors_as_warnings: True if failing checks should be raised as warnings, not errors.
+
+        Raises:
+            InconsistentDatasetsError: If inconsistencies are found and `errors_as_warnings == False`
+        """
+        new_dataset_path_info = DaplaDatasetPathInfo(new_dataset_path)
+        existing_dataset_path_info = DaplaDatasetPathInfo(existing_dataset_path)
+        results = [
+            {
+                "name": "Bucket name",
+                "success": (
+                    new_dataset_path_info.bucket_name
+                    == existing_dataset_path_info.bucket_name
+                ),
+            },
+            {
+                "name": "Data product name",
+                "success": (
+                    new_dataset_path_info.statistic_short_name
+                    == existing_dataset_path_info.statistic_short_name
+                ),
+            },
+            {
+                "name": "Dataset state",
+                "success": (
+                    new_dataset_path_info.dataset_state
+                    == existing_dataset_path_info.dataset_state
+                ),
+            },
+            {
+                "name": "Dataset short name",
+                "success": (
+                    new_dataset_path_info.dataset_short_name
+                    == existing_dataset_path_info.dataset_short_name
+                ),
+            },
+        ]
+        if failures := [result for result in results if not result["success"]]:
+            msg = f"{INCONSISTENCIES_MESSAGE} {', '.join(str(f['name']) for f in failures)}"
+            if errors_as_warnings:
+                warnings.warn(
+                    message=msg,
+                    category=InconsistentDatasetsWarning,
+                    stacklevel=2,
+                )
+            else:
+                raise InconsistentDatasetsError(
+                    msg,
+                )
 
     @staticmethod
     def _merge_metadata(

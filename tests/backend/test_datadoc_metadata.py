@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import contextlib
 import json
 import pathlib
 import shutil
+import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
@@ -18,6 +20,8 @@ from datadoc_model.model import Dataset
 from datadoc_model.model import Variable
 
 from datadoc.backend.core import Datadoc
+from datadoc.backend.core import InconsistentDatasetsError
+from datadoc.backend.core import InconsistentDatasetsWarning
 from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.backend.user_info import PLACEHOLDER_EMAIL_ADDRESS
 from datadoc.backend.user_info import TestUserInfo
@@ -27,6 +31,7 @@ from datadoc.enums import DataSetStatus
 from datadoc.enums import DataType
 from datadoc.enums import IsPersonalData
 from datadoc.enums import VariableRole
+from tests.utils import TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH
 from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
 from tests.utils import TEST_EXISTING_METADATA_FILEPATH
@@ -510,3 +515,103 @@ def test_merge_extracted_and_existing_dataset_metadata(metadata_merged: Datadoc)
         metadata_merged.dataset.metadata_last_updated_date
         != metadata_existing.dataset.metadata_last_updated_date
     )
+
+
+@pytest.mark.parametrize(
+    ("new_dataset_path", "existing_dataset_path"),
+    [
+        (
+            TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH,
+            TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH,
+        ),
+        (
+            TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH.replace("v1", "v2"),
+            TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH,
+        ),
+        (
+            TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH.replace("p2021", "p2022"),
+            TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH,
+        ),
+        (
+            TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH.replace(
+                "/ifpn",
+                "/deeper/folder/structure/ifpn",
+            ),
+            TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH,
+        ),
+    ],
+    ids=[
+        "identical path",
+        "differing version",
+        "differing period",
+        "different folder structure",
+    ],
+)
+@pytest.mark.parametrize(
+    "errors_as_warnings",
+    [True, False],
+    ids=["warnings", "errors"],
+)
+def test_check_ready_to_merge_consistent(
+    new_dataset_path: str,
+    existing_dataset_path: str,
+    errors_as_warnings: bool,  # noqa: FBT001
+):
+    with warnings.catch_warnings() if errors_as_warnings else contextlib.nullcontext():  # type: ignore [attr-defined]
+        if errors_as_warnings:
+            warnings.simplefilter("error")
+        Datadoc._check_ready_to_merge(  # noqa: SLF001
+            Path(new_dataset_path),
+            Path(existing_dataset_path),
+            errors_as_warnings=errors_as_warnings,
+        )
+
+
+@pytest.mark.parametrize(
+    ("new_dataset_path", "existing_dataset_path"),
+    [
+        (
+            TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH.replace("produkt", "delt"),
+            TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH,
+        ),
+        (
+            TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH.replace("ifpn", "blah"),
+            TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH,
+        ),
+        (
+            TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH.replace(
+                "klargjorte_data",
+                "utdata",
+            ),
+            TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH,
+        ),
+        (
+            TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH.replace(
+                "person_testdata",
+                "totally_different_dataset",
+            ),
+            TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH,
+        ),
+    ],
+    ids=["bucket", "data product", "dataset state", "dataset short name"],
+)
+@pytest.mark.parametrize(
+    "errors_as_warnings",
+    [True, False],
+    ids=["warnings", "errors"],
+)
+def test_check_ready_to_merge_inconsistent(
+    new_dataset_path: str,
+    existing_dataset_path: str,
+    errors_as_warnings: bool,  # noqa: FBT001
+):
+    with contextlib.ExitStack() as stack:
+        if errors_as_warnings:
+            stack.enter_context(pytest.warns(InconsistentDatasetsWarning))
+        else:
+            stack.enter_context(pytest.raises(InconsistentDatasetsError))
+        Datadoc._check_ready_to_merge(  # noqa: SLF001
+            Path(new_dataset_path),
+            Path(existing_dataset_path),
+            errors_as_warnings=errors_as_warnings,
+        )
