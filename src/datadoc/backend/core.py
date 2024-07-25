@@ -195,6 +195,16 @@ class Datadoc:
         *,
         errors_as_warnings: bool,
     ) -> None:
+        """Check if the datasets are consistent enough to make a successful merge of metadata.
+
+        Args:
+            new_dataset_path (Path | CloudPath): Path to the dataset to be documented.
+            existing_dataset_path (Path): Path stored in the existing metadata.
+            errors_as_warnings (bool): True if failing checks should be raised as warnings, not errors.
+
+        Raises:
+            InconsistentDatasetsError: If inconsistencies are found and `errors_as_warnings == False`
+        """
         new_dataset_path_info = DaplaDatasetPathInfo(new_dataset_path)
         existing_dataset_path_info = DaplaDatasetPathInfo(existing_dataset_path)
         results = [
@@ -228,14 +238,17 @@ class Datadoc:
             },
         ]
         if failures := [result for result in results if not result["success"]]:
+            msg = f"{INCONSISTENCIES_MESSAGE} {', '.join(str(f['name']) for f in failures)}"
             if errors_as_warnings:
                 warnings.warn(
-                    message=f"{INCONSISTENCIES_MESSAGE} inconsistencies are: {', '.join(str(f['name']) for f in failures)}",
+                    message=msg,
                     category=InconsistentDatasetsWarning,
                     stacklevel=2,
                 )
             else:
-                raise InconsistentDatasetsError(INCONSISTENCIES_MESSAGE)
+                raise InconsistentDatasetsError(
+                    msg,
+                )
 
     @staticmethod
     def _merge_metadata(
