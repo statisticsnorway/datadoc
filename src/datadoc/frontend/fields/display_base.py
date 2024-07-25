@@ -70,19 +70,6 @@ def get_enum_options(
     return dropdown_options
 
 
-def get_enum_options_for_required_field(
-    enum: Enum,
-) -> list[dict[str, str]]:
-    """Generate the list of options based on the currently chosen language."""
-    return [
-        {
-            "title": i.get_value_for_language(SupportedLanguages.NORSK_BOKMÅL),
-            "id": i.name,
-        }
-        for i in get_language_strings_enum(enum)  # type: ignore [attr-defined]
-    ]
-
-
 def get_data_source_options() -> list[dict[str, str]]:
     """Collect the unit type options."""
     dropdown_options = [
