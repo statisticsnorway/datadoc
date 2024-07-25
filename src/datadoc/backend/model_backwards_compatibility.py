@@ -81,7 +81,7 @@ def handle_current_version(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
         supplied_metadata: The metadata for the current version.
 
     Returns:
-        dict[str, Any]: The unmodified supplied metadata.
+        The unmodified supplied metadata.
     """
     return supplied_metadata
 
@@ -98,7 +98,7 @@ def _find_and_update_language_strings(supplied_metadata: dict | None) -> dict | 
         supplied_metadata: A dictionary where values may include nested dictionaries with language-specific strings.
 
     Returns:
-        Optional[dict]: The updated metadata dictionary with modified language strings, or `None` if the input is not a dictionary.
+        The updated metadata dictionary.
     """
     if isinstance(supplied_metadata, dict):
         for key, value in supplied_metadata.items():
@@ -116,11 +116,10 @@ def _convert_language_string_type(supplied_value: dict) -> list[dict[str, str]]:
     with 'languageCode' and 'languageText' keys.
 
     Args:
-        supplied_value: A dictionary containing language codes as keys and their corresponding language strings as values.
+        supplied_value: A dictionary containing language codes as keys and language strings as values.
 
     Returns:
-        list[dict[str, str]]: A list of dictionaries, each containing 'languageCode' and 'languageText'
-            keys, representing the converted language strings.
+        A list of dictionaries, each containing 'languageCode' and 'languageText' keys, representing the converted language strings.
     """
     return [
         {
@@ -164,7 +163,7 @@ def _cast_to_date_type(value_to_update: str | None) -> str | None:
         value_to_update: A string representing a date or `None`.
 
     Returns:
-        Optional[str]: The date string in ISO format if the input was a valid date string, or `None` if the input was `None`.
+        The date string in ISO format if the input was a valid date string, or `None` if the input was `None`.
     """
     if value_to_update is None:
         return value_to_update
@@ -179,9 +178,7 @@ def _cast_to_date_type(value_to_update: str | None) -> str | None:
 def handle_version_3_3_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Handle breaking changes for version 3.3.0.
 
-    Remove field 'direct person identifying'
-
-    This function modifies the supplied metadata to accommodate breaking changes introduced in version 4.0.0 for version 3.3.0.
+    This function modifies the supplied metadata to accommodate breaking changes introduced in version 4.0.0.
     Specifically, it removes the 'direct_person_identifying' field from each variable in 'datadoc.variables'
     and updates the 'document_version' field to "4.0.0".
 
@@ -189,7 +186,7 @@ def handle_version_3_3_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
         supplied_metadata: The metadata dictionary to be updated.
 
     Returns:
-        dict[str, Any]: The updated metadata dictionary.
+        The updated metadata dictionary.
     """
     for i in range(len(supplied_metadata["datadoc"]["variables"])):
         _remove_element_from_model(
@@ -201,21 +198,18 @@ def handle_version_3_3_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
 
 
 def handle_version_3_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
-    """Handle breaking changes for version 3.3.0.
+    """Handle breaking changes for version 3.2.0.
 
-    Update the type of contains_data_* fields.
-
-    Update the type of 'contains_data_*' fields to date strings.
-
-    This function updates the 'contains_data_from' and 'contains_data_until' fields in the 'datadoc.dataset'
-    and 'datadoc.variables' sections of the supplied metadata dictionary to ensure they are stored as date strings.
+    This function modifies the supplied metadata to accommodate breaking changes introduced in version 3.3.0.
+    Specifically, it updates the 'contains_data_from' and 'contains_data_until' fields in both the 'dataset' and 'variables'
+    sections of the supplied metadata dictionary to ensure they are stored as date strings.
     It also updates the 'document_version' field to "3.3.0".
 
     Args:
         supplied_metadata: The metadata dictionary to be updated.
 
     Returns:
-        dict[str, Any]: The updated metadata dictionary.
+        The updated metadata dictionary.
     """
     fields = ["contains_data_from", "contains_data_until"]
     for field in fields:
@@ -232,15 +226,16 @@ def handle_version_3_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
 def handle_version_3_1_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Handle breaking changes for version 3.1.0.
 
-    This function updates the 'data_source' field in both the 'dataset' and 'variables' sections of the supplied
-    metadata dictionary. Specifically, it extracts the 'languageText' from the first element of the 'data_source'
-    list and converts it to a string. The 'document_version' field is also updated to "3.2.0".
+    This function modifies the supplied metadata to accommodate breaking changes introduced in version 3.2.0.
+    Specifically, it updates the 'data_source' field in both the 'dataset' and 'variables' sections of the supplied
+    metadata dictionary by converting value to string.
+    The 'document_version' field is also updated to "3.2.0".
 
     Args:
         supplied_metadata: The metadata dictionary to be updated.
 
     Returns:
-        dict[str, Any]: The updated metadata dictionary.
+        The updated metadata dictionary.
     """
     data: list = supplied_metadata["datadoc"]["dataset"]["data_source"]
 
@@ -263,8 +258,9 @@ def handle_version_3_1_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
 def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Handle breaking changes for version 2.2.0.
 
-    This function updates the 'subject_field' in the 'dataset' section of the supplied metadata dictionary by converting it to a string.
-    The value is chosen based on the first non-null language field among 'nb', 'nn', and 'en'. It also removes the 'register_uri' field from the 'dataset'.
+    This function modifies the supplied metadata to accommodate breaking changes introduced in version 3.1.0.
+    Specifically, it updates the 'subject_field' in the 'dataset' section of the supplied metadata dictionary by converting it to a string.
+    It also removes the 'register_uri' field from the 'dataset'.
     Additionally, it removes 'sentinel_value_uri' from each variable, sets 'special_value' and 'custom_type' fields to None, and updates language strings in the 'variables' and 'dataset' sections.
     The 'document_version' is updated to "3.1.0".
 
@@ -272,9 +268,7 @@ def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
         supplied_metadata: The metadata dictionary to be updated. It is expected to contain a nested structure with 'datadoc', 'dataset', and 'variables'.
 
     Returns:
-        dict[str, Any]: The updated metadata dictionary.
-
-
+        The updated metadata dictionary.
     """
     if supplied_metadata["datadoc"]["dataset"]["subject_field"] is not None:
         data = supplied_metadata["datadoc"]["dataset"]["subject_field"]
@@ -312,7 +306,10 @@ def add_container(existing_metadata: dict) -> dict:
     The 'document_version' is set to "0.0.1" and 'pseudonymization' is set to None.
 
     Args:
-        existing_metadata: The original metadata dictionary to be wrapped. Returns: dict: A new dictionary containing the wrapped metadata with additional fields.
+        existing_metadata: The original metadata dictionary to be wrapped.
+
+    Returns:
+        A new dictionary containing the wrapped metadata with additional fields.
     """
     return {
         "document_version": "0.0.1",
@@ -324,15 +321,15 @@ def add_container(existing_metadata: dict) -> dict:
 def handle_version_2_1_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Handle breaking changes for version 2.1.0.
 
-    This function updates the 'owner' field in the 'dataset' section of the supplied metadata dictionary by converting it from a LanguageStringType to a string.
-    The value is chosen based on the first non-null language field among 'nb', 'nn', and 'en'.
+    This function modifies the supplied metadata to accommodate breaking changes introduced in version 2.2.0.
+    Specifically, it updates the 'owner' field in the 'dataset' section of the supplied metadata dictionary by converting it from a LanguageStringType to a string.
     The 'document_version' is updated to "2.2.0".
 
     Args:
         supplied_metadata: The metadata dictionary to be updated.
 
     Returns:
-        dict[str, Any]: The updated metadata dictionary with the 'owner' field modified and 'document_version' set to "2.2.0".
+        The updated metadata dictionary.
     """
     data = supplied_metadata["dataset"]["owner"]
     supplied_metadata["dataset"]["owner"] = str(data["nb"] or data["nn"] or data["en"])
@@ -343,17 +340,16 @@ def handle_version_2_1_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
 def handle_version_1_0_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Handle breaking changes for v1.0.0.
 
-    Handle breaking changes for version 1.0.0. This function updates the date fields 'metadata_created_date' and 'metadata_last_updated_date' to ISO 8601 format with UTC timezone.
+    This function modifies the supplied metadata to accommodate breaking changes introduced in version 2.1.0.
+    Specifically, it updates the date fields 'metadata_created_date' and 'metadata_last_updated_date' to ISO 8601 format with UTC timezone.
     It also converts the 'data_source' field from a string to a dictionary with language keys if necessary and removes the 'data_source_path' field.
     The 'document_version' is updated to "2.1.0".
-
-    'data_source' field converted (if needed), 'data_source_path' removed, and 'document_version' set to "2.1.0".
 
     Args:
         supplied_metadata: The metadata dictionary to be updated.
 
     Returns:
-        dict[str, Any]: The updated metadata dictionary with date fields modified.
+        The updated metadata dictionary.
 
     """
     datetime_fields = [("metadata_created_date"), ("metadata_last_updated_date")]
@@ -381,7 +377,18 @@ def handle_version_1_0_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
 def handle_version_0_1_1(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     """Handle breaking changes for v0.1.1.
 
-    PR ref: https://github.com/statisticsnorway/ssb-datadoc-model/pull/4.
+    This function modifies the supplied metadata to accommodate breaking changes introduced in version 1.0.0.
+    Specifically, it renames certain keys within the `dataset` and `variables` sections, and replaces empty string values with
+    `None` for `dataset` keys.
+
+    Args:
+        supplied_metadata: The metadata dictionary that needs to be updated.
+
+    Returns:
+        The updated metadata dictionary.
+
+    References:
+        PR ref: https://github.com/statisticsnorway/ssb-datadoc-model/pull/4
     """
     key_renaming = [
         ("metadata_created_date", "created_date"),
@@ -438,7 +445,7 @@ def upgrade_metadata(fresh_metadata: dict[str, Any]) -> dict[str, Any]:
         fresh_metadata: The metadata dictionary to be upgraded. This dictionary must include version information that determines which handlers to apply.
 
     Returns:
-        dict[str, Any]: The upgraded metadata dictionary, after applying all necessary handlers.
+        The upgraded metadata dictionary, after applying all necessary handlers.
 
     Raises:
         UnknownModelVersionError: If the metadata's version is unknown or unsupported.
@@ -479,6 +486,6 @@ def is_metadata_in_container_structure(
         metadata: The metadata dictionary to check.
 
     Returns:
-        bool: True if the metadata is in the container structure (i.e., contains the 'datadoc' field), False otherwise.
+        True if the metadata is in the container structure (i.e., contains the 'datadoc' field), False otherwise.
     """
     return "datadoc" in metadata
