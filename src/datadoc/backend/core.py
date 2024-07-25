@@ -91,7 +91,7 @@ class Datadoc:
                 Defaults to None.
             statistic_subject_mapping: An instance of StatisticSubjectMapping.
                 Defaults to None
-            errors_as_warnings: Disable raising exceptions if inconsistencies 
+            errors_as_warnings: Disable raising exceptions if inconsistencies
                 are found between existing and extracted metadata.
         """
         self._statistic_subject_mapping = statistic_subject_mapping
