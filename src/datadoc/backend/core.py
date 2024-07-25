@@ -144,6 +144,7 @@ class Datadoc:
             self._check_ready_to_merge(
                 self.dataset_path,
                 Path(extracted_metadata.dataset.file_path),
+                errors_as_warnings=self.errors_as_warnings,
             )
             merged_metadata = self._merge_metadata(
                 extracted_metadata,
@@ -188,6 +189,13 @@ class Datadoc:
         new_dataset_path_info = DaplaDatasetPathInfo(new_dataset_path)
         existing_dataset_path_info = DaplaDatasetPathInfo(existing_dataset_path)
         results = [
+            {
+                "name": "Bucket name",
+                "success": (
+                    new_dataset_path_info.bucket_name
+                    == existing_dataset_path_info.bucket_name
+                ),
+            },
             {
                 "name": "Data product name",
                 "success": (
