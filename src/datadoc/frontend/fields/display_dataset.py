@@ -11,6 +11,7 @@ from datadoc import state
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import DATASET_METADATA_MULTILANGUAGE_INPUT
+from datadoc.frontend.fields.display_base import DROPDOWN_DESELECT_OPTION
 from datadoc.frontend.fields.display_base import FieldTypes
 from datadoc.frontend.fields.display_base import MetadataCheckboxField
 from datadoc.frontend.fields.display_base import MetadataDropdownField
@@ -34,7 +35,7 @@ def get_statistical_subject_options() -> list[dict[str, str]]:
         for primary in state.statistic_subject_mapping.primary_subjects
         for secondary in primary.secondary_subjects
     ]
-    dropdown_options.insert(0, {"title": "-- Velg --", "id": ""})
+    dropdown_options.insert(0, {"title": DROPDOWN_DESELECT_OPTION, "id": ""})
     return dropdown_options
 
 
@@ -47,7 +48,7 @@ def get_unit_type_options() -> list[dict[str, str]]:
         }
         for unit_type in state.unit_types.classifications
     ]
-    dropdown_options.insert(0, {"title": "-- Velg --", "id": ""})
+    dropdown_options.insert(0, {"title": DROPDOWN_DESELECT_OPTION, "id": ""})
     return dropdown_options
 
 
@@ -60,7 +61,7 @@ def get_owner_options() -> list[dict[str, str]]:
         }
         for option in state.organisational_units.classifications
     ]
-    dropdown_options.insert(0, {"title": "-- Velg --", "id": ""})
+    dropdown_options.insert(0, {"title": DROPDOWN_DESELECT_OPTION, "id": ""})
     return dropdown_options
 
 
