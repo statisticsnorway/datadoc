@@ -13,6 +13,7 @@ from typing import Final
 from typing import Literal
 
 import arrow
+from cloudpathlib import GSPath
 
 from datadoc.enums import DataSetState
 from datadoc.enums import SupportedLanguages
@@ -23,6 +24,8 @@ if TYPE_CHECKING:
     from datetime import date
 
 logger = logging.getLogger(__name__)
+
+GS_PREFIX_FROM_PATHLIB = "gs:/"
 
 
 @dataclass
@@ -323,6 +326,7 @@ class DaplaDatasetPathInfo:
 
     def __init__(self, dataset_path: str | os.PathLike[str]) -> None:
         """Digest the path so that it's ready for further parsing."""
+        self.dataset_string = str(dataset_path)
         self.dataset_path = pathlib.Path(dataset_path)
         self.dataset_name_sections = self.dataset_path.stem.split("_")
         self._period_strings = self._extract_period_strings(self.dataset_name_sections)
@@ -446,6 +450,40 @@ class DaplaDatasetPathInfo:
                 norwegian_dataset_state_path_part.replace(" ", x) for x in ["-", "_"]
             }
         return return_value
+
+    @property
+    def bucket_name(
+        self,
+    ) -> str | None:
+        """Extract the bucket name from the dataset path.
+
+        Returns:
+            The bucket name or None if the dataset path is not a GCS path.
+
+        Examples:
+            >>> DaplaDatasetPathInfo('gs://ssb-staging-dapla-felles-data-delt/datadoc/utdata/person_data_p2021_v2.parquet').bucket_name
+            ssb-staging-dapla-felles-data-delt
+
+            >>> DaplaDatasetPathInfo(pathlib.Path('gs://ssb-staging-dapla-felles-data-delt/datadoc/utdata/person_data_p2021_v2.parquet')).bucket_name
+            ssb-staging-dapla-felles-data-delt
+
+            >>> DaplaDatasetPathInfo('gs:/ssb-staging-dapla-felles-data-delt/datadoc/utdata/person_data_p2021_v2.parquet').bucket_name
+            ssb-staging-dapla-felles-data-delt
+
+            >>> DaplaDatasetPathInfo('ssb-staging-dapla-felles-data-delt/datadoc/utdata/person_data_p2021_v2.parquet').bucket_name
+            None
+        """
+        prefix: str | None = None
+        if self.dataset_string.startswith(GSPath.cloud_prefix):
+            prefix = GSPath.cloud_prefix
+        elif self.dataset_string.startswith(GS_PREFIX_FROM_PATHLIB):
+            prefix = GS_PREFIX_FROM_PATHLIB
+        else:
+            return None
+
+        return pathlib.Path(
+            self.dataset_string.removeprefix(prefix),
+        ).parts[0]
 
     @property
     def dataset_short_name(
