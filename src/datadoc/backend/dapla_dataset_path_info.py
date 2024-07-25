@@ -115,7 +115,8 @@ class SsbDateFormat(DateFormat):
     """A subclass of Dateformat with relevant patterns for SSB unique dates.
 
     Attributes:
-        ssb_dates: A dictionary where keys are date format strings and values are corresponding date patterns specific to SSB.
+        ssb_dates: A dictionary where keys are date format strings and values
+                    are corresponding date patterns specific to SSB.
     """
 
     ssb_dates: dict
@@ -126,10 +127,12 @@ class SsbDateFormat(DateFormat):
         Convert SSB format to date-string and return the first date.
 
         Args:
-            period_string: A string representing the timeframe period in SSB format.
+            period_string: A string representing the timeframe period in
+                SSB format.
 
         Returns:
-            The first date of the period if the period_string is a valid SSB format, otherwise None.
+            The first date of the period if the period_string is a valid
+            SSB format, otherwise None.
 
         Example:
             >>> SSB_BIMESTER.get_floor("2003B8")
@@ -148,15 +151,17 @@ class SsbDateFormat(DateFormat):
             return None
 
     def get_ceil(self, period_string: str) -> date | None:
-        """Return the last date of the timeframe period defined in SSB date format.
+        """Return last date of the timeframe period defined in SSB date format.
 
         Convert SSB format to date-string and return the last date.
 
         Args:
-            period_string: A string representing the timeframe period in SSB format.
+            period_string: A string representing the timeframe period in SSB
+                            format.
 
         Returns:
-            The last date of the period if the period_string is a valid SSB format, otherwise None.
+            The last date of the period if the period_string is a valid SSB format,
+            otherwise None.
 
         Example:
             >>> SSB_TRIANNUAL.get_ceil("1999T11")
@@ -288,11 +293,12 @@ def categorize_period_string(period: str) -> IsoDateFormat | SsbDateFormat:
         period: A string representing the period to be categorized.
 
     Returns:
-        An instance of either IsoDateFormat or SsbDateFormat depending on the format
-        of the input period string.
+        An instance of either IsoDateFormat or SsbDateFormat depending on the
+        format of the input period string.
 
     Raises:
-        NotImplementedError: If the period string is not recognized as either an ISO or SSB date format.
+        NotImplementedError: If the period string is not recognized as either an
+            ISO or SSB date format.
 
     Examples:
         >>> date_format = categorize_period_string('2022-W01')
@@ -329,13 +335,15 @@ class DaplaDatasetPathInfo:
 
     @staticmethod
     def _get_period_string_indices(dataset_name_sections: list[str]) -> list[int]:
-        """Get all the indices at which period strings are found in the given list of dataset name sections.
+        """Get all the indices at which period strings are found in list.
 
         Args:
-            dataset_name_sections: A list of strings representing sections of a dataset name.
+            dataset_name_sections: A list of strings representing sections of a
+                dataset name.
 
         Returns:
-            A list of indices where period strings are found within the dataset_name_sections.
+            A list of indices where period strings are found within the
+            dataset_name_sections.
 
         Examples:
             >>> DaplaDatasetPathInfo._get_period_string_indices(['kommune', 'p2022', 'v1'])
@@ -355,10 +363,12 @@ class DaplaDatasetPathInfo:
             r"""Insert a 'p' as the second character.
 
             Args:
-                regex: A string representing the regular expression pattern to be modified.
+                regex: A string representing the regular expression pattern to be
+                    modified.
 
             Returns:
-                The modified regular expression pattern with 'p' inserted as the second character.
+                The modified regular expression pattern with 'p' inserted as the
+                second character.
 
             Examples:
                 >>> insert_p(r"^\d{4}[H]\d{1}$")
@@ -384,10 +394,12 @@ class DaplaDatasetPathInfo:
         the year periods from the dataset name.
 
         Args:
-            dataset_name_sections: A list of strings representing sections of a dataset name.
+            dataset_name_sections: A list of strings representing sections of a
+                dataset name.
 
         Returns:
-            A list of extracted period strings, with the first character stripped from each match.
+            A list of extracted period strings, with the first character stripped
+            from each match.
 
         Examples:
             >>> DaplaDatasetPathInfo._extract_period_strings(['p2022', 'kommune', 'v1'])
@@ -453,11 +465,13 @@ class DaplaDatasetPathInfo:
     ) -> str | None:
         """Extract the dataset short name from the filepath.
 
-        The dataset short name is defined as the first section of the stem, up to the period information,
-        or the version information if no period information is present.
+        The dataset short name is defined as the first section of the stem, up to
+        the period information or the version information if no period information
+        is present.
 
         Returns:
-            The extracted dataset short name if it can be determined, otherwise None.
+            The extracted dataset short name if it can be determined, otherwise
+            None.
 
         Examples:
             >>> DaplaDatasetPathInfo('prosjekt/befolkning/klargjorte_data/person_data_v1.parquet').dataset_short_name
@@ -524,10 +538,12 @@ class DaplaDatasetPathInfo:
     ) -> DataSetState | None:
         """Extract the dataset state from the path.
 
-        We assume that files are saved in the Norwegian language as specified by SSB.
+        We assume that files are saved in the Norwegian language as specified by
+        SSB.
 
         Returns:
-            The extracted dataset state if it can be determined from the path, otherwise None.
+            The extracted dataset state if it can be determined from the path,
+            otherwise None.
 
         Examples:
             >>> DaplaDatasetPathInfo('klargjorte_data/person_data_v1.parquet').dataset_state
@@ -558,7 +574,8 @@ class DaplaDatasetPathInfo:
         """Extract version information if exists in filename.
 
         Returns:
-            The extracted version information if available in the filename, otherwise None.
+            The extracted version information if available in the filename,
+            otherwise None.
 
         Examples:
             >>> DaplaDatasetPathInfo('person_data_v1.parquet').dataset_version
@@ -588,11 +605,12 @@ class DaplaDatasetPathInfo:
     ) -> str | None:
         """Extract the statistical short name from the filepath.
 
-        Extract the statistical short name from the filepath right before the dataset state,
-        based on the Dapla filepath naming convention.
+        Extract the statistical short name from the filepath right before the
+        dataset state based on the Dapla filepath naming convention.
 
         Returns:
-            The extracted statistical short name if it can be determined, otherwise None.
+            The extracted statistical short name if it can be determined,
+            otherwise None.
 
         Examples:
             >>> DaplaDatasetPathInfo('prosjekt/befolkning/klargjorte_data/person_data_v1.parquet').statistic_short_name
@@ -618,7 +636,8 @@ class DaplaDatasetPathInfo:
     def path_complies_with_naming_standard(self) -> bool:
         """Check if path is valid according to SSB standard.
 
-        Read more about SSB naming convention in the Dapla manual https://manual.dapla.ssb.no/statistikkere/navnestandard.html
+        Read more about SSB naming convention in the Dapla manual:
+        https://manual.dapla.ssb.no/statistikkere/navnestandard.html
 
         Returns:
             True if the path conforms to the SSB naming standard, otherwise False.

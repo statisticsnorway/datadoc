@@ -48,8 +48,9 @@ logger = logging.getLogger(__name__)
 class Datadoc:
     """Handle reading, updating and writing of metadata.
 
-    If a metadata document exists, it is this information that is loaded. Nothing is inferred from the dataset.
-    If only a dataset path is supplied the metadata document path is build based on the dataset path.
+    If a metadata document exists, it is this information that is loaded. Nothing
+    is inferred from the dataset. If only a dataset path is supplied the metadata
+    document path is build based on the dataset path.
 
     Example: /path/to/dataset.parquet -> /path/to/dataset__DOC.json
 
@@ -67,14 +68,16 @@ class Datadoc:
     ) -> None:
         """Initialize the Datadoc instance.
 
-        If a dataset path is supplied, it attempts to locate and load the corresponding
-        metadata document. If no dataset path is provided, the class is instantiated
-        without loading any metadata.
+        If a dataset path is supplied, it attempts to locate and load the
+        corresponding metadata document. If no dataset path is provided, the class
+        is instantiated without loading any metadata.
 
         Args:
             dataset_path: The file path to the dataset. Defaults to None.
-            metadata_document_path: The file path to the metadata document. Defaults to None.
-            statistic_subject_mapping: An instance of StatisticSubjectMapping. Defaults to None.
+            metadata_document_path: The file path to the metadata document.
+                Defaults to None.
+            statistic_subject_mapping: An instance of StatisticSubjectMapping.
+                Defaults to None.
         """
         self._statistic_subject_mapping = statistic_subject_mapping
         self.metadata_document: pathlib.Path | CloudPath | None = None
@@ -107,8 +110,10 @@ class Datadoc:
         - Metadata is extracted from an existing document if available.
         - If metadata is not available, it is extracted from the dataset file.
         - The dataset ID is set if not already present.
-        - Default values are set for variables, particularly the variable role on creation.
-        - Default values for variables ID and 'is_personal_data' are set if the values are None.
+        - Default values are set for variables, particularly the variable role on
+            creation.
+        - Default values for variables ID and 'is_personal_data' are set if the
+            values are None.
         - The 'contains_personal_data' attribute is set to False if not specified.
         - A lookup dictionary for variables is created based on their short names.
         """
@@ -192,10 +197,11 @@ class Datadoc:
     ) -> model.DatadocMetadata | None:
         """Read metadata from an existing metadata document.
 
-        If an existing metadata document is available, this method reads and loads the metadata from it.
-        It validates and upgrades the metadata as necessary.
+        If an existing metadata document is available, this method reads and loads
+        the metadata from it. It validates and upgrades the metadata as necessary.
         If we have read in a file with an empty "datadoc" structure the process ends.
-        A typical example causing a empty datadoc is a file produced from a pseudonymization process.
+        A typical example causing a empty datadoc is a file produced from a
+        pseudonymization process.
 
         Args:
             document: A path to the existing metadata document.
@@ -238,10 +244,12 @@ class Datadoc:
     ) -> str | None:
         """Extract the statistic short name from the dataset file path.
 
-        Map the extracted statistic short name to its corresponding statistical subject.
+        Map the extracted statistic short name to its corresponding statistical
+        subject.
 
         Args:
-            dapla_dataset_path_info: The object representing the decomposed file path.
+            dapla_dataset_path_info: The object representing the decomposed file
+                path.
 
         Returns:
             The code for the statistical subject or None if we couldn't map to one.
@@ -266,15 +274,19 @@ class Datadoc:
         """Obtain what metadata we can from the dataset itself.
 
         This makes it easier for the user by 'pre-filling' certain fields.
-        Certain elements are dependent on the dataset being saved according to SSB's standard.
+        Certain elements are dependent on the dataset being saved according
+        to SSB's standard.
 
         Args:
-            dataset: The path to the dataset file, which can be a local or cloud path.
+            dataset: The path to the dataset file, which can be a local or
+                cloud path.
 
         Side Effects:
             Updates the following instance attributes:
-                - ds_schema: An instance of DatasetParser initialized for the given dataset file.
-                - dataset: An instance of model.Dataset with pre-filled metadata fields.
+                - ds_schema: An instance of DatasetParser initialized for the
+                    given dataset file.
+                - dataset: An instance of model.Dataset with pre-filled metadata
+                    fields.
                 - variables: A list of fields extracted from the dataset schema.
         """
         dapla_dataset_path_info = DaplaDatasetPathInfo(dataset)
@@ -308,10 +320,12 @@ class Datadoc:
         """Write all currently known metadata to file.
 
         Side Effects:
-            - Updates the dataset's metadata_last_updated_date and metadata_last_updated_by attributes.
+            - Updates the dataset's metadata_last_updated_date and
+                metadata_last_updated_by attributes.
             - Updates the dataset's file_path attribute.
             - Validates the metadata model and stores it in a MetadataContainer.
-            - Writes the validated metadata to a file if the metadata_document attribute is set.
+            - Writes the validated metadata to a file if the metadata_document
+                attribute is set.
             - Logs the action and the content of the metadata document.
 
         Raises:

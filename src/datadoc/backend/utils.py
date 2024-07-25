@@ -24,7 +24,9 @@ from datadoc.enums import VariableRole
 
 
 def normalize_path(path: str) -> pathlib.Path | CloudPath:
-    """Obtain a pathlib compatible Path regardless of whether the file is on a filesystem or in GCS.
+    """Obtain a pathlib compatible Path.
+
+    Obtain a pathlib compatible Path regardless of whether the file is on a filesystem or in GCS.
 
     Args:
         path: Path on a filesystem or in cloud storage.
@@ -127,9 +129,9 @@ def set_variables_inherit_from_dataset(
 ) -> None:
     """Set specific dataset values on a list of variable objects.
 
-    This function populates 'data source', 'temporality type', 'contains data from', and
-    'contains data until' fields in each variable if they are not set (None). The values
-    are inherited from the corresponding fields in the dataset.
+    This function populates 'data source', 'temporality type', 'contains data from',
+    and 'contains data until' fields in each variable if they are not set (None).
+    The values are inherited from the corresponding fields in the dataset.
 
     Args:
         dataset: The dataset object from which to inherit values.
@@ -164,8 +166,8 @@ def incorrect_date_order(
 ) -> bool:
     """Evaluate the chronological order of two dates.
 
-    This function checks if 'date until' is earlier than 'date from'. If so, it indicates
-    an incorrect date order.
+    This function checks if 'date until' is earlier than 'date from'. If so, it
+    indicates an incorrect date order.
 
     Args:
         date_from: The start date of the time period.
@@ -209,7 +211,8 @@ def _has_metadata_value(
 def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
     """Count the number of obligatory dataset fields that have values.
 
-    This function returns the total count of obligatory fields in the dataset that are not None.
+    This function returns the total count of obligatory fields in the dataset that
+    are not None.
 
     Args:
         dataset: The dataset object for which to count the fields.
@@ -225,8 +228,8 @@ def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
 def num_obligatory_variables_fields_completed(variables: list) -> int:
     """Count the number of obligatory fields completed for each variable.
 
-    This function calculates the total number of obligatory fields that have values
-    for each variable in the list.
+    This function calculates the total number of obligatory fields that have
+    values for each variable in the list.
 
     Args:
         variables: A list of variable objects to count obligatory fields for.
@@ -253,9 +256,11 @@ def _is_missing_metadata(
 
     Args:
         field_name: The field name.
-        field_value: The field value. Can be of type str, or LanguageStringType for multilanguage fields.
+        field_value: The field value. Can be of type str, or LanguageStringType for
+            multilanguage fields.
         obligatory_list: List of obligatory fields.
-        obligatory_multi_language_list: List of obligatory fields with multilanguage values.
+        obligatory_multi_language_list: List of obligatory fields with multilanguage
+            values.
 
     Returns:
         True if field doesn't have value, False otherwise.
@@ -308,11 +313,13 @@ def _is_missing_multilanguage_value(
 def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
     """Identify all obligatory dataset fields that are missing values.
 
-    This function checks for obligatory fields that are either directly missing (i.e., set to `None`) or have
-    multilanguage values with empty content.
+    This function checks for obligatory fields that are either directly missing
+    (i.e., set to `None`) or have multilanguage values with empty content.
 
     Args:
-        dataset: The dataset object to examine. This object must support the `model_dump()` method which returns a dictionary of field names and values.
+        dataset: The dataset object to examine. This object must support the
+            `model_dump()` method which returns a dictionary of field names and
+            values.
 
     Returns:
         A list of field names (as strings) that are missing values. This includes:
@@ -335,16 +342,18 @@ def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
 def get_missing_obligatory_variables_fields(variables: list) -> list[dict]:
     """Identify obligatory variable fields that are missing values for each variable.
 
-    This function checks for obligatory fields that are either directly missing (i.e., set to `None`) or have
-    multilanguage values with empty content.
+    This function checks for obligatory fields that are either directly missing
+    (i.e., set to `None`) or have multilanguage values with empty content.
 
     Args:
         variables: A list of variable objects to check for missing obligatory fields.
 
     Returns:
-        A list of dictionaries with variable short names as keys and list of missing obligatory variable fields as values. This includes:
+        A list of dictionaries with variable short names as keys and list of missing
+        obligatory variable fields as values. This includes:
             - Fields that are directly `None` and are llisted as obligatory metadata.
-            - Multilanguage fields (listed as obligatory metadata) where the value exists but the primary language text is empty.
+            - Multilanguage fields (listed as obligatory metadata) where the value
+            exists but the primary language text is empty.
     """
     missing_variables_fields = [
         {

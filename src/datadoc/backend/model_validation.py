@@ -33,8 +33,8 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
     def check_date_order(self) -> Self:
         """Validate the order of date fields.
 
-        Check that dataset and variable date fields `contains_data_from` and `contains_data_until`
-        are in chronological order.
+        Check that dataset and variable date fields `contains_data_from` and
+        `contains_data_until` are in chronological order.
 
         Mode: This validator runs after other validation.
 
@@ -42,7 +42,8 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             The instance of the model after validation.
 
         Raises:
-            ValueError: If `contains_data_until` date is earlier than `contains_data_from date`.
+            ValueError: If `contains_data_until` date is earlier than
+                `contains_data_from date`.
         """
         if self.dataset is not None and incorrect_date_order(
             self.dataset.contains_data_from,
@@ -75,7 +76,8 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
     def check_inherit_values(self) -> Self:
         """Inherit values from dataset to variables if not set.
 
-        Sets values for 'data source', 'temporality type', 'contains data from', and 'contains data until' if they are None.
+        Sets values for 'data source', 'temporality type', 'contains data from',
+        and 'contains data until' if they are None.
 
         Mode: This validator runs after other validation.
 
@@ -97,7 +99,8 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             The instance of the model after validation.
 
         Raises:
-            ObligatoryDatasetWarning: If not all obligatory dataset metadata fields are filled in.
+            ObligatoryDatasetWarning: If not all obligatory dataset metadata fields
+                are filled in.
         """
         if (
             self.dataset is not None
@@ -125,7 +128,8 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             The instance of the model after validation.
 
         Raises:
-            ObligatoryVariableWarning: If not all obligatory variable metadata fields are filled in.
+            ObligatoryVariableWarning: If not all obligatory variable metadata fields
+                are filled in.
         """
         if (
             self.variables is not None

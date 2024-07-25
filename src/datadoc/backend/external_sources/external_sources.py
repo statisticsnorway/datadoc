@@ -31,7 +31,8 @@ class GetExternalSource(ABC, Generic[T]):
         asynchronous data fetching operation from an external source.
 
         Args:
-            executor: An instance of ThreadPoolExecutor to manage the asynchronous execution of data fetching.
+            executor: An instance of ThreadPoolExecutor to manage the asynchronous
+                execution of data fetching.
         """
         self.future = executor.submit(
             self._fetch_data_from_external_source,
@@ -60,24 +61,27 @@ class GetExternalSource(ABC, Generic[T]):
     def retrieve_external_data(self) -> T | None:
         """Retrieve the result of the data fetching operation.
 
-        This method checks if the asynchronous data fetching operation has completed.
-        If the operation is finished, it returns the result. Otherwise, it returns None.
+        This method checks if the asynchronous data fetching operation has
+        completed. If the operation is finished, it returns the result.
+        Otherwise, it returns None.
 
         Returns:
-            The result of the data fetching operation if it is complete or None if the operation has not yet finished.
+            The result of the data fetching operation if it is complete or None
+            if the operation has not yet finished.
         """
         if self.future:
             return self.future.result()
         return None
 
-    # TODO(@tilen1976) check return value  # noqa: TD004, TD003
     @abstractmethod
     def _fetch_data_from_external_source(self) -> T | None:
-        """Abstract method to be implemented in the subclass to handle external data retrieval.
+        """Abstract method to handle external data retrieval.
 
-        This method should define the logic for retrieving data from the specific external source.
+        to be implemented in the subclass
+        This method should define the logic for retrieving data from the specific
+        external source.
 
         Returns:
-            T | None: The data retrieved from the external source.
+            The data retrieved from the external source.
         """
         raise NotImplementedError
