@@ -9,6 +9,10 @@ DATE_VALIDATION_MESSAGE = f"{VALIDATION_ERROR}contains_data_from must be the sam
 
 OBLIGATORY_METADATA_WARNING = "Obligatory metadata is missing: "
 
+INCONSISTENCIES_MESSAGE = (
+    "Inconsistencies found between extracted and existing metadata."
+)
+
 OBLIGATORY_DATASET_METADATA_IDENTIFIERS: list = [
     "assessment",
     "dataset_state",
