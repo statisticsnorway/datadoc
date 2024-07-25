@@ -90,23 +90,21 @@ def handle_current_version(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     return supplied_metadata
 
 
-# TODO(@tilen1976) fix text  # noqa: TD004, TD003
 def _find_and_update_language_strings(supplied_metadata: dict | None) -> dict | None:
     """Find and update language-specific strings in the supplied metadata.
 
     This function iterates through the supplied metadata dictionary.
-    For each key-value pair, if the value is a dictionary containing the key "en"
+    For each key-value pair, if the value is a dictionary containing "en"
     it is passed to the `_convert_language_string_type` function to potentially
     update its format.
-    The function then returns the modified metadata dictionary. If the supplied
-    metadata is not a dictionary, it returns `None`.
 
     Args:
-        supplied_metadata: A dictionary where values may include nested
+        supplied_metadata: A metadata dictionary where values may include nested
             dictionaries with language-specific strings.
 
     Returns:
-        The updated metadata dictionary.
+        The updated metadata dictionary. If the supplied metadata is not a
+        dictionary, it returns `None`.
     """
     if isinstance(supplied_metadata, dict):
         for key, value in supplied_metadata.items():
@@ -287,8 +285,7 @@ def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     The 'document_version' is updated to "3.1.0".
 
     Args:
-        supplied_metadata: The metadata dictionary to be updated. It is expected
-            to contain a nested structure with 'datadoc', 'dataset', and 'variables'.
+        supplied_metadata: The metadata dictionary to be updated.
 
     Returns:
         The updated metadata dictionary.
@@ -324,7 +321,7 @@ def handle_version_2_2_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
 def add_container(existing_metadata: dict) -> dict:
     """Add container for previous versions.
 
-    Add a container structure for previous versions of metadata.
+    Adds a container structure for previous versions of metadata.
     This function wraps the existing metadata in a new container structure
     that includes the 'document_version', 'datadoc', and 'pseudonymization'
     fields. The 'document_version' is set to "0.0.1" and 'pseudonymization'
@@ -364,9 +361,8 @@ def handle_version_2_1_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
     return add_container(supplied_metadata)
 
 
-# TODO(@tilen1976) fix text  # noqa: TD004, TD003
 def handle_version_1_0_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
-    """Handle breaking changes for v1.0.0.
+    """Handle breaking changes for version 1.0.0.
 
     This function modifies the supplied metadata to accommodate breaking changes
     introduced in version 2.1.0. Specifically, it updates the date fields
@@ -406,7 +402,7 @@ def handle_version_1_0_0(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
 
 
 def handle_version_0_1_1(supplied_metadata: dict[str, Any]) -> dict[str, Any]:
-    """Handle breaking changes for v0.1.1.
+    """Handle breaking changes for version 0.1.1.
 
     This function modifies the supplied metadata to accommodate breaking changes
     introduced in version 1.0.0. Specifically, it renames certain keys within the
@@ -466,9 +462,8 @@ BackwardsCompatibleVersion(version="4.0.0", handler=handle_current_version)
 
 
 def upgrade_metadata(fresh_metadata: dict[str, Any]) -> dict[str, Any]:
-    """Run handler for this version to upgrade the document to the latest version.
+    """Upgrade the metadata to the latest version using registered handlers.
 
-    Upgrade the metadata to the latest version using registered handlers.
     This function checks the version of the provided metadata and applies a series
     of upgrade handlers to migrate the metadata to the latest version.
     It starts from the provided version and applies all subsequent handlers in
@@ -486,7 +481,6 @@ def upgrade_metadata(fresh_metadata: dict[str, Any]) -> dict[str, Any]:
         UnknownModelVersionError: If the metadata's version is unknown or unsupported.
     """
     # Special case for current version, we expose the current_model_version parameter for test purposes
-
     if is_metadata_in_container_structure(fresh_metadata):
         if fresh_metadata["datadoc"] is None:
             return fresh_metadata

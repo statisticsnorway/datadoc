@@ -26,7 +26,7 @@ from datadoc.enums import VariableRole
 def normalize_path(path: str) -> pathlib.Path | CloudPath:
     """Obtain a pathlib compatible Path.
 
-    Obtain a pathlib compatible Path regardless of whether the file is on a filesystem or in GCS.
+    Obtains a pathlib compatible Path regardless of whether the file is on a filesystem or in GCS.
 
     Args:
         path: Path on a filesystem or in cloud storage.
@@ -174,7 +174,7 @@ def incorrect_date_order(
         date_until: The end date of the time period.
 
     Returns:
-        True if 'date until' is earlier than 'date from', False otherwise.
+        True if 'date_until' is earlier than 'date_from' or if only 'date_from' is None, False otherwise.
 
     Example:
         >>> incorrect_date_order(datetime.date(1980, 1, 1), datetime.date(1967, 1, 1))
@@ -182,6 +182,9 @@ def incorrect_date_order(
 
         >>> incorrect_date_order(datetime.date(1967, 1, 1), datetime.date(1980, 1, 1))
         False
+
+        >>> incorrect_date_order(None, datetime.date(2024,7,1))
+        True
     """
     if date_from is None and date_until is not None:
         return True
@@ -209,10 +212,10 @@ def _has_metadata_value(
 
 
 def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
-    """Count the number of obligatory dataset fields that have values.
+    """Count the number of obligatory dataset fields completed for each variable.
 
     This function returns the total count of obligatory fields in the dataset that
-    are not None.
+    have values (are not None).
 
     Args:
         dataset: The dataset object for which to count the fields.
@@ -229,7 +232,7 @@ def num_obligatory_variables_fields_completed(variables: list) -> int:
     """Count the number of obligatory fields completed for each variable.
 
     This function calculates the total number of obligatory fields that have
-    values for each variable in the list.
+    values (are not None) for all variables in the list.
 
     Args:
         variables: A list of variable objects to count obligatory fields for.
@@ -291,7 +294,7 @@ def _is_missing_multilanguage_value(
         obligatory_list: List of obligatory fields with multilanguage values.
 
     Returns:
-        True if no value in any languages, False otherwise.
+        True if no value in any of languages for one field, False otherwise.
     """
     if (
         field_name in obligatory_list
