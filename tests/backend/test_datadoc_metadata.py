@@ -29,6 +29,7 @@ from datadoc.enums import IsPersonalData
 from datadoc.enums import VariableRole
 from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
+from tests.utils import TEST_EXISTING_METADATA_FILEPATH
 from tests.utils import TEST_PARQUET_FILEPATH
 from tests.utils import TEST_PROCESSED_DATA_POPULATION_DIRECTORY
 from tests.utils import TEST_RESOURCES_DIRECTORY
@@ -428,9 +429,84 @@ def test_default_spatial_coverage_description(
     assert ls.root[index].languageText == expected_text  # type: ignore[union-attr, index]
 
 
-def test_datadoc_dataset_and_metadata(datadoc_dataset_and_metadata: Datadoc):
+def test_open_extracted_and_existing_metadata(metadata_merged: Datadoc):
     assert (
-        str(datadoc_dataset_and_metadata.metadata_document)
+        str(metadata_merged.metadata_document)
         == "tests/resources/existing_metadata_file/person_data_v1__DOC.json"
     )
-    assert str(datadoc_dataset_and_metadata.dataset_path) is not None
+    assert str(metadata_merged.dataset_path) is not None
+
+
+def test_merge_extracted_and_existing_dataset_metadata(metadata_merged: Datadoc):
+    metadata_extracted = Datadoc(
+        dataset_path=str(metadata_merged.dataset_path),
+    )
+    metadata_existing = Datadoc(
+        metadata_document_path=str(TEST_EXISTING_METADATA_FILEPATH),
+    )
+
+    # Should match extracted metadata from the dataset
+    assert metadata_merged.dataset.short_name == metadata_extracted.dataset.short_name
+    assert metadata_merged.dataset.assessment == metadata_extracted.dataset.assessment
+    assert (
+        metadata_merged.dataset.dataset_state
+        == metadata_extracted.dataset.dataset_state
+    )
+    assert metadata_merged.dataset.version == metadata_extracted.dataset.version
+    assert metadata_merged.dataset.owner == metadata_extracted.dataset.owner
+    assert metadata_merged.dataset.file_path == metadata_extracted.dataset.file_path
+    assert (
+        metadata_merged.dataset.metadata_created_by
+        == metadata_extracted.dataset.metadata_created_by
+    )
+    assert (
+        metadata_merged.dataset.metadata_last_updated_by
+        == metadata_extracted.dataset.metadata_last_updated_by
+    )
+    assert (
+        metadata_merged.dataset.contains_data_from
+        == metadata_extracted.dataset.contains_data_from
+    )
+    assert (
+        metadata_merged.dataset.contains_data_until
+        == metadata_extracted.dataset.contains_data_until
+    )
+
+    # Should match existing metadata
+    assert metadata_merged.dataset.name == metadata_existing.dataset.name
+    assert (
+        metadata_merged.dataset.dataset_status
+        == metadata_existing.dataset.dataset_status
+    )
+    assert metadata_merged.dataset.description == metadata_existing.dataset.description
+    assert metadata_merged.dataset.data_source == metadata_existing.dataset.data_source
+    assert (
+        metadata_merged.dataset.population_description
+        == metadata_existing.dataset.population_description
+    )
+    assert metadata_merged.dataset.unit_type == metadata_existing.dataset.unit_type
+    assert (
+        metadata_merged.dataset.temporality_type
+        == metadata_existing.dataset.temporality_type
+    )
+    assert (
+        metadata_merged.dataset.subject_field == metadata_existing.dataset.subject_field
+    )
+    assert metadata_merged.dataset.keyword == metadata_existing.dataset.keyword
+
+    assert (
+        metadata_merged.dataset.spatial_coverage_description
+        == metadata_existing.dataset.spatial_coverage_description
+    )
+
+    # Special cases
+    assert metadata_merged.dataset.version_description is None
+    assert metadata_merged.dataset.id != metadata_existing.dataset.id
+    assert (
+        metadata_merged.dataset.metadata_created_date
+        != metadata_existing.dataset.metadata_created_date
+    )
+    assert (
+        metadata_merged.dataset.metadata_last_updated_date
+        != metadata_existing.dataset.metadata_last_updated_date
+    )

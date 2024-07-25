@@ -4,7 +4,7 @@
     "percentage_complete": 89,
     "document_version": "3.3.0",
     "dataset": {
-      "short_name": "person_data_v1",
+      "short_name": "person_data",
       "assessment": "SENSITIVE",
       "dataset_status": "DRAFT",
       "dataset_state": "PROCESSED_DATA",
