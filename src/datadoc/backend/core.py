@@ -187,8 +187,7 @@ class Datadoc:
     ) -> None:
         new_dataset_path_info = DaplaDatasetPathInfo(new_dataset_path)
         existing_dataset_path_info = DaplaDatasetPathInfo(existing_dataset_path)
-        results = []
-        results.append(
+        results = [
             {
                 "name": "Data product name",
                 "success": (
@@ -196,7 +195,21 @@ class Datadoc:
                     == existing_dataset_path_info.statistic_short_name
                 ),
             },
-        )
+            {
+                "name": "Dataset state",
+                "success": (
+                    new_dataset_path_info.dataset_state
+                    == existing_dataset_path_info.dataset_state
+                ),
+            },
+            {
+                "name": "Dataset short name",
+                "success": (
+                    new_dataset_path_info.dataset_short_name
+                    == existing_dataset_path_info.dataset_short_name
+                ),
+            },
+        ]
         if failures := [result for result in results if not result["success"]]:
             if errors_as_warnings:
                 warnings.warn(
