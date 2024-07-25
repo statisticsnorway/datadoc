@@ -141,9 +141,18 @@ class Datadoc:
             extracted_metadata = self._extract_metadata_from_dataset(self.dataset_path)
 
         if self.dataset_path and self.explicitly_defined_metadata_document:
+            if (
+                extracted_metadata is not None
+                and extracted_metadata.dataset is not None
+                and extracted_metadata.dataset.file_path is not None
+            ):
+                existing_file_path = extracted_metadata.dataset.file_path
+            else:
+                msg = "Could not access existing dataset file path"
+                raise ValueError(msg)
             self._check_ready_to_merge(
                 self.dataset_path,
-                Path(extracted_metadata.dataset.file_path),
+                Path(existing_file_path),
                 errors_as_warnings=self.errors_as_warnings,
             )
             merged_metadata = self._merge_metadata(
@@ -221,7 +230,7 @@ class Datadoc:
         if failures := [result for result in results if not result["success"]]:
             if errors_as_warnings:
                 warnings.warn(
-                    message=f"{INCONSISTENCIES_MESSAGE} inconsistencies are: {', '.join(r['name'] for r in failures)}",
+                    message=f"{INCONSISTENCIES_MESSAGE} inconsistencies are: {', '.join(str(f['name']) for f in failures)}",
                     category=InconsistentDatasetsWarning,
                     stacklevel=2,
                 )
