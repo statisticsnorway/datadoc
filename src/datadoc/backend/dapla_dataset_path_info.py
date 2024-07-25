@@ -458,7 +458,7 @@ class DaplaDatasetPathInfo:
         """Extract the bucket name from the dataset path.
 
         Returns:
-            str | None: The bucket name or None if the dataset path is not a GCS path.
+            The bucket name or None if the dataset path is not a GCS path.
 
         Examples:
             >>> DaplaDatasetPathInfo('gs://ssb-staging-dapla-felles-data-delt/datadoc/utdata/person_data_p2021_v2.parquet').bucket_name

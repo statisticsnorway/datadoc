@@ -198,9 +198,9 @@ class Datadoc:
         """Check if the datasets are consistent enough to make a successful merge of metadata.
 
         Args:
-            new_dataset_path (Path | CloudPath): Path to the dataset to be documented.
-            existing_dataset_path (Path): Path stored in the existing metadata.
-            errors_as_warnings (bool): True if failing checks should be raised as warnings, not errors.
+            new_dataset_path: Path to the dataset to be documented.
+            existing_dataset_path: Path stored in the existing metadata.
+            errors_as_warnings: True if failing checks should be raised as warnings, not errors.
 
         Raises:
             InconsistentDatasetsError: If inconsistencies are found and `errors_as_warnings == False`
