@@ -88,7 +88,7 @@ class Datadoc:
             dataset_path (Optional): The file path to the dataset.
             metadata_document_path (Optional): The file path to the metadata document.
             statistic_subject_mapping (Optional): An instance of StatisticSubjectMapping.
-            errors_as_warnings (Optional): Disable raising exceptions if inconsistencies are found between existing and extracted metadata.
+            errors_as_warnings: Disable raising exceptions if inconsistencies are found between existing and extracted metadata.
         """
         self._statistic_subject_mapping = statistic_subject_mapping
         self.errors_as_warnings = errors_as_warnings
