@@ -36,6 +36,8 @@ VARIABLES_METADATA_INPUT = "variables-metadata-input"
 VARIABLES_METADATA_DATE_INPUT = "variables-metadata-date-input"
 VARIABLES_METADATA_MULTILANGUAGE_INPUT = "dataset-metadata-multilanguage-input"
 
+DROPDOWN_DESELECT_OPTION = "--Velg --"
+
 METADATA_LANGUAGES = [
     {
         "supported_language": SupportedLanguages.NORSK_BOKMÅL,
@@ -66,7 +68,7 @@ def get_enum_options(
         }
         for i in get_language_strings_enum(enum)  # type: ignore [attr-defined]
     ]
-    dropdown_options.insert(0, {"title": "-- Velg --", "id": ""})
+    dropdown_options.insert(0, {"title": DROPDOWN_DESELECT_OPTION, "id": ""})
     return dropdown_options
 
 
@@ -79,7 +81,7 @@ def get_data_source_options() -> list[dict[str, str]]:
         }
         for data_sources in state.data_sources.classifications
     ]
-    dropdown_options.insert(0, {"title": "--Velg --", "id": ""})
+    dropdown_options.insert(0, {"title": DROPDOWN_DESELECT_OPTION, "id": ""})
     return dropdown_options
 
 
@@ -191,7 +193,7 @@ class MetadataDropdownField(DisplayMetadata):
             header=self.display_name,
             id=component_id,
             items=self.options_getter(),
-            placeholder="-- Velg --",
+            placeholder=DROPDOWN_DESELECT_OPTION,
             value=get_metadata_and_stringify(metadata, self.identifier),
             className="dropdown-component",
             showDescription=True,

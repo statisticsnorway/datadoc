@@ -1,6 +1,7 @@
 import pytest
 
 from datadoc import state
+from datadoc.frontend.fields.display_base import DROPDOWN_DESELECT_OPTION
 from datadoc.frontend.fields.display_dataset import get_statistical_subject_options
 from datadoc.frontend.fields.display_dataset import get_unit_type_options
 from tests.backend.test_code_list import CODE_LIST_DIR
@@ -18,7 +19,7 @@ from tests.utils import TEST_RESOURCES_DIRECTORY
             / STATISTICAL_SUBJECT_STRUCTURE_DIR
             / "extract_secondary_subject.xml",
             [
-                {"title": "", "id": ""},
+                {"title": DROPDOWN_DESELECT_OPTION, "id": ""},
                 {"title": "aa norwegian - aa00 norwegian", "id": "aa00"},
                 {"title": "aa norwegian - aa01 norwegian", "id": "aa01"},
                 {"title": "ab norwegian - ab00 norwegian", "id": "ab00"},
@@ -30,7 +31,7 @@ from tests.utils import TEST_RESOURCES_DIRECTORY
             / STATISTICAL_SUBJECT_STRUCTURE_DIR
             / "missing_language.xml",
             [
-                {"title": "", "id": ""},
+                {"title": DROPDOWN_DESELECT_OPTION, "id": ""},
                 {"title": " - aa00 norwegian", "id": "aa00"},
                 {"title": " - aa01 norwegian", "id": "aa01"},
                 {"title": " - ab00 norwegian", "id": "ab00"},
@@ -54,7 +55,7 @@ def test_get_statistical_subject_options(
         (
             TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_nb.csv",
             [
-                {"title": "", "id": ""},
+                {"title": DROPDOWN_DESELECT_OPTION, "id": ""},
                 {"title": "Adresse", "id": "01"},
                 {"title": "Arbeidsulykke", "id": "02"},
                 {"title": "Bolig", "id": "03"},
