@@ -174,3 +174,4 @@ def custom_warning_handler(  # noqa: PLR0913 remove fields causes incompatible t
 
 
 warnings.showwarning = custom_warning_handler
+warnings.simplefilter("always")
