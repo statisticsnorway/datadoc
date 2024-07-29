@@ -295,7 +295,6 @@ def num_variables_obligatory_fields(variables: list) -> int:
     num_fields = 0
     for _i in range(len(variables)):
         num_fields += len(OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS)
-    logger.info("Prosent issue: %s", num_fields)
     return num_fields
 
 
