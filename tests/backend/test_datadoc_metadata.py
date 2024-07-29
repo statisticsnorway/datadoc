@@ -631,6 +631,16 @@ VARIABLE_SHORT_NAMES = [
 ]
 
 
+VARIABLE_DATA_TYPES = [
+    DataType.STRING,
+    DataType.STRING,
+    DataType.STRING,
+    DataType.INTEGER,
+    DataType.INTEGER,
+    DataType.DATETIME,
+]
+
+
 @pytest.mark.parametrize(
     ("extracted_variables", "existing_variables"),
     [
@@ -683,10 +693,60 @@ def test_check_ready_to_merge_consistent_variables(
             Path(TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH),
             Path(TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH),
             DatadocMetadata(
-                variables=[Variable(short_name=name) for name in VARIABLE_SHORT_NAMES],
+                variables=[
+                    Variable(short_name=name, data_type=data_type)
+                    for name, data_type in zip(
+                        VARIABLE_SHORT_NAMES,
+                        VARIABLE_DATA_TYPES,
+                    )
+                ],
             ),
             DatadocMetadata(
-                variables=[Variable(short_name=name) for name in VARIABLE_SHORT_NAMES],
+                variables=[
+                    Variable(short_name=name, data_type=data_type)
+                    for name, data_type in zip(
+                        VARIABLE_SHORT_NAMES,
+                        VARIABLE_DATA_TYPES,
+                    )
+                ],
+            ),
+            errors_as_warnings=errors_as_warnings,
+        )
+
+
+@pytest.mark.parametrize(
+    "errors_as_warnings",
+    [True, False],
+    ids=["warnings", "errors"],
+)
+def test_check_ready_to_merge_inconsistent_variable_data_types(
+    errors_as_warnings: bool,  # noqa: FBT001
+):
+    with contextlib.ExitStack() as stack:
+        if errors_as_warnings:
+            stack.enter_context(pytest.warns(InconsistentDatasetsWarning))
+        else:
+            stack.enter_context(pytest.raises(InconsistentDatasetsError))
+        Datadoc._check_ready_to_merge(  # noqa: SLF001
+            Path(TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH),
+            Path(TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH),
+            DatadocMetadata(
+                variables=[
+                    Variable(short_name=name, data_type=data_type)
+                    for name, data_type in zip(
+                        VARIABLE_SHORT_NAMES,
+                        VARIABLE_DATA_TYPES[:-1] + [DataType.BOOLEAN],
+                    )
+                ],
+            ),
+            DatadocMetadata(
+                variables=[
+                    Variable(short_name=name, data_type=data_type)
+                    for name, data_type in zip(
+                        VARIABLE_SHORT_NAMES,
+                        VARIABLE_DATA_TYPES,
+                    )
+                ],
             ),
             errors_as_warnings=errors_as_warnings,
         )

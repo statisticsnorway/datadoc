@@ -255,6 +255,13 @@ class Datadoc:
                     == {v.short_name for v in existing_metadata.variables}
                 ),
             },
+            {
+                "name": "Variable datatypes",
+                "success": (
+                    [v.data_type for v in extracted_metadata.variables]
+                    == [v.data_type for v in existing_metadata.variables]
+                ),
+            },
         ]
         if failures := [result for result in results if not result["success"]]:
             msg = f"{INCONSISTENCIES_MESSAGE} {', '.join(str(f['name']) for f in failures)}"
