@@ -201,10 +201,13 @@ def _is_missing_multilanguage_value(
 ) -> bool:
     """Check obligatory fields with multilanguage value.
 
+    This function checks whether a given field, which is supposed to have
+    multilanguage values, is missing values in all specified languages.
+
     Args:
-        field_name: The field name.
-        field_value: The field value. LanguageStringType.
-        obligatory_list: List of obligatory fields with multilanguage values.
+        field_name: The name of the field to check.
+        field_value: The value of the field. Expected to be of type LanguageStringType.
+        obligatory_list: A list of obligatory field names that should have multilanguage values.
 
     Returns:
         True if no value in any of languages for one field, False otherwise.
@@ -231,15 +234,18 @@ def _has_multilanguage_value(
     field_value,  # noqa: ANN001 Skip type hint to enable dynamically handling value for LanguageStringType not indexable
     obligatory_list: list,
 ) -> bool:
-    """Check obligatory fields with multilanguage value.
+    """Check if an obligatory field with multilanguage value has any value.
+
+    This function checks whether a given obligatory field, which is supposed to have
+    multilanguage values, has a value in any of the specified languages.
 
     Args:
-        field_name: The field name.
-        field_value: The field value. LanguageStringType.
-        obligatory_list: List of obligatory fields with multilanguage values.
+        field_name: The name of the field to check.
+        field_value: The value of the field. Expected to be of type LanguageStringType.
+        obligatory_list: A list of obligatory field names that should have multilanguage values.
 
     Returns:
-        True if value in any of languages for one field, False otherwise.
+        True if there is a value in any of the specified languages for the field, False otherwise.
     """
     if (
         field_name in obligatory_list
@@ -264,18 +270,22 @@ def _is_missing_metadata(
     obligatory_list: list,
     obligatory_multi_language_list: list,
 ) -> bool:
-    """Check obligatory fields without value.
+    """Check if an obligatory field is missing its value.
+
+    This function checks whether a given field, which may be a simple string or a
+    multilanguage value, is missing its value. It considers two lists: one for
+    obligatory fields and another for obligatory multilanguage fields.
 
     Args:
-        field_name: The field name.
-        field_value: The field value. Can be of type str, or LanguageStringType for
+        field_name: The name of the field to check.
+        field_value: The value of the field. Can be of type str, or LanguageStringType for
             multilanguage fields.
         obligatory_list: List of obligatory fields.
         obligatory_multi_language_list: List of obligatory fields with multilanguage
             values.
 
     Returns:
-        True if field doesn't have value, False otherwise.
+        True if the field doesn't have a value, False otherwise.
     """
     if (
         field_name in obligatory_list
@@ -295,7 +305,10 @@ def _has_metadata_value(
     obligatory_list: list,
     obligatory_multilanguage_list: list,
 ) -> list:
-    """Return metadata fields with value.
+    """Return metadata fields that have values.
+
+    This function checks a metadata object for fields that have values. It
+    considers both simple obligatory fields and obligatory multilanguage fields.
 
     Args:
         metadata: The metadata object to check.
@@ -319,7 +332,7 @@ def _has_metadata_value(
 
 
 def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
-    """Count the number of obligatory dataset fields completed for each variable.
+    """Count the number of completed obligatory dataset fields.
 
     This function returns the total count of obligatory fields in the dataset that
     have values (are not None).
