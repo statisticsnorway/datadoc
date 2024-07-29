@@ -434,12 +434,24 @@ def test_default_spatial_coverage_description(
     assert ls.root[index].languageText == expected_text  # type: ignore[union-attr, index]
 
 
-def test_open_extracted_and_existing_metadata(metadata_merged: Datadoc):
+def test_open_extracted_and_existing_metadata(metadata_merged: Datadoc, tmp_path: Path):
     assert (
         metadata_merged.metadata_document
-        == TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH
+        == tmp_path
+        / "ifpn/klargjorte_data/person_testdata_p2021-12-31_p2021-12-31_v1__DOC.json"
     )
     assert str(metadata_merged.dataset_path) is not None
+
+
+def test_open_nonexistent_existing_metadata(existing_data_path: Path):
+    with pytest.raises(
+        ValueError,
+        match="Metadata document does not exist! Provided path:",
+    ):
+        Datadoc(
+            str(existing_data_path),
+            str(Datadoc.build_metadata_document_path(existing_data_path)),
+        )
 
 
 def test_merge_extracted_and_existing_dataset_metadata(metadata_merged: Datadoc):

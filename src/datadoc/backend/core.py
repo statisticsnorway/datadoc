@@ -106,11 +106,16 @@ class Datadoc:
         if metadata_document_path:
             self.metadata_document = normalize_path(metadata_document_path)
             self.explicitly_defined_metadata_document = True
+            if not self.metadata_document.exists():
+                msg = f"Metadata document does not exist! Provided path: {self.metadata_document}"
+                raise ValueError(
+                    msg,
+                )
         if dataset_path:
             self.dataset_path = normalize_path(dataset_path)
             if not metadata_document_path:
-                self.metadata_document = self.dataset_path.parent / (
-                    self.dataset_path.stem + METADATA_DOCUMENT_FILE_SUFFIX
+                self.metadata_document = self.build_metadata_document_path(
+                    self.dataset_path,
                 )
         if metadata_document_path or dataset_path:
             self._extract_metadata_from_files()
@@ -146,10 +151,16 @@ class Datadoc:
         ):
             extracted_metadata = self._extract_metadata_from_dataset(self.dataset_path)
 
-        if self.dataset_path and self.explicitly_defined_metadata_document:
+        if (
+            self.dataset_path
+            and self.explicitly_defined_metadata_document
+            and self.metadata_document is not None
+            and self.metadata_document.exists()
+            and extracted_metadata is not None
+            and existing_metadata is not None
+        ):
             if (
-                extracted_metadata is not None
-                and extracted_metadata.dataset is not None
+                extracted_metadata.dataset is not None
                 and extracted_metadata.dataset.file_path is not None
             ):
                 existing_file_path = extracted_metadata.dataset.file_path
@@ -166,6 +177,11 @@ class Datadoc:
             merged_metadata = self._merge_metadata(
                 extracted_metadata,
                 existing_metadata,
+            )
+            # We need to override this so that the document gets saved to the correct
+            # location, otherwise we would overwrite the existing document!
+            self.metadata_document = self.build_metadata_document_path(
+                self.dataset_path,
             )
             if merged_metadata.dataset and merged_metadata.variables:
                 self.dataset = merged_metadata.dataset
@@ -251,15 +267,15 @@ class Datadoc:
             {
                 "name": "Variable names",
                 "success": (
-                    {v.short_name for v in extracted_metadata.variables}
-                    == {v.short_name for v in existing_metadata.variables}
+                    {v.short_name for v in extracted_metadata.variables or []}
+                    == {v.short_name for v in existing_metadata.variables or []}
                 ),
             },
             {
                 "name": "Variable datatypes",
                 "success": (
-                    [v.data_type for v in extracted_metadata.variables]
-                    == [v.data_type for v in existing_metadata.variables]
+                    [v.data_type for v in extracted_metadata.variables or []]
+                    == [v.data_type for v in existing_metadata.variables or []]
                 ),
             },
         ]
@@ -301,6 +317,9 @@ class Datadoc:
                     field,
                     getattr(existing_metadata.dataset, field),
                 )
+        if existing_metadata.variables is not None:
+            # There is no extracted information to take care of, so we prefer the existing metadata
+            merged_metadata.variables = existing_metadata.variables
         return merged_metadata
 
     def _extract_metadata_from_existing_document(
@@ -428,6 +447,17 @@ class Datadoc:
         )
         metadata.variables = DatasetParser.for_file(dataset).get_fields()
         return metadata
+
+    @staticmethod
+    def build_metadata_document_path(
+        dataset_path: pathlib.Path | CloudPath,
+    ) -> pathlib.Path | CloudPath:
+        """Build the path to the metadata document corresponding to the given dataset.
+
+        Args:
+            dataset_path: Path to the dataset we wish to create metadata for.
+        """
+        return dataset_path.parent / (dataset_path.stem + METADATA_DOCUMENT_FILE_SUFFIX)
 
     def write_metadata_document(self) -> None:
         """Write all currently known metadata to file.
