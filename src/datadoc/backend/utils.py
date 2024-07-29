@@ -239,7 +239,7 @@ def _has_multilanguage_value(
         obligatory_list: List of obligatory fields with multilanguage values.
 
     Returns:
-        True if no value in any of languages for one field, False otherwise.
+        True if value in any of languages for one field, False otherwise.
     """
     if (
         field_name in obligatory_list
