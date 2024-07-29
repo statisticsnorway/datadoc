@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import warnings
 from typing import TYPE_CHECKING
 from typing import Self
@@ -24,6 +25,8 @@ from datadoc.utils import get_timestamp_now
 
 if TYPE_CHECKING:
     from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 
 class ValidateDatadocMetadata(model.DatadocMetadata):
@@ -109,6 +112,12 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             )
             != NUM_OBLIGATORY_DATASET_FIELDS
         ):
+            logger.warning(
+                "Type warning: %s.%s %s",
+                ObligatoryDatasetWarning,
+                OBLIGATORY_METADATA_WARNING,
+                get_missing_obligatory_dataset_fields(self.dataset),
+            )
             warnings.warn(
                 f"{OBLIGATORY_METADATA_WARNING} {get_missing_obligatory_dataset_fields(self.dataset)}",
                 ObligatoryDatasetWarning,
@@ -138,6 +147,12 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             )
             != NUM_OBLIGATORY_VARIABLES_FIELDS
         ):
+            logger.warning(
+                "Type warning: %s.%s %s",
+                ObligatoryVariableWarning,
+                OBLIGATORY_METADATA_WARNING,
+                get_missing_obligatory_variables_fields(self.variables),
+            )
             warnings.warn(
                 f"{OBLIGATORY_METADATA_WARNING} {get_missing_obligatory_variables_fields(self.variables)}",
                 ObligatoryVariableWarning,
