@@ -119,8 +119,10 @@ def register_callbacks(app: Dash) -> None:
                 for warning in w:
                     if issubclass(warning.category, ObligatoryDatasetWarning):
                         missing_obligatory_dataset = str(warning.message)
+                        logger.warning(missing_obligatory_dataset)
                     elif issubclass(warning.category, ObligatoryVariableWarning):
                         missing_obligatory_variables = str(warning.message)
+                        logger.warning(missing_obligatory_variables)
                     else:
                         logger.warning(
                             "An unexpected warning was caught: %s",
