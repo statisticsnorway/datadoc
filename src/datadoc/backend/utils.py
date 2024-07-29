@@ -194,6 +194,102 @@ def incorrect_date_order(
     return date_from is not None and date_until is not None and date_until < date_from
 
 
+def _is_missing_multilanguage_value(
+    field_name: str,
+    field_value,  # noqa: ANN001 Skip type hint to enable dynamically handling value for LanguageStringType not indexable
+    obligatory_list: list,
+) -> bool:
+    """Check obligatory fields with multilanguage value.
+
+    Args:
+        field_name: The field name.
+        field_value: The field value. LanguageStringType.
+        obligatory_list: List of obligatory fields with multilanguage values.
+
+    Returns:
+        True if no value in any of languages for one field, False otherwise.
+    """
+    if (
+        field_name in obligatory_list
+        and field_value
+        and (
+            len(field_value[0]) > 0
+            and not field_value[0]["languageText"]
+            and (len(field_value) <= 1 or not field_value[1]["languageText"])
+            and (
+                len(field_value) <= 2  # noqa: PLR2004 approve magic value
+                or not field_value[2]["languageText"]
+            )
+        )
+    ):
+        return True
+    return False
+
+
+def _has_multilanguage_value(
+    field_name: str,
+    field_value,  # noqa: ANN001 Skip type hint to enable dynamically handling value for LanguageStringType not indexable
+    obligatory_list: list,
+) -> bool:
+    """Check obligatory fields with multilanguage value.
+
+    Args:
+        field_name: The field name.
+        field_value: The field value. LanguageStringType.
+        obligatory_list: List of obligatory fields with multilanguage values.
+
+    Returns:
+        True if no value in any of languages for one field, False otherwise.
+    """
+    if (
+        field_name in obligatory_list
+        and field_value
+        and (
+            len(field_value[0]) > 0
+            and field_value[0]["languageText"]
+            or (len(field_value) == 1 and field_value[1]["languageText"])
+            or (
+                len(field_value) == 2  # noqa: PLR2004 approve magic value
+                and field_value[2]["languageText"]
+            )
+        )
+    ):
+        return True
+    return False
+
+
+def _is_missing_metadata(
+    field_name: str,
+    field_value,  # noqa: ANN001 Skip type hint because method '_is_missing_multilanguage_value'
+    obligatory_list: list,
+    obligatory_multi_language_list: list,
+) -> bool:
+    """Check obligatory fields without value.
+
+    Args:
+        field_name: The field name.
+        field_value: The field value. Can be of type str, or LanguageStringType for
+            multilanguage fields.
+        obligatory_list: List of obligatory fields.
+        obligatory_multi_language_list: List of obligatory fields with multilanguage
+            values.
+
+    Returns:
+        True if field doesn't have value, False otherwise.
+    """
+    if (
+        field_name in obligatory_list
+        and field_value is None
+        or _is_missing_multilanguage_value(
+            field_name,
+            field_value,
+            obligatory_multi_language_list,
+        )
+    ):
+        return True
+    return False
+
+
 def _has_metadata_value(
     metadata: model.Dataset | model.Variable,
     obligatory_list: list,
@@ -263,102 +359,6 @@ def num_obligatory_variable_fields_completed(variable: model.Variable) -> int:
             OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE,
         ),
     )
-
-
-def _is_missing_metadata(
-    field_name: str,
-    field_value,  # noqa: ANN001 Skip type hint because method '_is_missing_multilanguage_value'
-    obligatory_list: list,
-    obligatory_multi_language_list: list,
-) -> bool:
-    """Check obligatory fields without value.
-
-    Args:
-        field_name: The field name.
-        field_value: The field value. Can be of type str, or LanguageStringType for
-            multilanguage fields.
-        obligatory_list: List of obligatory fields.
-        obligatory_multi_language_list: List of obligatory fields with multilanguage
-            values.
-
-    Returns:
-        True if field doesn't have value, False otherwise.
-    """
-    if (
-        field_name in obligatory_list
-        and field_value is None
-        or _is_missing_multilanguage_value(
-            field_name,
-            field_value,
-            obligatory_multi_language_list,
-        )
-    ):
-        return True
-    return False
-
-
-def _is_missing_multilanguage_value(
-    field_name: str,
-    field_value,  # noqa: ANN001 Skip type hint to enable dynamically handling value for LanguageStringType not indexable
-    obligatory_list: list,
-) -> bool:
-    """Check obligatory fields with multilanguage value.
-
-    Args:
-        field_name: The field name.
-        field_value: The field value. LanguageStringType.
-        obligatory_list: List of obligatory fields with multilanguage values.
-
-    Returns:
-        True if no value in any of languages for one field, False otherwise.
-    """
-    if (
-        field_name in obligatory_list
-        and field_value
-        and (
-            len(field_value[0]) > 0
-            and not field_value[0]["languageText"]
-            and (len(field_value) <= 1 or not field_value[1]["languageText"])
-            and (
-                len(field_value) <= 2  # noqa: PLR2004 approve magic value
-                or not field_value[2]["languageText"]
-            )
-        )
-    ):
-        return True
-    return False
-
-
-def _has_multilanguage_value(
-    field_name: str,
-    field_value,  # noqa: ANN001 Skip type hint to enable dynamically handling value for LanguageStringType not indexable
-    obligatory_list: list,
-) -> bool:
-    """Check obligatory fields with multilanguage value.
-
-    Args:
-        field_name: The field name.
-        field_value: The field value. LanguageStringType.
-        obligatory_list: List of obligatory fields with multilanguage values.
-
-    Returns:
-        True if no value in any of languages for one field, False otherwise.
-    """
-    if (
-        field_name in obligatory_list
-        and field_value
-        and (
-            len(field_value[0]) > 0
-            and field_value[0]["languageText"]
-            or (len(field_value) == 1 and field_value[1]["languageText"])
-            or (
-                len(field_value) == 2  # noqa: PLR2004 approve magic value
-                and field_value[2]["languageText"]
-            )
-        )
-    ):
-        return True
-    return False
 
 
 def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
