@@ -13,13 +13,13 @@ from pydantic import model_validator
 
 from datadoc.backend.constants import DATE_VALIDATION_MESSAGE
 from datadoc.backend.constants import NUM_OBLIGATORY_DATASET_FIELDS
-from datadoc.backend.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
 from datadoc.backend.constants import OBLIGATORY_METADATA_WARNING
+from datadoc.backend.constants import OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
 from datadoc.backend.utils import get_missing_obligatory_dataset_fields
 from datadoc.backend.utils import get_missing_obligatory_variables_fields
 from datadoc.backend.utils import incorrect_date_order
 from datadoc.backend.utils import num_obligatory_dataset_fields_completed
-from datadoc.backend.utils import num_obligatory_variables_fields_completed
+from datadoc.backend.utils import num_obligatory_variable_fields_completed
 from datadoc.backend.utils import set_variables_inherit_from_dataset
 from datadoc.utils import get_timestamp_now
 
@@ -112,16 +112,16 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             )
             != NUM_OBLIGATORY_DATASET_FIELDS
         ):
+            warnings.warn(
+                f"{OBLIGATORY_METADATA_WARNING} {get_missing_obligatory_dataset_fields(self.dataset)}",
+                ObligatoryDatasetWarning,
+                stacklevel=2,
+            )
             logger.warning(
                 "Type warning: %s.%s %s",
                 ObligatoryDatasetWarning,
                 OBLIGATORY_METADATA_WARNING,
                 get_missing_obligatory_dataset_fields(self.dataset),
-            )
-            warnings.warn(
-                f"{OBLIGATORY_METADATA_WARNING} {get_missing_obligatory_dataset_fields(self.dataset)}",
-                ObligatoryDatasetWarning,
-                stacklevel=2,
             )
 
         return self
@@ -140,24 +140,25 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             ObligatoryVariableWarning: If not all obligatory variable metadata fields
                 are filled in.
         """
-        if (
-            self.variables is not None
-            and num_obligatory_variables_fields_completed(
-                self.variables,
-            )
-            != NUM_OBLIGATORY_VARIABLES_FIELDS
-        ):
-            logger.warning(
-                "Type warning: %s.%s %s",
-                ObligatoryVariableWarning,
-                OBLIGATORY_METADATA_WARNING,
-                get_missing_obligatory_variables_fields(self.variables),
-            )
-            warnings.warn(
-                f"{OBLIGATORY_METADATA_WARNING} {get_missing_obligatory_variables_fields(self.variables)}",
-                ObligatoryVariableWarning,
-                stacklevel=2,
-            )
+        if self.variables is not None:
+            for v in self.variables:
+                if (
+                    num_obligatory_variable_fields_completed(
+                        v,
+                    )
+                    != OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
+                ):
+                    warnings.warn(
+                        f"{OBLIGATORY_METADATA_WARNING} {get_missing_obligatory_variables_fields(self.variables)}",
+                        ObligatoryVariableWarning,
+                        stacklevel=2,
+                    )
+                    logger.warning(
+                        "Type warning: %s.%s %s",
+                        ObligatoryVariableWarning,
+                        OBLIGATORY_METADATA_WARNING,
+                        get_missing_obligatory_variables_fields(self.variables),
+                    )
 
         return self
 

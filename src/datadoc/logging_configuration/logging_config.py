@@ -53,5 +53,3 @@ def configure_logging(config: dict[str, Any] | None = None) -> None:
 
     logging.config.dictConfig(config)
     logging.getLogger("faker").setLevel(logging.ERROR)
-
-    logging.captureWarnings(capture=True)

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 from typing import TYPE_CHECKING
 
@@ -323,6 +324,27 @@ def set_variables_values_inherit_dataset_derived_date_values() -> None:
             )
 
 
+def _parse_error_message(message: str) -> list | None:
+    """Extract substrings from the message divided by {}."""
+    parsed_string = message.replace("Obligatory metadata is missing: ", "").strip()
+    parsed_string = parsed_string.replace("'", '"')
+    if not parsed_string:
+        return None
+    try:
+        # Attempt to parse the JSON string
+        return json.loads(parsed_string)
+    except json.JSONDecodeError:
+        logger.exception("Error parsing JSON {e}")
+        return []
+
+
+def _get_dict_by_key(
+    metadata_list: list[dict[str, list[str]]],
+    key: str,
+) -> dict[str, list[str]] | None:
+    return next((item for item in metadata_list if key in item), None)
+
+
 def variables_control(error_message: str | None) -> dbc.Alert | None:
     """Check obligatory metadata for variables.
 
@@ -331,18 +353,23 @@ def variables_control(error_message: str | None) -> dbc.Alert | None:
         and with a names of fields missing value.
     """
     missing_metadata: list = []
+    if not error_message:
+        logger.info("Error: %s", error_message)
+    error_message_parsed = _parse_error_message(str(error_message))
     for variable in state.metadata.variables:
-        if error_message is not None and variable.short_name in error_message:
-            missing_metadata_field = [
-                f[1]
-                for f in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME
-                if error_message and f[0] in error_message
-            ]
-            missing_metadata_fields_to_string = ", ".join(missing_metadata_field)
-            missing_metadata.append(
-                f"{variable.short_name}: {missing_metadata_fields_to_string}",
-            )
-    if len(missing_metadata) == 0:
+        if error_message_parsed:
+            key_to_find = _get_dict_by_key(error_message_parsed, variable.short_name)
+            if key_to_find is not None:
+                missing_metadata_field = [
+                    f[1]
+                    for f in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME
+                    if error_message and f[0] in key_to_find[variable.short_name]
+                ]
+                missing_metadata_fields_to_string = ", ".join(missing_metadata_field)
+                missing_metadata.append(
+                    f"{variable.short_name}: {missing_metadata_fields_to_string}",
+                )
+    if not missing_metadata:
         return None
     return build_ssb_alert(
         AlertTypes.WARNING,
