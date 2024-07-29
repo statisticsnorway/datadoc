@@ -325,7 +325,10 @@ def set_variables_values_inherit_dataset_derived_date_values() -> None:
 
 
 def _parse_error_message(message: str) -> list | None:
-    """Extract substrings from the message divided by {}."""
+    """Extract substrings from the message divided by {}.
+
+    Also remove first part over error message.
+    """
     parsed_string = message.replace("Obligatory metadata is missing: ", "").strip()
     parsed_string = parsed_string.replace("'", '"')
     if not parsed_string:
@@ -342,6 +345,7 @@ def _get_dict_by_key(
     metadata_list: list[dict[str, list[str]]],
     key: str,
 ) -> dict[str, list[str]] | None:
+    """Return list of fields by variable short name."""
     return next((item for item in metadata_list if key in item), None)
 
 
@@ -353,8 +357,6 @@ def variables_control(error_message: str | None) -> dbc.Alert | None:
         and with a names of fields missing value.
     """
     missing_metadata: list = []
-    if not error_message:
-        logger.info("Error: %s", error_message)
     error_message_parsed = _parse_error_message(str(error_message))
     for variable in state.metadata.variables:
         if error_message_parsed:
