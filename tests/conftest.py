@@ -31,7 +31,7 @@ from tests.backend.test_statistic_subject_mapping import (
 from .utils import TEST_DATASETS_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_FILE_NAME
-from .utils import TEST_EXISTING_METADATA_FILEPATH
+from .utils import TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH
 from .utils import TEST_NAMING_STANDARD_COMPATIBLE_DATASET
 from .utils import TEST_PARQUET_FILE_NAME
 from .utils import TEST_PARQUET_FILEPATH
@@ -104,7 +104,7 @@ def metadata_merged(
     )
     return Datadoc(
         str(target),
-        str(TEST_EXISTING_METADATA_FILEPATH),
+        str(TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH),
         statistic_subject_mapping=subject_mapping_fake_statistical_structure,
     )
 

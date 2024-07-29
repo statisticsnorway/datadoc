@@ -159,6 +159,8 @@ class Datadoc:
             self._check_ready_to_merge(
                 self.dataset_path,
                 Path(existing_file_path),
+                extracted_metadata,
+                existing_metadata,
                 errors_as_warnings=self.errors_as_warnings,
             )
             merged_metadata = self._merge_metadata(
@@ -198,6 +200,8 @@ class Datadoc:
     def _check_ready_to_merge(
         new_dataset_path: Path | CloudPath,
         existing_dataset_path: Path,
+        extracted_metadata: model.DatadocMetadata,
+        existing_metadata: model.DatadocMetadata,
         *,
         errors_as_warnings: bool,
     ) -> None:
@@ -206,6 +210,8 @@ class Datadoc:
         Args:
             new_dataset_path: Path to the dataset to be documented.
             existing_dataset_path: Path stored in the existing metadata.
+            extracted_metadata: Metadata extracted from a physical dataset.
+            existing_metadata: Metadata from a previously created metadata document.
             errors_as_warnings: True if failing checks should be raised as warnings, not errors.
 
         Raises:
@@ -240,6 +246,13 @@ class Datadoc:
                 "success": (
                     new_dataset_path_info.dataset_short_name
                     == existing_dataset_path_info.dataset_short_name
+                ),
+            },
+            {
+                "name": "Variable names",
+                "success": (
+                    {v.short_name for v in extracted_metadata.variables}
+                    == {v.short_name for v in existing_metadata.variables}
                 ),
             },
         ]

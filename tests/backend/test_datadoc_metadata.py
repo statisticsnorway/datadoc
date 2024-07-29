@@ -34,7 +34,7 @@ from datadoc.enums import VariableRole
 from tests.utils import TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH
 from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
-from tests.utils import TEST_EXISTING_METADATA_FILEPATH
+from tests.utils import TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH
 from tests.utils import TEST_PARQUET_FILEPATH
 from tests.utils import TEST_PROCESSED_DATA_POPULATION_DIRECTORY
 from tests.utils import TEST_RESOURCES_DIRECTORY
@@ -436,8 +436,8 @@ def test_default_spatial_coverage_description(
 
 def test_open_extracted_and_existing_metadata(metadata_merged: Datadoc):
     assert (
-        str(metadata_merged.metadata_document)
-        == "tests/resources/existing_metadata_file/person_data_v1__DOC.json"
+        metadata_merged.metadata_document
+        == TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH
     )
     assert str(metadata_merged.dataset_path) is not None
 
@@ -447,7 +447,7 @@ def test_merge_extracted_and_existing_dataset_metadata(metadata_merged: Datadoc)
         dataset_path=str(metadata_merged.dataset_path),
     )
     metadata_existing = Datadoc(
-        metadata_document_path=str(TEST_EXISTING_METADATA_FILEPATH),
+        metadata_document_path=str(TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH),
     )
 
     # Should match extracted metadata from the dataset
@@ -552,7 +552,7 @@ def test_merge_extracted_and_existing_dataset_metadata(metadata_merged: Datadoc)
     [True, False],
     ids=["warnings", "errors"],
 )
-def test_check_ready_to_merge_consistent(
+def test_check_ready_to_merge_consistent_paths(
     new_dataset_path: str,
     existing_dataset_path: str,
     errors_as_warnings: bool,  # noqa: FBT001
@@ -563,6 +563,8 @@ def test_check_ready_to_merge_consistent(
         Datadoc._check_ready_to_merge(  # noqa: SLF001
             Path(new_dataset_path),
             Path(existing_dataset_path),
+            DatadocMetadata(variables=[]),
+            DatadocMetadata(variables=[]),
             errors_as_warnings=errors_as_warnings,
         )
 
@@ -600,7 +602,7 @@ def test_check_ready_to_merge_consistent(
     [True, False],
     ids=["warnings", "errors"],
 )
-def test_check_ready_to_merge_inconsistent(
+def test_check_ready_to_merge_inconsistent_paths(
     new_dataset_path: str,
     existing_dataset_path: str,
     errors_as_warnings: bool,  # noqa: FBT001
@@ -613,5 +615,78 @@ def test_check_ready_to_merge_inconsistent(
         Datadoc._check_ready_to_merge(  # noqa: SLF001
             Path(new_dataset_path),
             Path(existing_dataset_path),
+            DatadocMetadata(variables=[]),
+            DatadocMetadata(variables=[]),
+            errors_as_warnings=errors_as_warnings,
+        )
+
+
+VARIABLE_SHORT_NAMES = [
+    "fnr",
+    "sivilstand",
+    "bostedskommune",
+    "inntekt",
+    "bankinnskudd",
+    "dato",
+]
+
+
+@pytest.mark.parametrize(
+    ("extracted_variables", "existing_variables"),
+    [
+        (VARIABLE_SHORT_NAMES, VARIABLE_SHORT_NAMES[:-2]),
+        (VARIABLE_SHORT_NAMES[:-2], VARIABLE_SHORT_NAMES),
+        (VARIABLE_SHORT_NAMES, VARIABLE_SHORT_NAMES[:-1] + ["blah"]),
+    ],
+    ids=["fewer existing", "fewer extracted", "renamed"],
+)
+@pytest.mark.parametrize(
+    "errors_as_warnings",
+    [True, False],
+    ids=["warnings", "errors"],
+)
+def test_check_ready_to_merge_inconsistent_variable_names(
+    extracted_variables: list[str],
+    existing_variables: list[str],
+    errors_as_warnings: bool,  # noqa: FBT001
+):
+    with contextlib.ExitStack() as stack:
+        if errors_as_warnings:
+            stack.enter_context(pytest.warns(InconsistentDatasetsWarning))
+        else:
+            stack.enter_context(pytest.raises(InconsistentDatasetsError))
+        Datadoc._check_ready_to_merge(  # noqa: SLF001
+            Path(TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH),
+            Path(TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH),
+            DatadocMetadata(
+                variables=[Variable(short_name=name) for name in extracted_variables],
+            ),
+            DatadocMetadata(
+                variables=[Variable(short_name=name) for name in existing_variables],
+            ),
+            errors_as_warnings=errors_as_warnings,
+        )
+
+
+@pytest.mark.parametrize(
+    "errors_as_warnings",
+    [True, False],
+    ids=["warnings", "errors"],
+)
+def test_check_ready_to_merge_consistent_variables(
+    errors_as_warnings: bool,  # noqa: FBT001
+):
+    with warnings.catch_warnings() if errors_as_warnings else contextlib.nullcontext():  # type: ignore [attr-defined]
+        if errors_as_warnings:
+            warnings.simplefilter("error")
+        Datadoc._check_ready_to_merge(  # noqa: SLF001
+            Path(TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH),
+            Path(TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH),
+            DatadocMetadata(
+                variables=[Variable(short_name=name) for name in VARIABLE_SHORT_NAMES],
+            ),
+            DatadocMetadata(
+                variables=[Variable(short_name=name) for name in VARIABLE_SHORT_NAMES],
+            ),
             errors_as_warnings=errors_as_warnings,
         )
