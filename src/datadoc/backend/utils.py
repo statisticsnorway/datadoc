@@ -218,33 +218,6 @@ def _has_metadata_value(
             k,
             v,
             obligatory_multilanguage_list,
-            # OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE,
-        )
-    ]
-
-
-def _has_dataset_metadata_value(
-    metadata: model.Dataset,
-    obligatory_list: list,
-) -> list:
-    """Return metadata fields with value.
-
-    Args:
-        metadata: The metadata object to check.
-        obligatory_list: A list of obligatory fields.
-
-    Returns:
-        List of metadata fields that have values.
-    """
-    return [
-        k
-        for k, v in metadata.model_dump().items()
-        if k in obligatory_list
-        and v is not None
-        or _has_multilanguage_value(
-            k,
-            v,
-            OBLIGATORY_DATASET_METADATA_IDENTIFIERS_MULTILANGUAGE,
         )
     ]
 
@@ -262,7 +235,11 @@ def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
         The number of obligatory dataset fields that have been completed (not None).
     """
     return len(
-        _has_dataset_metadata_value(dataset, OBLIGATORY_DATASET_METADATA_IDENTIFIERS),
+        _has_metadata_value(
+            dataset,
+            OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
+            OBLIGATORY_DATASET_METADATA_IDENTIFIERS_MULTILANGUAGE,
+        ),
     )
 
 
