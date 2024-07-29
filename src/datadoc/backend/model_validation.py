@@ -153,12 +153,12 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
                         ObligatoryVariableWarning,
                         stacklevel=2,
                     )
-                    logger.warning(
-                        "Type warning: %s.%s %s",
-                        ObligatoryVariableWarning,
-                        OBLIGATORY_METADATA_WARNING,
-                        get_missing_obligatory_variables_fields(self.variables),
-                    )
+            logger.warning(
+                "Type warning: %s.%s %s",
+                ObligatoryVariableWarning,
+                OBLIGATORY_METADATA_WARNING,
+                get_missing_obligatory_variables_fields(self.variables),
+            )
 
         return self
 

@@ -265,39 +265,6 @@ def num_obligatory_variable_fields_completed(variable: model.Variable) -> int:
     )
 
 
-def num_obligatory_variables_fields_completed(variables: list) -> int:
-    """Count the number of obligatory fields completed for all variables.
-
-    This function calculates the total number of obligatory fields that have
-    values (are not None) for all variables in the list.
-
-    Args:
-        variables: A list of variable objects to count obligatory fields for.
-
-    Returns:
-        The total number of obligatory variable fields that have been completed
-        (not None) across all variables.
-    """
-    num_variables = 0
-    for variable in variables:
-        num_variables += len(
-            _has_metadata_value(
-                variable,
-                OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
-                OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE,
-            ),
-        )
-    return num_variables
-
-
-def num_variables_obligatory_fields(variables: list) -> int:
-    """."""
-    num_fields = 0
-    for _i in range(len(variables)):
-        num_fields += len(OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS)
-    return num_fields
-
-
 def _is_missing_metadata(
     field_name: str,
     field_value,  # noqa: ANN001 Skip type hint because method '_is_missing_multilanguage_value'
