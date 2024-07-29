@@ -360,15 +360,15 @@ def variables_control(error_message: str | None) -> dbc.Alert | None:
     error_message_parsed = _parse_error_message(str(error_message))
     for variable in state.metadata.variables:
         if error_message_parsed:
-            variable_to_find = _get_dict_by_key(
+            fields_by_variable = _get_dict_by_key(
                 error_message_parsed,
                 variable.short_name,
             )
-            if variable_to_find is not None:
+            if fields_by_variable is not None:
                 missing_metadata_field = [
                     f[1]
                     for f in OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME
-                    if error_message and f[0] in variable_to_find[variable.short_name]
+                    if error_message and f[0] in fields_by_variable[variable.short_name]
                 ]
                 missing_metadata_fields_to_string = ", ".join(missing_metadata_field)
                 missing_metadata.append(
