@@ -32,9 +32,11 @@ from datadoc.enums import DataType
 from datadoc.enums import IsPersonalData
 from datadoc.enums import VariableRole
 from tests.utils import TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH
+from tests.utils import TEST_DATASETS_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
 from tests.utils import TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH
+from tests.utils import TEST_NAMING_STANDARD_COMPATIBLE_DATASET
 from tests.utils import TEST_PARQUET_FILEPATH
 from tests.utils import TEST_PROCESSED_DATA_POPULATION_DIRECTORY
 from tests.utils import TEST_RESOURCES_DIRECTORY
@@ -527,6 +529,51 @@ def test_merge_extracted_and_existing_dataset_metadata(metadata_merged: Datadoc)
         metadata_merged.dataset.metadata_last_updated_date
         != metadata_existing.dataset.metadata_last_updated_date
     )
+
+
+def test_merge_with_fewer_variables_in_dataset(tmp_path):
+    target = tmp_path / "fewer_variables_p2021-12-31_p2021-12-31_v1.parquet"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy(
+        TEST_DATASETS_DIRECTORY / "fewer_variables_p2021-12-31_p2021-12-31_v1.parquet",
+        target,
+    )
+    datadoc = Datadoc(
+        str(target),
+        str(TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH),
+        errors_as_warnings=True,
+    )
+    assert [v.short_name for v in datadoc.variables] == [
+        "fnr",
+        "inntekt",
+        "bankinnskudd",
+        "dato",
+    ]
+
+
+def test_merge_with_fewer_variables_in_existing_metadata(tmp_path):
+    target = tmp_path / TEST_NAMING_STANDARD_COMPATIBLE_DATASET
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy(
+        TEST_DATASETS_DIRECTORY / TEST_NAMING_STANDARD_COMPATIBLE_DATASET,
+        target,
+    )
+    datadoc = Datadoc(
+        str(target),
+        str(
+            TEST_EXISTING_METADATA_DIRECTORY
+            / "fewer_variables_p2020-12-31_p2020-12-31_v1__DOC.json",
+        ),
+        errors_as_warnings=True,
+    )
+    assert [v.short_name for v in datadoc.variables] == [
+        "fnr",
+        "sivilstand",
+        "bostedskommune",
+        "inntekt",
+        "bankinnskudd",
+        "dato",
+    ]
 
 
 @pytest.mark.parametrize(

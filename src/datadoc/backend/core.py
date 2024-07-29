@@ -297,15 +297,18 @@ class Datadoc:
         extracted_metadata: model.DatadocMetadata | None,
         existing_metadata: model.DatadocMetadata | None,
     ) -> model.DatadocMetadata:
-        # Use the extracted metadata as a base or an empty structure if extracted_metadata is None
-        merged_metadata = copy.deepcopy(extracted_metadata)
         if not existing_metadata:
             logger.warning(
                 "No existing metadata found, no merge to perform. Continuing with extracted metadata.",
             )
-            return merged_metadata or model.DatadocMetadata()
-        if not merged_metadata:
+            return extracted_metadata or model.DatadocMetadata()
+        if not extracted_metadata:
             return existing_metadata
+        # Use the extracted metadata as a base
+        merged_metadata = model.DatadocMetadata(
+            dataset=copy.deepcopy(extracted_metadata.dataset),
+            variables=[],
+        )
         if (
             merged_metadata.dataset is not None
             and existing_metadata.dataset is not None
@@ -317,9 +320,26 @@ class Datadoc:
                     field,
                     getattr(existing_metadata.dataset, field),
                 )
-        if existing_metadata.variables is not None:
-            # There is no extracted information to take care of, so we prefer the existing metadata
-            merged_metadata.variables = existing_metadata.variables
+
+        # Merge variables.
+        # For each extracted variable, copy existing metadata into the merged metadata
+        if (
+            existing_metadata.variables is not None
+            and extracted_metadata is not None
+            and extracted_metadata.variables is not None
+            and merged_metadata.variables is not None
+        ):
+            for extracted in extracted_metadata.variables:
+                existing = next(
+                    (
+                        existing
+                        for existing in existing_metadata.variables
+                        if existing.short_name == extracted.short_name
+                    ),
+                    None,
+                )
+                # If there is no existing metadata for this variable, we just use what we have extracted
+                merged_metadata.variables.append(existing or extracted)
         return merged_metadata
 
     def _extract_metadata_from_existing_document(
