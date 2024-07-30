@@ -142,12 +142,9 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
         """
         if self.variables is not None:
             for v in self.variables:
-                if (
-                    num_obligatory_variable_fields_completed(
-                        v,
-                    )
-                    != len(OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS)
-                ):
+                if num_obligatory_variable_fields_completed(
+                    v,
+                ) != len(OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS):
                     warnings.warn(
                         f"{OBLIGATORY_METADATA_WARNING} {get_missing_obligatory_variables_fields(self.variables)}",
                         ObligatoryVariableWarning,
