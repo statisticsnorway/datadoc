@@ -106,11 +106,16 @@ class Datadoc:
         if metadata_document_path:
             self.metadata_document = normalize_path(metadata_document_path)
             self.explicitly_defined_metadata_document = True
+            if not self.metadata_document.exists():
+                msg = f"Metadata document does not exist! Provided path: {self.metadata_document}"
+                raise ValueError(
+                    msg,
+                )
         if dataset_path:
             self.dataset_path = normalize_path(dataset_path)
             if not metadata_document_path:
-                self.metadata_document = self.dataset_path.parent / (
-                    self.dataset_path.stem + METADATA_DOCUMENT_FILE_SUFFIX
+                self.metadata_document = self.build_metadata_document_path(
+                    self.dataset_path,
                 )
         if metadata_document_path or dataset_path:
             self._extract_metadata_from_files()
@@ -146,10 +151,16 @@ class Datadoc:
         ):
             extracted_metadata = self._extract_metadata_from_dataset(self.dataset_path)
 
-        if self.dataset_path and self.explicitly_defined_metadata_document:
+        if (
+            self.dataset_path
+            and self.explicitly_defined_metadata_document
+            and self.metadata_document is not None
+            and self.metadata_document.exists()
+            and extracted_metadata is not None
+            and existing_metadata is not None
+        ):
             if (
-                extracted_metadata is not None
-                and extracted_metadata.dataset is not None
+                extracted_metadata.dataset is not None
                 and extracted_metadata.dataset.file_path is not None
             ):
                 existing_file_path = extracted_metadata.dataset.file_path
@@ -159,11 +170,18 @@ class Datadoc:
             self._check_ready_to_merge(
                 self.dataset_path,
                 Path(existing_file_path),
+                extracted_metadata,
+                existing_metadata,
                 errors_as_warnings=self.errors_as_warnings,
             )
             merged_metadata = self._merge_metadata(
                 extracted_metadata,
                 existing_metadata,
+            )
+            # We need to override this so that the document gets saved to the correct
+            # location, otherwise we would overwrite the existing document!
+            self.metadata_document = self.build_metadata_document_path(
+                self.dataset_path,
             )
             if merged_metadata.dataset and merged_metadata.variables:
                 self.dataset = merged_metadata.dataset
@@ -198,6 +216,8 @@ class Datadoc:
     def _check_ready_to_merge(
         new_dataset_path: Path | CloudPath,
         existing_dataset_path: Path,
+        extracted_metadata: model.DatadocMetadata,
+        existing_metadata: model.DatadocMetadata,
         *,
         errors_as_warnings: bool,
     ) -> None:
@@ -206,6 +226,8 @@ class Datadoc:
         Args:
             new_dataset_path: Path to the dataset to be documented.
             existing_dataset_path: Path stored in the existing metadata.
+            extracted_metadata: Metadata extracted from a physical dataset.
+            existing_metadata: Metadata from a previously created metadata document.
             errors_as_warnings: True if failing checks should be raised as warnings, not errors.
 
         Raises:
@@ -242,6 +264,20 @@ class Datadoc:
                     == existing_dataset_path_info.dataset_short_name
                 ),
             },
+            {
+                "name": "Variable names",
+                "success": (
+                    {v.short_name for v in extracted_metadata.variables or []}
+                    == {v.short_name for v in existing_metadata.variables or []}
+                ),
+            },
+            {
+                "name": "Variable datatypes",
+                "success": (
+                    [v.data_type for v in extracted_metadata.variables or []]
+                    == [v.data_type for v in existing_metadata.variables or []]
+                ),
+            },
         ]
         if failures := [result for result in results if not result["success"]]:
             msg = f"{INCONSISTENCIES_MESSAGE} {', '.join(str(f['name']) for f in failures)}"
@@ -261,15 +297,18 @@ class Datadoc:
         extracted_metadata: model.DatadocMetadata | None,
         existing_metadata: model.DatadocMetadata | None,
     ) -> model.DatadocMetadata:
-        # Use the extracted metadata as a base or an empty structure if extracted_metadata is None
-        merged_metadata = copy.deepcopy(extracted_metadata)
         if not existing_metadata:
             logger.warning(
                 "No existing metadata found, no merge to perform. Continuing with extracted metadata.",
             )
-            return merged_metadata or model.DatadocMetadata()
-        if not merged_metadata:
+            return extracted_metadata or model.DatadocMetadata()
+        if not extracted_metadata:
             return existing_metadata
+        # Use the extracted metadata as a base
+        merged_metadata = model.DatadocMetadata(
+            dataset=copy.deepcopy(extracted_metadata.dataset),
+            variables=[],
+        )
         if (
             merged_metadata.dataset is not None
             and existing_metadata.dataset is not None
@@ -281,6 +320,26 @@ class Datadoc:
                     field,
                     getattr(existing_metadata.dataset, field),
                 )
+
+        # Merge variables.
+        # For each extracted variable, copy existing metadata into the merged metadata
+        if (
+            existing_metadata.variables is not None
+            and extracted_metadata is not None
+            and extracted_metadata.variables is not None
+            and merged_metadata.variables is not None
+        ):
+            for extracted in extracted_metadata.variables:
+                existing = next(
+                    (
+                        existing
+                        for existing in existing_metadata.variables
+                        if existing.short_name == extracted.short_name
+                    ),
+                    None,
+                )
+                # If there is no existing metadata for this variable, we just use what we have extracted
+                merged_metadata.variables.append(existing or extracted)
         return merged_metadata
 
     def _extract_metadata_from_existing_document(
@@ -408,6 +467,17 @@ class Datadoc:
         )
         metadata.variables = DatasetParser.for_file(dataset).get_fields()
         return metadata
+
+    @staticmethod
+    def build_metadata_document_path(
+        dataset_path: pathlib.Path | CloudPath,
+    ) -> pathlib.Path | CloudPath:
+        """Build the path to the metadata document corresponding to the given dataset.
+
+        Args:
+            dataset_path: Path to the dataset we wish to create metadata for.
+        """
+        return dataset_path.parent / (dataset_path.stem + METADATA_DOCUMENT_FILE_SUFFIX)
 
     def write_metadata_document(self) -> None:
         """Write all currently known metadata to file.

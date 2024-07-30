@@ -38,10 +38,10 @@
             "custom_type": null,
             "id": "77346986-a2b4-4211-8d74-817e8b1f99d4",
             "owner": null,
-            "file_path": "/Users/cecilieseim/gitHub/metadata-datadoc/datadoc/tests/resources/datasets/person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
+            "file_path": "/Users/mmw/code/metadata/datadoc/tests/resources/datasets/person_testdata_p2021-12-31_p2021-12-31_v1.parquet",
             "metadata_created_date": "2024-07-09T09:47:28.347248Z",
             "metadata_created_by": null,
-            "metadata_last_updated_date": "2024-07-09T09:47:28.347248Z",
+            "metadata_last_updated_date": "2024-07-29T12:25:18.774598Z",
             "metadata_last_updated_by": null,
             "contains_data_from": "2021-12-31",
             "contains_data_until": "2021-12-31"
