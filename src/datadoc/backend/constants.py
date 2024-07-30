@@ -14,6 +14,7 @@ INCONSISTENCIES_MESSAGE = "Inconsistencies found between extracted and existing 
 OBLIGATORY_DATASET_METADATA_IDENTIFIERS: list = [
     "assessment",
     "dataset_state",
+    "dataset_status",
     "name",
     "description",
     "data_source",

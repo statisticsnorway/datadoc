@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import warnings
 from typing import TYPE_CHECKING
 from typing import Self
@@ -18,12 +19,14 @@ from datadoc.backend.utils import get_missing_obligatory_dataset_fields
 from datadoc.backend.utils import get_missing_obligatory_variables_fields
 from datadoc.backend.utils import incorrect_date_order
 from datadoc.backend.utils import num_obligatory_dataset_fields_completed
-from datadoc.backend.utils import num_obligatory_variables_fields_completed
+from datadoc.backend.utils import num_obligatory_variable_fields_completed
 from datadoc.backend.utils import set_variables_inherit_from_dataset
 from datadoc.utils import get_timestamp_now
 
 if TYPE_CHECKING:
     from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 
 class ValidateDatadocMetadata(model.DatadocMetadata):
@@ -114,6 +117,12 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
                 ObligatoryDatasetWarning,
                 stacklevel=2,
             )
+            logger.warning(
+                "Type warning: %s.%s %s",
+                ObligatoryDatasetWarning,
+                OBLIGATORY_METADATA_WARNING,
+                get_missing_obligatory_dataset_fields(self.dataset),
+            )
 
         return self
 
@@ -131,17 +140,24 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             ObligatoryVariableWarning: If not all obligatory variable metadata fields
                 are filled in.
         """
-        if (
-            self.variables is not None
-            and num_obligatory_variables_fields_completed(
-                self.variables,
-            )
-            != NUM_OBLIGATORY_VARIABLES_FIELDS
-        ):
-            warnings.warn(
-                f"{OBLIGATORY_METADATA_WARNING} {get_missing_obligatory_variables_fields(self.variables)}",
+        if self.variables is not None:
+            for v in self.variables:
+                if (
+                    num_obligatory_variable_fields_completed(
+                        v,
+                    )
+                    != NUM_OBLIGATORY_VARIABLES_FIELDS
+                ):
+                    warnings.warn(
+                        f"{OBLIGATORY_METADATA_WARNING} {get_missing_obligatory_variables_fields(self.variables)}",
+                        ObligatoryVariableWarning,
+                        stacklevel=2,
+                    )
+            logger.warning(
+                "Type warning: %s.%s %s",
                 ObligatoryVariableWarning,
-                stacklevel=2,
+                OBLIGATORY_METADATA_WARNING,
+                get_missing_obligatory_variables_fields(self.variables),
             )
 
         return self
@@ -174,3 +190,4 @@ def custom_warning_handler(  # noqa: PLR0913 remove fields causes incompatible t
 
 
 warnings.showwarning = custom_warning_handler
+warnings.simplefilter("always")

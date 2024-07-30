@@ -138,7 +138,7 @@ def test_obligatory_metadata_dataset_warning(metadata: Datadoc):
     ) as record:
         metadata.write_metadata_document()
     all_obligatory_completed = 100
-    num_warnings = 2
+    num_warnings = 9
     if metadata.percent_complete != all_obligatory_completed:
         assert len(record) == num_warnings
         assert issubclass(record[0].category, ObligatoryDatasetWarning)
@@ -183,6 +183,7 @@ def test_obligatory_metadata_dataset_warning_name(metadata: Datadoc):
             model.LanguageStringTypeItem(languageCode="nb", languageText="Navnet"),
         ],
     )
+    metadata.dataset.description = None
     with pytest.warns(
         ObligatoryDatasetWarning,
         match=OBLIGATORY_METADATA_WARNING,
@@ -208,6 +209,7 @@ def test_obligatory_metadata_dataset_warning_description(metadata: Datadoc):
     """Field name 'description' is a special case because it can match other field names like 'version_description'."""
     state.metadata = metadata
     error_message: str
+    missing_obligatory_dataset = ""
     with warnings.catch_warnings(record=True) as w:
         warnings.simplefilter("always")
         metadata.write_metadata_document()

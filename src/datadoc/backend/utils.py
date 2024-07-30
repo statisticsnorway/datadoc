@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime  # noqa: TCH003 import is needed in xdoctest
+import logging
 import pathlib
 import uuid
 
@@ -10,6 +11,7 @@ from cloudpathlib import GSPath
 from dapla import AuthClient
 from datadoc_model import model
 
+from datadoc.backend.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
 from datadoc.backend.constants import OBLIGATORY_DATASET_METADATA_IDENTIFIERS
 from datadoc.backend.constants import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS_MULTILANGUAGE,
@@ -21,6 +23,8 @@ from datadoc.backend.constants import (
 from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
 from datadoc.enums import VariableRole
+
+logger = logging.getLogger(__name__)
 
 
 def normalize_path(path: str) -> pathlib.Path | CloudPath:
@@ -191,96 +195,6 @@ def incorrect_date_order(
     return date_from is not None and date_until is not None and date_until < date_from
 
 
-def _has_metadata_value(
-    metadata: model.Dataset | model.Variable,
-    obligatory_list: list,
-) -> list:
-    """Return metadata fields with value.
-
-    Args:
-        metadata: The metadata object to check.
-        obligatory_list: A list of obligatory fields.
-
-    Returns:
-        List of metadata fields that have values.
-    """
-    return [
-        k
-        for k, v in metadata.model_dump().items()
-        if k in obligatory_list and v is not None
-    ]
-
-
-def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
-    """Count the number of obligatory dataset fields completed for each variable.
-
-    This function returns the total count of obligatory fields in the dataset that
-    have values (are not None).
-
-    Args:
-        dataset: The dataset object for which to count the fields.
-
-    Returns:
-        The number of obligatory dataset fields that have been completed (not None).
-    """
-    return len(
-        _has_metadata_value(dataset, OBLIGATORY_DATASET_METADATA_IDENTIFIERS),
-    )
-
-
-def num_obligatory_variables_fields_completed(variables: list) -> int:
-    """Count the number of obligatory fields completed for each variable.
-
-    This function calculates the total number of obligatory fields that have
-    values (are not None) for all variables in the list.
-
-    Args:
-        variables: A list of variable objects to count obligatory fields for.
-
-    Returns:
-        The total number of obligatory variable fields that have been completed
-        (not None) across all variables.
-    """
-    num_variables = 0
-    for variable in variables:
-        num_variables = len(
-            _has_metadata_value(variable, OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS),
-        )
-    return num_variables
-
-
-def _is_missing_metadata(
-    field_name: str,
-    field_value,  # noqa: ANN001 Skip type hint because method '_is_missing_multilanguage_value'
-    obligatory_list: list,
-    obligatory_multi_language_list: list,
-) -> bool:
-    """Check obligatory fields without value.
-
-    Args:
-        field_name: The field name.
-        field_value: The field value. Can be of type str, or LanguageStringType for
-            multilanguage fields.
-        obligatory_list: List of obligatory fields.
-        obligatory_multi_language_list: List of obligatory fields with multilanguage
-            values.
-
-    Returns:
-        True if field doesn't have value, False otherwise.
-    """
-    if (
-        field_name in obligatory_list
-        and field_value is None
-        or _is_missing_multilanguage_value(
-            field_name,
-            field_value,
-            obligatory_multi_language_list,
-        )
-    ):
-        return True
-    return False
-
-
 def _is_missing_multilanguage_value(
     field_name: str,
     field_value,  # noqa: ANN001 Skip type hint to enable dynamically handling value for LanguageStringType not indexable
@@ -288,10 +202,13 @@ def _is_missing_multilanguage_value(
 ) -> bool:
     """Check obligatory fields with multilanguage value.
 
+    This function checks whether a given field, which is supposed to have
+    multilanguage values, is missing values in all specified languages.
+
     Args:
-        field_name: The field name.
-        field_value: The field value. LanguageStringType.
-        obligatory_list: List of obligatory fields with multilanguage values.
+        field_name: The name of the field to check.
+        field_value: The value of the field. Expected to be of type LanguageStringType.
+        obligatory_list: A list of obligatory field names that should have multilanguage values.
 
     Returns:
         True if no value in any of languages for one field, False otherwise.
@@ -311,6 +228,85 @@ def _is_missing_multilanguage_value(
     ):
         return True
     return False
+
+
+def _is_missing_metadata(
+    field_name: str,
+    field_value,  # noqa: ANN001 Skip type hint because method '_is_missing_multilanguage_value'
+    obligatory_list: list,
+    obligatory_multi_language_list: list,
+) -> bool:
+    """Check if an obligatory field is missing its value.
+
+    This function checks whether a given field, which may be a simple string or a
+    multilanguage value, is missing its value. It considers two lists: one for
+    obligatory fields and another for obligatory multilanguage fields.
+
+    Args:
+        field_name: The name of the field to check.
+        field_value: The value of the field. Can be of type str, or LanguageStringType for
+            multilanguage fields.
+        obligatory_list: List of obligatory fields.
+        obligatory_multi_language_list: List of obligatory fields with multilanguage
+            values.
+
+    Returns:
+        True if the field doesn't have a value, False otherwise.
+    """
+    if (
+        field_name in obligatory_list
+        and field_value is None
+        or _is_missing_multilanguage_value(
+            field_name,
+            field_value,
+            obligatory_multi_language_list,
+        )
+    ):
+        return True
+    return False
+
+
+def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
+    """Count the number of completed obligatory dataset fields.
+
+    This function returns the total count of obligatory fields in the dataset that
+    have values (are not None).
+
+    Args:
+        dataset: The dataset object for which to count the fields.
+
+    Returns:
+        The number of obligatory dataset fields that have been completed (not None).
+    """
+    return len(OBLIGATORY_DATASET_METADATA_IDENTIFIERS) - len(
+        get_missing_obligatory_dataset_fields(dataset),
+    )
+
+
+def num_obligatory_variable_fields_completed(variable: model.Variable) -> int:
+    """Count the number of obligatory fields completed for one variable.
+
+    This function calculates the total number of obligatory fields that have
+    values (are not None) for one variable in the list.
+
+    Args:
+        variable: The variable to count obligatory fields for.
+
+    Returns:
+        The total number of obligatory variable fields that have been completed
+        (not None) for one variable.
+    """
+    missing_metadata = [
+        key
+        for key, value in variable.model_dump().items()
+        if _is_missing_metadata(
+            key,
+            value,
+            OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
+            OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE,
+        )
+    ]
+    return NUM_OBLIGATORY_VARIABLES_FIELDS - len(missing_metadata)
 
 
 def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:

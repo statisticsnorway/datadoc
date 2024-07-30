@@ -31,7 +31,7 @@ from datadoc.backend.utils import calculate_percentage
 from datadoc.backend.utils import derive_assessment_from_state
 from datadoc.backend.utils import normalize_path
 from datadoc.backend.utils import num_obligatory_dataset_fields_completed
-from datadoc.backend.utils import num_obligatory_variables_fields_completed
+from datadoc.backend.utils import num_obligatory_variable_fields_completed
 from datadoc.backend.utils import set_default_values_dataset
 from datadoc.backend.utils import set_default_values_variables
 from datadoc.enums import DataSetStatus
@@ -527,8 +527,10 @@ class Datadoc:
         saved in the datadoc as a simple quality indicator.
         """
         num_all_fields = NUM_OBLIGATORY_DATASET_FIELDS
-        num_set_fields = num_obligatory_dataset_fields_completed(self.dataset)
-        for _i in range(len(self.variables)):
+        num_set_fields = num_obligatory_dataset_fields_completed(
+            self.dataset,
+        )
+        for v in self.variables:
             num_all_fields += NUM_OBLIGATORY_VARIABLES_FIELDS
-            num_set_fields += num_obligatory_variables_fields_completed(self.variables)
+            num_set_fields += num_obligatory_variable_fields_completed(v)
         return calculate_percentage(num_set_fields, num_all_fields)
