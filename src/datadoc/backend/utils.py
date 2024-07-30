@@ -343,12 +343,8 @@ def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
     Returns:
         The number of obligatory dataset fields that have been completed (not None).
     """
-    return len(
-        _has_metadata_value(
-            dataset,
-            OBLIGATORY_DATASET_METADATA_IDENTIFIERS,
-            OBLIGATORY_DATASET_METADATA_IDENTIFIERS_MULTILANGUAGE,
-        ),
+    return len(OBLIGATORY_DATASET_METADATA_IDENTIFIERS) - len(
+        get_missing_obligatory_dataset_fields(dataset),
     )
 
 
