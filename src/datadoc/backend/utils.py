@@ -11,6 +11,7 @@ from cloudpathlib import GSPath
 from dapla import AuthClient
 from datadoc_model import model
 
+from datadoc.backend.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
 from datadoc.backend.constants import OBLIGATORY_DATASET_METADATA_IDENTIFIERS
 from datadoc.backend.constants import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS_MULTILANGUAGE,
@@ -229,41 +230,6 @@ def _is_missing_multilanguage_value(
     return False
 
 
-def _has_multilanguage_value(
-    field_name: str,
-    field_value,  # noqa: ANN001 Skip type hint to enable dynamically handling value for LanguageStringType not indexable
-    obligatory_list: list,
-) -> bool:
-    """Check if an obligatory field with multilanguage value has any value.
-
-    This function checks whether a given obligatory field, which is supposed to have
-    multilanguage values, has a value in any of the specified languages.
-
-    Args:
-        field_name: The name of the field to check.
-        field_value: The value of the field. Expected to be of type LanguageStringType.
-        obligatory_list: A list of obligatory field names that should have multilanguage values.
-
-    Returns:
-        True if there is a value in any of the specified languages for the field, False otherwise.
-    """
-    if (
-        field_name in obligatory_list
-        and field_value
-        and (
-            len(field_value[0]) > 0
-            and field_value[0]["languageText"]
-            or (len(field_value) == 1 and field_value[1]["languageText"])
-            or (
-                len(field_value) == 2  # noqa: PLR2004 approve magic value
-                and field_value[2]["languageText"]
-            )
-        )
-    ):
-        return True
-    return False
-
-
 def _is_missing_metadata(
     field_name: str,
     field_value,  # noqa: ANN001 Skip type hint because method '_is_missing_multilanguage_value'
@@ -300,37 +266,6 @@ def _is_missing_metadata(
     return False
 
 
-def _has_metadata_value(
-    metadata: model.Dataset | model.Variable,
-    obligatory_list: list,
-    obligatory_multilanguage_list: list,
-) -> list:
-    """Return metadata fields that have values.
-
-    This function checks a metadata object for fields that have values. It
-    considers both simple obligatory fields and obligatory multilanguage fields.
-
-    Args:
-        metadata: The metadata object to check.
-        obligatory_list: A list of obligatory fields.
-        obligatory_multilanguage_list: A list of obligatory multilanguage fields,
-
-    Returns:
-        List of metadata fields that have values.
-    """
-    return [
-        k
-        for k, v in metadata.model_dump().items()
-        if k in obligatory_list
-        and v is not None
-        or _has_multilanguage_value(
-            k,
-            v,
-            obligatory_multilanguage_list,
-        )
-    ]
-
-
 def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
     """Count the number of completed obligatory dataset fields.
 
@@ -361,13 +296,17 @@ def num_obligatory_variable_fields_completed(variable: model.Variable) -> int:
         The total number of obligatory variable fields that have been completed
         (not None) for one variable.
     """
-    return len(
-        _has_metadata_value(
-            variable,
+    missing_metadata = [
+        key
+        for key, value in variable.model_dump().items()
+        if _is_missing_metadata(
+            key,
+            value,
             OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS,
             OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE,
-        ),
-    )
+        )
+    ]
+    return NUM_OBLIGATORY_VARIABLES_FIELDS - len(missing_metadata)
 
 
 def get_missing_obligatory_dataset_fields(dataset: model.Dataset) -> list:
