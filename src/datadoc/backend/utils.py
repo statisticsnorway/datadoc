@@ -213,7 +213,7 @@ def _is_missing_multilanguage_value(
     Returns:
         True if no value in any of languages for one field, False otherwise.
     """
-    if (
+    return bool(
         field_name in obligatory_list
         and field_value
         and (
@@ -224,10 +224,8 @@ def _is_missing_multilanguage_value(
                 len(field_value) <= 2  # noqa: PLR2004 approve magic value
                 or not field_value[2]["languageText"]
             )
-        )
-    ):
-        return True
-    return False
+        ),
+    )
 
 
 def _is_missing_metadata(
@@ -253,17 +251,15 @@ def _is_missing_metadata(
     Returns:
         True if the field doesn't have a value, False otherwise.
     """
-    if (
+    return bool(
         field_name in obligatory_list
         and field_value is None
         or _is_missing_multilanguage_value(
             field_name,
             field_value,
             obligatory_multi_language_list,
-        )
-    ):
-        return True
-    return False
+        ),
+    )
 
 
 def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
@@ -281,6 +277,25 @@ def num_obligatory_dataset_fields_completed(dataset: model.Dataset) -> int:
     return len(OBLIGATORY_DATASET_METADATA_IDENTIFIERS) - len(
         get_missing_obligatory_dataset_fields(dataset),
     )
+
+
+def num_obligatory_variables_fields_completed(variables: list) -> int:
+    """Count the number of obligatory fields completed for all variables.
+
+    This function calculates the total number of obligatory fields that have
+    values (are not None) for one variable in the list.
+
+    Args:
+        variables: A list with variable objects.
+
+    Returns:
+        The total number of obligatory variable fields that have been completed
+        (not None) for all variables.
+    """
+    num_completed = 0
+    for v in variables:
+        num_completed += num_obligatory_variable_fields_completed(v)
+    return num_completed
 
 
 def num_obligatory_variable_fields_completed(variable: model.Variable) -> int:

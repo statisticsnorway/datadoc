@@ -19,7 +19,7 @@ from datadoc.backend.utils import get_missing_obligatory_dataset_fields
 from datadoc.backend.utils import get_missing_obligatory_variables_fields
 from datadoc.backend.utils import incorrect_date_order
 from datadoc.backend.utils import num_obligatory_dataset_fields_completed
-from datadoc.backend.utils import num_obligatory_variable_fields_completed
+from datadoc.backend.utils import num_obligatory_variables_fields_completed
 from datadoc.backend.utils import set_variables_inherit_from_dataset
 from datadoc.utils import get_timestamp_now
 
@@ -140,19 +140,14 @@ class ValidateDatadocMetadata(model.DatadocMetadata):
             ObligatoryVariableWarning: If not all obligatory variable metadata fields
                 are filled in.
         """
-        if self.variables is not None:
-            for v in self.variables:
-                if (
-                    num_obligatory_variable_fields_completed(
-                        v,
-                    )
-                    != NUM_OBLIGATORY_VARIABLES_FIELDS
-                ):
-                    warnings.warn(
-                        f"{OBLIGATORY_METADATA_WARNING} {get_missing_obligatory_variables_fields(self.variables)}",
-                        ObligatoryVariableWarning,
-                        stacklevel=2,
-                    )
+        if self.variables is not None and num_obligatory_variables_fields_completed(
+            self.variables,
+        ) != (NUM_OBLIGATORY_VARIABLES_FIELDS * len(self.variables)):
+            warnings.warn(
+                f"{OBLIGATORY_METADATA_WARNING} {get_missing_obligatory_variables_fields(self.variables)}",
+                ObligatoryVariableWarning,
+                stacklevel=2,
+            )
             logger.warning(
                 "Type warning: %s.%s %s",
                 ObligatoryVariableWarning,

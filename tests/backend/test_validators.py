@@ -138,7 +138,7 @@ def test_obligatory_metadata_dataset_warning(metadata: Datadoc):
     ) as record:
         metadata.write_metadata_document()
     all_obligatory_completed = 100
-    num_warnings = 9
+    num_warnings = 2
     if metadata.percent_complete != all_obligatory_completed:
         assert len(record) == num_warnings
         assert issubclass(record[0].category, ObligatoryDatasetWarning)
