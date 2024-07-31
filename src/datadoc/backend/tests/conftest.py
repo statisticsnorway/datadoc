@@ -34,8 +34,9 @@ from datadoc.backend.tests.constants import TEST_NAMING_STANDARD_COMPATIBLE_DATA
 from datadoc.backend.tests.constants import TEST_PARQUET_FILE_NAME
 from datadoc.backend.tests.constants import TEST_PARQUET_FILEPATH
 from datadoc.backend.tests.constants import TEST_RESOURCES_DIRECTORY
-
-from .test_statistic_subject_mapping import STATISTICAL_SUBJECT_STRUCTURE_DIR
+from datadoc.backend.tests.test_statistic_subject_mapping import (
+    STATISTICAL_SUBJECT_STRUCTURE_DIR,
+)
 
 CODE_LIST_DIR = "code_list"
 
