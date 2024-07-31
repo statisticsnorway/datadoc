@@ -5,15 +5,15 @@ from pathlib import Path
 
 import pytest
 
-from datadoc.backend.core import Datadoc
-from datadoc.backend.model_backwards_compatibility import UnknownModelVersionError
-from datadoc.backend.model_backwards_compatibility import add_container
-from datadoc.backend.model_backwards_compatibility import handle_version_2_2_0
-from datadoc.backend.model_backwards_compatibility import handle_version_3_3_0
-from datadoc.backend.model_backwards_compatibility import (
+from datadoc.backend.src.core import Datadoc
+from datadoc.backend.src.model_backwards_compatibility import UnknownModelVersionError
+from datadoc.backend.src.model_backwards_compatibility import add_container
+from datadoc.backend.src.model_backwards_compatibility import handle_version_2_2_0
+from datadoc.backend.src.model_backwards_compatibility import handle_version_3_3_0
+from datadoc.backend.src.model_backwards_compatibility import (
     is_metadata_in_container_structure,
 )
-from datadoc.backend.model_backwards_compatibility import upgrade_metadata
+from datadoc.backend.src.model_backwards_compatibility import upgrade_metadata
 from tests.utils import TEST_COMPATIBILITY_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
 

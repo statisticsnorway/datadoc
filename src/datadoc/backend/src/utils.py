@@ -11,13 +11,13 @@ from cloudpathlib import GSPath
 from dapla import AuthClient
 from datadoc_model import model
 
-from datadoc.backend.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
-from datadoc.backend.constants import OBLIGATORY_DATASET_METADATA_IDENTIFIERS
-from datadoc.backend.constants import (
+from datadoc.backend.src.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
+from datadoc.backend.src.constants import OBLIGATORY_DATASET_METADATA_IDENTIFIERS
+from datadoc.backend.src.constants import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS_MULTILANGUAGE,
 )
-from datadoc.backend.constants import OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
-from datadoc.backend.constants import (
+from datadoc.backend.src.constants import OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS
+from datadoc.backend.src.constants import (
     OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE,
 )
 from datadoc.enums import Assessment

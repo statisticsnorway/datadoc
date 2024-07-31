@@ -131,6 +131,17 @@ disable_error_code = [
     "no-untyped-def",
 ]
 
+# Disable specific error codes in the 'tests' package
+# Also don't require type annotations
+[[tool.mypy.overrides]]
+module = ["datadoc.backend.tests.*"]
+disable_error_code = [
+    "var-annotated",
+    "has-type",
+    "no-any-return",
+    "no-untyped-def",
+]
+
 [tool.ruff]
 force-exclude = true    # Apply excludes to pre-commit
 show-fixes = true
@@ -190,8 +201,24 @@ classmethod-decorators = [
     "D103",   # docstrings are overkill for test functions
     "D100",
 ]
+
+"src/datadoc/backend/tests**" = [
+    "S101",   # asserts are encouraged in pytest
+    "ANN001", # type annotations don't add value for test functions
+    "ANN002", # type annotations don't add value for test functions
+    "ANN003", # type annotations don't add value for test functions
+    "ANN201", # type annotations don't add value for test functions
+    "ANN204", # type annotations don't add value for test functions
+    "ANN205", # type annotations don't add value for test functions
+    "ANN206", # type annotations don't add value for test functions
+    "D103",   # docstrings are overkill for test functions
+    "D100",
+]
+
 "*/__init__.py" = ["F401"]
+
 "src/datadoc/frontend/callbacks/register_callbacks.py" = ["C901"]
+
 # This filename is a convention for Gunicorn
 "src/datadoc/gunicorn.conf.py" = ["N999"]
 

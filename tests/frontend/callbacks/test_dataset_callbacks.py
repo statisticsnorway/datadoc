@@ -15,7 +15,7 @@ from datadoc_model import model
 
 from datadoc import enums
 from datadoc import state
-from datadoc.backend.model_validation import ObligatoryDatasetWarning
+from datadoc.backend.src.model_validation import ObligatoryDatasetWarning
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import dataset_control
@@ -30,7 +30,7 @@ from datadoc.frontend.text import INVALID_DATE_ORDER
 from datadoc.frontend.text import INVALID_VALUE
 
 if TYPE_CHECKING:
-    from datadoc.backend.core import Datadoc
+    from datadoc.backend.src.core import Datadoc
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 DATASET_CALLBACKS_MODULE = "datadoc.frontend.callbacks.dataset"

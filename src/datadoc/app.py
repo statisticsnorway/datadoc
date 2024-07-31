@@ -16,9 +16,9 @@ from flask_healthz import healthz
 
 from datadoc import config
 from datadoc import state
-from datadoc.backend.code_list import CodeList
-from datadoc.backend.core import Datadoc
-from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
+from datadoc.backend.src.code_list import CodeList
+from datadoc.backend.src.core import Datadoc
+from datadoc.backend.src.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.frontend.callbacks.register_callbacks import register_callbacks
 from datadoc.frontend.components.control_bars import build_controls_bar
 from datadoc.frontend.components.control_bars import build_footer_control_bar

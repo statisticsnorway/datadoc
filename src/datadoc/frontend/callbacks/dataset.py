@@ -11,8 +11,8 @@ from pydantic import ValidationError
 
 from datadoc import config
 from datadoc import state
-from datadoc.backend.core import Datadoc
-from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
+from datadoc.backend.src.core import Datadoc
+from datadoc.backend.src.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.constants import CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE
 from datadoc.constants import MISSING_METADATA_WARNING
 from datadoc.frontend.callbacks.utils import MetadataInputTypes

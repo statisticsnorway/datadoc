@@ -16,7 +16,7 @@ from pydantic_core import Url
 
 from datadoc import enums
 from datadoc import state
-from datadoc.backend.model_validation import ObligatoryVariableWarning
+from datadoc.backend.src.model_validation import ObligatoryVariableWarning
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
@@ -39,7 +39,7 @@ from datadoc.frontend.text import INVALID_DATE_ORDER
 from datadoc.frontend.text import INVALID_VALUE
 
 if TYPE_CHECKING:
-    from datadoc.backend.core import Datadoc
+    from datadoc.backend.src.core import Datadoc
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 

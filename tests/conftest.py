@@ -20,10 +20,10 @@ from bs4 import ResultSet
 from datadoc_model import model
 
 from datadoc import state
-from datadoc.backend.code_list import CodeList
-from datadoc.backend.core import Datadoc
-from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-from datadoc.backend.user_info import TestUserInfo
+from datadoc.backend.src.code_list import CodeList
+from datadoc.backend.src.core import Datadoc
+from datadoc.backend.src.statistic_subject_mapping import StatisticSubjectMapping
+from datadoc.backend.src.user_info import TestUserInfo
 from tests.backend.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
 )

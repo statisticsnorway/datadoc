@@ -1,0 +1,253 @@
+{
+  "percentage_complete": 98,
+  "document_version": "2.1.0",
+  "dataset": {
+    "short_name": "person_data",
+    "assessment": "SENSITIVE",
+    "dataset_status": "DRAFT",
+    "dataset_state": "PROCESSED_DATA",
+    "name": {
+      "en": "successfully_read_existing_file",
+      "nn": "",
+      "nb": "Persondata"
+    },
+    "description": {
+      "en": "",
+      "nn": "",
+      "nb": ""
+    },
+    "data_source": {
+      "en": "",
+      "nn": "",
+      "nb": "Skatteetaten"
+    },
+    "register_uri": null,
+    "population_description": {
+      "en": "",
+      "nn": "",
+      "nb": "Norsk befolkning"
+    },
+    "version": "1",
+    "version_description": null,
+    "unit_type": "PERSON",
+    "temporality_type": "STATUS",
+    "subject_field": {
+      "en": "",
+      "nn": "",
+      "nb": "Skatt"
+    },
+    "keyword": ["Skatt", "Person", "Helsepenger"],
+    "spatial_coverage_description": {
+      "en": "",
+      "nn": "",
+      "nb": "Norge"
+    },
+    "id": "143fca77-ef56-419c-a1e1-d69c4199f020",
+    "owner": {
+      "en": "",
+      "nn": "",
+      "nb": "723"
+    },
+    "file_path": null,
+    "metadata_created_date": "2022-09-05T11:07:14Z",
+    "metadata_created_by": "default_user@ssb.no",
+    "metadata_last_updated_date": "2024-01-08T15:41:05.681664Z",
+    "metadata_last_updated_by": "default_user@ssb.no",
+    "contains_data_from": "2010-09-05",
+    "contains_data_until": "2022-09-05"
+  },
+  "variables": [
+    {
+      "short_name": "pers_id",
+      "name": {
+        "en": "",
+        "nn": "",
+        "nb": "g"
+      },
+      "data_type": "STRING",
+      "variable_role": "IDENTIFIER",
+      "definition_uri": "https://www.ssb.no/a/metadata/conceptvariable/vardok/26/nb",
+      "direct_person_identifying": true,
+      "data_source": null,
+      "population_description": null,
+      "comment": null,
+      "temporality_type": null,
+      "measurement_unit": null,
+      "format": null,
+      "classification_uri": null,
+      "sentinel_value_uri": null,
+      "invalid_value_description": null,
+      "id": null,
+      "contains_data_from": null,
+      "contains_data_until": null
+    },
+    {
+      "short_name": "tidspunkt",
+      "name": {
+        "en": "",
+        "nn": "",
+        "nb": "g"
+      },
+      "data_type": "DATETIME",
+      "variable_role": "START_TIME",
+      "definition_uri": null,
+      "direct_person_identifying": false,
+      "data_source": null,
+      "population_description": null,
+      "comment": null,
+      "temporality_type": null,
+      "measurement_unit": null,
+      "format": null,
+      "classification_uri": null,
+      "sentinel_value_uri": null,
+      "invalid_value_description": null,
+      "id": null,
+      "contains_data_from": null,
+      "contains_data_until": null
+    },
+    {
+      "short_name": "sivilstand",
+      "name": {
+        "en": "",
+        "nn": "",
+        "nb": "g"
+      },
+      "data_type": "STRING",
+      "variable_role": "MEASURE",
+      "definition_uri": "https://www.ssb.no/a/metadata/conceptvariable/vardok/91/nb",
+      "direct_person_identifying": false,
+      "data_source": null,
+      "population_description": null,
+      "comment": null,
+      "temporality_type": null,
+      "measurement_unit": null,
+      "format": null,
+      "classification_uri": null,
+      "sentinel_value_uri": null,
+      "invalid_value_description": null,
+      "id": null,
+      "contains_data_from": null,
+      "contains_data_until": null
+    },
+    {
+      "short_name": "alm_inntekt",
+      "name": {
+        "en": "",
+        "nn": "",
+        "nb": "g"
+      },
+      "data_type": "INTEGER",
+      "variable_role": "MEASURE",
+      "definition_uri": "https://www.ssb.no/a/metadata/conceptvariable/vardok/1438/nb",
+      "direct_person_identifying": false,
+      "data_source": null,
+      "population_description": null,
+      "comment": null,
+      "temporality_type": null,
+      "measurement_unit": null,
+      "format": null,
+      "classification_uri": null,
+      "sentinel_value_uri": null,
+      "invalid_value_description": null,
+      "id": null,
+      "contains_data_from": null,
+      "contains_data_until": null
+    },
+    {
+      "short_name": "sykepenger",
+      "name": {
+        "en": "",
+        "nn": "",
+        "nb": "g"
+      },
+      "data_type": "INTEGER",
+      "variable_role": "MEASURE",
+      "definition_uri": "https://www.ssb.no/metadata/conceptvariable/vardok/3366/nb",
+      "direct_person_identifying": false,
+      "data_source": null,
+      "population_description": null,
+      "comment": null,
+      "temporality_type": null,
+      "measurement_unit": null,
+      "format": null,
+      "classification_uri": null,
+      "sentinel_value_uri": null,
+      "invalid_value_description": null,
+      "id": null,
+      "contains_data_from": null,
+      "contains_data_until": null
+    },
+    {
+      "short_name": "ber_bruttoformue",
+      "name": {
+        "en": "",
+        "nn": "",
+        "nb": "g"
+      },
+      "data_type": "INTEGER",
+      "variable_role": "MEASURE",
+      "definition_uri": "https://www.ssb.no/metadata/conceptvariable/vardok/3327/nb",
+      "direct_person_identifying": false,
+      "data_source": null,
+      "population_description": null,
+      "comment": null,
+      "temporality_type": null,
+      "measurement_unit": null,
+      "format": null,
+      "classification_uri": null,
+      "sentinel_value_uri": null,
+      "invalid_value_description": null,
+      "id": null,
+      "contains_data_from": null,
+      "contains_data_until": null
+    },
+    {
+      "short_name": "fullf_utdanning",
+      "name": {
+        "en": "",
+        "nn": "",
+        "nb": "g"
+      },
+      "data_type": "STRING",
+      "variable_role": "MEASURE",
+      "definition_uri": "https://www.ssb.no/metadata/conceptvariable/vardok/3242/nb",
+      "direct_person_identifying": false,
+      "data_source": null,
+      "population_description": null,
+      "comment": null,
+      "temporality_type": null,
+      "measurement_unit": null,
+      "format": null,
+      "classification_uri": null,
+      "sentinel_value_uri": null,
+      "invalid_value_description": null,
+      "id": null,
+      "contains_data_from": null,
+      "contains_data_until": null
+    },
+    {
+      "short_name": "hoveddiagnose",
+      "name": {
+        "en": "",
+        "nn": "",
+        "nb": "g"
+      },
+      "data_type": "STRING",
+      "variable_role": "MEASURE",
+      "definition_uri": "https://www.ssb.no/metadata/conceptvariable/vardok/2578/nb",
+      "direct_person_identifying": false,
+      "data_source": null,
+      "population_description": null,
+      "comment": null,
+      "temporality_type": null,
+      "measurement_unit": null,
+      "format": null,
+      "classification_uri": null,
+      "sentinel_value_uri": null,
+      "invalid_value_description": null,
+      "id": null,
+      "contains_data_from": null,
+      "contains_data_until": null
+    }
+  ]
+}

@@ -13,9 +13,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from datadoc.backend.code_list import CodeList
-    from datadoc.backend.core import Datadoc
-    from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
+    from datadoc.backend.src.code_list import CodeList
+    from datadoc.backend.src.core import Datadoc
+    from datadoc.backend.src.statistic_subject_mapping import StatisticSubjectMapping
 
 
 # Global metadata container

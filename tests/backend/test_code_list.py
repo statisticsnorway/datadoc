@@ -1,7 +1,7 @@
 import pytest
 
-from datadoc.backend.code_list import CodeList
-from datadoc.backend.code_list import CodeListItem
+from datadoc.backend.src.code_list import CodeList
+from datadoc.backend.src.code_list import CodeListItem
 from tests.utils import TEST_RESOURCES_DIRECTORY
 
 CODE_LIST_DIR = "code_list"

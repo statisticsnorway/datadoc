@@ -14,6 +14,8 @@ from datadoc_model import model
 from datadoc import config
 from datadoc import enums
 from datadoc import state
+from datadoc.constants import DATE_VALIDATION_MESSAGE
+from datadoc.constants import VALIDATION_ERROR
 from datadoc.frontend.components.dataset_tab import build_dataset_tab
 from datadoc.frontend.components.variables_tab import build_variables_tab
 
@@ -137,10 +139,6 @@ def get_dataset_path() -> pathlib.Path | CloudPath | str:
     if path_from_env is None:
         path_from_env = ""
     return path_from_env
-
-
-VALIDATION_ERROR = "Validation error: "
-DATE_VALIDATION_MESSAGE = f"{VALIDATION_ERROR}contains_data_from must be the same or earlier date than contains_data_until"
 
 
 def parse_and_validate_dates(

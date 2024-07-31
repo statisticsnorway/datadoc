@@ -2,9 +2,9 @@ import pytest
 import requests
 from bs4 import BeautifulSoup
 
-from datadoc.backend.statistic_subject_mapping import PrimarySubject
-from datadoc.backend.statistic_subject_mapping import SecondarySubject
-from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
+from datadoc.backend.src.statistic_subject_mapping import PrimarySubject
+from datadoc.backend.src.statistic_subject_mapping import SecondarySubject
+from datadoc.backend.src.statistic_subject_mapping import StatisticSubjectMapping
 from tests.utils import TEST_RESOURCES_DIRECTORY
 
 
