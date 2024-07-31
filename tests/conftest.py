@@ -28,8 +28,6 @@ from datadoc.backend.tests.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
 )
 
-from .utils import CODE_LIST_DIR
-from .utils import DATADOC_METADATA_MODULE
 from .utils import TEST_DATASETS_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_FILE_NAME
@@ -41,6 +39,10 @@ from .utils import TEST_RESOURCES_DIRECTORY
 
 if TYPE_CHECKING:
     from pytest_mock import MockerFixture
+
+
+DATADOC_METADATA_MODULE = "datadoc.backend.src"
+CODE_LIST_DIR = "code_list"
 
 
 @pytest.fixture(autouse=True)
