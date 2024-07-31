@@ -11,9 +11,9 @@ from datadoc.backend.src.dapla_dataset_path_info import ISO_YEAR_MONTH
 from datadoc.backend.src.dapla_dataset_path_info import ISO_YEAR_MONTH_DAY
 from datadoc.backend.src.dapla_dataset_path_info import SSB_BIMESTER
 from datadoc.backend.src.dapla_dataset_path_info import DaplaDatasetPathInfo
+from datadoc.backend.tests.constants import TEST_BUCKET_PARQUET_FILEPATH_WITH_SHORTNAME
+from datadoc.backend.tests.constants import TEST_PARQUET_FILEPATH
 from datadoc.enums import DataSetState
-from tests.utils import TEST_BUCKET_PARQUET_FILEPATH_WITH_SHORTNAME
-from tests.utils import TEST_PARQUET_FILEPATH
 
 if TYPE_CHECKING:
     import pathlib

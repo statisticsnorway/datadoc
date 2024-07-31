@@ -24,16 +24,18 @@ from datadoc.backend.src.code_list import CodeList
 from datadoc.backend.src.core import Datadoc
 from datadoc.backend.src.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.backend.src.user_info import TestUserInfo
+from datadoc.backend.tests.constants import TEST_DATASETS_DIRECTORY
+from datadoc.backend.tests.constants import TEST_EXISTING_METADATA_DIRECTORY
+from datadoc.backend.tests.constants import TEST_EXISTING_METADATA_FILE_NAME
+from datadoc.backend.tests.constants import (
+    TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH,
+)
+from datadoc.backend.tests.constants import TEST_NAMING_STANDARD_COMPATIBLE_DATASET
+from datadoc.backend.tests.constants import TEST_PARQUET_FILE_NAME
+from datadoc.backend.tests.constants import TEST_PARQUET_FILEPATH
+from datadoc.backend.tests.constants import TEST_RESOURCES_DIRECTORY
 
 from .test_statistic_subject_mapping import STATISTICAL_SUBJECT_STRUCTURE_DIR
-from .utils import TEST_DATASETS_DIRECTORY
-from .utils import TEST_EXISTING_METADATA_DIRECTORY
-from .utils import TEST_EXISTING_METADATA_FILE_NAME
-from .utils import TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH
-from .utils import TEST_NAMING_STANDARD_COMPATIBLE_DATASET
-from .utils import TEST_PARQUET_FILE_NAME
-from .utils import TEST_PARQUET_FILEPATH
-from .utils import TEST_RESOURCES_DIRECTORY
 
 CODE_LIST_DIR = "code_list"
 

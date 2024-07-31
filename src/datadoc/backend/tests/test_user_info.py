@@ -10,6 +10,8 @@ from datadoc.backend.src.user_info import DaplaLabUserInfo
 from datadoc.backend.src.user_info import JupyterHubUserInfo
 from datadoc.backend.src.user_info import UnknownUserInfo
 from datadoc.backend.src.user_info import UserInfo
+
+# TODO(@tilen1976): check where to put these  # noqa: TD003
 from datadoc.config import DAPLA_REGION
 from datadoc.config import DAPLA_SERVICE
 from datadoc.config import JUPYTERHUB_USER

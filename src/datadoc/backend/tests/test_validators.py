@@ -12,6 +12,7 @@ import pytest
 from datadoc_model import model
 from pydantic import ValidationError
 
+# TODO(@tilen1976): what to do with state?  # noqa: TD003
 from datadoc import state
 from datadoc.backend.src.constants import OBLIGATORY_METADATA_WARNING
 from datadoc.backend.src.model_validation import ObligatoryDatasetWarning

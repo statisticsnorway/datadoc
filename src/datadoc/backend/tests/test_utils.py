@@ -1,5 +1,3 @@
-"""Test methods in utils.py."""
-
 import os
 import pathlib
 
@@ -9,10 +7,9 @@ from cloudpathlib.local import LocalGSPath
 
 from datadoc.backend.src.utils import calculate_percentage
 from datadoc.backend.src.utils import normalize_path
-from datadoc.backend.tests.utils import TEST_BUCKET_PARQUET_FILEPATH
-from datadoc.backend.tests.utils import TEST_PARQUET_FILEPATH
-
-BACKEND_UTILS_MODULE = "datadoc.backend.src.utils"
+from datadoc.backend.tests.constants import DATADOC_METADATA_MODULE_UTILS
+from datadoc.backend.tests.constants import TEST_BUCKET_PARQUET_FILEPATH
+from datadoc.backend.tests.constants import TEST_PARQUET_FILEPATH
 
 
 @pytest.mark.parametrize(
@@ -27,10 +24,10 @@ def test_normalize_path(
     expected_type: type[os.PathLike],
     mocker,
 ):
-    mocker.patch(f"{BACKEND_UTILS_MODULE}.AuthClient", autospec=True)
-    mocker.patch(f"{BACKEND_UTILS_MODULE}.GSClient", LocalGSClient)
+    mocker.patch(f"{DATADOC_METADATA_MODULE_UTILS}.AuthClient", autospec=True)
+    mocker.patch(f"{DATADOC_METADATA_MODULE_UTILS}.GSClient", LocalGSClient)
     mocker.patch(
-        f"{BACKEND_UTILS_MODULE}.GSPath",
+        f"{DATADOC_METADATA_MODULE_UTILS}.GSPath",
         LocalGSPath,
     )
     file = normalize_path(  # for testing purposes

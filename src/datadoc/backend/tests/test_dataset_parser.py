@@ -16,10 +16,10 @@ from datadoc.backend.src.dataset_parser import KNOWN_INTEGER_TYPES
 from datadoc.backend.src.dataset_parser import KNOWN_STRING_TYPES
 from datadoc.backend.src.dataset_parser import DatasetParser
 from datadoc.backend.src.dataset_parser import DatasetParserParquet
+from datadoc.backend.tests.constants import TEST_PARQUET_FILEPATH
+from datadoc.backend.tests.constants import TEST_PARQUET_GZIP_FILEPATH
+from datadoc.backend.tests.constants import TEST_SAS7BDAT_FILEPATH
 from datadoc.enums import DataType
-from tests.utils import TEST_PARQUET_FILEPATH
-from tests.utils import TEST_PARQUET_GZIP_FILEPATH
-from tests.utils import TEST_SAS7BDAT_FILEPATH
 
 
 def test_use_abstract_class_directly():

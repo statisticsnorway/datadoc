@@ -31,6 +31,7 @@ from datadoc.enums import DataSetStatus
 from datadoc.enums import DataType
 from datadoc.enums import IsPersonalData
 from datadoc.enums import VariableRole
+from tests.utils import DATADOC_METADATA_MODULE_CORE
 from tests.utils import TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH
 from tests.utils import TEST_DATASETS_DIRECTORY
 from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
@@ -44,9 +45,6 @@ from tests.utils import TEST_RESOURCES_DIRECTORY
 if TYPE_CHECKING:
     from collections.abc import Generator
     from datetime import datetime
-
-
-DATADOC_METADATA_MODULE = "datadoc.backend.core"
 
 
 @pytest.fixture()
@@ -129,7 +127,7 @@ def test_write_metadata_document(
 
 @pytest.mark.usefixtures("existing_metadata_file")
 @patch(
-    "datadoc.backend.user_info.get_user_info_for_current_platform",
+    DATADOC_METADATA_MODULE_CORE + ".user_info.get_user_info_for_current_platform",
     return_value=TestUserInfo(),
 )
 def test_write_metadata_document_existing_document(

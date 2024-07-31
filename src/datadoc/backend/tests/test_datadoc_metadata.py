@@ -25,28 +25,27 @@ from datadoc.backend.src.core import InconsistentDatasetsWarning
 from datadoc.backend.src.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.backend.src.user_info import PLACEHOLDER_EMAIL_ADDRESS
 from datadoc.backend.src.user_info import TestUserInfo
+from datadoc.backend.tests.constants import TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH
+from datadoc.backend.tests.constants import TEST_DATASETS_DIRECTORY
+from datadoc.backend.tests.constants import TEST_EXISTING_METADATA_DIRECTORY
+from datadoc.backend.tests.constants import TEST_EXISTING_METADATA_FILE_NAME
+from datadoc.backend.tests.constants import (
+    TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH,
+)
+from datadoc.backend.tests.constants import TEST_NAMING_STANDARD_COMPATIBLE_DATASET
+from datadoc.backend.tests.constants import TEST_PARQUET_FILEPATH
+from datadoc.backend.tests.constants import TEST_PROCESSED_DATA_POPULATION_DIRECTORY
+from datadoc.backend.tests.constants import TEST_RESOURCES_DIRECTORY
 from datadoc.enums import Assessment
 from datadoc.enums import DataSetState
 from datadoc.enums import DataSetStatus
 from datadoc.enums import DataType
 from datadoc.enums import IsPersonalData
 from datadoc.enums import VariableRole
-from tests.utils import TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH
-from tests.utils import TEST_DATASETS_DIRECTORY
-from tests.utils import TEST_EXISTING_METADATA_DIRECTORY
-from tests.utils import TEST_EXISTING_METADATA_FILE_NAME
-from tests.utils import TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH
-from tests.utils import TEST_NAMING_STANDARD_COMPATIBLE_DATASET
-from tests.utils import TEST_PARQUET_FILEPATH
-from tests.utils import TEST_PROCESSED_DATA_POPULATION_DIRECTORY
-from tests.utils import TEST_RESOURCES_DIRECTORY
 
 if TYPE_CHECKING:
     from collections.abc import Generator
     from datetime import datetime
-
-
-DATADOC_METADATA_MODULE = "datadoc.backend.core"
 
 
 @pytest.fixture()
