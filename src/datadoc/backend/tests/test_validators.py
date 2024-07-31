@@ -12,8 +12,6 @@ import pytest
 from datadoc_model import model
 from pydantic import ValidationError
 
-# TODO(@tilen1976): what to do with state?  # noqa: TD003
-from datadoc import state
 from datadoc.backend.src.model_validation import ObligatoryDatasetWarning
 from datadoc.backend.src.model_validation import ObligatoryVariableWarning
 from datadoc.backend.src.utility.constants import OBLIGATORY_METADATA_WARNING
@@ -86,7 +84,7 @@ def test_write_metadata_document_created_date(
     assert metadata.dataset.metadata_created_date is not None
 
 
-# TODO(@tilen1976): Frontend? remove state?  # noqa: TD003
+# TODO(@tilen1976): Frontend?   # noqa: TD003
 @pytest.mark.parametrize(
     ("variable_date", "date_from", "date_until"),
     [
@@ -104,7 +102,6 @@ def test_variables_inherit_dates(
     date_until,
     metadata: Datadoc,
 ):
-    state.metadata = metadata
     metadata.dataset.contains_data_from = date_from
     metadata.dataset.contains_data_until = date_until
     for v in metadata.variables:
@@ -132,9 +129,7 @@ def test_variables_inherit_temporality_type_value(metadata: Datadoc):
     )
 
 
-# TODO(@tilen1976): state?  # noqa: TD003
 def test_obligatory_metadata_dataset_warning(metadata: Datadoc):
-    state.metadata = metadata
     with pytest.warns(
         ObligatoryDatasetWarning,
         match=OBLIGATORY_METADATA_WARNING,
@@ -150,9 +145,7 @@ def test_obligatory_metadata_dataset_warning(metadata: Datadoc):
         )
 
 
-# TODO(@tilen1976): state?  # noqa: TD003
 def test_obligatory_metadata_variables_warning(metadata: Datadoc):
-    state.metadata = metadata
     with pytest.warns(
         ObligatoryVariableWarning,
         match=OBLIGATORY_METADATA_WARNING,
@@ -170,9 +163,7 @@ def test_obligatory_metadata_variables_warning(metadata: Datadoc):
             )
 
 
-# TODO(@tilen1976): state?  # noqa: TD003
 def test_obligatory_metadata_dataset_warning_name(metadata: Datadoc):
-    state.metadata = metadata
     metadata.dataset.name = None
     with pytest.warns(
         ObligatoryDatasetWarning,
@@ -210,10 +201,8 @@ def test_obligatory_metadata_dataset_warning_name(metadata: Datadoc):
     assert "name" in str(record3[0].message)
 
 
-# TODO(@tilen1976): state?  # noqa: TD003
 def test_obligatory_metadata_dataset_warning_description(metadata: Datadoc):
     """Field name 'description' is a special case because it can match other field names like 'version_description'."""
-    state.metadata = metadata
     error_message: str
     missing_obligatory_dataset = ""
     with warnings.catch_warnings(record=True) as w:
@@ -237,11 +226,9 @@ def test_obligatory_metadata_dataset_warning_description(metadata: Datadoc):
     assert not re.search(r"\bdescription\b", missing_obligatory_dataset)
 
 
-# TODO(@tilen1976): state?  # noqa: TD003
 def test_obligatory_metadata_dataset_warning_multiple_languages(
     metadata: Datadoc,
 ):
-    state.metadata = metadata
     missing_obligatory_dataset = ""
 
     metadata.dataset.description = model.LanguageStringType(
@@ -286,9 +273,7 @@ def test_obligatory_metadata_dataset_warning_multiple_languages(
     assert re.search(r"\bdescription\b", missing_obligatory_dataset)
 
 
-# TODO(@tilen1976): state?  # noqa: TD003
 def test_obligatory_metadata_variables_warning_name(metadata: Datadoc):
-    state.metadata = metadata
     variable_with_name = "{'pers_id': ['name']}"
     with pytest.warns(
         ObligatoryVariableWarning,
