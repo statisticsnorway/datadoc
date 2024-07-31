@@ -680,12 +680,10 @@ class DaplaDatasetPathInfo:
         Returns:
             True if the path conforms to the SSB naming standard, otherwise False.
         """
-        if (
+        return bool(
             self.dataset_state
             and self.statistic_short_name
             and self.contains_data_from
             and self.contains_data_until
-            and self.dataset_version
-        ):
-            return True
-        return False
+            and self.dataset_version,
+        )
