@@ -13,8 +13,8 @@ import dash_bootstrap_components as dbc
 import pytest
 from datadoc_model import model
 
-from datadoc import enums
 from datadoc import state
+from datadoc.backend.src import enums
 from datadoc.backend.src.model_validation import ObligatoryDatasetWarning
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input

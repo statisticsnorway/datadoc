@@ -24,7 +24,7 @@ from datadoc.backend.src.code_list import CodeList
 from datadoc.backend.src.core import Datadoc
 from datadoc.backend.src.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.backend.src.user_info import TestUserInfo
-from tests.backend.test_statistic_subject_mapping import (
+from datadoc.backend.tests.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
 )
 

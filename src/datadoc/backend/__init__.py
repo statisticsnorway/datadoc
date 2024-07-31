@@ -1,0 +1,1 @@
+"""Datadoc package."""
