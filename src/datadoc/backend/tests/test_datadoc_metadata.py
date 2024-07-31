@@ -25,6 +25,7 @@ from datadoc.backend.src.core import InconsistentDatasetsWarning
 from datadoc.backend.src.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.backend.src.user_info import PLACEHOLDER_EMAIL_ADDRESS
 from datadoc.backend.src.user_info import TestUserInfo
+from datadoc.backend.tests.constants import DATADOC_METADATA_MODULE_CORE
 from datadoc.backend.tests.constants import TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH
 from datadoc.backend.tests.constants import TEST_DATASETS_DIRECTORY
 from datadoc.backend.tests.constants import TEST_EXISTING_METADATA_DIRECTORY
@@ -128,7 +129,7 @@ def test_write_metadata_document(
 
 @pytest.mark.usefixtures("existing_metadata_file")
 @patch(
-    "datadoc.backend.src.user_info.get_user_info_for_current_platform",
+    DATADOC_METADATA_MODULE_CORE + ".user_info.get_user_info_for_current_platform",
     return_value=TestUserInfo(),
 )
 def test_write_metadata_document_existing_document(
