@@ -13,8 +13,6 @@ from dotenv import load_dotenv
 
 from datadoc.backend.src.utility.enums import DaplaRegion
 from datadoc.backend.src.utility.enums import DaplaService
-from datadoc.constants import DAPLA_MANUAL_TEXT
-from datadoc.frontend.components.builders import build_link_object
 
 logging.basicConfig(level=logging.DEBUG, force=True)
 
@@ -156,11 +154,3 @@ def get_organisational_unit_code() -> int | None:
 def get_data_source_code() -> int | None:
     """The code for the organisational units code list in Klass."""
     return int(_get_config_item("DATADOC_DATA_SOURCE_CODE") or 712)
-
-
-def get_dapla_manual_naming_standard_url() -> dict | None:
-    """Get the URL to naming standard in the DAPLA manual."""
-    link_href = _get_config_item("DAPLA_MANUAL_NAMING_STANDARD_URL")
-    if link_href is None:
-        return None
-    return build_link_object(DAPLA_MANUAL_TEXT, link_href)
