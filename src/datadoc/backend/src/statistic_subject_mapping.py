@@ -9,8 +9,8 @@ import requests
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
 
-from datadoc.backend.external_sources.external_sources import GetExternalSource
 from datadoc.backend.src.enums import SupportedLanguages
+from datadoc.backend.src.external_sources.external_sources import GetExternalSource
 
 if TYPE_CHECKING:
     import concurrent

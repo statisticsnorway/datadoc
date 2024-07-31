@@ -4,8 +4,8 @@ import logging
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from datadoc.backend.external_sources.external_sources import GetExternalSource
 from datadoc.backend.src.enums import SupportedLanguages
+from datadoc.backend.src.external_sources.external_sources import GetExternalSource
 
 if TYPE_CHECKING:
     import concurrent
