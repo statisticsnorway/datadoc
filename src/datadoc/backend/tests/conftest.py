@@ -235,7 +235,8 @@ def _mock_fetch_statistical_structure(
             return BeautifulSoup(f.read(), features="xml").find_all("hovedemne")
 
     mocker.patch(
-        "datadoc.backend.src.statistic_subject_mapping.StatisticSubjectMapping._fetch_data_from_external_source",
+        DATADOC_METADATA_MODULE
+        + ".statistic_subject_mapping.StatisticSubjectMapping._fetch_data_from_external_source",
         functools.partial(fake_statistical_structure),
     )
 
@@ -283,7 +284,8 @@ def _mock_fetch_dataframe(
         }
 
     mocker.patch(
-        "datadoc.backend.src.code_list.CodeList._fetch_data_from_external_source",
+        DATADOC_METADATA_MODULE
+        + ".code_list.CodeList._fetch_data_from_external_source",
         functools.partial(fake_code_list),
     )
 

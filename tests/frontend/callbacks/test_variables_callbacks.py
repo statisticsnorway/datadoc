@@ -15,8 +15,8 @@ from datadoc_model.model import LanguageStringTypeItem
 from pydantic_core import Url
 
 from datadoc import state
-from datadoc.backend.src import enums
 from datadoc.backend.src.model_validation import ObligatoryVariableWarning
+from datadoc.backend.src.utility import enums
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace

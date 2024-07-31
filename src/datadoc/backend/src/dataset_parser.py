@@ -17,8 +17,8 @@ from datadoc_model.model import LanguageStringTypeItem
 from datadoc_model.model import Variable
 from pyarrow import parquet as pq
 
-from datadoc.backend.src.enums import DataType
-from datadoc.backend.src.enums import SupportedLanguages
+from datadoc.backend.src.utility.enums import DataType
+from datadoc.backend.src.utility.enums import SupportedLanguages
 
 if t.TYPE_CHECKING:
     import pyarrow as pa

@@ -11,10 +11,10 @@ from typing import TextIO
 from datadoc_model import model
 from pydantic import model_validator
 
-from datadoc.backend.src.constants import DATE_VALIDATION_MESSAGE
-from datadoc.backend.src.constants import NUM_OBLIGATORY_DATASET_FIELDS
-from datadoc.backend.src.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
-from datadoc.backend.src.constants import OBLIGATORY_METADATA_WARNING
+from datadoc.backend.src.utility.constants import DATE_VALIDATION_MESSAGE
+from datadoc.backend.src.utility.constants import NUM_OBLIGATORY_DATASET_FIELDS
+from datadoc.backend.src.utility.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
+from datadoc.backend.src.utility.constants import OBLIGATORY_METADATA_WARNING
 from datadoc.backend.src.utils import get_missing_obligatory_dataset_fields
 from datadoc.backend.src.utils import get_missing_obligatory_variables_fields
 from datadoc.backend.src.utils import get_timestamp_now

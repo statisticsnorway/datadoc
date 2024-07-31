@@ -13,7 +13,7 @@ from datadoc_model import model
 
 from datadoc import config
 from datadoc import state
-from datadoc.backend.src import enums
+from datadoc.backend.src.utility import enums
 from datadoc.constants import DATE_VALIDATION_MESSAGE
 from datadoc.constants import VALIDATION_ERROR
 from datadoc.frontend.components.dataset_tab import build_dataset_tab

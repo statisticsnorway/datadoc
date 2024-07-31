@@ -7,8 +7,8 @@ from typing import Protocol
 import jwt
 
 from datadoc import config
-from datadoc.backend.src.enums import DaplaRegion
-from datadoc.backend.src.enums import DaplaService
+from datadoc.backend.src.utility.enums import DaplaRegion
+from datadoc.backend.src.utility.enums import DaplaService
 
 logger = logging.getLogger(__name__)
 

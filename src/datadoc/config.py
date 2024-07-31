@@ -11,8 +11,8 @@ from typing import Literal
 from dotenv import dotenv_values
 from dotenv import load_dotenv
 
-from datadoc.backend.src.enums import DaplaRegion
-from datadoc.backend.src.enums import DaplaService
+from datadoc.backend.src.utility.enums import DaplaRegion
+from datadoc.backend.src.utility.enums import DaplaService
 from datadoc.constants import DAPLA_MANUAL_TEXT
 from datadoc.frontend.components.builders import build_link_object
 

@@ -6,7 +6,7 @@ import functools
 from enum import Enum
 
 from datadoc import state
-from datadoc.backend.src import enums
+from datadoc.backend.src.utility import enums
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_MULTILANGUAGE_INPUT
 from datadoc.frontend.fields.display_base import FieldTypes
