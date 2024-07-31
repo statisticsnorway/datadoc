@@ -86,6 +86,7 @@ def test_write_metadata_document_created_date(
     assert metadata.dataset.metadata_created_date is not None
 
 
+# TODO(@tilen1976): Frontend? remove state?  # noqa: TD003
 @pytest.mark.parametrize(
     ("variable_date", "date_from", "date_until"),
     [
@@ -131,6 +132,7 @@ def test_variables_inherit_temporality_type_value(metadata: Datadoc):
     )
 
 
+# TODO(@tilen1976): state?  # noqa: TD003
 def test_obligatory_metadata_dataset_warning(metadata: Datadoc):
     state.metadata = metadata
     with pytest.warns(
@@ -148,6 +150,7 @@ def test_obligatory_metadata_dataset_warning(metadata: Datadoc):
         )
 
 
+# TODO(@tilen1976): state?  # noqa: TD003
 def test_obligatory_metadata_variables_warning(metadata: Datadoc):
     state.metadata = metadata
     with pytest.warns(
@@ -167,6 +170,7 @@ def test_obligatory_metadata_variables_warning(metadata: Datadoc):
             )
 
 
+# TODO(@tilen1976): state?  # noqa: TD003
 def test_obligatory_metadata_dataset_warning_name(metadata: Datadoc):
     state.metadata = metadata
     metadata.dataset.name = None
@@ -206,6 +210,7 @@ def test_obligatory_metadata_dataset_warning_name(metadata: Datadoc):
     assert "name" in str(record3[0].message)
 
 
+# TODO(@tilen1976): state?  # noqa: TD003
 def test_obligatory_metadata_dataset_warning_description(metadata: Datadoc):
     """Field name 'description' is a special case because it can match other field names like 'version_description'."""
     state.metadata = metadata
@@ -232,6 +237,7 @@ def test_obligatory_metadata_dataset_warning_description(metadata: Datadoc):
     assert not re.search(r"\bdescription\b", missing_obligatory_dataset)
 
 
+# TODO(@tilen1976): state?  # noqa: TD003
 def test_obligatory_metadata_dataset_warning_multiple_languages(
     metadata: Datadoc,
 ):
@@ -280,6 +286,7 @@ def test_obligatory_metadata_dataset_warning_multiple_languages(
     assert re.search(r"\bdescription\b", missing_obligatory_dataset)
 
 
+# TODO(@tilen1976): state?  # noqa: TD003
 def test_obligatory_metadata_variables_warning_name(metadata: Datadoc):
     state.metadata = metadata
     variable_with_name = "{'pers_id': ['name']}"
