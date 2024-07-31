@@ -24,6 +24,8 @@ from datadoc.backend.src.code_list import CodeList
 from datadoc.backend.src.core import Datadoc
 from datadoc.backend.src.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.backend.src.user_info import TestUserInfo
+from datadoc.backend.tests.constants import CODE_LIST_DIR
+from datadoc.backend.tests.constants import DATADOC_METADATA_MODULE
 from datadoc.backend.tests.constants import TEST_DATASETS_DIRECTORY
 from datadoc.backend.tests.constants import TEST_EXISTING_METADATA_DIRECTORY
 from datadoc.backend.tests.constants import TEST_EXISTING_METADATA_FILE_NAME
@@ -37,8 +39,6 @@ from datadoc.backend.tests.constants import TEST_RESOURCES_DIRECTORY
 from datadoc.backend.tests.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
 )
-
-CODE_LIST_DIR = "code_list"
 
 if TYPE_CHECKING:
     from pytest_mock import MockerFixture
@@ -60,11 +60,11 @@ def dummy_timestamp() -> datetime:
     return datetime(2022, 1, 1, tzinfo=timezone.utc)
 
 
-# TODO(@tilen1976): hardcode test  # noqa: TD003
+# TODO(@tilen1976): hardcoded test  # noqa: TD003
 @pytest.fixture()
 def _mock_timestamp(mocker: MockerFixture, dummy_timestamp: datetime) -> None:
     mocker.patch(
-        "datadoc.backend.src.core.get_timestamp_now",
+        DATADOC_METADATA_MODULE + ".core.get_timestamp_now",
         return_value=dummy_timestamp,
     )
 
@@ -72,7 +72,7 @@ def _mock_timestamp(mocker: MockerFixture, dummy_timestamp: datetime) -> None:
 @pytest.fixture()
 def _mock_user_info(mocker: MockerFixture) -> None:
     mocker.patch(
-        "datadoc.backend.src.user_info.get_user_info_for_current_platform",
+        DATADOC_METADATA_MODULE + ".user_info.get_user_info_for_current_platform",
         return_value=TestUserInfo(),
     )
 
