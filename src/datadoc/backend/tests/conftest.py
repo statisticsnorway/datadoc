@@ -17,7 +17,6 @@ import pandas as pd
 import pytest
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
-from datadoc_model import model
 
 from datadoc import state
 from datadoc.backend.src.code_list import CodeList
@@ -151,21 +150,7 @@ def nynorsk_name() -> str:
     return "Nynorsk namn"
 
 
-@pytest.fixture()
-def language_object(
-    english_name: str,
-    bokmål_name: str,
-    nynorsk_name: str,
-) -> model.LanguageStringType:
-    return model.LanguageStringType(
-        [
-            model.LanguageStringTypeItem(languageCode="en", languageText=english_name),
-            model.LanguageStringTypeItem(languageCode="nb", languageText=bokmål_name),
-            model.LanguageStringTypeItem(languageCode="nn", languageText=nynorsk_name),
-        ],
-    )
-
-
+# TODO(@tilen1976): unused?  # noqa: TD003
 @pytest.fixture()
 def language_dicts(english_name: str, bokmål_name: str) -> list[dict[str, str]]:
     return [
@@ -293,15 +278,6 @@ def _mock_fetch_dataframe(
 @pytest.fixture()
 def code_list_fake_structure(_mock_fetch_dataframe, thread_pool_executor) -> CodeList:
     return CodeList(thread_pool_executor, 100)
-
-
-@pytest.fixture()
-def _code_list_fake_classifications_variables(code_list_fake_structure) -> None:
-    state.measurement_units = code_list_fake_structure
-    state.measurement_units.wait_for_external_result()
-
-    state.data_sources = code_list_fake_structure
-    state.data_sources.wait_for_external_result()
 
 
 @pytest.fixture()
