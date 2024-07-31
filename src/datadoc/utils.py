@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import datetime
 import importlib
 
 METADATA_DOCUMENT_FILE_SUFFIX = "__DOC.json"
@@ -31,11 +30,6 @@ def pick_random_port() -> int:
     with socket.socket() as sock:
         sock.bind(("", 0))
         return int(sock.getsockname()[1])
-
-
-def get_timestamp_now() -> datetime.datetime:
-    """Return a timestamp for the current moment."""
-    return datetime.datetime.now(tz=datetime.timezone.utc)
 
 
 def get_app_version() -> str:

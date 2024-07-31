@@ -17,11 +17,11 @@ from datadoc.backend.src.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
 from datadoc.backend.src.constants import OBLIGATORY_METADATA_WARNING
 from datadoc.backend.src.utils import get_missing_obligatory_dataset_fields
 from datadoc.backend.src.utils import get_missing_obligatory_variables_fields
+from datadoc.backend.src.utils import get_timestamp_now
 from datadoc.backend.src.utils import incorrect_date_order
 from datadoc.backend.src.utils import num_obligatory_dataset_fields_completed
 from datadoc.backend.src.utils import num_obligatory_variables_fields_completed
 from datadoc.backend.src.utils import set_variables_inherit_from_dataset
-from datadoc.utils import get_timestamp_now
 
 if TYPE_CHECKING:
     from datetime import datetime

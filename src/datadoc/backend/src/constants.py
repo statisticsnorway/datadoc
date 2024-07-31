@@ -88,3 +88,5 @@ DATASET_FIELDS_FROM_EXISTING_METADATA = [
     "custom_type",
     "owner",
 ]
+
+METADATA_DOCUMENT_FILE_SUFFIX = "__DOC.json"

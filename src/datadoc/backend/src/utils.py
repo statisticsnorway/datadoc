@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import datetime  # noqa: TCH003 import is needed in xdoctest
+import datetime  # import is needed in xdoctest
 import logging
 import pathlib
 import uuid
@@ -25,6 +25,11 @@ from datadoc.backend.src.enums import DataSetState
 from datadoc.backend.src.enums import VariableRole
 
 logger = logging.getLogger(__name__)
+
+
+def get_timestamp_now() -> datetime.datetime:
+    """Return a timestamp for the current moment."""
+    return datetime.datetime.now(tz=datetime.timezone.utc)
 
 
 def normalize_path(path: str) -> pathlib.Path | CloudPath:

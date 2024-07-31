@@ -17,6 +17,7 @@ from datadoc.backend.src import user_info
 from datadoc.backend.src.constants import DATASET_FIELDS_FROM_EXISTING_METADATA
 from datadoc.backend.src.constants import DEFAULT_SPATIAL_COVERAGE_DESCRIPTION
 from datadoc.backend.src.constants import INCONSISTENCIES_MESSAGE
+from datadoc.backend.src.constants import METADATA_DOCUMENT_FILE_SUFFIX
 from datadoc.backend.src.constants import NUM_OBLIGATORY_DATASET_FIELDS
 from datadoc.backend.src.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
 from datadoc.backend.src.dapla_dataset_path_info import DaplaDatasetPathInfo
@@ -30,13 +31,12 @@ from datadoc.backend.src.model_validation import ValidateDatadocMetadata
 from datadoc.backend.src.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.backend.src.utils import calculate_percentage
 from datadoc.backend.src.utils import derive_assessment_from_state
+from datadoc.backend.src.utils import get_timestamp_now
 from datadoc.backend.src.utils import normalize_path
 from datadoc.backend.src.utils import num_obligatory_dataset_fields_completed
 from datadoc.backend.src.utils import num_obligatory_variables_fields_completed
 from datadoc.backend.src.utils import set_default_values_dataset
 from datadoc.backend.src.utils import set_default_values_variables
-from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
-from datadoc.utils import get_timestamp_now
 
 if TYPE_CHECKING:
     import pathlib
