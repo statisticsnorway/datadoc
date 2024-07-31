@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 
 from datadoc_model import model
 
-from datadoc import config
+from datadoc.backend.src import config
 from datadoc.backend.src import user_info
 from datadoc.backend.src.constants import DATASET_FIELDS_FROM_EXISTING_METADATA
 from datadoc.backend.src.constants import DEFAULT_SPATIAL_COVERAGE_DESCRIPTION
