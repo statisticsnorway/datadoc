@@ -15,7 +15,6 @@ from dash import html
 from datadoc import state
 from datadoc.enums import LanguageStringsEnum
 from datadoc.enums import SupportedLanguages
-from datadoc.frontend.callbacks.utils import get_language_strings_enum
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -63,10 +62,10 @@ def get_enum_options(
     """Generate the list of options based on the currently chosen language."""
     dropdown_options = [
         {
-            "title": i.get_value_for_language(SupportedLanguages.NORSK_BOKMÅL),
+            "title": i.get_value_for_language(SupportedLanguages.NORSK_BOKMÅL) or "",
             "id": i.name,
         }
-        for i in get_language_strings_enum(enum)  # type: ignore [attr-defined]
+        for i in enum  # type: ignore [attr-defined]
     ]
     dropdown_options.insert(0, {"title": DROPDOWN_DESELECT_OPTION, "id": ""})
     return dropdown_options
