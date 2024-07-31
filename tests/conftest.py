@@ -3,14 +3,11 @@
 from __future__ import annotations
 
 import concurrent
-import copy
 import functools
 import os
-import pathlib
 import shutil
 from datetime import datetime
 from datetime import timezone
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pandas as pd
@@ -28,16 +25,14 @@ from datadoc.backend.tests.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
 )
 
-from .utils import TEST_DATASETS_DIRECTORY
-from .utils import TEST_EXISTING_METADATA_DIRECTORY
-from .utils import TEST_EXISTING_METADATA_FILE_NAME
-from .utils import TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH
-from .utils import TEST_NAMING_STANDARD_COMPATIBLE_DATASET
 from .utils import TEST_PARQUET_FILE_NAME
 from .utils import TEST_PARQUET_FILEPATH
 from .utils import TEST_RESOURCES_DIRECTORY
 
 if TYPE_CHECKING:
+    import pathlib
+    from pathlib import Path
+
     from pytest_mock import MockerFixture
 
 
@@ -56,6 +51,7 @@ def faker_session_locale():
     return ["no_NO"]
 
 
+# TODO(@tilen1976): private?  # noqa: TD003
 @pytest.fixture()
 def dummy_timestamp() -> datetime:
     return datetime(2022, 1, 1, tzinfo=timezone.utc)
@@ -89,41 +85,6 @@ def metadata(
         str(tmp_path / TEST_PARQUET_FILE_NAME),
         statistic_subject_mapping=subject_mapping_fake_statistical_structure,
     )
-
-
-@pytest.fixture()
-def metadata_merged(
-    _mock_timestamp: None,
-    _mock_user_info: None,
-    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
-    tmp_path: Path,
-) -> Datadoc:
-    target = tmp_path / TEST_NAMING_STANDARD_COMPATIBLE_DATASET
-    target.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy(
-        TEST_DATASETS_DIRECTORY / TEST_NAMING_STANDARD_COMPATIBLE_DATASET,
-        target,
-    )
-    return Datadoc(
-        str(target),
-        str(TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH),
-        statistic_subject_mapping=subject_mapping_fake_statistical_structure,
-    )
-
-
-@pytest.fixture()
-def existing_metadata_path() -> Path:
-    return TEST_EXISTING_METADATA_DIRECTORY
-
-
-@pytest.fixture()
-def existing_metadata_file(tmp_path: Path, existing_metadata_path: Path) -> Path:
-    # Setup by copying the file into the relevant directory
-    shutil.copy(
-        existing_metadata_path / TEST_EXISTING_METADATA_FILE_NAME,
-        tmp_path / TEST_EXISTING_METADATA_FILE_NAME,
-    )
-    return tmp_path / TEST_EXISTING_METADATA_FILE_NAME
 
 
 @pytest.fixture(autouse=True)
@@ -166,6 +127,7 @@ def language_object(
     )
 
 
+# TODO(@tilen1976): i bruk?  # noqa: TD003
 @pytest.fixture()
 def language_dicts(english_name: str, bokmål_name: str) -> list[dict[str, str]]:
     return [
@@ -174,35 +136,13 @@ def language_dicts(english_name: str, bokmål_name: str) -> list[dict[str, str]]
     ]
 
 
+# TODO(@tilen1976): i bruk?  # noqa: TD003
 @pytest.fixture()
 def existing_data_path() -> Path:
     return TEST_PARQUET_FILEPATH
 
 
-@pytest.fixture()
-def full_dataset_state_path(
-    path_parts_to_insert: str | list[str],
-) -> pathlib.Path:
-    """Create a longer path structure from just one section.
-
-    Examples:
-    >>> full_dataset_state_path('inndata')
-    'tests/inndata/resources/person_data_v1.parquet'
-    >>> full_dataset_state_path(['klargjorte_data', 'arbmark'])
-    'tests/klargjorte_data/arbmark/resources/person_data_v1.parquet'
-    """
-    split_path = list(pathlib.Path(TEST_PARQUET_FILEPATH).parts)
-    new_path = copy.copy(split_path)
-
-    if isinstance(path_parts_to_insert, str):
-        parts = [path_parts_to_insert]
-    else:
-        parts = path_parts_to_insert
-    for p in parts:
-        new_path.insert(-2, p)
-    return pathlib.Path().joinpath(*new_path)
-
-
+# TODO(@tilen1976): private?  # noqa: TD003
 @pytest.fixture()
 def subject_xml_file_path() -> pathlib.Path:
     return (
@@ -241,29 +181,19 @@ def _mock_fetch_statistical_structure(
     )
 
 
-@pytest.fixture()
-def subject_mapping_http_exception(
-    requests_mock,
-    exception_to_raise,
-    thread_pool_executor,
-) -> StatisticSubjectMapping:
-    requests_mock.get(
-        "http://test.some.url.com",
-        exc=exception_to_raise,
-    )
-    return StatisticSubjectMapping(thread_pool_executor, "http://test.some.url.com")
-
-
+# TODO(@tilen1976): private?  # noqa: TD003
 @pytest.fixture()
 def code_list_csv_filepath_nb() -> pathlib.Path:
     return TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_nb.csv"
 
 
+# TODO(@tilen1976): private?  # noqa: TD003
 @pytest.fixture()
 def code_list_csv_filepath_nn() -> pathlib.Path:
     return TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_nn.csv"
 
 
+# TODO(@tilen1976): private?  # noqa: TD003
 @pytest.fixture()
 def code_list_csv_filepath_en() -> pathlib.Path:
     return TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_en.csv"
@@ -302,14 +232,3 @@ def _code_list_fake_classifications_variables(code_list_fake_structure) -> None:
 
     state.data_sources = code_list_fake_structure
     state.data_sources.wait_for_external_result()
-
-
-@pytest.fixture()
-def copy_dataset_to_path(
-    tmp_path: pathlib.Path,
-    full_dataset_state_path: pathlib.Path,
-) -> pathlib.Path:
-    temporary_dataset = tmp_path / full_dataset_state_path
-    temporary_dataset.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy(TEST_PARQUET_FILEPATH, temporary_dataset)
-    return temporary_dataset
