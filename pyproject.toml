@@ -200,6 +200,7 @@ classmethod-decorators = [
     "ANN206", # type annotations don't add value for test functions
     "D103",   # docstrings are overkill for test functions
     "D100",
+    "PLC2401", # norwegian characters allowed
 ]
 
 "src/datadoc/backend/tests**" = [
@@ -213,6 +214,7 @@ classmethod-decorators = [
     "ANN206", # type annotations don't add value for test functions
     "D103",   # docstrings are overkill for test functions
     "D100",
+    "PLC2401", # norwegian characters allowed
 ]
 
 "*/__init__.py" = ["F401"]
