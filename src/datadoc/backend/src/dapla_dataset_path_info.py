@@ -15,8 +15,8 @@ from typing import Literal
 import arrow
 from cloudpathlib import GSPath
 
-from datadoc.enums import DataSetState
-from datadoc.enums import SupportedLanguages
+from datadoc.backend.src.enums import DataSetState
+from datadoc.backend.src.enums import SupportedLanguages
 
 if TYPE_CHECKING:
     import datetime

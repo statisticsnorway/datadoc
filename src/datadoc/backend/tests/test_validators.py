@@ -15,10 +15,10 @@ from pydantic import ValidationError
 # TODO(@tilen1976): what to do with state?  # noqa: TD003
 from datadoc import state
 from datadoc.backend.src.constants import OBLIGATORY_METADATA_WARNING
+from datadoc.backend.src.enums import TemporalityTypeType
 from datadoc.backend.src.model_validation import ObligatoryDatasetWarning
 from datadoc.backend.src.model_validation import ObligatoryVariableWarning
 from datadoc.backend.src.utils import incorrect_date_order
-from datadoc.enums import TemporalityTypeType
 
 if TYPE_CHECKING:
     from datadoc.backend.src.core import Datadoc

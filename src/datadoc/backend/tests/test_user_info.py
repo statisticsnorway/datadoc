@@ -5,6 +5,8 @@ import pytest
 from faker import Faker
 
 from datadoc.backend.src import user_info
+from datadoc.backend.src.enums import DaplaRegion
+from datadoc.backend.src.enums import DaplaService
 from datadoc.backend.src.user_info import PLACEHOLDER_EMAIL_ADDRESS
 from datadoc.backend.src.user_info import DaplaLabUserInfo
 from datadoc.backend.src.user_info import JupyterHubUserInfo
@@ -12,11 +14,9 @@ from datadoc.backend.src.user_info import UnknownUserInfo
 from datadoc.backend.src.user_info import UserInfo
 
 # TODO(@tilen1976): check where to put these  # noqa: TD003
-from datadoc.config import DAPLA_REGION
-from datadoc.config import DAPLA_SERVICE
-from datadoc.config import JUPYTERHUB_USER
-from datadoc.enums import DaplaRegion
-from datadoc.enums import DaplaService
+from datadoc.backend.tests.constants import DAPLA_REGION
+from datadoc.backend.tests.constants import DAPLA_SERVICE
+from datadoc.backend.tests.constants import JUPYTERHUB_USER
 
 
 @pytest.fixture()

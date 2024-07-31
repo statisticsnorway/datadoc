@@ -13,7 +13,7 @@ import ssb_dash_components as ssb
 from dash import html
 
 from datadoc import state
-from datadoc.enums import SupportedLanguages
+from datadoc.backend.src.enums import SupportedLanguages
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
 
 if TYPE_CHECKING:

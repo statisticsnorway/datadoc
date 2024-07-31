@@ -22,6 +22,12 @@ from datadoc_model.model import Variable
 from datadoc.backend.src.core import Datadoc
 from datadoc.backend.src.core import InconsistentDatasetsError
 from datadoc.backend.src.core import InconsistentDatasetsWarning
+from datadoc.backend.src.enums import Assessment
+from datadoc.backend.src.enums import DataSetState
+from datadoc.backend.src.enums import DataSetStatus
+from datadoc.backend.src.enums import DataType
+from datadoc.backend.src.enums import IsPersonalData
+from datadoc.backend.src.enums import VariableRole
 from datadoc.backend.src.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.backend.src.user_info import PLACEHOLDER_EMAIL_ADDRESS
 from datadoc.backend.src.user_info import TestUserInfo
@@ -37,12 +43,6 @@ from datadoc.backend.tests.constants import TEST_NAMING_STANDARD_COMPATIBLE_DATA
 from datadoc.backend.tests.constants import TEST_PARQUET_FILEPATH
 from datadoc.backend.tests.constants import TEST_PROCESSED_DATA_POPULATION_DIRECTORY
 from datadoc.backend.tests.constants import TEST_RESOURCES_DIRECTORY
-from datadoc.enums import Assessment
-from datadoc.enums import DataSetState
-from datadoc.enums import DataSetStatus
-from datadoc.enums import DataType
-from datadoc.enums import IsPersonalData
-from datadoc.enums import VariableRole
 
 if TYPE_CHECKING:
     from collections.abc import Generator

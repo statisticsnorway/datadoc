@@ -58,3 +58,8 @@ DATADOC_METADATA_MODULE = "datadoc.backend.src"
 DATADOC_METADATA_MODULE_CORE = "datadoc.backend.src.core"
 
 DATADOC_METADATA_MODULE_UTILS = "datadoc.backend.src.utils"
+
+# From config
+JUPYTERHUB_USER = "JUPYTERHUB_USER"
+DAPLA_REGION = "DAPLA_REGION"
+DAPLA_SERVICE = "DAPLA_SERVICE"

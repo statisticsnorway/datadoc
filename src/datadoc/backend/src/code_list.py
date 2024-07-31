@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from datadoc.backend.external_sources.external_sources import GetExternalSource
-from datadoc.enums import SupportedLanguages
+from datadoc.backend.src.enums import SupportedLanguages
 
 if TYPE_CHECKING:
     import concurrent

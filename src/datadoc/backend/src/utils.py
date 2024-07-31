@@ -20,9 +20,9 @@ from datadoc.backend.src.constants import OBLIGATORY_VARIABLES_METADATA_IDENTIFI
 from datadoc.backend.src.constants import (
     OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_MULTILANGUAGE,
 )
-from datadoc.enums import Assessment
-from datadoc.enums import DataSetState
-from datadoc.enums import VariableRole
+from datadoc.backend.src.enums import Assessment
+from datadoc.backend.src.enums import DataSetState
+from datadoc.backend.src.enums import VariableRole
 
 logger = logging.getLogger(__name__)
 

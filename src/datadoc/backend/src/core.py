@@ -21,6 +21,7 @@ from datadoc.backend.src.constants import NUM_OBLIGATORY_DATASET_FIELDS
 from datadoc.backend.src.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
 from datadoc.backend.src.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.src.dataset_parser import DatasetParser
+from datadoc.backend.src.enums import DataSetStatus
 from datadoc.backend.src.model_backwards_compatibility import (
     is_metadata_in_container_structure,
 )
@@ -34,7 +35,6 @@ from datadoc.backend.src.utils import num_obligatory_dataset_fields_completed
 from datadoc.backend.src.utils import num_obligatory_variables_fields_completed
 from datadoc.backend.src.utils import set_default_values_dataset
 from datadoc.backend.src.utils import set_default_values_variables
-from datadoc.enums import DataSetStatus
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
 from datadoc.utils import get_timestamp_now
 
