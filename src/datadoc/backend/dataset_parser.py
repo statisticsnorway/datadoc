@@ -171,8 +171,7 @@ class DatasetParserParquet(DatasetParser):
     def get_fields(self) -> list[Variable]:
         """Extract the fields from this dataset."""
         with self.dataset.open(mode="rb") as f:
-            # Type stubs for pyarrow are incorrect see https://github.com/zen-xu/pyarrow-stubs/issues/4
-            schema: pa.Schema = pq.read_schema(f)  # type: ignore  # noqa: PGH003
+            schema: pa.Schema = pq.read_schema(f)  # type: ignore [arg-type]
         return [
             Variable(
                 short_name=data_field.name.strip(),

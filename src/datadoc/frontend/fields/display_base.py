@@ -13,12 +13,12 @@ import ssb_dash_components as ssb
 from dash import html
 
 from datadoc import state
+from datadoc.enums import LanguageStringsEnum
 from datadoc.enums import SupportedLanguages
 from datadoc.frontend.callbacks.utils import get_language_strings_enum
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-    from enum import Enum
 
     from dash.development.base_component import Component
     from datadoc_model.model import LanguageStringType
@@ -58,7 +58,7 @@ METADATA_LANGUAGES = [
 
 
 def get_enum_options(
-    enum: Enum,
+    enum: type[LanguageStringsEnum],
 ) -> list[dict[str, str]]:
     """Generate the list of options based on the currently chosen language."""
     dropdown_options = [
