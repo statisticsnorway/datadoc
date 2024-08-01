@@ -59,7 +59,6 @@ def dummy_timestamp() -> datetime:
     return datetime(2022, 1, 1, tzinfo=timezone.utc)
 
 
-# TODO(@tilen1976): hardcoded test  # noqa: TD003
 @pytest.fixture()
 def _mock_timestamp(mocker: MockerFixture, dummy_timestamp: datetime) -> None:
     mocker.patch(
@@ -125,6 +124,7 @@ def existing_metadata_file(tmp_path: Path, existing_metadata_path: Path) -> Path
     return tmp_path / TEST_EXISTING_METADATA_FILE_NAME
 
 
+# TODO(@tilen1976): Is this necessary in backend?  # noqa: TD003
 @pytest.fixture(autouse=True)
 def _clear_state() -> None:
     """Global fixture, referred to in pytest.ini."""
@@ -150,7 +150,7 @@ def nynorsk_name() -> str:
     return "Nynorsk namn"
 
 
-# TODO(@tilen1976): unused?  # noqa: TD003
+# TODO(@tilen1976): unused in backend?  # noqa: TD003
 @pytest.fixture()
 def language_dicts(english_name: str, bokmål_name: str) -> list[dict[str, str]]:
     return [
