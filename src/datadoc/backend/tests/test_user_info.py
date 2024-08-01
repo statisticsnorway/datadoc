@@ -12,8 +12,6 @@ from datadoc.backend.src.user_info import UnknownUserInfo
 from datadoc.backend.src.user_info import UserInfo
 from datadoc.backend.src.utility.enums import DaplaRegion
 from datadoc.backend.src.utility.enums import DaplaService
-
-# TODO(@tilen1976): check where to put these  # noqa: TD003
 from datadoc.backend.tests.constants import DAPLA_REGION
 from datadoc.backend.tests.constants import DAPLA_SERVICE
 from datadoc.backend.tests.constants import JUPYTERHUB_USER
