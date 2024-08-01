@@ -19,13 +19,13 @@ from datadoc_model.model import DatadocMetadata
 from datadoc_model.model import Dataset
 from datadoc_model.model import Variable
 
-from datadoc.backend.constants import DATASET_FIELDS_FROM_EXISTING_METADATA
 from datadoc.backend.src.core import Datadoc
 from datadoc.backend.src.core import InconsistentDatasetsError
 from datadoc.backend.src.core import InconsistentDatasetsWarning
 from datadoc.backend.src.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.backend.src.user_info import PLACEHOLDER_EMAIL_ADDRESS
 from datadoc.backend.src.user_info import TestUserInfo
+from datadoc.backend.src.utility.constants import DATASET_FIELDS_FROM_EXISTING_METADATA
 from datadoc.backend.src.utility.enums import Assessment
 from datadoc.backend.src.utility.enums import DataSetState
 from datadoc.backend.src.utility.enums import DataSetStatus
