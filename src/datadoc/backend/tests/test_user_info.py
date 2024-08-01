@@ -14,9 +14,9 @@ from datadoc.backend.src.utility.enums import DaplaRegion
 from datadoc.backend.src.utility.enums import DaplaService
 
 # TODO(@tilen1976): check where to put these  # noqa: TD003
-from datadoc.backend.tests.utility.constants import DAPLA_REGION
-from datadoc.backend.tests.utility.constants import DAPLA_SERVICE
-from datadoc.backend.tests.utility.constants import JUPYTERHUB_USER
+from datadoc.backend.tests.constants import DAPLA_REGION
+from datadoc.backend.tests.constants import DAPLA_SERVICE
+from datadoc.backend.tests.constants import JUPYTERHUB_USER
 
 
 @pytest.fixture()

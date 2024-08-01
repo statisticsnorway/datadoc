@@ -2,8 +2,8 @@ import pytest
 
 from datadoc.backend.src.code_list import CodeList
 from datadoc.backend.src.code_list import CodeListItem
-from datadoc.backend.tests.utility.conftest import CODE_LIST_DIR
-from datadoc.backend.tests.utility.constants import TEST_RESOURCES_DIRECTORY
+from datadoc.backend.tests.conftest import CODE_LIST_DIR
+from datadoc.backend.tests.constants import TEST_RESOURCES_DIRECTORY
 
 
 @pytest.mark.parametrize(

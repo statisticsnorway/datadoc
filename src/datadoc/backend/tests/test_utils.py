@@ -9,9 +9,9 @@ from cloudpathlib.local import LocalGSPath
 from datadoc.backend.src.utility.utils import calculate_percentage
 from datadoc.backend.src.utility.utils import incorrect_date_order
 from datadoc.backend.src.utility.utils import normalize_path
-from datadoc.backend.tests.utility.constants import DATADOC_METADATA_MODULE_UTILS
-from datadoc.backend.tests.utility.constants import TEST_BUCKET_PARQUET_FILEPATH
-from datadoc.backend.tests.utility.constants import TEST_PARQUET_FILEPATH
+from datadoc.backend.tests.constants import DATADOC_METADATA_MODULE_UTILS
+from datadoc.backend.tests.constants import TEST_BUCKET_PARQUET_FILEPATH
+from datadoc.backend.tests.constants import TEST_PARQUET_FILEPATH
 
 
 @pytest.mark.parametrize(

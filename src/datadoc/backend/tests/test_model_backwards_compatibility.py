@@ -14,8 +14,8 @@ from datadoc.backend.src.model_backwards_compatibility import (
     is_metadata_in_container_structure,
 )
 from datadoc.backend.src.model_backwards_compatibility import upgrade_metadata
-from datadoc.backend.tests.utility.constants import TEST_COMPATIBILITY_DIRECTORY
-from datadoc.backend.tests.utility.constants import TEST_EXISTING_METADATA_FILE_NAME
+from datadoc.backend.tests.constants import TEST_COMPATIBILITY_DIRECTORY
+from datadoc.backend.tests.constants import TEST_EXISTING_METADATA_FILE_NAME
 
 BACKWARDS_COMPATIBLE_VERSION_DIRECTORIES = [
     d for d in TEST_COMPATIBILITY_DIRECTORY.iterdir() if d.is_dir()
