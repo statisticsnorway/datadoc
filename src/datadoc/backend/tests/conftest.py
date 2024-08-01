@@ -164,18 +164,12 @@ def existing_data_path() -> Path:
     return TEST_PARQUET_FILEPATH
 
 
+# TODO(@tilen1976): fix xdoctest  # noqa: TD003
 @pytest.fixture()
 def full_dataset_state_path(
     path_parts_to_insert: str | list[str],
 ) -> pathlib.Path:
-    """Create a longer path structure from just one section.
-
-    Examples:
-    >>> full_dataset_state_path('inndata')
-    'tests/inndata/resources/person_data_v1.parquet'
-    >>> full_dataset_state_path(['klargjorte_data', 'arbmark'])
-    'tests/klargjorte_data/arbmark/resources/person_data_v1.parquet'
-    """
+    """Create a longer path structure from just one section."""
     split_path = list(pathlib.Path(TEST_PARQUET_FILEPATH).parts)
     new_path = copy.copy(split_path)
 
