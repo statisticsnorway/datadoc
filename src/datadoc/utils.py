@@ -7,6 +7,7 @@ import importlib
 METADATA_DOCUMENT_FILE_SUFFIX = "__DOC.json"
 
 
+# TODO(@tilen1976): Do we need this in backend?  # noqa: TD003
 def running_in_notebook() -> bool:
     """Return True if running in Jupyter Notebook."""
     try:
