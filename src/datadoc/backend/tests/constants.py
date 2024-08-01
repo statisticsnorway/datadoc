@@ -57,7 +57,7 @@ DATADOC_METADATA_MODULE = "datadoc.backend.src"
 
 DATADOC_METADATA_MODULE_CORE = "datadoc.backend.src.core"
 
-DATADOC_METADATA_MODULE_UTILS = "datadoc.backend.src.utils"
+DATADOC_METADATA_MODULE_UTILS = "datadoc.backend.src.utility.utils"
 
 # From config
 JUPYTERHUB_USER = "JUPYTERHUB_USER"

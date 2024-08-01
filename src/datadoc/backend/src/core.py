@@ -29,14 +29,14 @@ from datadoc.backend.src.utility.constants import METADATA_DOCUMENT_FILE_SUFFIX
 from datadoc.backend.src.utility.constants import NUM_OBLIGATORY_DATASET_FIELDS
 from datadoc.backend.src.utility.constants import NUM_OBLIGATORY_VARIABLES_FIELDS
 from datadoc.backend.src.utility.enums import DataSetStatus
-from datadoc.backend.src.utils import calculate_percentage
-from datadoc.backend.src.utils import derive_assessment_from_state
-from datadoc.backend.src.utils import get_timestamp_now
-from datadoc.backend.src.utils import normalize_path
-from datadoc.backend.src.utils import num_obligatory_dataset_fields_completed
-from datadoc.backend.src.utils import num_obligatory_variables_fields_completed
-from datadoc.backend.src.utils import set_default_values_dataset
-from datadoc.backend.src.utils import set_default_values_variables
+from datadoc.backend.src.utility.utils import calculate_percentage
+from datadoc.backend.src.utility.utils import derive_assessment_from_state
+from datadoc.backend.src.utility.utils import get_timestamp_now
+from datadoc.backend.src.utility.utils import normalize_path
+from datadoc.backend.src.utility.utils import num_obligatory_dataset_fields_completed
+from datadoc.backend.src.utility.utils import num_obligatory_variables_fields_completed
+from datadoc.backend.src.utility.utils import set_default_values_dataset
+from datadoc.backend.src.utility.utils import set_default_values_variables
 
 if TYPE_CHECKING:
     import pathlib
