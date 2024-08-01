@@ -148,6 +148,7 @@ def mypy(session: Session) -> None:
         "pytest",
         "types-setuptools",
         "pandas-stubs",
+        "pyarrow-stubs",
         "types-Pygments",
         "types-colorama",
         "types-beautifulsoup4",

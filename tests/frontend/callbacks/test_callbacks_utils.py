@@ -1,12 +1,8 @@
-from enum import Enum
-
 import pytest
 from dash import html
 from datadoc_model import model
 
-from datadoc.enums import LanguageStringsEnum
 from datadoc.frontend.callbacks.utils import find_existing_language_string
-from datadoc.frontend.callbacks.utils import get_language_strings_enum
 from datadoc.frontend.callbacks.utils import render_tabs
 
 
@@ -56,31 +52,6 @@ def test_find_existing_language_string_pre_existing_strings(
             model.LanguageStringTypeItem(languageCode="nn", languageText=nynorsk_name),
         ],
     )
-
-
-@pytest.mark.parametrize(
-    "model_enum",
-    [
-        model.Assessment,
-        model.DataSetStatus,
-        model.DataSetState,
-        model.DataType,
-        model.VariableRole,
-        model.TemporalityTypeType,
-    ],
-)
-def test_get_language_strings_enum(model_enum: Enum):
-    assert issubclass(get_language_strings_enum(model_enum), LanguageStringsEnum)  # type: ignore [arg-type]
-
-
-def test_get_language_strings_enum_unknown():
-    class TestEnum(Enum):
-        """Test enum."""
-
-        TEST = "test"
-
-    with pytest.raises(AttributeError):
-        get_language_strings_enum(TestEnum)
 
 
 @pytest.mark.parametrize(
