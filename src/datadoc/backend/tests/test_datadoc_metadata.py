@@ -19,6 +19,7 @@ from datadoc_model.model import DatadocMetadata
 from datadoc_model.model import Dataset
 from datadoc_model.model import Variable
 
+from datadoc.backend.constants import DATASET_FIELDS_FROM_EXISTING_METADATA
 from datadoc.backend.src.core import Datadoc
 from datadoc.backend.src.core import InconsistentDatasetsError
 from datadoc.backend.src.core import InconsistentDatasetsWarning
@@ -472,7 +473,6 @@ def test_merge_extracted_and_existing_dataset_metadata(metadata_merged: Datadoc)
         == metadata_extracted.dataset.dataset_state
     )
     assert metadata_merged.dataset.version == metadata_extracted.dataset.version
-    assert metadata_merged.dataset.owner == metadata_extracted.dataset.owner
     assert metadata_merged.dataset.file_path == metadata_extracted.dataset.file_path
     assert (
         metadata_merged.dataset.metadata_created_by
@@ -492,63 +492,52 @@ def test_merge_extracted_and_existing_dataset_metadata(metadata_merged: Datadoc)
     )
 
     # Should match existing metadata
-    assert metadata_merged.dataset.name == metadata_existing.dataset.name
-    assert (
-        metadata_merged.dataset.dataset_status
-        == metadata_existing.dataset.dataset_status
-    )
-    assert metadata_merged.dataset.description == metadata_existing.dataset.description
-    assert metadata_merged.dataset.data_source == metadata_existing.dataset.data_source
-    assert (
-        metadata_merged.dataset.population_description
-        == metadata_existing.dataset.population_description
-    )
-    assert metadata_merged.dataset.unit_type == metadata_existing.dataset.unit_type
-    assert (
-        metadata_merged.dataset.temporality_type
-        == metadata_existing.dataset.temporality_type
-    )
-    assert (
-        metadata_merged.dataset.subject_field == metadata_existing.dataset.subject_field
-    )
-    assert metadata_merged.dataset.keyword == metadata_existing.dataset.keyword
-
-    assert (
-        metadata_merged.dataset.spatial_coverage_description
-        == metadata_existing.dataset.spatial_coverage_description
-    )
+    for field in DATASET_FIELDS_FROM_EXISTING_METADATA:
+        actual = getattr(metadata_merged.dataset, field)
+        assert actual == getattr(
+            metadata_existing.dataset,
+            field,
+        ), f"{field} in merged metadata did not match existing metadata"
 
     # Special cases
     assert metadata_merged.dataset.version_description is None
     assert metadata_merged.dataset.id != metadata_existing.dataset.id
-    assert (
-        metadata_merged.dataset.metadata_created_date
-        != metadata_existing.dataset.metadata_created_date
-    )
-    assert (
-        metadata_merged.dataset.metadata_last_updated_date
-        != metadata_existing.dataset.metadata_last_updated_date
-    )
+    assert metadata_merged.dataset.metadata_created_date is None
+    assert metadata_merged.dataset.metadata_last_updated_date is None
 
 
-def test_merge_with_fewer_variables_in_dataset(tmp_path):
-    target = tmp_path / "fewer_variables_p2021-12-31_p2021-12-31_v1.parquet"
-    target.parent.mkdir(parents=True, exist_ok=True)
+def test_merge_variables(tmp_path):
+    dataset = tmp_path / "fewer_variables_p2021-12-31_p2021-12-31_v1.parquet"
+    existing_document = TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH
+    dataset.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(
         TEST_DATASETS_DIRECTORY / "fewer_variables_p2021-12-31_p2021-12-31_v1.parquet",
-        target,
+        dataset,
     )
-    datadoc = Datadoc(
-        str(target),
-        str(TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH),
+    extracted = Datadoc(
+        dataset_path=str(dataset),
+    )
+    existing = Datadoc(
+        metadata_document_path=str(existing_document),
+    )
+    merged = Datadoc(
+        dataset_path=str(dataset),
+        metadata_document_path=str(existing_document),
         errors_as_warnings=True,
     )
-    assert [v.short_name for v in datadoc.variables] == [
-        "fnr",
-        "inntekt",
-        "bankinnskudd",
-        "dato",
+    assert [v.short_name for v in merged.variables] == [
+        v.short_name for v in extracted.variables
     ]
+    assert all(v.id is not None for v in merged.variables)
+    assert [v.id for v in merged.variables] != [v.id for v in existing.variables]
+    assert all(
+        v.contains_data_from == merged.dataset.contains_data_from
+        for v in merged.variables
+    )
+    assert all(
+        v.contains_data_until == merged.dataset.contains_data_until
+        for v in merged.variables
+    )
 
 
 def test_merge_with_fewer_variables_in_existing_metadata(tmp_path):

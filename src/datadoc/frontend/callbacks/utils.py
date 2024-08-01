@@ -6,14 +6,12 @@ import datetime
 import logging
 from typing import TYPE_CHECKING
 from typing import TypeAlias
-from typing import cast
 
 import arrow
 from datadoc_model import model
 
 from datadoc import config
 from datadoc import state
-from datadoc.backend.src.utility import enums
 from datadoc.constants import DATE_VALIDATION_MESSAGE
 from datadoc.constants import VALIDATION_ERROR
 from datadoc.frontend.components.dataset_tab import build_dataset_tab
@@ -21,7 +19,6 @@ from datadoc.frontend.components.variables_tab import build_variables_tab
 
 if TYPE_CHECKING:
     import pathlib
-    from enum import Enum
 
     import pydantic
     from cloudpathlib import CloudPath
@@ -34,20 +31,6 @@ logger = logging.getLogger(__name__)
 MetadataInputTypes: TypeAlias = (
     str | list[str] | int | float | bool | datetime.date | None
 )
-
-
-def get_language_strings_enum(
-    enum: Enum | type[enums.LanguageStringsEnum],
-) -> enums.LanguageStringsEnum:
-    """Get the correct language strings enum for the given enum.
-
-    We need multiple languages to display in the front end, but the model only defines a single language in the enums.
-    """
-    language_strings_enum: enums.LanguageStringsEnum = getattr(
-        enums,
-        cast(type[enums.LanguageStringsEnum], enum).__name__,
-    )
-    return language_strings_enum
 
 
 def _check_if_language_string_item_exists(

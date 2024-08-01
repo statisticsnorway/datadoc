@@ -338,8 +338,18 @@ class Datadoc:
                     ),
                     None,
                 )
-                # If there is no existing metadata for this variable, we just use what we have extracted
-                merged_metadata.variables.append(existing or extracted)
+                if existing:
+                    existing.id = None  # Set to None so that it will be set assigned a fresh ID later
+                    existing.contains_data_from = (
+                        extracted.contains_data_from or existing.contains_data_from
+                    )
+                    existing.contains_data_until = (
+                        extracted.contains_data_until or existing.contains_data_until
+                    )
+                    merged_metadata.variables.append(existing)
+                else:
+                    # If there is no existing metadata for this variable, we just use what we have extracted
+                    merged_metadata.variables.append(extracted)
         return merged_metadata
 
     def _extract_metadata_from_existing_document(

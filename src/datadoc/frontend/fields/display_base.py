@@ -13,12 +13,11 @@ import ssb_dash_components as ssb
 from dash import html
 
 from datadoc import state
+from datadoc.backend.src.utility.enums import LanguageStringsEnum
 from datadoc.backend.src.utility.enums import SupportedLanguages
-from datadoc.frontend.callbacks.utils import get_language_strings_enum
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-    from enum import Enum
 
     from dash.development.base_component import Component
     from datadoc_model.model import LanguageStringType
@@ -36,7 +35,7 @@ VARIABLES_METADATA_INPUT = "variables-metadata-input"
 VARIABLES_METADATA_DATE_INPUT = "variables-metadata-date-input"
 VARIABLES_METADATA_MULTILANGUAGE_INPUT = "dataset-metadata-multilanguage-input"
 
-DROPDOWN_DESELECT_OPTION = "--Velg --"
+DROPDOWN_DESELECT_OPTION = "-- Velg --"
 
 METADATA_LANGUAGES = [
     {
@@ -58,15 +57,15 @@ METADATA_LANGUAGES = [
 
 
 def get_enum_options(
-    enum: Enum,
+    enum: type[LanguageStringsEnum],
 ) -> list[dict[str, str]]:
     """Generate the list of options based on the currently chosen language."""
     dropdown_options = [
         {
-            "title": i.get_value_for_language(SupportedLanguages.NORSK_BOKMÅL),
+            "title": i.get_value_for_language(SupportedLanguages.NORSK_BOKMÅL) or "",
             "id": i.name,
         }
-        for i in get_language_strings_enum(enum)  # type: ignore [attr-defined]
+        for i in enum  # type: ignore [attr-defined]
     ]
     dropdown_options.insert(0, {"title": DROPDOWN_DESELECT_OPTION, "id": ""})
     return dropdown_options
