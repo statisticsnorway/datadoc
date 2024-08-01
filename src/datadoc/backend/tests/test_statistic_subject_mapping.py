@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from datadoc.backend.src.statistic_subject_mapping import PrimarySubject
 from datadoc.backend.src.statistic_subject_mapping import SecondarySubject
 from datadoc.backend.src.statistic_subject_mapping import StatisticSubjectMapping
-from datadoc.backend.tests.constants import TEST_RESOURCES_DIRECTORY
+from datadoc.backend.tests.utility.constants import TEST_RESOURCES_DIRECTORY
 
 
 def test_no_source_url(thread_pool_executor):

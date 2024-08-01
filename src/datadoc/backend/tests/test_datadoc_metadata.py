@@ -31,18 +31,24 @@ from datadoc.backend.src.utility.enums import DataSetStatus
 from datadoc.backend.src.utility.enums import DataType
 from datadoc.backend.src.utility.enums import IsPersonalData
 from datadoc.backend.src.utility.enums import VariableRole
-from datadoc.backend.tests.constants import DATADOC_METADATA_MODULE_CORE
-from datadoc.backend.tests.constants import TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH
-from datadoc.backend.tests.constants import TEST_DATASETS_DIRECTORY
-from datadoc.backend.tests.constants import TEST_EXISTING_METADATA_DIRECTORY
-from datadoc.backend.tests.constants import TEST_EXISTING_METADATA_FILE_NAME
-from datadoc.backend.tests.constants import (
+from datadoc.backend.tests.utility.constants import DATADOC_METADATA_MODULE_CORE
+from datadoc.backend.tests.utility.constants import (
+    TEST_BUCKET_NAMING_STANDARD_COMPATIBLE_PATH,
+)
+from datadoc.backend.tests.utility.constants import TEST_DATASETS_DIRECTORY
+from datadoc.backend.tests.utility.constants import TEST_EXISTING_METADATA_DIRECTORY
+from datadoc.backend.tests.utility.constants import TEST_EXISTING_METADATA_FILE_NAME
+from datadoc.backend.tests.utility.constants import (
     TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH,
 )
-from datadoc.backend.tests.constants import TEST_NAMING_STANDARD_COMPATIBLE_DATASET
-from datadoc.backend.tests.constants import TEST_PARQUET_FILEPATH
-from datadoc.backend.tests.constants import TEST_PROCESSED_DATA_POPULATION_DIRECTORY
-from datadoc.backend.tests.constants import TEST_RESOURCES_DIRECTORY
+from datadoc.backend.tests.utility.constants import (
+    TEST_NAMING_STANDARD_COMPATIBLE_DATASET,
+)
+from datadoc.backend.tests.utility.constants import TEST_PARQUET_FILEPATH
+from datadoc.backend.tests.utility.constants import (
+    TEST_PROCESSED_DATA_POPULATION_DIRECTORY,
+)
+from datadoc.backend.tests.utility.constants import TEST_RESOURCES_DIRECTORY
 
 if TYPE_CHECKING:
     from collections.abc import Generator

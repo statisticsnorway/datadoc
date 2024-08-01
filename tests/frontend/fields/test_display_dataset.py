@@ -1,10 +1,10 @@
 import pytest
 
 from datadoc import state
-from datadoc.backend.tests.constants import CODE_LIST_DIR
 from datadoc.backend.tests.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
 )
+from datadoc.backend.tests.utility.constants import CODE_LIST_DIR
 from datadoc.frontend.fields.display_base import DROPDOWN_DESELECT_OPTION
 from datadoc.frontend.fields.display_dataset import get_statistical_subject_options
 from datadoc.frontend.fields.display_dataset import get_unit_type_options

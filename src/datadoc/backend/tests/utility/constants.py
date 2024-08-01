@@ -2,7 +2,6 @@
 
 from pathlib import Path
 
-# File paths
 TEST_BUCKET_PARQUET_FILEPATH = "gs://ssb-staging-dapla-felles-data-delt/datadoc/klargjorte_data/person_data_v1.parquet"
 
 TEST_BUCKET_PARQUET_FILEPATH_WITH_SHORTNAME = "gs://ssb-staging-dapla-felles-data-delt/befolkning/klargjorte_data/person_data_v1.parquet"
@@ -48,18 +47,18 @@ TEST_COMPATIBILITY_DIRECTORY = TEST_EXISTING_METADATA_DIRECTORY / "compatibility
 TEST_PROCESSED_DATA_POPULATION_DIRECTORY = TEST_RESOURCES_DIRECTORY / "klargjorte_data"
 
 
-# Constant for path part
 CODE_LIST_DIR = "code_list"
 
-# Constants will change when PyPi package
+JUPYTERHUB_USER = "JUPYTERHUB_USER"
+
+DAPLA_REGION = "DAPLA_REGION"
+
+DAPLA_SERVICE = "DAPLA_SERVICE"
+
+# TODO(@tilen1976): These constants will change when PyPi package  # noqa: TD003
 
 DATADOC_METADATA_MODULE = "datadoc.backend.src"
 
 DATADOC_METADATA_MODULE_CORE = "datadoc.backend.src.core"
 
 DATADOC_METADATA_MODULE_UTILS = "datadoc.backend.src.utility.utils"
-
-# From config
-JUPYTERHUB_USER = "JUPYTERHUB_USER"
-DAPLA_REGION = "DAPLA_REGION"
-DAPLA_SERVICE = "DAPLA_SERVICE"

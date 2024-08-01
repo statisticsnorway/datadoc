@@ -23,21 +23,23 @@ from datadoc.backend.src.code_list import CodeList
 from datadoc.backend.src.core import Datadoc
 from datadoc.backend.src.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.backend.src.user_info import TestUserInfo
-from datadoc.backend.tests.constants import CODE_LIST_DIR
-from datadoc.backend.tests.constants import DATADOC_METADATA_MODULE
-from datadoc.backend.tests.constants import TEST_DATASETS_DIRECTORY
-from datadoc.backend.tests.constants import TEST_EXISTING_METADATA_DIRECTORY
-from datadoc.backend.tests.constants import TEST_EXISTING_METADATA_FILE_NAME
-from datadoc.backend.tests.constants import (
-    TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH,
-)
-from datadoc.backend.tests.constants import TEST_NAMING_STANDARD_COMPATIBLE_DATASET
-from datadoc.backend.tests.constants import TEST_PARQUET_FILE_NAME
-from datadoc.backend.tests.constants import TEST_PARQUET_FILEPATH
-from datadoc.backend.tests.constants import TEST_RESOURCES_DIRECTORY
 from datadoc.backend.tests.test_statistic_subject_mapping import (
     STATISTICAL_SUBJECT_STRUCTURE_DIR,
 )
+from datadoc.backend.tests.utility.constants import CODE_LIST_DIR
+from datadoc.backend.tests.utility.constants import DATADOC_METADATA_MODULE
+from datadoc.backend.tests.utility.constants import TEST_DATASETS_DIRECTORY
+from datadoc.backend.tests.utility.constants import TEST_EXISTING_METADATA_DIRECTORY
+from datadoc.backend.tests.utility.constants import TEST_EXISTING_METADATA_FILE_NAME
+from datadoc.backend.tests.utility.constants import (
+    TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH,
+)
+from datadoc.backend.tests.utility.constants import (
+    TEST_NAMING_STANDARD_COMPATIBLE_DATASET,
+)
+from datadoc.backend.tests.utility.constants import TEST_PARQUET_FILE_NAME
+from datadoc.backend.tests.utility.constants import TEST_PARQUET_FILEPATH
+from datadoc.backend.tests.utility.constants import TEST_RESOURCES_DIRECTORY
 
 if TYPE_CHECKING:
     from pytest_mock import MockerFixture
