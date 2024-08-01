@@ -19,6 +19,7 @@ from datadoc_model.model import DatadocMetadata
 from datadoc_model.model import Dataset
 from datadoc_model.model import Variable
 
+from datadoc.backend.constants import DATASET_FIELDS_FROM_EXISTING_METADATA
 from datadoc.backend.core import Datadoc
 from datadoc.backend.core import InconsistentDatasetsError
 from datadoc.backend.core import InconsistentDatasetsWarning
@@ -472,7 +473,6 @@ def test_merge_extracted_and_existing_dataset_metadata(metadata_merged: Datadoc)
         == metadata_extracted.dataset.dataset_state
     )
     assert metadata_merged.dataset.version == metadata_extracted.dataset.version
-    assert metadata_merged.dataset.owner == metadata_extracted.dataset.owner
     assert metadata_merged.dataset.file_path == metadata_extracted.dataset.file_path
     assert (
         metadata_merged.dataset.metadata_created_by
@@ -492,43 +492,18 @@ def test_merge_extracted_and_existing_dataset_metadata(metadata_merged: Datadoc)
     )
 
     # Should match existing metadata
-    assert metadata_merged.dataset.name == metadata_existing.dataset.name
-    assert (
-        metadata_merged.dataset.dataset_status
-        == metadata_existing.dataset.dataset_status
-    )
-    assert metadata_merged.dataset.description == metadata_existing.dataset.description
-    assert metadata_merged.dataset.data_source == metadata_existing.dataset.data_source
-    assert (
-        metadata_merged.dataset.population_description
-        == metadata_existing.dataset.population_description
-    )
-    assert metadata_merged.dataset.unit_type == metadata_existing.dataset.unit_type
-    assert (
-        metadata_merged.dataset.temporality_type
-        == metadata_existing.dataset.temporality_type
-    )
-    assert (
-        metadata_merged.dataset.subject_field == metadata_existing.dataset.subject_field
-    )
-    assert metadata_merged.dataset.keyword == metadata_existing.dataset.keyword
-
-    assert (
-        metadata_merged.dataset.spatial_coverage_description
-        == metadata_existing.dataset.spatial_coverage_description
-    )
+    for field in DATASET_FIELDS_FROM_EXISTING_METADATA:
+        actual = getattr(metadata_merged.dataset, field)
+        assert actual == getattr(
+            metadata_existing.dataset,
+            field,
+        ), f"{field} in merged metadata did not match existing metadata"
 
     # Special cases
     assert metadata_merged.dataset.version_description is None
     assert metadata_merged.dataset.id != metadata_existing.dataset.id
-    assert (
-        metadata_merged.dataset.metadata_created_date
-        != metadata_existing.dataset.metadata_created_date
-    )
-    assert (
-        metadata_merged.dataset.metadata_last_updated_date
-        != metadata_existing.dataset.metadata_last_updated_date
-    )
+    assert metadata_merged.dataset.metadata_created_date is None
+    assert metadata_merged.dataset.metadata_last_updated_date is None
 
 
 def test_merge_variables(tmp_path):

@@ -35,7 +35,7 @@ VARIABLES_METADATA_INPUT = "variables-metadata-input"
 VARIABLES_METADATA_DATE_INPUT = "variables-metadata-date-input"
 VARIABLES_METADATA_MULTILANGUAGE_INPUT = "dataset-metadata-multilanguage-input"
 
-DROPDOWN_DESELECT_OPTION = "--Velg --"
+DROPDOWN_DESELECT_OPTION = "-- Velg --"
 
 METADATA_LANGUAGES = [
     {
