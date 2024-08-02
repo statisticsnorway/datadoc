@@ -6,7 +6,7 @@ from typing import Protocol
 
 import jwt
 
-from datadoc.backend.src.utility import config
+from datadoc.backend.src import config
 from datadoc.backend.src.utility.enums import DaplaRegion
 from datadoc.backend.src.utility.enums import DaplaService
 

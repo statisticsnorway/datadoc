@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING
 
 from datadoc_model import model
 
+from datadoc.backend.src import config
 from datadoc.backend.src import user_info
 from datadoc.backend.src.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.backend.src.dataset_parser import DatasetParser
@@ -21,7 +22,6 @@ from datadoc.backend.src.model_backwards_compatibility import (
 from datadoc.backend.src.model_backwards_compatibility import upgrade_metadata
 from datadoc.backend.src.model_validation import ValidateDatadocMetadata
 from datadoc.backend.src.statistic_subject_mapping import StatisticSubjectMapping
-from datadoc.backend.src.utility import config
 from datadoc.backend.src.utility.constants import DATASET_FIELDS_FROM_EXISTING_METADATA
 from datadoc.backend.src.utility.constants import DEFAULT_SPATIAL_COVERAGE_DESCRIPTION
 from datadoc.backend.src.utility.constants import INCONSISTENCIES_MESSAGE
