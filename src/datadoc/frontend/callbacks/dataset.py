@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import datetime
 import logging
 import re
 from typing import TYPE_CHECKING
 
+import arrow
 from dash import no_update
 from pydantic import ValidationError
 
@@ -15,6 +17,7 @@ from datadoc.backend.core import Datadoc
 from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.constants import CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE
 from datadoc.constants import MISSING_METADATA_WARNING
+from datadoc.frontend.callbacks.utils import VALIDATION_ERROR
 from datadoc.frontend.callbacks.utils import MetadataInputTypes
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import get_dataset_path
@@ -40,6 +43,7 @@ from datadoc.frontend.fields.display_dataset import (
 from datadoc.frontend.fields.display_dataset import (
     OBLIGATORY_DATASET_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
 )
+from datadoc.frontend.fields.display_dataset import TIMEZONE_AWARE_METADATA_IDENTIFIERS
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.frontend.text import INVALID_DATE_ORDER
 from datadoc.frontend.text import INVALID_VALUE
@@ -168,6 +172,14 @@ def process_special_cases(
             )
     elif metadata_identifier in DROPDOWN_DATASET_METADATA_IDENTIFIERS and value == "":
         updated_value = None
+    elif metadata_identifier in TIMEZONE_AWARE_METADATA_IDENTIFIERS and isinstance(
+        value,
+        (str, datetime.date, datetime.datetime),
+    ):
+        try:
+            updated_value = arrow.get(value).astimezone(tz=datetime.UTC)
+        except arrow.parser.ParserError as e:
+            raise ValueError(VALIDATION_ERROR + str(e)) from e
     else:
         updated_value = value
 
