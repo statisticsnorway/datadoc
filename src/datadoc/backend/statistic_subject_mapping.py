@@ -67,14 +67,14 @@ class PrimarySubject(Subject):
 
 
 class StatisticSubjectMapping(GetExternalSource):
-    """Provides mapping between statistic short name and primary and secondary subject."""
+    """Provide mapping between statistic short name and primary and secondary subject."""
 
     def __init__(
         self,
         executor: concurrent.futures.ThreadPoolExecutor,
         source_url: str | None,
     ) -> None:
-        """Retrieves the statistical structure document from the given URL.
+        """Retrieve the statistical structure document from the given URL.
 
         Initializes the mapping based on values in the statistical structure document sourced at `source_url`.
 
