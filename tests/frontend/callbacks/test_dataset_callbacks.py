@@ -100,7 +100,7 @@ def file_path_without_dates():
             "Census",
         ),
         (
-            DatasetIdentifiers.DESCRIPTION,
+            DatasetIdentifiers.POPULATION_DESCRIPTION,
             "Population description",
             enums.LanguageStringType(
                 [
@@ -123,6 +123,11 @@ def file_path_without_dates():
                     ),
                 ],
             ),
+        ),
+        (
+            DatasetIdentifiers.UNIT_TYPE,
+            "17",
+            "17",
         ),
         (
             DatasetIdentifiers.TEMPORALITY_TYPE,
@@ -157,6 +162,25 @@ def file_path_without_dates():
                         languageText="Norway",
                     ),
                 ],
+            ),
+        ),
+        (DatasetIdentifiers.CONTAINS_PERSONAL_DATA, True, True),
+        (
+            DatasetIdentifiers.USE_RESTRICTION,
+            enums.UseRestriction.PROCESS_LIMITATIONS,
+            "PROCESS_LIMITATIONS",
+        ),
+        (
+            DatasetIdentifiers.USE_RESTRICTION_DATE,
+            "2024-12-31T23:59:59Z",
+            datetime.datetime(
+                2024,
+                12,
+                31,
+                23,
+                59,
+                59,
+                tzinfo=datetime.UTC,
             ),
         ),
         (

@@ -83,6 +83,9 @@ class DatasetIdentifiers(str, Enum):
     SUBJECT_FIELD = "subject_field"
     KEYWORD = "keyword"
     SPATIAL_COVERAGE_DESCRIPTION = "spatial_coverage_description"
+    CONTAINS_PERSONAL_DATA = "contains_personal_data"
+    USE_RESTRICTION = "use_restriction"
+    USE_RESTRICTION_DATE = "use_restriction_date"
     ID = "id"
     OWNER = "owner"
     FILE_PATH = "file_path"
@@ -92,9 +95,6 @@ class DatasetIdentifiers(str, Enum):
     METADATA_LAST_UPDATED_BY = "metadata_last_updated_by"
     CONTAINS_DATA_FROM = "contains_data_from"
     CONTAINS_DATA_UNTIL = "contains_data_until"
-    USE_RESTRICTION = "use_restriction"
-    USE_RESTRICTION_DATE = "use_restriction_date"
-    CONTAINS_PERSONAL_DATA = "contains_personal_data"
 
 
 DISPLAY_DATASET: dict[
