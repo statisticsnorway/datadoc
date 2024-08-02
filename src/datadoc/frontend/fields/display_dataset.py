@@ -14,6 +14,7 @@ from datadoc.frontend.fields.display_base import DATASET_METADATA_MULTILANGUAGE_
 from datadoc.frontend.fields.display_base import DROPDOWN_DESELECT_OPTION
 from datadoc.frontend.fields.display_base import FieldTypes
 from datadoc.frontend.fields.display_base import MetadataCheckboxField
+from datadoc.frontend.fields.display_base import MetadataDateField
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import MetadataMultiLanguageField
@@ -83,6 +84,9 @@ class DatasetIdentifiers(str, Enum):
     SUBJECT_FIELD = "subject_field"
     KEYWORD = "keyword"
     SPATIAL_COVERAGE_DESCRIPTION = "spatial_coverage_description"
+    CONTAINS_PERSONAL_DATA = "contains_personal_data"
+    USE_RESTRICTION = "use_restriction"
+    USE_RESTRICTION_DATE = "use_restriction_date"
     ID = "id"
     OWNER = "owner"
     FILE_PATH = "file_path"
@@ -92,9 +96,6 @@ class DatasetIdentifiers(str, Enum):
     METADATA_LAST_UPDATED_BY = "metadata_last_updated_by"
     CONTAINS_DATA_FROM = "contains_data_from"
     CONTAINS_DATA_UNTIL = "contains_data_until"
-    USE_RESTRICTION = "use_restriction"
-    USE_RESTRICTION_DATE = "use_restriction_date"
-    CONTAINS_PERSONAL_DATA = "contains_personal_data"
 
 
 DISPLAY_DATASET: dict[
@@ -292,7 +293,7 @@ DISPLAY_DATASET: dict[
             enums.UseRestriction,
         ),
     ),
-    DatasetIdentifiers.USE_RESTRICTION_DATE: MetadataPeriodField(
+    DatasetIdentifiers.USE_RESTRICTION_DATE: MetadataDateField(
         identifier=DatasetIdentifiers.USE_RESTRICTION_DATE.value,
         display_name="Bruksrestriksjonsdato",
         description='Oppgi ev. "tiltaksdato" for bruksrestriksjoner, f.eks. frist for sletting/anonymisering. Noen bruksrestriksjoner vil ikke ha en slik dato, f.eks. vil en behandlingsbegrensning normalt være permanent/tidsuavhengig.',
@@ -334,6 +335,10 @@ DROPDOWN_DATASET_METADATA: list[MetadataDropdownField] = [
 ]
 DROPDOWN_DATASET_METADATA_IDENTIFIERS: list[str] = [
     m.identifier for m in DROPDOWN_DATASET_METADATA
+]
+
+TIMEZONE_AWARE_METADATA_IDENTIFIERS = [
+    m.identifier for m in DISPLAYED_DATASET_METADATA if isinstance(m, MetadataDateField)
 ]
 
 OBLIGATORY_DATASET_METADATA_IDENTIFIERS: list[str] = [
