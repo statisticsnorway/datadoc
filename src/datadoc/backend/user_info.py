@@ -19,7 +19,7 @@ PLACEHOLDER_EMAIL_ADDRESS = "default_user@ssb.no"
 class UserInfo(Protocol):
     """Information about the current user.
 
-    May be implemented for different platforms.
+    Implementations may be provided for different platforms or testing.
     """
 
     @property
@@ -33,7 +33,7 @@ class UnknownUserInfo:
 
     @property
     def short_email(self) -> str | None:
-        """Unknow email address."""
+        """Unknown email address."""
         return None
 
 
