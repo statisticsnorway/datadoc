@@ -20,7 +20,10 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class Subject:
-    """Base class for Primary and Secondary subjects."""
+    """Base class for Primary and Secondary subjects.
+
+    A statistical subject is a related grouping of statistics.
+    """
 
     titles: dict[str, str]
     subject_code: str
@@ -64,16 +67,20 @@ class PrimarySubject(Subject):
 
 
 class StatisticSubjectMapping(GetExternalSource):
-    """Allow mapping between statistic short name and primary and secondary subject."""
+    """Provide mapping between statistic short name and primary and secondary subject."""
 
     def __init__(
         self,
         executor: concurrent.futures.ThreadPoolExecutor,
         source_url: str | None,
     ) -> None:
-        """Retrieves the statistical structure document from the given URL.
+        """Retrieve the statistical structure document from the given URL.
 
-        Initializes the mapping dicts. Based on the values in the statistical structure document.
+        Initializes the mapping based on values in the statistical structure document sourced at `source_url`.
+
+        Args:
+            executor: The ThreadPoolExecutor which will run the job of fetching the statistical structure document.
+            source_url: The URL from which to fetch the statistical structure document.
         """
         self.source_url = source_url
 
@@ -157,7 +164,7 @@ class StatisticSubjectMapping(GetExternalSource):
     def _parse_xml_if_loaded(self) -> bool:
         """Checks if the xml is loaded, then parses the xml if it is loaded.
 
-        Returns true if it is loaded and parsed.
+        Returns `True` if it is loaded and parsed.
         """
         if self.check_if_external_data_is_loaded():
             self._statistic_subject_structure_xml = self.retrieve_external_data()

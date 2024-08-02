@@ -153,6 +153,9 @@ class DatasetParser(ABC):
 
         If we encounter a data type we don't know, we just ignore it and let
         the user handle it in the GUI.
+
+        Arguments:
+            data_type: The concrete data type to map.
         """
         return TYPE_MAP.get(data_type.lower(), None)
 
@@ -165,7 +168,11 @@ class DatasetParserParquet(DatasetParser):
     """Concrete implementation for parsing parquet files."""
 
     def __init__(self, dataset: pathlib.Path | CloudPath) -> None:
-        """Use the super init method."""
+        """Call the super init method for initialization.
+
+        Args:
+            dataset: Path to the dataset to parse.
+        """
         super().__init__(dataset)
 
     def get_fields(self) -> list[Variable]:
@@ -187,7 +194,11 @@ class DatasetParserSas7Bdat(DatasetParser):
     """Concrete implementation for parsing SAS7BDAT files."""
 
     def __init__(self, dataset: pathlib.Path | CloudPath) -> None:
-        """Use the super init method."""
+        """Call the super init method for initialization.
+
+        Args:
+            dataset: Path to the dataset to parse.
+        """
         super().__init__(dataset)
 
     def get_fields(self) -> list[Variable]:
