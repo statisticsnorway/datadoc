@@ -420,11 +420,12 @@ def test_existing_metadata_variables_valid_id(
     assert pre_open_id == post_write_id
 
 
-# TODO(@tilen1976): understand why this tests fail and fix it  # noqa: TD003
+# TODO(@tilen1976): understand why this tests fail and fix it. Fails only on index 0 when all test run, not when only backend # noqa: TD003
+# caused by test in callbacks: test_accept_dataset_metadata_input_valid_data, so it will not be a problem when the tests are separated
 @pytest.mark.parametrize(
     ("index", "expected_text"),
     [
-        # (0, "Norge") this fails in test when all tests are run, not only backend tests,
+        (0, "Norge"),
         (1, "Noreg"),
         (2, "Norway"),
     ],

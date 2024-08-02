@@ -51,7 +51,7 @@ def faker_session_locale():
     return ["no_NO"]
 
 
-# TODO(@tilen1976): private?  # noqa: TD003
+# TODO(@tilen1976): backend?  # noqa: TD003
 @pytest.fixture()
 def dummy_timestamp() -> datetime:
     return datetime(2022, 1, 1, tzinfo=timezone.utc)
@@ -136,7 +136,7 @@ def language_dicts(english_name: str, bokmål_name: str) -> list[dict[str, str]]
     ]
 
 
-# TODO(@tilen1976): i bruk?  # noqa: TD003
+# TODO(@tilen1976): backend?  # noqa: TD003
 @pytest.fixture()
 def existing_data_path() -> Path:
     return TEST_PARQUET_FILEPATH
@@ -181,19 +181,16 @@ def _mock_fetch_statistical_structure(
     )
 
 
-# TODO(@tilen1976): private?  # noqa: TD003
 @pytest.fixture()
 def code_list_csv_filepath_nb() -> pathlib.Path:
     return TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_nb.csv"
 
 
-# TODO(@tilen1976): private?  # noqa: TD003
 @pytest.fixture()
 def code_list_csv_filepath_nn() -> pathlib.Path:
     return TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_nn.csv"
 
 
-# TODO(@tilen1976): private?  # noqa: TD003
 @pytest.fixture()
 def code_list_csv_filepath_en() -> pathlib.Path:
     return TEST_RESOURCES_DIRECTORY / CODE_LIST_DIR / "code_list_en.csv"
@@ -225,6 +222,7 @@ def code_list_fake_structure(_mock_fetch_dataframe, thread_pool_executor) -> Cod
     return CodeList(thread_pool_executor, 100)
 
 
+# TODO(@tilen1976): Not private?  # noqa: TD003
 @pytest.fixture()
 def _code_list_fake_classifications_variables(code_list_fake_structure) -> None:
     state.measurement_units = code_list_fake_structure
