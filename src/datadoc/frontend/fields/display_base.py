@@ -201,6 +201,29 @@ class MetadataDropdownField(DisplayMetadata):
 
 
 @dataclass
+class MetadataDateField(DisplayMetadata):
+    """Controls how fields which define a single date are displayed."""
+
+    def render(
+        self,
+        component_id: dict,
+        metadata: BaseModel,
+    ) -> ssb.Input:
+        """Build Input date component."""
+        return ssb.Input(
+            label=self.display_name,
+            id=component_id,
+            debounce=False,
+            type="date",
+            disabled=not self.editable,
+            showDescription=True,
+            description=self.description,
+            value=get_metadata_and_stringify(metadata, self.identifier),
+            className="input-component",
+        )
+
+
+@dataclass
 class MetadataPeriodField(DisplayMetadata):
     """Controls how fields which define a time period are displayed.
 
@@ -342,6 +365,7 @@ class MetadataCheckboxField(DisplayMetadata):
 FieldTypes = (
     MetadataInputField
     | MetadataDropdownField
+    | MetadataDateField
     | MetadataCheckboxField
     | MetadataPeriodField
     | MetadataMultiLanguageField

@@ -248,7 +248,7 @@ DATASET_INPUT_URL_FIELD_LIST: list[FieldTypes] = [
     if isinstance(m, MetadataInputField) and m.type == "url"
 ]
 
-DATASET_DATE_FIELD_LIST: list[FieldTypes] = [
+DATASET_PERIOD_FIELD_LIST: list[FieldTypes] = [
     m for m in DISPLAY_DATASET.values() if isinstance(m, MetadataPeriodField)
 ]
 
@@ -256,9 +256,12 @@ DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL: list[FieldTypes] = [
     m
     for m in DISPLAY_DATASET.values()
     if isinstance(m, MetadataDropdownField)
-    and m.identifier != DatasetIdentifiers.UNIT_TYPE.value
-    and m.identifier != DatasetIdentifiers.SUBJECT_FIELD.value
-    and m.identifier != DatasetIdentifiers.OWNER.value
+    and m.identifier
+    not in (
+        DatasetIdentifiers.UNIT_TYPE.value,
+        DatasetIdentifiers.SUBJECT_FIELD.value,
+        DatasetIdentifiers.OWNER.value,
+    )
 ]
 
 
@@ -279,11 +282,11 @@ DATASET_DROPDOWN_FIELD_LIST_MINUS_ATYPICAL: list[FieldTypes] = [
         (
             (
                 "title",
-                DATASET_DATE_FIELD_LIST,
+                DATASET_PERIOD_FIELD_LIST,
                 model.Dataset(short_name="date_dataset"),
                 {"type": "dataset-edit-section", "id": "title-nb"},
             ),
-            3,
+            2,
             ssb.Input,
         ),
         (
