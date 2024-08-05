@@ -124,7 +124,6 @@ def existing_metadata_file(tmp_path: Path, existing_metadata_path: Path) -> Path
     return tmp_path / TEST_EXISTING_METADATA_FILE_NAME
 
 
-# TODO(@tilen1976): Is this necessary in backend?  # noqa: TD003
 @pytest.fixture(autouse=True)
 def _clear_state() -> None:
     """Global fixture, referred to in pytest.ini."""
@@ -150,22 +149,12 @@ def nynorsk_name() -> str:
     return "Nynorsk namn"
 
 
-# TODO(@tilen1976): unused in backend?  # noqa: TD003
-@pytest.fixture()
-def language_dicts(english_name: str, bokmål_name: str) -> list[dict[str, str]]:
-    return [
-        {"languageCode": "en", "languageText": english_name},
-        {"languageCode": "nb", "languageText": bokmål_name},
-    ]
-
-
 @pytest.fixture()
 def existing_data_path() -> Path:
     return TEST_PARQUET_FILEPATH
 
 
-# TODO(@tilen1976): fix xdoctest  # noqa: TD003
-#  Caused by: ModuleNotFoundError("No module named 'pytest'") - probably path issue
+# TODO(@tilen1976): check in new package - path issue # noqa: TD003
 @pytest.fixture()
 def full_dataset_state_path(
     path_parts_to_insert: str | list[str],

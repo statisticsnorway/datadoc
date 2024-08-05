@@ -85,31 +85,21 @@ def get_log_formatter() -> Literal["simple", "json"]:
     return "simple"
 
 
-# TODO(@tilen1976): remove backend?  # noqa: TD003
-def get_dash_development_mode() -> bool:
-    """Get the development mode for Dash."""
-    return _get_config_item("DATADOC_DASH_DEVELOPMENT_MODE") == "True"
-
-
-# TODO(@tilen1976): remove backend?  # noqa: TD003
 def get_jupyterhub_service_prefix() -> str | None:
     """Get the JupyterHub service prefix."""
     return _get_config_item("JUPYTERHUB_SERVICE_PREFIX")
 
 
-# TODO(@tilen1976): remove backend?  # noqa: TD003
 def get_app_name() -> str:
     """Get the name of the app. Defaults to 'Datadoc'."""
     return _get_config_item("DATADOC_APP_NAME") or "Datadoc"
 
 
-# TODO(@tilen1976): remove backend?  # noqa: TD003
 def get_jupyterhub_http_referrer() -> str | None:
     """Get the JupyterHub http referrer."""
     return _get_config_item("JUPYTERHUB_HTTP_REFERER")
 
 
-# TODO(@tilen1976): remove backend?  # noqa: TD003
 def get_port() -> int:
     """Get the port to run the app on."""
     return int(_get_config_item("DATADOC_PORT") or 7002)

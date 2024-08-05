@@ -395,3 +395,15 @@ def get_missing_obligatory_variables_fields(variables: list) -> list[dict]:
     ]
     # Filtering out variable keys with empty values list
     return [item for item in missing_variables_fields if next(iter(item.values()))]
+
+
+def running_in_notebook() -> bool:
+    """Return True if running in Jupyter Notebook."""
+    try:
+        return bool(get_ipython().__class__.__name__ == "ZMQInteractiveShell")  # type: ignore [name-defined]
+    except NameError:
+        # The get_ipython method is globally available in ipython interpreters
+        # as used in Jupyter. However it is not available in other python
+        # interpreters and will throw a NameError. Therefore we're not running
+        # in Jupyter.
+        return False

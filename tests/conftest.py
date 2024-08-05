@@ -51,7 +51,6 @@ def faker_session_locale():
     return ["no_NO"]
 
 
-# TODO(@tilen1976): backend?  # noqa: TD003
 @pytest.fixture()
 def dummy_timestamp() -> datetime:
     return datetime(2022, 1, 1, tzinfo=timezone.utc)
@@ -127,7 +126,6 @@ def language_object(
     )
 
 
-# TODO(@tilen1976): i bruk?  # noqa: TD003
 @pytest.fixture()
 def language_dicts(english_name: str, bokmål_name: str) -> list[dict[str, str]]:
     return [
@@ -136,13 +134,11 @@ def language_dicts(english_name: str, bokmål_name: str) -> list[dict[str, str]]
     ]
 
 
-# TODO(@tilen1976): backend?  # noqa: TD003
 @pytest.fixture()
 def existing_data_path() -> Path:
     return TEST_PARQUET_FILEPATH
 
 
-# TODO(@tilen1976): private?  # noqa: TD003
 @pytest.fixture()
 def subject_xml_file_path() -> pathlib.Path:
     return (
@@ -222,7 +218,6 @@ def code_list_fake_structure(_mock_fetch_dataframe, thread_pool_executor) -> Cod
     return CodeList(thread_pool_executor, 100)
 
 
-# TODO(@tilen1976): Not private?  # noqa: TD003
 @pytest.fixture()
 def _code_list_fake_classifications_variables(code_list_fake_structure) -> None:
     state.measurement_units = code_list_fake_structure
