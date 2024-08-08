@@ -9,6 +9,7 @@ import logging
 import os
 import pathlib
 import shutil
+import warnings
 from datetime import datetime
 from datetime import timezone
 from pathlib import Path
@@ -19,6 +20,17 @@ import pytest
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
 from datadoc_model import model
+
+# WORKAROUND for 'InstrumentationWarning: typeguard cannot check these packages because they are already imported: datadoc'
+# Ref: https://github.com/agronholm/typeguard/issues/260#issuecomment-1197525481
+try:
+    from typeguard import install_import_hook
+
+    install_import_hook(["datadoc"])
+except ImportError:
+    warnings.warn("Typeguard not installed, not running import hook", stacklevel=1)
+
+# END WORKAROUND
 
 from datadoc import state
 from datadoc.backend.code_list import CodeList
@@ -44,20 +56,6 @@ if TYPE_CHECKING:
     from pytest_mock import MockerFixture
 
 logger = logging.getLogger(__name__)
-
-
-# WORKAROUND for 'InstrumentationWarning: typeguard cannot check these packages because they are already imported: datadoc'
-# Ref: https://github.com/agronholm/typeguard/issues/260#issuecomment-1197525481
-def pytest_configure():
-    try:
-        from typeguard import install_import_hook
-
-        install_import_hook("datadoc")
-    except ImportError:
-        logger.debug("Typeguard not installed, not running import hook")
-
-
-# END WORKAROUND
 
 
 @pytest.fixture(autouse=True)
