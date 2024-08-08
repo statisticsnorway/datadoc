@@ -198,7 +198,7 @@ def file_path_without_dates():
 def test_accept_dataset_metadata_input_valid_data(
     metadata_identifier: DatasetIdentifiers,
     provided_value: MetadataInputTypes,
-    expected_model_value: str,
+    expected_model_value,
     metadata: Datadoc,
 ):
     state.metadata = metadata

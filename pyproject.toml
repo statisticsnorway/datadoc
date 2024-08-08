@@ -118,6 +118,7 @@ module = [
     "datadoc_model",
     "datadoc_model.model",
     "pytest_mock",
+    "typeguard",
 ]
 ignore_missing_imports = true
 

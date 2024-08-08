@@ -12,6 +12,7 @@ from abc import ABC
 from abc import abstractmethod
 
 import pandas as pd
+from cloudpathlib import CloudPath  # noqa: TCH002 needed for typeguard
 from datadoc_model.model import LanguageStringType
 from datadoc_model.model import LanguageStringTypeItem
 from datadoc_model.model import Variable
@@ -22,7 +23,6 @@ from datadoc.enums import SupportedLanguages
 
 if t.TYPE_CHECKING:
     import pyarrow as pa
-    from cloudpathlib import CloudPath
 
 KNOWN_INTEGER_TYPES = (
     "int",
