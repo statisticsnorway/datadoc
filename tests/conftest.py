@@ -18,6 +18,8 @@ import pytest
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
 from datadoc_model import model
+from typeguard import install_import_hook
+from typeguard import typechecked
 
 from datadoc import state
 from datadoc.backend.code_list import CodeList
@@ -41,6 +43,23 @@ CODE_LIST_DIR = "code_list"
 
 if TYPE_CHECKING:
     from pytest_mock import MockerFixture
+
+
+# WORKAROUND for 'InstrumentationWarning: typeguard cannot check these packages because they are already imported: datadoc'
+# Ref: https://github.com/agronholm/typeguard/issues/260#issuecomment-1197525481
+def pytest_configure():
+    install_import_hook("datadoc")
+
+
+def pytest_runtest_call(item):
+    # Decorate every test function [e.g. test_foo()] with typeguard's
+    # typechecked() decorator.
+    test_func = getattr(item, "obj", None)
+    if test_func is not None:
+        item.obj = typechecked(test_func)
+
+
+# END WORKAROUND
 
 
 @pytest.fixture(autouse=True)
