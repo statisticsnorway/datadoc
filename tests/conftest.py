@@ -15,15 +15,12 @@ import pytest
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
 from datadoc_model import model
+from dataset.code_list import CodeList
+from dataset.core import Datadoc
+from dataset.statistic_subject_mapping import StatisticSubjectMapping
+from dataset.user_info import TestUserInfo
 
 from datadoc import state
-from datadoc.backend.src.code_list import CodeList
-from datadoc.backend.src.core import Datadoc
-from datadoc.backend.src.statistic_subject_mapping import StatisticSubjectMapping
-from datadoc.backend.src.user_info import TestUserInfo
-from datadoc.backend.tests.test_statistic_subject_mapping import (
-    STATISTICAL_SUBJECT_STRUCTURE_DIR,
-)
 
 from .utils import TEST_PARQUET_FILE_NAME
 from .utils import TEST_PARQUET_FILEPATH
@@ -36,8 +33,9 @@ if TYPE_CHECKING:
     from pytest_mock import MockerFixture
 
 
-DATADOC_METADATA_MODULE = "datadoc.backend.src"
+DATADOC_METADATA_MODULE = "dataset"
 CODE_LIST_DIR = "code_list"
+STATISTICAL_SUBJECT_STRUCTURE_DIR = "statistical_subject_structure"
 
 
 @pytest.fixture(autouse=True)

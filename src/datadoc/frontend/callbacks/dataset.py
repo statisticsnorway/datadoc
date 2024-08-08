@@ -9,12 +9,12 @@ from typing import TYPE_CHECKING
 
 import arrow
 from dash import no_update
+from dataset.core import Datadoc
+from dataset.dapla_dataset_path_info import DaplaDatasetPathInfo
 from pydantic import ValidationError
 
 from datadoc import config
 from datadoc import state
-from datadoc.backend.src.core import Datadoc
-from datadoc.backend.src.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.constants import CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE
 from datadoc.constants import MISSING_METADATA_WARNING
 from datadoc.frontend.callbacks.utils import VALIDATION_ERROR

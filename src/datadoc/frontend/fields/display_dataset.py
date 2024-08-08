@@ -6,9 +6,10 @@ import functools
 import logging
 from enum import Enum
 
+from dataset.utility import enums
+from dataset.utility.enums import SupportedLanguages
+
 from datadoc import state
-from datadoc.backend.src.utility import enums
-from datadoc.backend.src.utility.enums import SupportedLanguages
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import DATASET_METADATA_MULTILANGUAGE_INPUT
 from datadoc.frontend.fields.display_base import DROPDOWN_DESELECT_OPTION

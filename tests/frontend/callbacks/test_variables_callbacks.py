@@ -12,11 +12,11 @@ import dash_bootstrap_components as dbc
 import pytest
 from datadoc_model import model
 from datadoc_model.model import LanguageStringTypeItem
+from dataset.model_validation import ObligatoryVariableWarning
+from dataset.utility import enums
 from pydantic_core import Url
 
 from datadoc import state
-from datadoc.backend.src.model_validation import ObligatoryVariableWarning
-from datadoc.backend.src.utility import enums
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
@@ -39,7 +39,8 @@ from datadoc.frontend.text import INVALID_DATE_ORDER
 from datadoc.frontend.text import INVALID_VALUE
 
 if TYPE_CHECKING:
-    from datadoc.backend.src.core import Datadoc
+    from dataset.core import Datadoc
+
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 

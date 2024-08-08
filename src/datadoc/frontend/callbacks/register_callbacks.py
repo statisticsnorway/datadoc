@@ -18,10 +18,10 @@ from dash import State
 from dash import ctx
 from dash import html
 from dash import no_update
+from dataset.model_validation import ObligatoryDatasetWarning
+from dataset.model_validation import ObligatoryVariableWarning
 
 from datadoc import state
-from datadoc.backend.src.model_validation import ObligatoryDatasetWarning
-from datadoc.backend.src.model_validation import ObligatoryVariableWarning
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import dataset_control

@@ -5,8 +5,9 @@ from __future__ import annotations
 import functools
 from enum import Enum
 
+from dataset.utility import enums
+
 from datadoc import state
-from datadoc.backend.src.utility import enums
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_MULTILANGUAGE_INPUT
 from datadoc.frontend.fields.display_base import FieldTypes

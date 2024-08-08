@@ -11,10 +11,10 @@ from typing import Any
 
 import ssb_dash_components as ssb
 from dash import html
+from dataset.utility.enums import LanguageStringsEnum
+from dataset.utility.enums import SupportedLanguages
 
 from datadoc import state
-from datadoc.backend.src.utility.enums import LanguageStringsEnum
-from datadoc.backend.src.utility.enums import SupportedLanguages
 
 if TYPE_CHECKING:
     from collections.abc import Callable
