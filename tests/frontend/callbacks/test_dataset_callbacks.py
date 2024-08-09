@@ -74,9 +74,9 @@ def file_path_without_dates():
         (
             DatasetIdentifiers.NAME,
             "Dataset name",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Dataset name",
                     ),
@@ -86,9 +86,9 @@ def file_path_without_dates():
         (
             DatasetIdentifiers.DESCRIPTION,
             "Dataset description",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Dataset description",
                     ),
@@ -103,9 +103,9 @@ def file_path_without_dates():
         (
             DatasetIdentifiers.POPULATION_DESCRIPTION,
             "Population description",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Population description",
                     ),
@@ -116,9 +116,9 @@ def file_path_without_dates():
         (
             DatasetIdentifiers.VERSION_DESCRIPTION,
             "Version description",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Version description",
                     ),
@@ -148,17 +148,17 @@ def file_path_without_dates():
         (
             DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION,
             "Spatial coverage description",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Spatial coverage description",
                     ),
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nn",
                         languageText="Noreg",
                     ),
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="en",
                         languageText="Norway",
                     ),

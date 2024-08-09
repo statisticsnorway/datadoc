@@ -12,7 +12,6 @@ import dash_bootstrap_components as dbc
 import pytest
 from datadoc_model.model import LanguageStringTypeItem
 from dataset import ObligatoryVariableWarning
-from dataset import enums
 from dataset import model
 from pydantic_core import Url
 
@@ -50,9 +49,9 @@ if TYPE_CHECKING:
         (
             VariableIdentifiers.NAME,
             "Variable name",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Variable name",
                     ),
@@ -87,9 +86,9 @@ if TYPE_CHECKING:
         (
             VariableIdentifiers.POPULATION_DESCRIPTION,
             "Population description",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Population description",
                     ),
@@ -99,9 +98,9 @@ if TYPE_CHECKING:
         (
             VariableIdentifiers.COMMENT,
             "Comment",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Comment",
                     ),
@@ -131,9 +130,9 @@ if TYPE_CHECKING:
         (
             VariableIdentifiers.INVALID_VALUE_DESCRIPTION,
             "Invalid value",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Invalid value",
                     ),
