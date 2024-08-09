@@ -51,7 +51,7 @@ from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
 
 if TYPE_CHECKING:
     import dash_bootstrap_components as dbc
-    from datadoc_model.model import LanguageStringType
+    from dataset import model
 
 logger = logging.getLogger(__name__)
 
@@ -136,17 +136,17 @@ def process_keyword(value: str) -> list[str]:
 
 
 def process_special_cases(
-    value: MetadataInputTypes | LanguageStringType,
+    value: MetadataInputTypes | model.LanguageStringType,
     metadata_identifier: str,
     language: str | None = None,
-) -> MetadataInputTypes | LanguageStringType:
+) -> MetadataInputTypes | model.LanguageStringType:
     """Pre-process metadata where needed.
 
     Some types of metadata need processing before being saved
     to the model. Handle these cases here, other values are
     returned unchanged.
     """
-    updated_value: MetadataInputTypes | LanguageStringType
+    updated_value: MetadataInputTypes | model.LanguageStringType
     if metadata_identifier == DatasetIdentifiers.KEYWORD.value and isinstance(
         value,
         str,
@@ -188,7 +188,7 @@ def process_special_cases(
 
 
 def accept_dataset_metadata_input(
-    value: MetadataInputTypes | LanguageStringType,
+    value: MetadataInputTypes | model.LanguageStringType,
     metadata_identifier: str,
     language: str | None = None,
 ) -> tuple[bool, str]:

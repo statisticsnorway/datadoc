@@ -10,7 +10,6 @@ from uuid import UUID
 import arrow
 import dash_bootstrap_components as dbc
 import pytest
-from datadoc_model.model import LanguageStringTypeItem
 from dataset import ObligatoryVariableWarning
 from dataset import enums
 from dataset import model
@@ -453,7 +452,7 @@ def test_variables_values_multilanguage_inherit_dataset_values(
     state.metadata = metadata
     dataset_population_description = "Personer bosatt i Norge"
     dataset_population_description_language_item = [
-        LanguageStringTypeItem(
+        model.LanguageStringTypeItem(
             languageCode="nb",
             languageText="Personer bosatt i Norge",
         ),
@@ -483,7 +482,10 @@ def test_variables_values_multilanguage_can_be_changed_after_inherit_dataset_val
     state.metadata = metadata
     dataset_population_description = "Persons in Norway"
     dataset_population_description_language_item = [
-        LanguageStringTypeItem(languageCode="en", languageText="Persons in Norway"),
+        model.LanguageStringTypeItem(
+            languageCode="en",
+            languageText="Persons in Norway",
+        ),
     ]
     dataset_identifier = DatasetIdentifiers.POPULATION_DESCRIPTION
     variables_identifier = VariableIdentifiers.POPULATION_DESCRIPTION
@@ -504,7 +506,10 @@ def test_variables_values_multilanguage_can_be_changed_after_inherit_dataset_val
             variables_identifier,
         )
     variables_language_item = [
-        LanguageStringTypeItem(languageCode="en", languageText="Persons in Sweden"),
+        model.LanguageStringTypeItem(
+            languageCode="en",
+            languageText="Persons in Sweden",
+        ),
     ]
     setattr(
         state.metadata.variables_lookup["pers_id"],
@@ -599,7 +604,7 @@ def test_variables_metadata_control_dont_return_alert(metadata: Datadoc):
             state.metadata.variables_lookup[val.short_name],
             VariableIdentifiers.NAME,
             model.LanguageStringType(
-                [LanguageStringTypeItem(languageCode="nb", languageText="Test")],
+                [model.LanguageStringTypeItem(languageCode="nb", languageText="Test")],
             ),
         )
         setattr(

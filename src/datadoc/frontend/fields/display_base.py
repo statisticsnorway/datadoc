@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from dash.development.base_component import Component
-    from datadoc_model.model import LanguageStringType
+    from dataset import model
     from pydantic import BaseModel
 
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
@@ -98,7 +98,7 @@ def get_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str | No
 
 
 def _get_string_type_item(
-    language_strings: LanguageStringType,
+    language_strings: model.LanguageStringType,
     current_metadata_language: enums.SupportedLanguages,
 ) -> str | None:
     if language_strings.root is not None:
@@ -114,7 +114,7 @@ def get_multi_language_metadata_and_stringify(
     language: enums.SupportedLanguages,
 ) -> str | None:
     """Get a metadata value supporting multiple languages from the model."""
-    value: LanguageStringType | None = getattr(metadata, identifier)
+    value: model.LanguageStringType | None = getattr(metadata, identifier)
     if value is None:
         return ""
     return _get_string_type_item(value, language)
