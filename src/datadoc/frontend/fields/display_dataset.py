@@ -7,7 +7,6 @@ import logging
 from enum import Enum
 
 from dataset import enums
-from dataset import model
 
 from datadoc import state
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
@@ -117,7 +116,7 @@ DISPLAY_DATASET: dict[
         obligatory=True,
         options_getter=functools.partial(
             get_enum_options,
-            model.Assessment,
+            enums.Assessment,
         ),
     ),
     DatasetIdentifiers.DATASET_STATUS: MetadataDropdownField(
@@ -126,7 +125,7 @@ DISPLAY_DATASET: dict[
         description="Oppgi om metadataene er under arbeid (utkast), kan deles internt (intern), kan deles eksternt(ekstern) eller er avsluttet/erstattet (utgått). Det kan være restriksjoner knyttet til deling både internt og eksternt.",
         options_getter=functools.partial(
             get_enum_options,
-            model.DataSetStatus,
+            enums.DataSetStatus,
         ),
         obligatory=True,
     ),
@@ -195,7 +194,7 @@ DISPLAY_DATASET: dict[
         description="Temporalitetstypen sier noe om tidsdimensjonen i datasettet. Fast er data med verdi som ikke endres over tid (f.eks. fødselsdato), tverrsnitt er data som er målt på et gitt tidspunkt, akkumulert er data som er samlet over en viss tidsperiode (f.eks. inntekt gjennom et år) og hendelse/forløp registrerer tidspunkt og tidsperiode for ulike hendelser /tilstander, f.eks. (skifte av) bosted.",
         options_getter=functools.partial(
             get_enum_options,
-            model.TemporalityTypeType,
+            enums.TemporalityTypeType,
         ),
         obligatory=True,
     ),
@@ -291,7 +290,7 @@ DISPLAY_DATASET: dict[
         description="Oppgi om det er knyttet noen bruksrestriksjoner til datasettet, f.eks. krav om sletting/anonymisering.",
         options_getter=functools.partial(
             get_enum_options,
-            model.UseRestriction,
+            enums.UseRestriction,
         ),
     ),
     DatasetIdentifiers.USE_RESTRICTION_DATE: MetadataDateField(

@@ -58,13 +58,13 @@ def file_path_without_dates():
         (DatasetIdentifiers.SHORT_NAME, "person_data_v1", "person_data_v1"),
         (
             DatasetIdentifiers.ASSESSMENT,
-            model.Assessment.PROTECTED,
-            model.Assessment.PROTECTED.value,
+            enums.Assessment.PROTECTED,
+            enums.Assessment.PROTECTED.value,
         ),
         (
             DatasetIdentifiers.DATASET_STATUS,
-            model.DataSetStatus.INTERNAL,
-            model.DataSetStatus.INTERNAL.value,
+            enums.DataSetStatus.INTERNAL,
+            enums.DataSetStatus.INTERNAL.value,
         ),
         (
             DatasetIdentifiers.DATASET_STATE,
@@ -132,8 +132,8 @@ def file_path_without_dates():
         ),
         (
             DatasetIdentifiers.TEMPORALITY_TYPE,
-            model.TemporalityTypeType.ACCUMULATED,
-            model.TemporalityTypeType.ACCUMULATED.value,
+            enums.TemporalityTypeType.ACCUMULATED,
+            enums.TemporalityTypeType.ACCUMULATED.value,
         ),
         (
             DatasetIdentifiers.SUBJECT_FIELD,
@@ -168,7 +168,7 @@ def file_path_without_dates():
         (DatasetIdentifiers.CONTAINS_PERSONAL_DATA, True, True),
         (
             DatasetIdentifiers.USE_RESTRICTION,
-            model.UseRestriction.PROCESS_LIMITATIONS,
+            enums.UseRestriction.PROCESS_LIMITATIONS,
             "PROCESS_LIMITATIONS",
         ),
         (
