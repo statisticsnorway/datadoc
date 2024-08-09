@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 from typing import TypeAlias
 
 import arrow
-from datadoc_model import model
+from dataset import model
 
 from datadoc import config
 from datadoc import state

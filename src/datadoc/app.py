@@ -12,8 +12,8 @@ from pathlib import Path
 from dash import Dash
 from dash import dcc
 from dash import html
+from dataset import Datadoc
 from dataset.code_list import CodeList
-from dataset.core import Datadoc
 from dataset.statistic_subject_mapping import StatisticSubjectMapping
 from flask_healthz import healthz
 

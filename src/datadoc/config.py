@@ -8,8 +8,7 @@ from pathlib import Path
 from pprint import pformat
 from typing import Literal
 
-from dataset.utility.enums import DaplaRegion
-from dataset.utility.enums import DaplaService
+from dataset import enums
 from dotenv import dotenv_values
 from dotenv import load_dotenv
 
@@ -117,18 +116,18 @@ def get_statistical_subject_source_url() -> str | None:
     return _get_config_item("DATADOC_STATISTICAL_SUBJECT_SOURCE_URL")
 
 
-def get_dapla_region() -> DaplaRegion | None:
+def get_dapla_region() -> enums.DaplaRegion | None:
     """Get the Dapla region we're running on."""
     if region := _get_config_item(DAPLA_REGION):
-        return DaplaRegion(region)
+        return enums.DaplaRegion(region)
 
     return None
 
 
-def get_dapla_service() -> DaplaService | None:
+def get_dapla_service() -> enums.DaplaService | None:
     """Get the Dapla service we're running on."""
     if service := _get_config_item(DAPLA_SERVICE):
-        return DaplaService(service)
+        return enums.DaplaService(service)
 
     return None
 

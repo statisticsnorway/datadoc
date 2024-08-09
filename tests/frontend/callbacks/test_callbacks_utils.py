@@ -1,6 +1,6 @@
 import pytest
 from dash import html
-from datadoc_model import model
+from dataset import model
 
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import render_tabs

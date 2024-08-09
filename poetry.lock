@@ -802,7 +802,7 @@ description = "Dapla Toolbelt Metadata"
 optional = false
 python-versions = ">=3.10,<4.0"
 files = [
-    {file = "dapla_toolbelt_metadata-0.0.0-py3-none-any.whl", hash = "sha256:982909a4bf5c5a2bf14d3c6afa889704adfb5aa68f0a606d171903f909bc4db1"},
+    {file = "dapla_toolbelt_metadata-0.0.0-py3-none-any.whl", hash = "sha256:189ba193ed1645bb222e80f32f60c021e683dc8dad5426df16c17cb7da97a694"},
 ]
 
 [package.dependencies]

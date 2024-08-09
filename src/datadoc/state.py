@@ -13,8 +13,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from dataset import Datadoc
     from dataset.code_list import CodeList
-    from dataset.core import Datadoc
     from dataset.statistic_subject_mapping import StatisticSubjectMapping
 
 

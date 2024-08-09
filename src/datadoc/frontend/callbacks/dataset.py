@@ -9,8 +9,8 @@ from typing import TYPE_CHECKING
 
 import arrow
 from dash import no_update
-from dataset.core import Datadoc
-from dataset.dapla_dataset_path_info import DaplaDatasetPathInfo
+from dataset import DaplaDatasetPathInfo
+from dataset import Datadoc
 from pydantic import ValidationError
 
 from datadoc import config

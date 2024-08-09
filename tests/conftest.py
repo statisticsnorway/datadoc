@@ -14,9 +14,9 @@ import pandas as pd
 import pytest
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
-from datadoc_model import model
+from dataset import Datadoc
+from dataset import model
 from dataset.code_list import CodeList
-from dataset.core import Datadoc
 from dataset.statistic_subject_mapping import StatisticSubjectMapping
 from dataset.user_info import TestUserInfo
 

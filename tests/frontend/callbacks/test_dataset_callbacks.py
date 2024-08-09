@@ -11,9 +11,9 @@ from uuid import UUID
 import dash
 import dash_bootstrap_components as dbc
 import pytest
-from datadoc_model import model
-from dataset.model_validation import ObligatoryDatasetWarning
-from dataset.utility import enums
+from dataset import ObligatoryDatasetWarning
+from dataset import enums
+from dataset import model
 
 from datadoc import state
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
@@ -30,7 +30,7 @@ from datadoc.frontend.text import INVALID_DATE_ORDER
 from datadoc.frontend.text import INVALID_VALUE
 
 if TYPE_CHECKING:
-    from dataset.core import Datadoc
+    from dataset import Datadoc
 
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
@@ -58,13 +58,13 @@ def file_path_without_dates():
         (DatasetIdentifiers.SHORT_NAME, "person_data_v1", "person_data_v1"),
         (
             DatasetIdentifiers.ASSESSMENT,
-            enums.Assessment.PROTECTED,
-            enums.Assessment.PROTECTED.value,
+            model.Assessment.PROTECTED,
+            model.Assessment.PROTECTED.value,
         ),
         (
             DatasetIdentifiers.DATASET_STATUS,
-            enums.DataSetStatus.INTERNAL,
-            enums.DataSetStatus.INTERNAL.value,
+            model.DataSetStatus.INTERNAL,
+            model.DataSetStatus.INTERNAL.value,
         ),
         (
             DatasetIdentifiers.DATASET_STATE,
@@ -132,8 +132,8 @@ def file_path_without_dates():
         ),
         (
             DatasetIdentifiers.TEMPORALITY_TYPE,
-            enums.TemporalityTypeType.ACCUMULATED,
-            enums.TemporalityTypeType.ACCUMULATED.value,
+            model.TemporalityTypeType.ACCUMULATED,
+            model.TemporalityTypeType.ACCUMULATED.value,
         ),
         (
             DatasetIdentifiers.SUBJECT_FIELD,
@@ -168,7 +168,7 @@ def file_path_without_dates():
         (DatasetIdentifiers.CONTAINS_PERSONAL_DATA, True, True),
         (
             DatasetIdentifiers.USE_RESTRICTION,
-            enums.UseRestriction.PROCESS_LIMITATIONS,
+            model.UseRestriction.PROCESS_LIMITATIONS,
             "PROCESS_LIMITATIONS",
         ),
         (

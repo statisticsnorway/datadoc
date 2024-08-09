@@ -33,8 +33,8 @@ from datadoc.frontend.text import INVALID_VALUE
 
 if TYPE_CHECKING:
     import dash_bootstrap_components as dbc
-    from datadoc_model import model
     from datadoc_model.model import LanguageStringType
+    from dataset import model
 
 
 logger = logging.getLogger(__name__)

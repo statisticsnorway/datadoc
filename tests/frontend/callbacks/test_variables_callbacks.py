@@ -10,10 +10,10 @@ from uuid import UUID
 import arrow
 import dash_bootstrap_components as dbc
 import pytest
-from datadoc_model import model
 from datadoc_model.model import LanguageStringTypeItem
-from dataset.model_validation import ObligatoryVariableWarning
-from dataset.utility import enums
+from dataset import ObligatoryVariableWarning
+from dataset import enums
+from dataset import model
 from pydantic_core import Url
 
 from datadoc import state
@@ -39,7 +39,7 @@ from datadoc.frontend.text import INVALID_DATE_ORDER
 from datadoc.frontend.text import INVALID_VALUE
 
 if TYPE_CHECKING:
-    from dataset.core import Datadoc
+    from dataset import Datadoc
 
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
@@ -61,13 +61,13 @@ if TYPE_CHECKING:
         ),
         (
             VariableIdentifiers.DATA_TYPE,
-            enums.DataType.STRING,
-            enums.DataType.STRING.value,
+            model.DataType.STRING,
+            model.DataType.STRING.value,
         ),
         (
             VariableIdentifiers.VARIABLE_ROLE,
-            enums.VariableRole.MEASURE,
-            enums.VariableRole.MEASURE.value,
+            model.VariableRole.MEASURE,
+            model.VariableRole.MEASURE.value,
         ),
         (
             VariableIdentifiers.DEFINITION_URI,
@@ -76,8 +76,8 @@ if TYPE_CHECKING:
         ),
         (
             VariableIdentifiers.IS_PERSONAL_DATA,
-            enums.IsPersonalData.NOT_PERSONAL_DATA,
-            enums.IsPersonalData.NOT_PERSONAL_DATA.value,
+            model.IsPersonalData.NOT_PERSONAL_DATA,
+            model.IsPersonalData.NOT_PERSONAL_DATA.value,
         ),
         (
             VariableIdentifiers.DATA_SOURCE,
@@ -110,8 +110,8 @@ if TYPE_CHECKING:
         ),
         (
             VariableIdentifiers.TEMPORALITY_TYPE,
-            enums.TemporalityTypeType.ACCUMULATED,
-            enums.TemporalityTypeType.ACCUMULATED.value,
+            model.TemporalityTypeType.ACCUMULATED,
+            model.TemporalityTypeType.ACCUMULATED.value,
         ),
         (
             VariableIdentifiers.MEASUREMENT_UNIT,
@@ -605,12 +605,12 @@ def test_variables_metadata_control_dont_return_alert(metadata: Datadoc):
         setattr(
             state.metadata.variables_lookup[val.short_name],
             VariableIdentifiers.DATA_TYPE,
-            enums.DataType.STRING,
+            model.DataType.STRING,
         )
         setattr(
             state.metadata.variables_lookup[val.short_name],
             VariableIdentifiers.VARIABLE_ROLE,
-            enums.VariableRole.MEASURE,
+            model.VariableRole.MEASURE,
         )
         setattr(
             state.metadata.variables_lookup[val.short_name],
@@ -620,7 +620,7 @@ def test_variables_metadata_control_dont_return_alert(metadata: Datadoc):
         setattr(
             state.metadata.variables_lookup[val.short_name],
             VariableIdentifiers.IS_PERSONAL_DATA,
-            enums.IsPersonalData.NON_PSEUDONYMISED_ENCRYPTED_PERSONAL_DATA,
+            model.IsPersonalData.NON_PSEUDONYMISED_ENCRYPTED_PERSONAL_DATA,
         )
     with warnings.catch_warnings(record=True) as w:
         warnings.simplefilter("always")

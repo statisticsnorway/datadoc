@@ -5,7 +5,8 @@ from __future__ import annotations
 import functools
 from enum import Enum
 
-from dataset.utility import enums
+from dataset import enums
+from dataset import model
 
 from datadoc import state
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
@@ -81,7 +82,7 @@ DISPLAY_VARIABLES: dict[
         obligatory=True,
         options_getter=functools.partial(
             get_enum_options,
-            enums.DataType,
+            model.DataType,
         ),
     ),
     VariableIdentifiers.VARIABLE_ROLE: MetadataDropdownField(
@@ -91,7 +92,7 @@ DISPLAY_VARIABLES: dict[
         obligatory=True,
         options_getter=functools.partial(
             get_enum_options,
-            enums.VariableRole,
+            model.VariableRole,
         ),
     ),
     VariableIdentifiers.DEFINITION_URI: MetadataInputField(
@@ -107,7 +108,7 @@ DISPLAY_VARIABLES: dict[
         obligatory=True,
         options_getter=functools.partial(
             get_enum_options,
-            enums.IsPersonalData,
+            model.IsPersonalData,
         ),
     ),
     VariableIdentifiers.DATA_SOURCE: MetadataDropdownField(
@@ -134,7 +135,7 @@ DISPLAY_VARIABLES: dict[
         description="Temporalitetstypen settes vanligvis på datasettnivå, men dersom datasettet består av variabler med ulike temporalitetstyper, kan den settes på variabelnivå. Temporalitet sier noe om tidsdimensjonen i datasettet. Fast er data med verdi som ikke endres over tid (f.eks. fødselsdato), tverrsnitt er data som er målt på et gitt tidspunkt, akkumulert er data som  er samlet over en viss tidsperiode (f.eks. inntekt gjennom et år) og  hendelse/forløp registrerer tidspunkt og tidsperiode for ulike hendelser /tilstander, f.eks. (skifte av) bosted.",
         options_getter=functools.partial(
             get_enum_options,
-            enums.TemporalityTypeType,
+            model.TemporalityTypeType,
         ),
     ),
     VariableIdentifiers.MEASUREMENT_UNIT: MetadataDropdownField(
