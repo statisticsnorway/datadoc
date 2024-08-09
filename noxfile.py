@@ -166,8 +166,6 @@ def tests(session: Session) -> None:
     session.install(
         "coverage[toml]", "pytest", "pygments", "pytest-mock", "requests-mock", "faker"
     )
-    # Use `PYTHONPATH` to include the `src` directory
-    session.env["PYTHONPATH"] = "src"
     try:
         session.run(
             "coverage",
@@ -175,7 +173,8 @@ def tests(session: Session) -> None:
             "--parallel",
             "-m",
             "pytest",
-            "--tb=short",
+            "-o",
+            "pythonpath=",
             *session.posargs,
         )
     finally:
