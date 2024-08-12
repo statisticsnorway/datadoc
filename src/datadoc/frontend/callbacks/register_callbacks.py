@@ -236,12 +236,14 @@ def register_callbacks(app: Dash) -> None:
     @app.callback(
         Output(VARIABLES_INFORMATION_ID, "children"),
         Input("dataset-opened-counter", "data"),
-        prevent_initial_call=True,
     )
     def callback_populate_variables_info_section(
         dataset_opened_counter: int,  # noqa: ARG001 Dash requires arguments for all Inputs
     ) -> str:
-        return f"Datasettet inneholder {len(state.metadata.variables)} variabler."
+        if state.metadata.variables and len(state.metadata.variables) > 0:
+            return f"Datasettet inneholder {len(state.metadata.variables)} variabler."
+
+        return "Åpne et datasett for å liste variablene."
 
     @app.callback(
         Output(ACCORDION_WRAPPER_ID, "children"),

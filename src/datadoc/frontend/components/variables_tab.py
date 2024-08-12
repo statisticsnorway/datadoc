@@ -15,17 +15,12 @@ def build_variables_tab() -> html.Article:
         [
             html.Header(
                 [
-                    ssb.Title(
-                        "Variabel detaljer",
-                        size=2,
-                        className="workspace-title",
-                    ),
                     ssb.Paragraph(
                         id=VARIABLES_INFORMATION_ID,
                         className="workspace-info-paragraph",
                     ),
                     ssb.Input(
-                        label="Søk i variabler",
+                        label="Filtrer",
                         searchField=True,
                         disabled=False,
                         placeholder="Variabel kortnavn...",
