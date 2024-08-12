@@ -23,7 +23,6 @@ from datadoc.frontend.callbacks.register_callbacks import register_callbacks
 from datadoc.frontend.components.control_bars import build_controls_bar
 from datadoc.frontend.components.control_bars import build_footer_control_bar
 from datadoc.frontend.components.control_bars import header
-from datadoc.frontend.components.control_bars import progress_bar
 from datadoc.logging_configuration.logging_config import configure_logging
 from datadoc.utils import get_app_version
 from datadoc.utils import pick_random_port
@@ -50,7 +49,6 @@ def build_app(app: type[Dash]) -> Dash:
                         data=0,
                         storage_type="session",
                     ),
-                    progress_bar,
                     build_controls_bar(),
                     html.Div(id="alerts-section"),
                     dcc.Tabs(
