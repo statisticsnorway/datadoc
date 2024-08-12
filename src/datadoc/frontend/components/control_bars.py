@@ -19,23 +19,6 @@ header = ssb.Header(
     className="datadoc-header",
 )
 
-progress_bar = html.Div(
-    children=[
-        html.Label(
-            title="progress-bar",
-            htmlFor="progress-bar",
-            id="progress-bar-label",
-        ),
-        html.Progress(
-            id="progress-bar",
-            max="100",
-            value="0",
-            className="progress-bar",
-        ),
-    ],
-    className="progress-bar-wrapper",
-)
-
 
 def build_footer_control_bar() -> html.Aside:
     """Build footer control bar which resides below all the content."""
