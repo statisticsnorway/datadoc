@@ -9,7 +9,6 @@ import logging
 import warnings
 from typing import TYPE_CHECKING
 
-from dash import ALL
 from dash import MATCH
 from dash import Dash
 from dash import Input
@@ -59,35 +58,6 @@ logger = logging.getLogger(__name__)
 
 def register_callbacks(app: Dash) -> None:
     """Define and register callbacks."""
-
-    @app.callback(
-        Output("progress-bar", "value"),
-        Input({"type": DATASET_METADATA_INPUT, "id": ALL}, "value"),
-        Input(
-            {
-                "type": VARIABLES_METADATA_INPUT,
-                "variable_short_name": ALL,
-                "id": ALL,
-            },
-            "value",
-        ),
-    )
-    def callback_update_progress(
-        value: MetadataInputTypes,  # noqa: ARG001 argument required by Dash
-        data: list[dict],  # noqa: ARG001 argument required by Dash
-    ) -> str:
-        """Update the progress bar when new data is entered."""
-        return str(state.metadata.percent_complete)
-
-    @app.callback(
-        Output("progress-bar-label", "children"),
-        Input("progress-bar", "value"),
-    )
-    def callback_update_progress_label(
-        value: MetadataInputTypes,  # noqa: ARG001 argument required by Dash
-    ) -> str:
-        """Update the progress bar label when progress bar is updated."""
-        return f"{state.metadata.percent_complete}%"
 
     @app.callback(
         Output("alerts-section", "children", allow_duplicate=True),
