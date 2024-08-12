@@ -533,8 +533,7 @@ class Datadoc:
         """The percentage of obligatory metadata completed.
 
         A metadata field is counted as complete when any non-None value is
-        assigned. Used for a live progress bar in the UI, as well as being
-        saved in the datadoc as a simple quality indicator.
+        assigned. This value is saved int the metadata document as a simple quality indicator.
         """
         num_all_fields = NUM_OBLIGATORY_DATASET_FIELDS + (
             NUM_OBLIGATORY_VARIABLES_FIELDS * len(self.variables)
