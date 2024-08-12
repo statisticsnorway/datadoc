@@ -34,9 +34,9 @@ from datadoc.frontend.callbacks.variables import variables_control
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_dataset_edit_section
 from datadoc.frontend.components.builders import build_ssb_alert
-from datadoc.frontend.components.dataset_tab import SECTION_WRAPPER_ID
-from datadoc.frontend.components.variables_tab import ACCORDION_WRAPPER_ID
-from datadoc.frontend.components.variables_tab import VARIABLES_INFORMATION_ID
+from datadoc.frontend.components.identifiers import ACCORDION_WRAPPER_ID
+from datadoc.frontend.components.identifiers import SECTION_WRAPPER_ID
+from datadoc.frontend.components.identifiers import VARIABLES_INFORMATION_ID
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import DATASET_METADATA_INPUT
 from datadoc.frontend.fields.display_base import DATASET_METADATA_MULTILANGUAGE_INPUT

@@ -4,6 +4,8 @@ from datadoc_model import model
 
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import render_tabs
+from datadoc.frontend.components.identifiers import ACCORDION_WRAPPER_ID
+from datadoc.frontend.components.identifiers import SECTION_WRAPPER_ID
 
 
 def test_find_existing_language_string_no_existing_strings(bokmål_name: str):
@@ -55,13 +57,13 @@ def test_find_existing_language_string_pre_existing_strings(
 
 
 @pytest.mark.parametrize(
-    ("tab", "content"),
+    ("tab", "identifier"),
     [
-        ("dataset", "Datasett detaljer"),
-        ("variables", "Variabel detaljer"),
+        ("dataset", SECTION_WRAPPER_ID),
+        ("variables", ACCORDION_WRAPPER_ID),
     ],
 )
-def test_render_tabs(tab, content):
+def test_render_tabs(tab: str, identifier: str):
     result = render_tabs(tab)
     assert isinstance(result, html.Article)
-    assert result.children[0].children[0].children == content
+    assert result.children[-1].id == identifier
