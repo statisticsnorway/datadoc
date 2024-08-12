@@ -8,19 +8,21 @@ from typing import TYPE_CHECKING
 from typing import TypeAlias
 
 import arrow
+import ssb_dash_components as ssb
+from dash import html
 from datadoc_model import model
 
 from datadoc import config
 from datadoc import state
-from datadoc.frontend.components.dataset_tab import build_dataset_tab
-from datadoc.frontend.components.variables_tab import build_variables_tab
+from datadoc.frontend.components.identifiers import ACCORDION_WRAPPER_ID
+from datadoc.frontend.components.identifiers import SECTION_WRAPPER_ID
+from datadoc.frontend.components.identifiers import VARIABLES_INFORMATION_ID
 
 if TYPE_CHECKING:
     import pathlib
 
     import pydantic
     from cloudpathlib import CloudPath
-    from dash import html
 
 
 logger = logging.getLogger(__name__)
@@ -185,7 +187,42 @@ def parse_and_validate_dates(
 def render_tabs(tab: str) -> html.Article | None:
     """Render tab content."""
     if tab == "dataset":
-        return build_dataset_tab()
+        return html.Article(
+            [
+                html.Article(
+                    id=SECTION_WRAPPER_ID,
+                    className="workspace-content",
+                ),
+            ],
+            className="workspace-page-wrapper",
+        )
     if tab == "variables":
-        return build_variables_tab()
+        return html.Article(
+            [
+                html.Header(
+                    [
+                        ssb.Paragraph(
+                            id=VARIABLES_INFORMATION_ID,
+                            className="workspace-info-paragraph",
+                        ),
+                        ssb.Input(
+                            label="Filtrer",
+                            searchField=True,
+                            disabled=False,
+                            placeholder="Variabel kortnavn...",
+                            id="search-variables",
+                            n_submit=0,
+                            value="",
+                        ),
+                    ],
+                    className="workspace-header",
+                ),
+                html.Article(
+                    id=ACCORDION_WRAPPER_ID,
+                    className="workspace-content",
+                ),
+            ],
+            className="workspace-page-wrapper",
+        )
+
     return None

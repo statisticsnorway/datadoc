@@ -34,9 +34,9 @@ from datadoc.frontend.callbacks.variables import variables_control
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_dataset_edit_section
 from datadoc.frontend.components.builders import build_ssb_alert
-from datadoc.frontend.components.dataset_tab import SECTION_WRAPPER_ID
-from datadoc.frontend.components.variables_tab import ACCORDION_WRAPPER_ID
-from datadoc.frontend.components.variables_tab import VARIABLES_INFORMATION_ID
+from datadoc.frontend.components.identifiers import ACCORDION_WRAPPER_ID
+from datadoc.frontend.components.identifiers import SECTION_WRAPPER_ID
+from datadoc.frontend.components.identifiers import VARIABLES_INFORMATION_ID
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import DATASET_METADATA_INPUT
 from datadoc.frontend.fields.display_base import DATASET_METADATA_MULTILANGUAGE_INPUT
@@ -236,12 +236,14 @@ def register_callbacks(app: Dash) -> None:
     @app.callback(
         Output(VARIABLES_INFORMATION_ID, "children"),
         Input("dataset-opened-counter", "data"),
-        prevent_initial_call=True,
     )
     def callback_populate_variables_info_section(
         dataset_opened_counter: int,  # noqa: ARG001 Dash requires arguments for all Inputs
     ) -> str:
-        return f"Datasettet inneholder {len(state.metadata.variables)} variabler."
+        if state.metadata.variables and len(state.metadata.variables) > 0:
+            return f"Datasettet inneholder {len(state.metadata.variables)} variabler."
+
+        return "Åpne et datasett for å liste variablene."
 
     @app.callback(
         Output(ACCORDION_WRAPPER_ID, "children"),
