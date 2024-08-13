@@ -1,6 +1,5 @@
 .control-bar-section{
     display: flex;
-    flex-wrap: wrap;
     gap: 0.5rem;
     padding: 1rem 0;
     align-items: center;
@@ -9,7 +8,6 @@
 
 .ssb-input.file-path-input{
     max-width: 1100px;
-    width: 100%;
 }
 
 .ssb-btn.secondary-btn.file-open-button,.ssb-btn.secondary-btn.file-save-button{
@@ -111,4 +109,10 @@
 .button-section{
   display: flex;
   gap: 0.5rem;
+}
+
+@media only screen and (max-width: 1200px) {
+  .control-bar-section{
+    flex-wrap: wrap;
+  }
 }
