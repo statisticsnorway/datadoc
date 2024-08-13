@@ -1,7 +1,7 @@
 .control-bar-section{
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.5rem;
     padding: 1rem 0;
     align-items: center;
     margin-top: 1rem;
@@ -106,4 +106,9 @@
 #alerts-section > div.fade.ssb-alert.alert.alert-warning.alert-dismissible.show > .alert_list{
   margin: 0;
   margin-top: 1rem;
+}
+
+.button-section{
+  display: flex;
+  gap: 0.5rem;
 }

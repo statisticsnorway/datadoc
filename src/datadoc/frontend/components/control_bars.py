@@ -49,15 +49,20 @@ def build_controls_bar() -> html.Section:
                 className="file-path-input",
                 id="dataset-path-input",
             ),
-            ssb.Button(
-                children=["Åpne fil"],
-                id="open-button",
-                className="file-open-button",
-            ),
-            ssb.Button(
-                children=["Lagre metadata"],
-                id="save-button",
-                className="file-save-button",
+            html.Section(
+                [
+                    ssb.Button(
+                        children=["Åpne fil"],
+                        id="open-button",
+                        className="file-open-button",
+                    ),
+                    ssb.Button(
+                        children=["Lagre metadata"],
+                        id="save-button",
+                        className="file-save-button",
+                    ),
+                ],
+                className="button-section",
             ),
         ],
         className="control-bar-section",
