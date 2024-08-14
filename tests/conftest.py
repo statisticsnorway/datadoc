@@ -66,7 +66,7 @@ def dummy_timestamp() -> datetime:
 @pytest.fixture()
 def _mock_timestamp(mocker: MockerFixture, dummy_timestamp: datetime) -> None:
     mocker.patch(
-        "datadoc.backend.core.get_timestamp_now",
+        DATADOC_METADATA_MODULE + ".core.get_timestamp_now",
         return_value=dummy_timestamp,
     )
 
@@ -74,7 +74,7 @@ def _mock_timestamp(mocker: MockerFixture, dummy_timestamp: datetime) -> None:
 @pytest.fixture()
 def _mock_user_info(mocker: MockerFixture) -> None:
     mocker.patch(
-        "datadoc.backend.user_info.get_user_info_for_current_platform",
+        DATADOC_METADATA_MODULE + ".user_info.get_user_info_for_current_platform",
         return_value=TestUserInfo(),
     )
 
@@ -237,7 +237,8 @@ def _mock_fetch_statistical_structure(
             return BeautifulSoup(f.read(), features="xml").find_all("hovedemne")
 
     mocker.patch(
-        "datadoc.backend.statistic_subject_mapping.StatisticSubjectMapping._fetch_data_from_external_source",
+        DATADOC_METADATA_MODULE
+        + ".statistic_subject_mapping.StatisticSubjectMapping._fetch_data_from_external_source",
         functools.partial(fake_statistical_structure),
     )
 
@@ -285,7 +286,8 @@ def _mock_fetch_dataframe(
         }
 
     mocker.patch(
-        "datadoc.backend.code_list.CodeList._fetch_data_from_external_source",
+        DATADOC_METADATA_MODULE
+        + ".code_list.CodeList._fetch_data_from_external_source",
         functools.partial(fake_code_list),
     )
 
