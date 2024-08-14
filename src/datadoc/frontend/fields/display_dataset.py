@@ -208,7 +208,7 @@ DISPLAY_DATASET: dict[
     DatasetIdentifiers.KEYWORD: MetadataInputField(
         identifier=DatasetIdentifiers.KEYWORD.value,
         display_name="Nøkkelord",
-        description="Her kan en oppgi nøkkelord som beskriver datasettet, og som kan brukes i søk. Nøkkelordene må legges inn som en komma separert streng. F.eks. befolkning, skatt, arbeidsledighet",
+        description="Her kan en oppgi nøkkelord som beskriver datasettet, og som kan brukes i søk. Nøkkelordene må legges inn som en kommaseparert streng. F.eks. befolkning, skatt, arbeidsledighet",
         value_getter=get_comma_separated_string,
     ),
     DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION: MetadataMultiLanguageField(
