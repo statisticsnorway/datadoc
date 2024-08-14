@@ -10,23 +10,19 @@ import pathlib
 import shutil
 from datetime import datetime
 from datetime import timezone
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pandas as pd
 import pytest
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
-from datadoc_model import model
+from dataset import Datadoc
+from dataset import model
+from dataset.code_list import CodeList
+from dataset.statistic_subject_mapping import StatisticSubjectMapping
+from dataset.user_info import TestUserInfo
 
 from datadoc import state
-from datadoc.backend.code_list import CodeList
-from datadoc.backend.core import Datadoc
-from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-from datadoc.backend.user_info import TestUserInfo
-from tests.backend.test_statistic_subject_mapping import (
-    STATISTICAL_SUBJECT_STRUCTURE_DIR,
-)
 
 from .utils import TEST_DATASETS_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_DIRECTORY
@@ -37,7 +33,15 @@ from .utils import TEST_PARQUET_FILE_NAME
 from .utils import TEST_PARQUET_FILEPATH
 from .utils import TEST_RESOURCES_DIRECTORY
 
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from pytest_mock import MockerFixture
+
+
+DATADOC_METADATA_MODULE = "dataset"
 CODE_LIST_DIR = "code_list"
+STATISTICAL_SUBJECT_STRUCTURE_DIR = "statistical_subject_structure"
 
 if TYPE_CHECKING:
     from pytest_mock import MockerFixture

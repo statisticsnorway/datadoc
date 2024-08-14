@@ -9,12 +9,12 @@ from typing import TYPE_CHECKING
 
 import arrow
 from dash import no_update
+from dataset import DaplaDatasetPathInfo
+from dataset import Datadoc
 from pydantic import ValidationError
 
 from datadoc import config
 from datadoc import state
-from datadoc.backend.core import Datadoc
-from datadoc.backend.dapla_dataset_path_info import DaplaDatasetPathInfo
 from datadoc.constants import CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE
 from datadoc.constants import MISSING_METADATA_WARNING
 from datadoc.frontend.callbacks.utils import VALIDATION_ERROR
@@ -33,6 +33,8 @@ from datadoc.frontend.callbacks.variables import (
 )
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_ssb_alert
+from datadoc.frontend.constants import INVALID_DATE_ORDER
+from datadoc.frontend.constants import INVALID_VALUE
 from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET
 from datadoc.frontend.fields.display_dataset import (
     DROPDOWN_DATASET_METADATA_IDENTIFIERS,
@@ -45,13 +47,11 @@ from datadoc.frontend.fields.display_dataset import (
 )
 from datadoc.frontend.fields.display_dataset import TIMEZONE_AWARE_METADATA_IDENTIFIERS
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
-from datadoc.frontend.text import INVALID_DATE_ORDER
-from datadoc.frontend.text import INVALID_VALUE
 from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
 
 if TYPE_CHECKING:
     import dash_bootstrap_components as dbc
-    from datadoc_model.model import LanguageStringType
+    from dataset import model
 
 logger = logging.getLogger(__name__)
 
@@ -136,17 +136,17 @@ def process_keyword(value: str) -> list[str]:
 
 
 def process_special_cases(
-    value: MetadataInputTypes | LanguageStringType,
+    value: MetadataInputTypes | model.LanguageStringType,
     metadata_identifier: str,
     language: str | None = None,
-) -> MetadataInputTypes | LanguageStringType:
+) -> MetadataInputTypes | model.LanguageStringType:
     """Pre-process metadata where needed.
 
     Some types of metadata need processing before being saved
     to the model. Handle these cases here, other values are
     returned unchanged.
     """
-    updated_value: MetadataInputTypes | LanguageStringType
+    updated_value: MetadataInputTypes | model.LanguageStringType
     if metadata_identifier == DatasetIdentifiers.KEYWORD.value and isinstance(
         value,
         str,
@@ -188,7 +188,7 @@ def process_special_cases(
 
 
 def accept_dataset_metadata_input(
-    value: MetadataInputTypes | LanguageStringType,
+    value: MetadataInputTypes | model.LanguageStringType,
     metadata_identifier: str,
     language: str | None = None,
 ) -> tuple[bool, str]:

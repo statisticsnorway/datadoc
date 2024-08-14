@@ -6,9 +6,14 @@ import functools
 import logging
 from enum import Enum
 
-from datadoc import enums
+from dataset import enums
+
 from datadoc import state
-from datadoc.enums import SupportedLanguages
+from datadoc.enums import Assessment
+from datadoc.enums import DataSetState
+from datadoc.enums import DataSetStatus
+from datadoc.enums import TemporalityTypeType
+from datadoc.enums import UseRestriction
 from datadoc.frontend.fields.display_base import DATASET_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import DATASET_METADATA_MULTILANGUAGE_INPUT
 from datadoc.frontend.fields.display_base import DROPDOWN_DESELECT_OPTION
@@ -30,7 +35,7 @@ def get_statistical_subject_options() -> list[dict[str, str]]:
     """Generate the list of options for statistical subject."""
     dropdown_options = [
         {
-            "title": f"{primary.get_title(SupportedLanguages.NORSK_BOKMÅL)} - {secondary.get_title(SupportedLanguages.NORSK_BOKMÅL)}",
+            "title": f"{primary.get_title(enums.SupportedLanguages.NORSK_BOKMÅL)} - {secondary.get_title(enums.SupportedLanguages.NORSK_BOKMÅL)}",
             "id": secondary.subject_code,
         }
         for primary in state.statistic_subject_mapping.primary_subjects
@@ -44,7 +49,7 @@ def get_unit_type_options() -> list[dict[str, str]]:
     """Collect the unit type options."""
     dropdown_options = [
         {
-            "title": unit_type.get_title(SupportedLanguages.NORSK_BOKMÅL),
+            "title": unit_type.get_title(enums.SupportedLanguages.NORSK_BOKMÅL),
             "id": unit_type.code,
         }
         for unit_type in state.unit_types.classifications
@@ -57,7 +62,7 @@ def get_owner_options() -> list[dict[str, str]]:
     """Collect the owner options."""
     dropdown_options = [
         {
-            "title": f"{option.code} - {option.get_title(SupportedLanguages.NORSK_BOKMÅL)}",
+            "title": f"{option.code} - {option.get_title(enums.SupportedLanguages.NORSK_BOKMÅL)}",
             "id": option.code,
         }
         for option in state.organisational_units.classifications
@@ -116,7 +121,7 @@ DISPLAY_DATASET: dict[
         obligatory=True,
         options_getter=functools.partial(
             get_enum_options,
-            enums.Assessment,
+            Assessment,
         ),
     ),
     DatasetIdentifiers.DATASET_STATUS: MetadataDropdownField(
@@ -125,7 +130,7 @@ DISPLAY_DATASET: dict[
         description="Oppgi om metadataene er under arbeid (utkast), kan deles internt (intern), kan deles eksternt(ekstern) eller er avsluttet/erstattet (utgått). Det kan være restriksjoner knyttet til deling både internt og eksternt.",
         options_getter=functools.partial(
             get_enum_options,
-            enums.DataSetStatus,
+            DataSetStatus,
         ),
         obligatory=True,
     ),
@@ -136,7 +141,7 @@ DISPLAY_DATASET: dict[
         obligatory=True,
         options_getter=functools.partial(
             get_enum_options,
-            enums.DataSetState,
+            DataSetState,
         ),
     ),
     DatasetIdentifiers.NAME: MetadataMultiLanguageField(
@@ -194,7 +199,7 @@ DISPLAY_DATASET: dict[
         description="Temporalitetstypen sier noe om tidsdimensjonen i datasettet. Fast er data med verdi som ikke endres over tid (f.eks. fødselsdato), tverrsnitt er data som er målt på et gitt tidspunkt, akkumulert er data som er samlet over en viss tidsperiode (f.eks. inntekt gjennom et år) og hendelse/forløp registrerer tidspunkt og tidsperiode for ulike hendelser /tilstander, f.eks. (skifte av) bosted.",
         options_getter=functools.partial(
             get_enum_options,
-            enums.TemporalityTypeType,
+            TemporalityTypeType,
         ),
         obligatory=True,
     ),
@@ -290,7 +295,7 @@ DISPLAY_DATASET: dict[
         description="Oppgi om det er knyttet noen bruksrestriksjoner til datasettet, f.eks. krav om sletting/anonymisering.",
         options_getter=functools.partial(
             get_enum_options,
-            enums.UseRestriction,
+            UseRestriction,
         ),
     ),
     DatasetIdentifiers.USE_RESTRICTION_DATE: MetadataDateField(

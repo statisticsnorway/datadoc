@@ -11,26 +11,27 @@ from uuid import UUID
 import dash
 import dash_bootstrap_components as dbc
 import pytest
-from datadoc_model import model
+from dataset import ObligatoryDatasetWarning
+from dataset import model
 
 from datadoc import enums
 from datadoc import state
-from datadoc.backend.model_validation import ObligatoryDatasetWarning
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import dataset_control
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.dataset import process_special_cases
+from datadoc.frontend.constants import INVALID_DATE_ORDER
+from datadoc.frontend.constants import INVALID_VALUE
 from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET
 from datadoc.frontend.fields.display_dataset import (
     MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS,
 )
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
-from datadoc.frontend.text import INVALID_DATE_ORDER
-from datadoc.frontend.text import INVALID_VALUE
 
 if TYPE_CHECKING:
-    from datadoc.backend.core import Datadoc
+    from dataset import Datadoc
+
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 DATASET_CALLBACKS_MODULE = "datadoc.frontend.callbacks.dataset"
@@ -73,9 +74,9 @@ def file_path_without_dates():
         (
             DatasetIdentifiers.NAME,
             "Dataset name",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Dataset name",
                     ),
@@ -85,9 +86,9 @@ def file_path_without_dates():
         (
             DatasetIdentifiers.DESCRIPTION,
             "Dataset description",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Dataset description",
                     ),
@@ -102,9 +103,9 @@ def file_path_without_dates():
         (
             DatasetIdentifiers.POPULATION_DESCRIPTION,
             "Population description",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Population description",
                     ),
@@ -115,9 +116,9 @@ def file_path_without_dates():
         (
             DatasetIdentifiers.VERSION_DESCRIPTION,
             "Version description",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Version description",
                     ),
@@ -147,17 +148,17 @@ def file_path_without_dates():
         (
             DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION,
             "Spatial coverage description",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Spatial coverage description",
                     ),
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nn",
                         languageText="Noreg",
                     ),
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="en",
                         languageText="Norway",
                     ),

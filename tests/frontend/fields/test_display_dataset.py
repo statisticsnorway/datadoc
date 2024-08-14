@@ -4,10 +4,8 @@ from datadoc import state
 from datadoc.frontend.fields.display_base import DROPDOWN_DESELECT_OPTION
 from datadoc.frontend.fields.display_dataset import get_statistical_subject_options
 from datadoc.frontend.fields.display_dataset import get_unit_type_options
-from tests.backend.test_code_list import CODE_LIST_DIR
-from tests.backend.test_statistic_subject_mapping import (
-    STATISTICAL_SUBJECT_STRUCTURE_DIR,
-)
+from tests.conftest import CODE_LIST_DIR
+from tests.conftest import STATISTICAL_SUBJECT_STRUCTURE_DIR
 from tests.utils import TEST_RESOURCES_DIRECTORY
 
 

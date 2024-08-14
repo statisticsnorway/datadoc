@@ -18,6 +18,8 @@ from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_edit_section
 from datadoc.frontend.components.builders import build_ssb_accordion
 from datadoc.frontend.components.builders import build_ssb_alert
+from datadoc.frontend.constants import INVALID_DATE_ORDER
+from datadoc.frontend.constants import INVALID_VALUE
 from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import (
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,
@@ -28,13 +30,10 @@ from datadoc.frontend.fields.display_variables import (
 )
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
-from datadoc.frontend.text import INVALID_DATE_ORDER
-from datadoc.frontend.text import INVALID_VALUE
 
 if TYPE_CHECKING:
     import dash_bootstrap_components as dbc
-    from datadoc_model import model
-    from datadoc_model.model import LanguageStringType
+    from dataset import model
 
 
 logger = logging.getLogger(__name__)
@@ -77,10 +76,10 @@ def populate_variables_workspace(
 
 def handle_multi_language_metadata(
     metadata_field: str,
-    new_value: MetadataInputTypes | LanguageStringType,
+    new_value: MetadataInputTypes | model.LanguageStringType,
     updated_row_id: str,
     language: str,
-) -> MetadataInputTypes | LanguageStringType:
+) -> MetadataInputTypes | model.LanguageStringType:
     """Handle updates to fields which support multiple languages."""
     if new_value is None:
         # This edge case occurs when the user removes the text in an input field
@@ -267,7 +266,7 @@ def variable_identifier_multilanguage(
 
 
 def set_variables_values_inherit_dataset_values(
-    value: MetadataInputTypes | LanguageStringType,
+    value: MetadataInputTypes | model.LanguageStringType,
     metadata_identifier: str,
 ) -> None:
     """Set variable value based on dataset value."""
@@ -282,7 +281,7 @@ def set_variables_values_inherit_dataset_values(
 
 
 def set_variables_value_multilanguage_inherit_dataset_values(
-    value: MetadataInputTypes | LanguageStringType,
+    value: MetadataInputTypes | model.LanguageStringType,
     metadata_identifier: str,
     language: str,
 ) -> None:

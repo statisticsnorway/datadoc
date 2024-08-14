@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 import pytest
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
 from dash import html
-from datadoc_model import model
+from dataset import model
 
 from datadoc.frontend.components.builders import build_edit_section
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
