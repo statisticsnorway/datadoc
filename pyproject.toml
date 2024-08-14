@@ -41,6 +41,7 @@ pyjwt = ">=2.8.0"
 ssb-klass-python = ">=0.0.9"
 ssb-dash-components = ">=0.8.1"
 ssb-datadoc-model = "^6.0.0"
+dapla-toolbelt-metadata = "^0.1.2"
 
 [tool.poetry.group.dev.dependencies]
 mypy = ">=0.950"
