@@ -160,6 +160,7 @@ ignore = [
     "E501",   # Let black handle line length
     "TRY003",
     "FIX002", # It's OK to use TODOs if they meet the requirements
+    "PLC2401", # Allow non-ASCII character because of norwegian letters
 ]
 
 [tool.ruff.lint.isort]
