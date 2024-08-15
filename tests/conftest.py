@@ -25,7 +25,6 @@ from dapla_metadata.datasets.user_info import TestUserInfo
 from datadoc import state
 
 from .utils import TEST_EXISTING_METADATA_DIRECTORY
-from .utils import TEST_EXISTING_METADATA_FILE_NAME
 from .utils import TEST_PARQUET_FILE_NAME
 from .utils import TEST_PARQUET_FILEPATH
 from .utils import TEST_RESOURCES_DIRECTORY
@@ -95,17 +94,6 @@ def existing_metadata_path() -> Path:
     return TEST_EXISTING_METADATA_DIRECTORY
 
 
-# TODO(@tilen1976: remove?)  # noqa: TD004, TD003
-@pytest.fixture()
-def existing_metadata_file(tmp_path: Path, existing_metadata_path: Path) -> Path:
-    # Setup by copying the file into the relevant directory
-    shutil.copy(
-        existing_metadata_path / TEST_EXISTING_METADATA_FILE_NAME,
-        tmp_path / TEST_EXISTING_METADATA_FILE_NAME,
-    )
-    return tmp_path / TEST_EXISTING_METADATA_FILE_NAME
-
-
 @pytest.fixture(autouse=True)
 def _clear_state() -> None:
     """Global fixture, referred to in pytest.ini."""
@@ -144,21 +132,6 @@ def language_object(
             model.LanguageStringTypeItem(languageCode="nn", languageText=nynorsk_name),
         ],
     )
-
-
-# TODO(@tilen1976: remove?)  # noqa: TD004, TD003
-@pytest.fixture()
-def language_dicts(english_name: str, bokmål_name: str) -> list[dict[str, str]]:
-    return [
-        {"languageCode": "en", "languageText": english_name},
-        {"languageCode": "nb", "languageText": bokmål_name},
-    ]
-
-
-# TODO(@tilen1976: remove?)  # noqa: TD004, TD003
-@pytest.fixture()
-def existing_data_path() -> Path:
-    return TEST_PARQUET_FILEPATH
 
 
 @pytest.fixture()
@@ -221,20 +194,6 @@ def _mock_fetch_statistical_structure(
         + ".statistic_subject_mapping.StatisticSubjectMapping._fetch_data_from_external_source",
         functools.partial(fake_statistical_structure),
     )
-
-
-# TODO(@tilen1976: remove?)  # noqa: TD004, TD003
-@pytest.fixture()
-def subject_mapping_http_exception(
-    requests_mock,
-    exception_to_raise,
-    thread_pool_executor,
-) -> StatisticSubjectMapping:
-    requests_mock.get(
-        "http://test.some.url.com",
-        exc=exception_to_raise,
-    )
-    return StatisticSubjectMapping(thread_pool_executor, "http://test.some.url.com")
 
 
 @pytest.fixture()
