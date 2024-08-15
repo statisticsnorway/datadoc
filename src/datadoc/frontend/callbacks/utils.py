@@ -9,8 +9,8 @@ from typing import TypeAlias
 
 import arrow
 import ssb_dash_components as ssb
+from dapla_metadata.datasets import model
 from dash import html
-from dataset import model
 
 from datadoc import config
 from datadoc import state

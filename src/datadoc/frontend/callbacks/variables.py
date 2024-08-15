@@ -33,7 +33,7 @@ from datadoc.frontend.fields.display_variables import VariableIdentifiers
 
 if TYPE_CHECKING:
     import dash_bootstrap_components as dbc
-    from dataset import model
+    from dapla_metadata.datasets import model
 
 
 logger = logging.getLogger(__name__)

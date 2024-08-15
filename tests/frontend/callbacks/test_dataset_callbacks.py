@@ -11,8 +11,8 @@ from uuid import UUID
 import dash
 import dash_bootstrap_components as dbc
 import pytest
-from dataset import ObligatoryDatasetWarning
-from dataset import model
+from dapla_metadata.datasets import ObligatoryDatasetWarning
+from dapla_metadata.datasets import model
 
 from datadoc import enums
 from datadoc import state
@@ -30,7 +30,7 @@ from datadoc.frontend.fields.display_dataset import (
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 
 if TYPE_CHECKING:
-    from dataset import Datadoc
+    from dapla_metadata.datasets import Datadoc
 
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 

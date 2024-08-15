@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from enum import Enum
 
-from dataset import enums
-from dataset import model
+from dapla_metadata.datasets import enums
+from dapla_metadata.datasets import model
 
 
 class LanguageStringsEnum(Enum):

@@ -16,11 +16,11 @@ import pandas as pd
 import pytest
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
-from dataset import Datadoc
-from dataset import model
-from dataset.code_list import CodeList
-from dataset.statistic_subject_mapping import StatisticSubjectMapping
-from dataset.user_info import TestUserInfo
+from dapla_metadata.datasets import Datadoc
+from dapla_metadata.datasets import model
+from dapla_metadata.datasets.code_list import CodeList
+from dapla_metadata.datasets.statistic_subject_mapping import StatisticSubjectMapping
+from dapla_metadata.datasets.user_info import TestUserInfo
 
 from datadoc import state
 
@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     from pytest_mock import MockerFixture
 
 
-DATADOC_METADATA_MODULE = "dataset"
+DATADOC_METADATA_MODULE = "dapla_metadata.datasets"
 CODE_LIST_DIR = "code_list"
 STATISTICAL_SUBJECT_STRUCTURE_DIR = "statistical_subject_structure"
 

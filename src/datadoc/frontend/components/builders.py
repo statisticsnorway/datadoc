@@ -16,7 +16,7 @@ from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
 from datadoc.frontend.fields.display_base import FieldTypes
 
 if TYPE_CHECKING:
-    from dataset import model
+    from dapla_metadata.datasets import model
 
 
 class AlertTypes(Enum):

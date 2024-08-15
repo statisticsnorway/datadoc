@@ -10,16 +10,16 @@ from typing import TYPE_CHECKING
 from typing import Any
 
 import ssb_dash_components as ssb
+from dapla_metadata.datasets import enums
 from dash import html
-from dataset import enums
 
 from datadoc import state
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+    from dapla_metadata.datasets import model
     from dash.development.base_component import Component
-    from dataset import model
     from pydantic import BaseModel
 
     from datadoc.enums import LanguageStringsEnum

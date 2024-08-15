@@ -812,42 +812,29 @@ tomli = ">=1.1.0"
 
 [[package]]
 name = "dapla-toolbelt-metadata"
-version = "0.1.2"
+version = "0.2.0"
 description = "Dapla Toolbelt Metadata"
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    {file = "dapla_toolbelt_metadata-0.1.2-py3-none-any.whl", hash = "sha256:82a5a89a587aa151d87759353f9bc120581f87603081ce086ec2c864460ba342"},
-    {file = "dapla_toolbelt_metadata-0.1.2.tar.gz", hash = "sha256:77e9487d98458b865aaa9e57f181aefdc6b96bbccc0d640ea37e44dd7c6623d6"},
+    {file = "dapla_toolbelt_metadata-0.2.0-py3-none-any.whl", hash = "sha256:b2479b36d91b03b96735cd2e7a55631a7ffd1f4eb28aea17f297d07cc354897a"},
+    {file = "dapla_toolbelt_metadata-0.2.0.tar.gz", hash = "sha256:6bd69eddcac54985fcb541751a929ddf16010243b90d6631427e13296b4e440c"},
 ]
 
 [package.dependencies]
 arrow = ">=1.3.0"
 beautifulsoup4 = ">=4.12.3"
-black = ">=24.8.0,<25.0.0"
 bs4 = ">=0.0.2,<0.0.3"
-click = ">=8.0.1"
 cloudpathlib = {version = ">=0.17.0", extras = ["gs"]}
-coverage = ">=7.6.1,<8.0.0"
 dapla-toolbelt = ">=1.3.3"
-faker = ">=26.1.0,<27.0.0"
-furo = ">=2024.7.18,<2025.0.0"
-gunicorn = ">=21.2.0"
 pandas = ">=1.4.2"
-pre-commit = ">=3.8.0,<4.0.0"
 pyarrow = ">=8.0.0"
 pydantic = ">=2.5.2"
-pygments = ">=2.18.0,<3.0.0"
 pyjwt = ">=2.8.0"
-pytest = ">=8.3.2,<9.0.0"
-pytest-mock = ">=3.14.0,<4.0.0"
 python-dotenv = ">=1.0.1"
 requests = ">=2.31.0"
-requests-mock = ">=1.12.1,<2.0.0"
-ruff = ">=0.5.6,<0.6.0"
 ssb-datadoc-model = ">=6.0.0,<7.0.0"
 ssb-klass-python = ">=0.0.9"
-types-beautifulsoup4 = ">=4.12.0.20240511,<5.0.0.0"
 
 [[package]]
 name = "dash"
@@ -5263,4 +5250,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "86e7284e5642e83a5f048acbf25c3ea61cf91dd0d72e03d98cc52baf7c14190d"
+content-hash = "bf55d7a80ba98b779fc39138efe50bf945c95749846b09f93863c5ddaa675875"

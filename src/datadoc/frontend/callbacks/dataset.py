@@ -8,9 +8,9 @@ import re
 from typing import TYPE_CHECKING
 
 import arrow
+from dapla_metadata.datasets import DaplaDatasetPathInfo
+from dapla_metadata.datasets import Datadoc
 from dash import no_update
-from dataset import DaplaDatasetPathInfo
-from dataset import Datadoc
 from pydantic import ValidationError
 
 from datadoc import config
@@ -51,7 +51,7 @@ from datadoc.utils import METADATA_DOCUMENT_FILE_SUFFIX
 
 if TYPE_CHECKING:
     import dash_bootstrap_components as dbc
-    from dataset import model
+    from dapla_metadata.datasets import model
 
 logger = logging.getLogger(__name__)
 

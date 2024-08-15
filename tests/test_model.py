@@ -1,6 +1,6 @@
 """Verify that we are in sync with the Model."""
 
-from dataset import model
+from dapla_metadata.datasets import model
 
 from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers

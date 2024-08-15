@@ -10,8 +10,8 @@ from uuid import UUID
 import arrow
 import dash_bootstrap_components as dbc
 import pytest
-from dataset import ObligatoryVariableWarning
-from dataset import model
+from dapla_metadata.datasets import ObligatoryVariableWarning
+from dapla_metadata.datasets import model
 from pydantic_core import Url
 
 from datadoc import enums
@@ -38,7 +38,7 @@ from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
 
 if TYPE_CHECKING:
-    from dataset import Datadoc
+    from dapla_metadata.datasets import Datadoc
 
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 

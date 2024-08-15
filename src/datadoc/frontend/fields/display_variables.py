@@ -5,7 +5,7 @@ from __future__ import annotations
 import functools
 from enum import Enum
 
-from dataset import enums
+from dapla_metadata.datasets import enums
 
 from datadoc import state
 from datadoc.enums import DataType

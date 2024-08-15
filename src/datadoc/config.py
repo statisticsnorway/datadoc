@@ -8,7 +8,7 @@ from pathlib import Path
 from pprint import pformat
 from typing import Literal
 
-from dataset import enums
+from dapla_metadata.datasets import enums
 from dotenv import dotenv_values
 from dotenv import load_dotenv
 

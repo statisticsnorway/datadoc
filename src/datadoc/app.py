@@ -9,12 +9,12 @@ import concurrent
 import logging
 from pathlib import Path
 
+from dapla_metadata.datasets import Datadoc
+from dapla_metadata.datasets.code_list import CodeList
+from dapla_metadata.datasets.statistic_subject_mapping import StatisticSubjectMapping
 from dash import Dash
 from dash import dcc
 from dash import html
-from dataset import Datadoc
-from dataset.code_list import CodeList
-from dataset.statistic_subject_mapping import StatisticSubjectMapping
 from flask_healthz import healthz
 
 from datadoc import config

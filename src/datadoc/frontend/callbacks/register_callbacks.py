@@ -9,6 +9,8 @@ import logging
 import warnings
 from typing import TYPE_CHECKING
 
+from dapla_metadata.datasets import ObligatoryDatasetWarning
+from dapla_metadata.datasets import ObligatoryVariableWarning
 from dash import MATCH
 from dash import Dash
 from dash import Input
@@ -17,8 +19,6 @@ from dash import State
 from dash import ctx
 from dash import html
 from dash import no_update
-from dataset import ObligatoryDatasetWarning
-from dataset import ObligatoryVariableWarning
 
 from datadoc import state
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
