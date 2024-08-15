@@ -33,7 +33,6 @@ def pick_random_port() -> int:
         return int(sock.getsockname()[1])
 
 
-# TODO(@tilen1976: remove?)  # noqa: TD004, TD003
 def get_timestamp_now() -> datetime.datetime:
     """Return a timestamp for the current moment."""
     return datetime.datetime.now(tz=datetime.timezone.utc)

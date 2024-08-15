@@ -24,11 +24,8 @@ from dapla_metadata.datasets.user_info import TestUserInfo
 
 from datadoc import state
 
-from .utils import TEST_DATASETS_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_FILE_NAME
-from .utils import TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH
-from .utils import TEST_NAMING_STANDARD_COMPATIBLE_DATASET
 from .utils import TEST_PARQUET_FILE_NAME
 from .utils import TEST_PARQUET_FILEPATH
 from .utils import TEST_RESOURCES_DIRECTORY
@@ -89,27 +86,6 @@ def metadata(
     shutil.copy(TEST_PARQUET_FILEPATH, tmp_path / TEST_PARQUET_FILE_NAME)
     return Datadoc(
         str(tmp_path / TEST_PARQUET_FILE_NAME),
-        statistic_subject_mapping=subject_mapping_fake_statistical_structure,
-    )
-
-
-# TODO(@tilen1976: remove?)  # noqa: TD004, TD003
-@pytest.fixture()
-def metadata_merged(
-    _mock_timestamp: None,
-    _mock_user_info: None,
-    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
-    tmp_path: Path,
-) -> Datadoc:
-    target = tmp_path / TEST_NAMING_STANDARD_COMPATIBLE_DATASET
-    target.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy(
-        TEST_DATASETS_DIRECTORY / TEST_NAMING_STANDARD_COMPATIBLE_DATASET,
-        target,
-    )
-    return Datadoc(
-        str(target),
-        str(TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH),
         statistic_subject_mapping=subject_mapping_fake_statistical_structure,
     )
 
