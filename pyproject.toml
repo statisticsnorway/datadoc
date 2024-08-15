@@ -40,7 +40,7 @@ cloudpathlib = { extras = ["gs"], version = ">=0.17.0" }
 pyjwt = ">=2.8.0"
 ssb-klass-python = ">=0.0.9"
 ssb-dash-components = ">=0.8.1"
-ssb-datadoc-model = "^6.0.0"
+# ssb-datadoc-model = "^6.0.0"
 dapla-toolbelt-metadata = "^0.2.0"
 
 [tool.poetry.group.dev.dependencies]
@@ -116,8 +116,8 @@ module = [
     "pyarrow",
     "pyarrow.parquet",
     "dash.development.base_component",
-    "datadoc_model",
-    "datadoc_model.model",
+    # "datadoc_model",
+    # "datadoc_model.model",
     "pytest_mock",
 ]
 ignore_missing_imports = true
