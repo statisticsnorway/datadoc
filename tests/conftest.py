@@ -93,6 +93,7 @@ def metadata(
     )
 
 
+# TODO(@tilen1976: remove?)  # noqa: TD004, TD003
 @pytest.fixture()
 def metadata_merged(
     _mock_timestamp: None,
@@ -118,6 +119,7 @@ def existing_metadata_path() -> Path:
     return TEST_EXISTING_METADATA_DIRECTORY
 
 
+# TODO(@tilen1976: remove?)  # noqa: TD004, TD003
 @pytest.fixture()
 def existing_metadata_file(tmp_path: Path, existing_metadata_path: Path) -> Path:
     # Setup by copying the file into the relevant directory
@@ -168,6 +170,7 @@ def language_object(
     )
 
 
+# TODO(@tilen1976: remove?)  # noqa: TD004, TD003
 @pytest.fixture()
 def language_dicts(english_name: str, bokmål_name: str) -> list[dict[str, str]]:
     return [
@@ -176,6 +179,7 @@ def language_dicts(english_name: str, bokmål_name: str) -> list[dict[str, str]]
     ]
 
 
+# TODO(@tilen1976: remove?)  # noqa: TD004, TD003
 @pytest.fixture()
 def existing_data_path() -> Path:
     return TEST_PARQUET_FILEPATH
@@ -243,6 +247,7 @@ def _mock_fetch_statistical_structure(
     )
 
 
+# TODO(@tilen1976: remove?)  # noqa: TD004, TD003
 @pytest.fixture()
 def subject_mapping_http_exception(
     requests_mock,

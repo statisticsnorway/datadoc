@@ -24,6 +24,7 @@ class LanguageStringsEnum(Enum):
         self._value_ = self.name
         self.language_strings = language_strings
 
+    # TODO(@tilen1976: remove?)  # noqa: TD004, TD003
     @classmethod
     def _missing_(cls, value: object) -> LanguageStringsEnum:
         """Support constructing an enum member from a supplied name string."""
