@@ -39,7 +39,6 @@ ssb-klass-python = ">=0.0.9"
 pyarrow = ">=8.0.0"
 gunicorn = ">=21.2.0"
 dapla-toolbelt = ">=1.3.3"
-pandas = ">=1.4.2"
 
 [tool.poetry.group.dev.dependencies]
 mypy = ">=0.950"
