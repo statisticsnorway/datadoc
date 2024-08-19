@@ -9,6 +9,7 @@ import concurrent
 import logging
 from pathlib import Path
 
+import ssb_dash_components as ssb
 from dapla_metadata.datasets import Datadoc
 from dapla_metadata.datasets.code_list import CodeList
 from dapla_metadata.datasets.statistic_subject_mapping import StatisticSubjectMapping
@@ -58,11 +59,21 @@ def build_app(app: type[Dash]) -> Dash:
                         children=[
                             dcc.Tab(
                                 label="Datasett",
+                                children=ssb.Title(
+                                    "Rediger datasett",
+                                    size=2,
+                                    className="workspace-tab-title",
+                                ),
                                 value="dataset",
                                 className="workspace-tab",
                             ),
                             dcc.Tab(
                                 label="Variabler",
+                                children=ssb.Title(
+                                    "Rediger variabler",
+                                    size=2,
+                                    className="workspace-tab-title",
+                                ),
                                 value="variables",
                                 className="workspace-tab",
                             ),
