@@ -4,6 +4,7 @@ from dash import html
 
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import render_tabs
+from datadoc.frontend.callbacks.utils import select_tabs
 from datadoc.frontend.components.identifiers import ACCORDION_WRAPPER_ID
 from datadoc.frontend.components.identifiers import SECTION_WRAPPER_ID
 
@@ -67,3 +68,12 @@ def test_render_tabs(tab: str, identifier: str):
     result = render_tabs(tab)
     assert isinstance(result, html.Article)
     assert result.children[-1].id == identifier
+
+
+def test_switch_tabs():
+    keydown_right = {"key": "ArrowRight"}
+    keydown_left = {"key": "ArrowLeft"}
+    assert select_tabs(keydown_right, "dataset") == "variables"
+    assert select_tabs(keydown_right, "variables") == "dataset"
+    assert select_tabs(keydown_left, "dataset") == "variables"
+    assert select_tabs(keydown_left, "variables") == "dataset"
