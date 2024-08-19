@@ -22,6 +22,7 @@ from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import (
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,
 )
+from datadoc.frontend.fields.display_variables import NON_EDITABLE_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import (
     OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
@@ -66,6 +67,11 @@ def populate_variables_workspace(
                 build_edit_section(
                     OPTIONAL_VARIABLES_METADATA,
                     "Anbefalt",
+                    variable,
+                ),
+                build_edit_section(
+                    NON_EDITABLE_VARIABLES_METADATA,
+                    "Maskingenerert",
                     variable,
                 ),
             ],
