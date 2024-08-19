@@ -26,6 +26,7 @@ from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import dataset_control
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.utils import render_tabs
+from datadoc.frontend.callbacks.utils import select_tabs
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
@@ -216,12 +217,7 @@ def register_callbacks(app: Dash) -> None:
         enhancing accessibility by allowing users to navigate between tabs
         using the arrow keys.
         """
-        if keydown:
-            if keydown["key"] == "ArrowRight":
-                return "variables" if current_tab == "dataset" else "dataset"
-            if keydown["key"] == "ArrowLeft":
-                return "dataset" if current_tab == "variables" else "variables"
-        return current_tab
+        return select_tabs(keydown, current_tab)
 
     @app.callback(
         Output(VARIABLES_INFORMATION_ID, "children"),
