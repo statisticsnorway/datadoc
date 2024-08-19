@@ -107,8 +107,6 @@ module = [
     "pyarrow",
     "pyarrow.parquet",
     "dash.development.base_component",
-    # "datadoc_model",
-    # "datadoc_model.model",
     "pytest_mock",
 ]
 ignore_missing_imports = true
