@@ -15,10 +15,38 @@ delete the .rst file afterwards.
 datadoc package
 ===============
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   datadoc.frontend
+   datadoc.logging_configuration
+
+Submodules
+----------
+
 datadoc.app module
 ------------------
 
 .. automodule:: datadoc.app
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+datadoc.config module
+---------------------
+
+.. automodule:: datadoc.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+datadoc.constants module
+------------------------
+
+.. automodule:: datadoc.constants
    :members:
    :undoc-members:
    :show-inheritance:
@@ -50,38 +78,45 @@ datadoc.utils module
 datadoc.wsgi module
 -------------------
 
-datadoc.backend package
-=======================
-
-
-datadoc.backend.datadoc\_metadata module
-----------------------------------------
-
-.. automodule:: datadoc.backend.core
+.. automodule:: datadoc.wsgi
    :members:
    :undoc-members:
    :show-inheritance:
 
-datadoc.backend.dataset\_parser module
---------------------------------------
+Module contents
+---------------
 
-.. automodule:: datadoc.backend.dataset_parser
+.. automodule:: datadoc
    :members:
    :undoc-members:
    :show-inheritance:
 
-datadoc.backend.model\_backwards\_compatibility module
-------------------------------------------------------
+datadoc.logging\_configuration package
+======================================
 
-.. automodule:: datadoc.backend.model_backwards_compatibility
+Submodules
+----------
+
+datadoc.logging\_configuration.json\_formatter module
+-----------------------------------------------------
+
+.. automodule:: datadoc.logging_configuration.json_formatter
    :members:
    :undoc-members:
    :show-inheritance:
 
-datadoc.backend.storage\_adapter module
----------------------------------------
+datadoc.logging\_configuration.logging\_config module
+-----------------------------------------------------
 
-.. automodule:: datadoc.backend.storage_adapter
+.. automodule:: datadoc.logging_configuration.logging_config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: datadoc.logging_configuration
    :members:
    :undoc-members:
    :show-inheritance:
@@ -89,10 +124,116 @@ datadoc.backend.storage\_adapter module
 datadoc.frontend package
 ========================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   datadoc.frontend.callbacks
+   datadoc.frontend.components
+   datadoc.frontend.fields
+
+Submodules
+----------
+
+datadoc.frontend.constants module
+---------------------------------
+
+.. automodule:: datadoc.frontend.constants
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: datadoc.frontend
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+datadoc.frontend.fields package
+===============================
+
+Submodules
+----------
+
+datadoc.frontend.fields.display\_base module
+--------------------------------------------
+
+.. automodule:: datadoc.frontend.fields.display_base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+datadoc.frontend.fields.display\_dataset module
+-----------------------------------------------
+
+.. automodule:: datadoc.frontend.fields.display_dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+datadoc.frontend.fields.display\_variables module
+-------------------------------------------------
+
+.. automodule:: datadoc.frontend.fields.display_variables
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: datadoc.frontend.fields
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+datadoc.frontend.components package
+===================================
+
+Submodules
+----------
+
+datadoc.frontend.components.builders module
+-------------------------------------------
+
+.. automodule:: datadoc.frontend.components.builders
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+datadoc.frontend.components.control\_bars module
+------------------------------------------------
+
+.. automodule:: datadoc.frontend.components.control_bars
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+datadoc.frontend.components.identifiers module
+----------------------------------------------
+
+.. automodule:: datadoc.frontend.components.identifiers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: datadoc.frontend.components
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 datadoc.frontend.callbacks package
 ==================================
 
+Submodules
+----------
 
 datadoc.frontend.callbacks.dataset module
 -----------------------------------------
@@ -126,76 +267,11 @@ datadoc.frontend.callbacks.variables module
    :undoc-members:
    :show-inheritance:
 
-datadoc.frontend.components package
-===================================
+Module contents
+---------------
 
-
-datadoc.frontend.components.alerts module
------------------------------------------
-
-.. automodule:: datadoc.frontend.components.alerts
+.. automodule:: datadoc.frontend.callbacks
    :members:
    :undoc-members:
    :show-inheritance:
-
-datadoc.frontend.components.builders module
--------------------------------------------
-
-.. automodule:: datadoc.frontend.components.builders
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-datadoc.frontend.components.control\_bars module
-------------------------------------------------
-
-.. automodule:: datadoc.frontend.components.control_bars
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-datadoc.frontend.components.dataset\_tab module
------------------------------------------------
-
-.. automodule:: datadoc.frontend.components.dataset_tab
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-datadoc.frontend.components.variables\_tab module
--------------------------------------------------
-
-.. automodule:: datadoc.frontend.components.variables_tab
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-datadoc.frontend.fields package
-===============================
-
-
-datadoc.frontend.fields.display\_base module
---------------------------------------------
-
-.. automodule:: datadoc.frontend.fields.display_base
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-datadoc.frontend.fields.display\_dataset module
------------------------------------------------
-
-.. automodule:: datadoc.frontend.fields.display_dataset
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-datadoc.frontend.fields.display\_variables module
--------------------------------------------------
-
-.. automodule:: datadoc.frontend.fields.display_variables
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 ```

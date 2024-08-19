@@ -9,6 +9,9 @@ import concurrent
 import logging
 from pathlib import Path
 
+from dapla_metadata.datasets import Datadoc
+from dapla_metadata.datasets.code_list import CodeList
+from dapla_metadata.datasets.statistic_subject_mapping import StatisticSubjectMapping
 from dash import Dash
 from dash import dcc
 from dash import html
@@ -16,9 +19,6 @@ from flask_healthz import healthz
 
 from datadoc import config
 from datadoc import state
-from datadoc.backend.code_list import CodeList
-from datadoc.backend.core import Datadoc
-from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
 from datadoc.frontend.callbacks.register_callbacks import register_callbacks
 from datadoc.frontend.components.control_bars import build_controls_bar
 from datadoc.frontend.components.control_bars import build_footer_control_bar

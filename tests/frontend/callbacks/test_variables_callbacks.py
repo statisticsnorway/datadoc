@@ -10,13 +10,12 @@ from uuid import UUID
 import arrow
 import dash_bootstrap_components as dbc
 import pytest
-from datadoc_model import model
-from datadoc_model.model import LanguageStringTypeItem
+from dapla_metadata.datasets import ObligatoryVariableWarning
+from dapla_metadata.datasets import model
 from pydantic_core import Url
 
 from datadoc import enums
 from datadoc import state
-from datadoc.backend.model_validation import ObligatoryVariableWarning
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
@@ -30,16 +29,17 @@ from datadoc.frontend.callbacks.variables import (
     set_variables_values_inherit_dataset_values,
 )
 from datadoc.frontend.callbacks.variables import variables_control
+from datadoc.frontend.constants import INVALID_DATE_ORDER
+from datadoc.frontend.constants import INVALID_VALUE
 from datadoc.frontend.fields.display_base import get_metadata_and_stringify
 from datadoc.frontend.fields.display_base import get_standard_metadata
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
-from datadoc.frontend.text import INVALID_DATE_ORDER
-from datadoc.frontend.text import INVALID_VALUE
 
 if TYPE_CHECKING:
-    from datadoc.backend.core import Datadoc
+    from dapla_metadata.datasets import Datadoc
+
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 
@@ -49,9 +49,9 @@ if TYPE_CHECKING:
         (
             VariableIdentifiers.NAME,
             "Variable name",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Variable name",
                     ),
@@ -86,9 +86,9 @@ if TYPE_CHECKING:
         (
             VariableIdentifiers.POPULATION_DESCRIPTION,
             "Population description",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Population description",
                     ),
@@ -98,9 +98,9 @@ if TYPE_CHECKING:
         (
             VariableIdentifiers.COMMENT,
             "Comment",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Comment",
                     ),
@@ -130,9 +130,9 @@ if TYPE_CHECKING:
         (
             VariableIdentifiers.INVALID_VALUE_DESCRIPTION,
             "Invalid value",
-            enums.LanguageStringType(
+            model.LanguageStringType(
                 [
-                    enums.LanguageStringTypeItem(
+                    model.LanguageStringTypeItem(
                         languageCode="nb",
                         languageText="Invalid value",
                     ),
@@ -452,7 +452,7 @@ def test_variables_values_multilanguage_inherit_dataset_values(
     state.metadata = metadata
     dataset_population_description = "Personer bosatt i Norge"
     dataset_population_description_language_item = [
-        LanguageStringTypeItem(
+        model.LanguageStringTypeItem(
             languageCode="nb",
             languageText="Personer bosatt i Norge",
         ),
@@ -482,7 +482,10 @@ def test_variables_values_multilanguage_can_be_changed_after_inherit_dataset_val
     state.metadata = metadata
     dataset_population_description = "Persons in Norway"
     dataset_population_description_language_item = [
-        LanguageStringTypeItem(languageCode="en", languageText="Persons in Norway"),
+        model.LanguageStringTypeItem(
+            languageCode="en",
+            languageText="Persons in Norway",
+        ),
     ]
     dataset_identifier = DatasetIdentifiers.POPULATION_DESCRIPTION
     variables_identifier = VariableIdentifiers.POPULATION_DESCRIPTION
@@ -503,7 +506,10 @@ def test_variables_values_multilanguage_can_be_changed_after_inherit_dataset_val
             variables_identifier,
         )
     variables_language_item = [
-        LanguageStringTypeItem(languageCode="en", languageText="Persons in Sweden"),
+        model.LanguageStringTypeItem(
+            languageCode="en",
+            languageText="Persons in Sweden",
+        ),
     ]
     setattr(
         state.metadata.variables_lookup["pers_id"],
@@ -598,7 +604,7 @@ def test_variables_metadata_control_dont_return_alert(metadata: Datadoc):
             state.metadata.variables_lookup[val.short_name],
             VariableIdentifiers.NAME,
             model.LanguageStringType(
-                [LanguageStringTypeItem(languageCode="nb", languageText="Test")],
+                [model.LanguageStringTypeItem(languageCode="nb", languageText="Test")],
             ),
         )
         setattr(

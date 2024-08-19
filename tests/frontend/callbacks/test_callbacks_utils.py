@@ -1,6 +1,6 @@
 import pytest
+from dapla_metadata.datasets import model
 from dash import html
-from datadoc_model import model
 
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import render_tabs
