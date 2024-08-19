@@ -204,6 +204,26 @@ def register_callbacks(app: Dash) -> None:
         return render_tabs(tab)
 
     @app.callback(
+        Output("tabs", "value"),
+        Input("keyboard", "keydown"),
+        Input("tabs", "value"),
+    )
+    def switch_tabs(keydown: dict, current_tab: str) -> str:
+        """Handle keyboard events and switch tabs.
+
+        This callback is designed to make Dash core component Tabs
+        with children Tab focusable and keyboard interactive,
+        enhancing accessibility by allowing users to navigate between tabs
+        using the arrow keys.
+        """
+        if keydown:
+            if keydown["key"] == "ArrowRight":
+                return "variables" if current_tab == "dataset" else "dataset"
+            if keydown["key"] == "ArrowLeft":
+                return "dataset" if current_tab == "variables" else "variables"
+        return current_tab
+
+    @app.callback(
         Output(VARIABLES_INFORMATION_ID, "children"),
         Input("dataset-opened-counter", "data"),
     )

@@ -16,6 +16,7 @@ from dapla_metadata.datasets.statistic_subject_mapping import StatisticSubjectMa
 from dash import Dash
 from dash import dcc
 from dash import html
+from dash_extensions import Keyboard
 from flask_healthz import healthz
 
 from datadoc import config
@@ -52,34 +53,44 @@ def build_app(app: type[Dash]) -> Dash:
                     ),
                     build_controls_bar(),
                     html.Div(id="alerts-section"),
-                    dcc.Tabs(
-                        id="tabs",
-                        className="ssb-tabs",
-                        value="dataset",
-                        children=[
-                            dcc.Tab(
-                                label="Datasett",
-                                children=ssb.Title(
-                                    "Rediger datasett",
-                                    size=2,
-                                    className="workspace-tab-title",
-                                ),
+                    html.Div(
+                        [
+                            dcc.Tabs(
+                                id="tabs",
+                                className="ssb-tabs",
                                 value="dataset",
-                                className="workspace-tab",
+                                children=[
+                                    dcc.Tab(
+                                        label="Datasett",
+                                        children=ssb.Title(
+                                            "Rediger datasett",
+                                            size=2,
+                                            className="workspace-tab-title",
+                                        ),
+                                        value="dataset",
+                                        className="workspace-tab",
+                                    ),
+                                    dcc.Tab(
+                                        label="Variabler",
+                                        children=ssb.Title(
+                                            "Rediger variabler",
+                                            size=2,
+                                            className="workspace-tab-title",
+                                        ),
+                                        value="variables",
+                                        className="workspace-tab",
+                                    ),
+                                ],
                             ),
-                            dcc.Tab(
-                                label="Variabler",
-                                children=ssb.Title(
-                                    "Rediger variabler",
-                                    size=2,
-                                    className="workspace-tab-title",
-                                ),
-                                value="variables",
-                                className="workspace-tab",
+                            html.Div(id="display-tab"),
+                            Keyboard(
+                                id="keyboard",
+                                captureKeys=["ArrowLeft", "ArrowRight"],
                             ),
                         ],
+                        tabIndex="0",
+                        className="focusable-tabs-section",
                     ),
-                    html.Div(id="display-tab"),
                 ],
                 className="main-content-app",
             ),
