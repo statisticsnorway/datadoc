@@ -4,16 +4,22 @@ from __future__ import annotations
 
 import datetime
 import logging
+import warnings
 from typing import TYPE_CHECKING
 from typing import TypeAlias
 
 import arrow
 import ssb_dash_components as ssb
+from dapla_metadata.datasets import Datadoc
+from dapla_metadata.datasets import ObligatoryDatasetWarning
+from dapla_metadata.datasets import ObligatoryVariableWarning
 from dapla_metadata.datasets import model
 from dash import html
 
 from datadoc import config
 from datadoc import state
+from datadoc.frontend.components.builders import AlertTypes
+from datadoc.frontend.components.builders import build_ssb_alert
 from datadoc.frontend.components.identifiers import ACCORDION_WRAPPER_ID
 from datadoc.frontend.components.identifiers import SECTION_WRAPPER_ID
 from datadoc.frontend.components.identifiers import VARIABLES_INFORMATION_ID
@@ -226,3 +232,42 @@ def render_tabs(tab: str) -> html.Article | None:
         )
 
     return None
+
+
+def save_metadata_and_generate_alerts(metadata: Datadoc) -> list:
+    """Save the metadata document to disk and check obligatory metadata.
+
+    Returns:
+        List of alerts including obligatory metadata warnings if missing,
+        and success alert if metadata is saved correctly.
+    """
+    from datadoc.frontend.callbacks.dataset import dataset_control
+    from datadoc.frontend.callbacks.variables import variables_control
+
+    missing_obligatory_dataset = ""
+    missing_obligatory_variables = ""
+
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        metadata.write_metadata_document()
+        success_alert = build_ssb_alert(
+            AlertTypes.SUCCESS,
+            "Lagret metadata",
+        )
+
+        for warning in w:
+            if issubclass(warning.category, ObligatoryDatasetWarning):
+                missing_obligatory_dataset = str(warning.message)
+            elif issubclass(warning.category, ObligatoryVariableWarning):
+                missing_obligatory_variables = str(warning.message)
+            else:
+                logger.warning(
+                    "An unexpected warning was caught: %s",
+                    warning.message,
+                )
+
+    return [
+        success_alert,
+        dataset_control(missing_obligatory_dataset),
+        variables_control(missing_obligatory_variables, metadata.variables),
+    ]

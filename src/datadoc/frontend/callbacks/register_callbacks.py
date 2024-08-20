@@ -22,9 +22,7 @@ from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_inpu
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.utils import render_tabs
-from datadoc.frontend.callbacks.validation_utils import (
-    save_metadata_and_generate_alerts,
-)
+from datadoc.frontend.callbacks.utils import save_metadata_and_generate_alerts
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
@@ -73,7 +71,7 @@ def register_callbacks(app: Dash) -> None:
             If none return no_update.
         """
         if n_clicks and n_clicks > 0:
-            return save_metadata_and_generate_alerts()
+            return save_metadata_and_generate_alerts(state.metadata)
 
         return no_update
 

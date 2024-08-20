@@ -24,7 +24,9 @@ from dapla_metadata.datasets.user_info import TestUserInfo
 
 from datadoc import state
 
+from .utils import TEST_EKS_PARQUET
 from .utils import TEST_EXISTING_METADATA_DIRECTORY
+from .utils import TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH_NO_MISSING
 from .utils import TEST_PARQUET_FILE_NAME
 from .utils import TEST_PARQUET_FILEPATH
 from .utils import TEST_RESOURCES_DIRECTORY
@@ -85,6 +87,21 @@ def metadata(
     shutil.copy(TEST_PARQUET_FILEPATH, tmp_path / TEST_PARQUET_FILE_NAME)
     return Datadoc(
         str(tmp_path / TEST_PARQUET_FILE_NAME),
+        statistic_subject_mapping=subject_mapping_fake_statistical_structure,
+    )
+
+
+@pytest.fixture()
+def metadata_3(
+    _mock_timestamp: None,
+    _mock_user_info: None,
+    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
+    tmp_path: Path,
+) -> Datadoc:
+    shutil.copy(TEST_PARQUET_FILEPATH, tmp_path / TEST_EKS_PARQUET)
+    return Datadoc(
+        None,
+        str(TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH_NO_MISSING),
         statistic_subject_mapping=subject_mapping_fake_statistical_structure,
     )
 

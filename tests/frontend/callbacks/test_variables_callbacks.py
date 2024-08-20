@@ -591,7 +591,7 @@ def test_variables_metadata_control_return_alert(metadata: Datadoc):
         state.metadata.write_metadata_document()
         if issubclass(w[1].category, ObligatoryVariableWarning):
             missing_metadata = str(w[1].message)
-    result = variables_control(missing_metadata)
+    result = variables_control(missing_metadata, metadata.variables)
     assert isinstance(result, dbc.Alert)
 
 
@@ -632,5 +632,5 @@ def test_variables_metadata_control_dont_return_alert(metadata: Datadoc):
         state.metadata.write_metadata_document()
         if issubclass(w[0].category, ObligatoryVariableWarning):
             missing_metadata = str(w[0].message)
-    result = variables_control(missing_metadata)
+    result = variables_control(missing_metadata, metadata.variables)
     assert result is None
