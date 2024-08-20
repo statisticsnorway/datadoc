@@ -75,9 +75,9 @@ def test_render_tabs(tab: str, identifier: str):
 
 
 # if none metadata missing: only save alert
-# if dataset missing ->
-# if variables missing ->
-# if another warning ->
+# if dataset missing ->  ObligatoryDatasetWarning
+# if variables missing -> ObligatoryVariableWarning
+# if another warning -> message
 # if not n_clicks ?
 # if n_clicks and n_clicks > 0 ?
 def test_save_and_generate_alerts():
@@ -87,7 +87,6 @@ def test_save_and_generate_alerts():
         "var2",
     ]
     state.metadata = mock_metadata
-
     result = save_metadata_and_generate_alerts(
         mock_metadata,
     )
