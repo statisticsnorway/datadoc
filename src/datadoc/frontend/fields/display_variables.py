@@ -217,3 +217,7 @@ OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME: list[tuple] = [
     for m in DISPLAY_VARIABLES.values()
     if m.obligatory and m.editable
 ]
+
+NON_EDITABLE_VARIABLES_METADATA = [
+    m for m in DISPLAY_VARIABLES.values() if not m.editable
+]
