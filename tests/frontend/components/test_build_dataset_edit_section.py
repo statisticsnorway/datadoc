@@ -2,8 +2,8 @@
 
 import pytest
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
+from dapla_metadata.datasets import model
 from dash import html
-from datadoc_model import model
 
 from datadoc.frontend.components.builders import build_dataset_edit_section
 from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET

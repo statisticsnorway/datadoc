@@ -27,7 +27,7 @@
 
 .workspace-info-paragraph {
     display: inline-block;
-    align-self: flex-end;
+    align-self: center;
     margin-bottom: 0;
 }
 
@@ -48,7 +48,7 @@
     padding: 1rem 0;
 }
 
-#dataset-metadata-input-Metadata-right{
+#dataset-metadata-input-right{
     max-width: 500px;
     width: 100%;
 }
@@ -68,5 +68,9 @@
 }
 
 .dataset-machine-section{
+    flex-direction: column;
+}
+
+.variables-machine-section{
     flex-direction: column;
 }

@@ -16,7 +16,7 @@ from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
 from datadoc.frontend.fields.display_base import FieldTypes
 
 if TYPE_CHECKING:
-    from datadoc_model import model
+    from dapla_metadata.datasets import model
 
 
 class AlertTypes(Enum):
@@ -132,6 +132,26 @@ def build_edit_section(
             for inputs, side in zip(metadata_inputs, ["left", "right"])
         ],
         className="edit-section",
+    )
+
+
+def build_variables_machine_section(
+    metadata_inputs: list,
+    title: str,
+    variable: model.Variable,
+) -> html.Section:
+    """Create input section for variable workspace."""
+    return html.Section(
+        id={"type": "edit-section", "title": title},
+        children=[
+            ssb.Title(title, size=3, className="edit-section-title"),
+            build_input_field_section(
+                metadata_inputs,
+                "left",
+                variable,
+            ),
+        ],
+        className="variable-machine-section",
     )
 
 

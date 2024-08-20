@@ -10,34 +10,34 @@ import pathlib
 import shutil
 from datetime import datetime
 from datetime import timezone
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pandas as pd
 import pytest
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
-from datadoc_model import model
+from dapla_metadata.datasets import Datadoc
+from dapla_metadata.datasets import model
+from dapla_metadata.datasets.code_list import CodeList
+from dapla_metadata.datasets.statistic_subject_mapping import StatisticSubjectMapping
+from dapla_metadata.datasets.user_info import TestUserInfo
 
 from datadoc import state
-from datadoc.backend.code_list import CodeList
-from datadoc.backend.core import Datadoc
-from datadoc.backend.statistic_subject_mapping import StatisticSubjectMapping
-from datadoc.backend.user_info import TestUserInfo
-from tests.backend.test_statistic_subject_mapping import (
-    STATISTICAL_SUBJECT_STRUCTURE_DIR,
-)
 
-from .utils import TEST_DATASETS_DIRECTORY
 from .utils import TEST_EXISTING_METADATA_DIRECTORY
-from .utils import TEST_EXISTING_METADATA_FILE_NAME
-from .utils import TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH
-from .utils import TEST_NAMING_STANDARD_COMPATIBLE_DATASET
 from .utils import TEST_PARQUET_FILE_NAME
 from .utils import TEST_PARQUET_FILEPATH
 from .utils import TEST_RESOURCES_DIRECTORY
 
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from pytest_mock import MockerFixture
+
+
+DATADOC_METADATA_MODULE = "dapla_metadata.datasets"
 CODE_LIST_DIR = "code_list"
+STATISTICAL_SUBJECT_STRUCTURE_DIR = "statistical_subject_structure"
 
 if TYPE_CHECKING:
     from pytest_mock import MockerFixture
@@ -62,7 +62,7 @@ def dummy_timestamp() -> datetime:
 @pytest.fixture()
 def _mock_timestamp(mocker: MockerFixture, dummy_timestamp: datetime) -> None:
     mocker.patch(
-        "datadoc.backend.core.get_timestamp_now",
+        DATADOC_METADATA_MODULE + ".core.get_timestamp_now",
         return_value=dummy_timestamp,
     )
 
@@ -70,7 +70,7 @@ def _mock_timestamp(mocker: MockerFixture, dummy_timestamp: datetime) -> None:
 @pytest.fixture()
 def _mock_user_info(mocker: MockerFixture) -> None:
     mocker.patch(
-        "datadoc.backend.user_info.get_user_info_for_current_platform",
+        DATADOC_METADATA_MODULE + ".user_info.get_user_info_for_current_platform",
         return_value=TestUserInfo(),
     )
 
@@ -90,38 +90,8 @@ def metadata(
 
 
 @pytest.fixture()
-def metadata_merged(
-    _mock_timestamp: None,
-    _mock_user_info: None,
-    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
-    tmp_path: Path,
-) -> Datadoc:
-    target = tmp_path / TEST_NAMING_STANDARD_COMPATIBLE_DATASET
-    target.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy(
-        TEST_DATASETS_DIRECTORY / TEST_NAMING_STANDARD_COMPATIBLE_DATASET,
-        target,
-    )
-    return Datadoc(
-        str(target),
-        str(TEST_EXISTING_METADATA_NAMING_STANDARD_FILEPATH),
-        statistic_subject_mapping=subject_mapping_fake_statistical_structure,
-    )
-
-
-@pytest.fixture()
 def existing_metadata_path() -> Path:
     return TEST_EXISTING_METADATA_DIRECTORY
-
-
-@pytest.fixture()
-def existing_metadata_file(tmp_path: Path, existing_metadata_path: Path) -> Path:
-    # Setup by copying the file into the relevant directory
-    shutil.copy(
-        existing_metadata_path / TEST_EXISTING_METADATA_FILE_NAME,
-        tmp_path / TEST_EXISTING_METADATA_FILE_NAME,
-    )
-    return tmp_path / TEST_EXISTING_METADATA_FILE_NAME
 
 
 @pytest.fixture(autouse=True)
@@ -162,19 +132,6 @@ def language_object(
             model.LanguageStringTypeItem(languageCode="nn", languageText=nynorsk_name),
         ],
     )
-
-
-@pytest.fixture()
-def language_dicts(english_name: str, bokmål_name: str) -> list[dict[str, str]]:
-    return [
-        {"languageCode": "en", "languageText": english_name},
-        {"languageCode": "nb", "languageText": bokmål_name},
-    ]
-
-
-@pytest.fixture()
-def existing_data_path() -> Path:
-    return TEST_PARQUET_FILEPATH
 
 
 @pytest.fixture()
@@ -233,7 +190,8 @@ def _mock_fetch_statistical_structure(
             return BeautifulSoup(f.read(), features="xml").find_all("hovedemne")
 
     mocker.patch(
-        "datadoc.backend.statistic_subject_mapping.StatisticSubjectMapping._fetch_data_from_external_source",
+        DATADOC_METADATA_MODULE
+        + ".statistic_subject_mapping.StatisticSubjectMapping._fetch_data_from_external_source",
         functools.partial(fake_statistical_structure),
     )
 
@@ -289,7 +247,8 @@ def _mock_fetch_dataframe(
         }
 
     mocker.patch(
-        "datadoc.backend.code_list.CodeList._fetch_data_from_external_source",
+        DATADOC_METADATA_MODULE
+        + ".code_list.CodeList._fetch_data_from_external_source",
         functools.partial(fake_code_list),
     )
 

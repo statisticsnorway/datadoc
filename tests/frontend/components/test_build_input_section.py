@@ -3,7 +3,7 @@
 import dash_bootstrap_components as dbc
 import pytest
 import ssb_dash_components as ssb  # type: ignore[import-untyped]
-from datadoc_model import model
+from dapla_metadata.datasets import model
 
 from datadoc.frontend.components.builders import build_input_field_section
 from datadoc.frontend.fields.display_base import MetadataCheckboxField

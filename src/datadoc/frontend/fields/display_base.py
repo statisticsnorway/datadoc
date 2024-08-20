@@ -10,19 +10,19 @@ from typing import TYPE_CHECKING
 from typing import Any
 
 import ssb_dash_components as ssb
+from dapla_metadata.datasets import enums
 from dash import html
 
 from datadoc import state
-from datadoc.enums import LanguageStringsEnum
-from datadoc.enums import SupportedLanguages
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+    from dapla_metadata.datasets import model
     from dash.development.base_component import Component
-    from datadoc_model.model import LanguageStringType
     from pydantic import BaseModel
 
+    from datadoc.enums import LanguageStringsEnum
     from datadoc.frontend.callbacks.utils import MetadataInputTypes
 
 logger = logging.getLogger(__name__)
@@ -39,17 +39,17 @@ DROPDOWN_DESELECT_OPTION = "-- Velg --"
 
 METADATA_LANGUAGES = [
     {
-        "supported_language": SupportedLanguages.NORSK_BOKMÅL,
+        "supported_language": enums.SupportedLanguages.NORSK_BOKMÅL,
         "language_title": "Bokmål",
         "language_value": "nb",
     },
     {
-        "supported_language": SupportedLanguages.NORSK_NYNORSK,
+        "supported_language": enums.SupportedLanguages.NORSK_NYNORSK,
         "language_title": "Nynorsk",
         "language_value": "nn",
     },
     {
-        "supported_language": SupportedLanguages.ENGLISH,
+        "supported_language": enums.SupportedLanguages.ENGLISH,
         "language_title": "English",
         "language_value": "en",
     },
@@ -62,7 +62,8 @@ def get_enum_options(
     """Generate the list of options based on the currently chosen language."""
     dropdown_options = [
         {
-            "title": i.get_value_for_language(SupportedLanguages.NORSK_BOKMÅL) or "",
+            "title": i.get_value_for_language(enums.SupportedLanguages.NORSK_BOKMÅL)
+            or "",
             "id": i.name,
         }
         for i in enum  # type: ignore [attr-defined]
@@ -75,7 +76,7 @@ def get_data_source_options() -> list[dict[str, str]]:
     """Collect the unit type options."""
     dropdown_options = [
         {
-            "title": data_sources.get_title(SupportedLanguages.NORSK_BOKMÅL),
+            "title": data_sources.get_title(enums.SupportedLanguages.NORSK_BOKMÅL),
             "id": data_sources.code,
         }
         for data_sources in state.data_sources.classifications
@@ -98,8 +99,8 @@ def get_metadata_and_stringify(metadata: BaseModel, identifier: str) -> str | No
 
 
 def _get_string_type_item(
-    language_strings: LanguageStringType,
-    current_metadata_language: SupportedLanguages,
+    language_strings: model.LanguageStringType,
+    current_metadata_language: enums.SupportedLanguages,
 ) -> str | None:
     if language_strings.root is not None:
         for i in language_strings.root:
@@ -111,10 +112,10 @@ def _get_string_type_item(
 def get_multi_language_metadata_and_stringify(
     metadata: BaseModel,
     identifier: str,
-    language: SupportedLanguages,
+    language: enums.SupportedLanguages,
 ) -> str | None:
     """Get a metadata value supporting multiple languages from the model."""
-    value: LanguageStringType | None = getattr(metadata, identifier)
+    value: model.LanguageStringType | None = getattr(metadata, identifier)
     if value is None:
         return ""
     return _get_string_type_item(value, language)
@@ -276,7 +277,7 @@ class MetadataMultiLanguageField(DisplayMetadata):
                         value=get_multi_language_metadata_and_stringify(
                             metadata,
                             self.identifier,
-                            SupportedLanguages(i["supported_language"]),
+                            enums.SupportedLanguages(i["supported_language"]),
                         ),
                         debounce=True,
                         id={
@@ -298,7 +299,7 @@ class MetadataMultiLanguageField(DisplayMetadata):
                     value=get_multi_language_metadata_and_stringify(
                         metadata,
                         self.identifier,
-                        SupportedLanguages(i["supported_language"]),
+                        enums.SupportedLanguages(i["supported_language"]),
                     ),
                     debounce=True,
                     id={
