@@ -22,11 +22,11 @@ from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
 from datadoc.frontend.fields.display_variables import (
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,
 )
-from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import (
     OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
 )
-from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
+from datadoc.frontend.fields.display_variables import VARIABLES_METADATA_LEFT
+from datadoc.frontend.fields.display_variables import VARIABLES_METADATA_RIGHT
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
 from datadoc.frontend.text import INVALID_DATE_ORDER
 from datadoc.frontend.text import INVALID_VALUE
@@ -59,13 +59,8 @@ def populate_variables_workspace(
             variable.short_name or "",
             children=[
                 build_edit_section(
-                    OBLIGATORY_VARIABLES_METADATA,
-                    "Obligatorisk",
-                    variable,
-                ),
-                build_edit_section(
-                    OPTIONAL_VARIABLES_METADATA,
-                    "Anbefalt",
+                    [VARIABLES_METADATA_LEFT, VARIABLES_METADATA_RIGHT],
+                    "",
                     variable,
                 ),
             ],
@@ -192,12 +187,12 @@ def accept_variable_metadata_date_input(
         )
 
         # Save both values to the model if they pass validation.
-        state.metadata.variables_lookup[
-            variable_short_name
-        ].contains_data_from = parsed_contains_data_from
-        state.metadata.variables_lookup[
-            variable_short_name
-        ].contains_data_until = parsed_contains_data_until
+        state.metadata.variables_lookup[variable_short_name].contains_data_from = (
+            parsed_contains_data_from
+        )
+        state.metadata.variables_lookup[variable_short_name].contains_data_until = (
+            parsed_contains_data_until
+        )
     except (ValidationError, ValueError) as e:
         logger.exception(
             "Validation failed for %s, %s, %s: %s, %s: %s",

@@ -239,6 +239,14 @@ def _mock_fetch_statistical_structure(
 
 
 @pytest.fixture()
+def _statistic_subject_mapping_fake_subjects(
+    subject_mapping_fake_statistical_structure,
+) -> None:
+    state.statistic_subject_mapping = subject_mapping_fake_statistical_structure
+    state.statistic_subject_mapping.wait_for_external_result()
+
+
+@pytest.fixture()
 def subject_mapping_http_exception(
     requests_mock,
     exception_to_raise,
@@ -292,12 +300,18 @@ def code_list_fake_structure(_mock_fetch_dataframe, thread_pool_executor) -> Cod
 
 
 @pytest.fixture()
-def _code_list_fake_classifications_variables(code_list_fake_structure) -> None:
+def _code_list_fake_classifications(code_list_fake_structure) -> None:
     state.measurement_units = code_list_fake_structure
     state.measurement_units.wait_for_external_result()
 
     state.data_sources = code_list_fake_structure
     state.data_sources.wait_for_external_result()
+
+    state.unit_types = code_list_fake_structure
+    state.unit_types.wait_for_external_result()
+
+    state.organisational_units = code_list_fake_structure
+    state.organisational_units.wait_for_external_result()
 
 
 @pytest.fixture()

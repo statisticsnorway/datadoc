@@ -98,28 +98,29 @@ def build_ssb_alert(
 
 def build_input_field_section(
     metadata_fields: list[FieldTypes],
+    side: str,
     variable: model.Variable,
 ) -> dbc.Form:
     """Create form with input fields for variable workspace."""
     return dbc.Form(
         [
             i.render(
-                {
+                component_id={
                     "type": VARIABLES_METADATA_INPUT,
                     "variable_short_name": variable.short_name,
                     "id": i.identifier,
                 },
-                variable,
+                metadata=variable,
             )
             for i in metadata_fields
         ],
-        id=VARIABLES_METADATA_INPUT,
+        id=f"{VARIABLES_METADATA_INPUT}-{side}",
         className="edit-section-form",
     )
 
 
 def build_edit_section(
-    metadata_inputs: list,
+    metadata_inputs: list[list[FieldTypes]],
     title: str,
     variable: model.Variable,
 ) -> html.Section:
@@ -127,11 +128,8 @@ def build_edit_section(
     return html.Section(
         id={"type": "edit-section", "title": title},
         children=[
-            ssb.Title(title, size=3, className="edit-section-title"),
-            build_input_field_section(
-                metadata_inputs,
-                variable,
-            ),
+            build_input_field_section(inputs, side, variable)
+            for inputs, side in zip(metadata_inputs, ["left", "right"])
         ],
         className="edit-section",
     )
@@ -160,17 +158,17 @@ def build_ssb_accordion(
     )
 
 
-def build_dataset_edit_section(
+def build_dataset_machine_section(
     title: str,
     metadata_inputs: list[FieldTypes],
     dataset: model.Dataset,
     key: dict,
 ) -> html.Section:
-    """Create edit section for dataset workspace."""
+    """Create section for dataset machine generated workspace."""
     return html.Section(
         id=key,
         children=[
-            ssb.Title(title, size=3, className="edit-section-title"),
+            ssb.Title(title, size=2, className="edit-section-title"),
             dbc.Form(
                 [
                     i.render(
@@ -185,6 +183,35 @@ def build_dataset_edit_section(
                 id=f"{DATASET_METADATA_INPUT}-{title}",
                 className="edit-section-form",
             ),
+        ],
+        className="edit-section dataset-machine-section",
+    )
+
+
+def build_dataset_edit_section(
+    metadata_inputs: list[list[FieldTypes]],
+    dataset: model.Dataset,
+    key: dict,
+) -> html.Section:
+    """Create edit section for dataset workspace."""
+    return html.Section(
+        id=key,
+        children=[
+            dbc.Form(
+                [
+                    i.render(
+                        component_id={
+                            "type": DATASET_METADATA_INPUT,
+                            "id": i.identifier,
+                        },
+                        metadata=dataset,
+                    )
+                    for i in inputs
+                ],
+                id=f"{DATASET_METADATA_INPUT}-{side}",
+                className="edit-section-form",
+            )
+            for inputs, side in zip(metadata_inputs, ["left", "right"])
         ],
         className="edit-section dataset-edit-section",
     )

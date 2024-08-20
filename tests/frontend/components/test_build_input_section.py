@@ -10,10 +10,10 @@ from datadoc.frontend.fields.display_base import MetadataCheckboxField
 from datadoc.frontend.fields.display_base import MetadataDropdownField
 from datadoc.frontend.fields.display_base import MetadataInputField
 from datadoc.frontend.fields.display_base import MetadataPeriodField
-from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
-from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
+from datadoc.frontend.fields.display_variables import VARIABLES_METADATA_LEFT
+from datadoc.frontend.fields.display_variables import VARIABLES_METADATA_RIGHT
 
-VARIABLES_METADATA = OBLIGATORY_VARIABLES_METADATA + OPTIONAL_VARIABLES_METADATA
+VARIABLES_METADATA = VARIABLES_METADATA_LEFT + VARIABLES_METADATA_RIGHT
 
 INPUT_FIELD_SECTION = [
     (
@@ -35,18 +35,19 @@ INPUT_FIELD_SECTION = [
 ]
 
 
-@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
+@pytest.mark.usefixtures("_code_list_fake_classifications")
 def test_build_input_field_section_no_input():
     """Assert build with empty inputs returns dash bootstrap Form component and empty children list."""
     input_section = build_input_field_section(
         [],
+        "",
         "",
     )
     assert input_section.children == []
     assert isinstance(input_section, dbc.Form)
 
 
-@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
+@pytest.mark.usefixtures("_code_list_fake_classifications")
 @pytest.mark.parametrize(
     ("field_list", "variable"),
     INPUT_FIELD_SECTION,
@@ -55,27 +56,26 @@ def test_build_input_fields_input_components(
     field_list,
     variable,
 ):
-    input_section = build_input_field_section(field_list, variable)
-    type_input = ssb.Input
+    input_section = build_input_field_section(field_list, "left", variable)
+
     elements_of_input = [
-        element for element in input_section.children if isinstance(element, type_input)
+        element for element in input_section.children if isinstance(element, ssb.Input)
     ]
+
     elements_of_input_and_type_text_url = [
         element
-        for element in input_section.children
-        if isinstance(element, type_input)
-        and element.type == "text"
-        or isinstance(element, type_input)
-        and element.type == "url"
+        for element in elements_of_input
+        if element.type in {"text", "url", "number"}
     ]
+
     variable_identifier_input = [
         element
         for element in VARIABLES_METADATA
         if isinstance(element, MetadataInputField)
     ]
+
     assert all(isinstance(field, ssb.Input) for field in elements_of_input)
-    for item in elements_of_input_and_type_text_url:
-        assert item.debounce is True
+    assert all(item.debounce is True for item in elements_of_input_and_type_text_url)
     assert all(
         item1.label == item2.display_name
         for item1, item2 in zip(
@@ -85,7 +85,7 @@ def test_build_input_fields_input_components(
     )
 
 
-@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
+@pytest.mark.usefixtures("_code_list_fake_classifications")
 @pytest.mark.parametrize(
     ("field_list", "variable"),
     INPUT_FIELD_SECTION,
@@ -95,59 +95,65 @@ def test_build_input_fields_checkbox_components(
     variable,
 ):
     """Test checkbox fields for variabel identifiers."""
-    input_section = build_input_field_section(field_list, variable)
-    type_checkbox = ssb.Checkbox
+    input_section = build_input_field_section(field_list, "left", variable)
     elements_of_checkbox = [
         element
         for element in input_section.children
-        if isinstance(element, type_checkbox)
+        if isinstance(element, ssb.Checkbox)
     ]
+
     variable_identifier_checkbox = [
         element
         for element in VARIABLES_METADATA
         if isinstance(element, MetadataCheckboxField)
     ]
-    assert all(isinstance(item, type_checkbox) for item in elements_of_checkbox)
-    for item in elements_of_checkbox:
-        assert item._type == "Checkbox"  # noqa: SLF001
-    for item in elements_of_checkbox:
-        assert item.disabled is False
+
+    assert all(isinstance(item, ssb.Checkbox) for item in elements_of_checkbox)
+    assert all(item.disabled is False for item in elements_of_checkbox)
+    assert all(
+        item._type == "Checkbox" for item in elements_of_checkbox  # noqa: SLF001
+    )
     assert all(
         item1.label == item2.display_name
         for item1, item2 in zip(elements_of_checkbox, variable_identifier_checkbox)
     )
 
 
-@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
+@pytest.mark.usefixtures("_code_list_fake_classifications")
 @pytest.mark.parametrize(
     ("field_list", "variable"),
     INPUT_FIELD_SECTION,
 )
 def test_build_input_fields_type_date(field_list, variable):
     """Test Input field type 'url'."""
-    input_section = build_input_field_section(field_list, variable)
-    type_input = ssb.Input
+    input_section = build_input_field_section(field_list, "left", variable)
+
     elements_of_input = [
-        element for element in input_section.children if isinstance(element, type_input)
+        element for element in input_section.children if isinstance(element, ssb.Input)
     ]
+
     elements_of_date = [
         element for element in elements_of_input if element.type == "date"
     ]
+
     variable_identifier_date = [
         element for element in field_list if isinstance(element, MetadataPeriodField)
     ]
-    for item1, item2 in zip(elements_of_date, variable_identifier_date):
-        assert item1.label == item2.display_name
+
+    assert all(
+        item1.label == item2.display_name
+        for item1, item2 in zip(elements_of_date, variable_identifier_date)
+    )
     assert all(item.debounce is False for item in elements_of_date)
 
 
-@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
+@pytest.mark.usefixtures("_code_list_fake_classifications")
 @pytest.mark.parametrize(
     ("field_list", "variable"),
     INPUT_FIELD_SECTION,
 )
 def test_build_input_fields_type_url(field_list, variable):
-    input_section = build_input_field_section(field_list, variable)
+    input_section = build_input_field_section(field_list, "right", variable)
     variable_identifier_input = [
         element for element in field_list if isinstance(element, MetadataInputField)
     ]
@@ -164,7 +170,7 @@ def test_build_input_fields_type_url(field_list, variable):
         assert item1.label == item2.display_name
 
 
-@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
+@pytest.mark.usefixtures("_code_list_fake_classifications")
 @pytest.mark.parametrize(
     ("field_list", "variable"),
     INPUT_FIELD_SECTION,
@@ -174,7 +180,7 @@ def test_build_input_fields_dropdown_components(
     variable,
 ):
     """Test props for variable identifiers fields."""
-    input_section = build_input_field_section(field_list, variable)
+    input_section = build_input_field_section(field_list, "right", variable)
     type_dropdown = ssb.Dropdown
     elements_of_dropdown = [
         element

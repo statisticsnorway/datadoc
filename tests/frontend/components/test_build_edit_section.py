@@ -11,7 +11,7 @@ from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METAD
 from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
 
 
-@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
+@pytest.mark.usefixtures("_code_list_fake_classifications")
 @pytest.mark.parametrize(
     ("field_list", "title", "variable"),
     [
@@ -33,41 +33,33 @@ def test_build_edit_section_return_correct_component(
     assert isinstance(edit_section, html.Section)
 
 
-@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
+@pytest.mark.usefixtures("_code_list_fake_classifications")
 @pytest.mark.parametrize(
     ("field_list", "title", "variable"),
     [
         (
             [],
-            "",
             model.Variable(),
         ),
         (
-            OPTIONAL_VARIABLES_METADATA,
-            "Anbefalt",
+            [OPTIONAL_VARIABLES_METADATA, OBLIGATORY_VARIABLES_METADATA],
             model.Variable(short_name="sivilstand"),
-        ),
-        (
-            OBLIGATORY_VARIABLES_METADATA,
-            "Obligatorisk",
-            model.Variable(short_name="sykepenger"),
         ),
     ],
 )
 def test_build_edit_section_children_return_correct_components(
     field_list,
-    title,
     variable,
 ):
     """Assert method has a list of children which returns SSB dash component Title and dash bootstrap Form."""
-    edit_section = build_edit_section(field_list, title, variable)
+    edit_section = build_edit_section(field_list, variable)
     title = edit_section.children[0]
     form = edit_section.children[1]
     assert isinstance(title, ssb.Title)
     assert isinstance(form, dbc.Form)
 
 
-@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
+@pytest.mark.usefixtures("_code_list_fake_classifications")
 @pytest.mark.parametrize(
     ("field_list", "title", "variable"),
     [
