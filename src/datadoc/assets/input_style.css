@@ -157,7 +157,6 @@ label.form-check-label{
 }
 
 .multilanguage-fieldset{
-
     max-width: unset;
     margin-right: 1rem;
 }
@@ -171,7 +170,6 @@ label.form-check-label{
 }
 
 .ssb-dropdown.dropdown-component {
-    /*max-width: 500px;*/
     max-width: unset;
     width: 100%;
 }
@@ -182,4 +180,15 @@ label.form-check-label{
 
 #input_version-dataset-metadata-input{
     margin-right: 1rem;
+}
+
+#dataset-metadata-input-Maskingenerert > .ssb-input.input-component{
+    max-width: 700px;
+    width: 100%;
+}
+
+#variables-metadata-input-left-machine > .ssb-input.input-component{
+    max-width: 700px;
+    width: 100%;
+    padding: 0 1rem;
 }

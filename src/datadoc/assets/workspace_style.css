@@ -99,14 +99,3 @@
     width: 100%;
     padding: 0 1rem;
 }
-
-#dataset-metadata-input-Maskingenerert > .ssb-input.input-component{
-    max-width: 650px;
-    width: 100%;
-}
-
-#variables-metadata-input-left-machine > .ssb-input.input-component{
-    max-width: 650px;
-    width: 100%;
-    padding: 0 1rem;
-}
