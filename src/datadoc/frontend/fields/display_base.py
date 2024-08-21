@@ -360,6 +360,7 @@ class MetadataCheckboxField(DisplayMetadata):
             value=get_standard_metadata(metadata, self.identifier),
             showDescription=True,
             description=self.description,
+            className="metadata-checkbox-field",
         )
 
 

@@ -1,6 +1,6 @@
 .control-bar-section{
     display: flex;
-    gap: 0.5rem;
+    gap: 1rem;
     padding: 1rem 0;
     align-items: end;
     margin-top: 1rem;
@@ -108,7 +108,7 @@
 
 .button-section{
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
 }
 
 @media only screen and (max-width: 1200px) {

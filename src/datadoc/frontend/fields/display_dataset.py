@@ -107,12 +107,25 @@ DISPLAY_DATASET: dict[
     DatasetIdentifiers,
     FieldTypes,
 ] = {
-    DatasetIdentifiers.SHORT_NAME: MetadataInputField(
-        identifier=DatasetIdentifiers.SHORT_NAME.value,
-        display_name="Kortnavn",
-        description="Datasettets tekniske kortnavn (uten versjonsnummer og filendelse).",
+    DatasetIdentifiers.NAME: MetadataMultiLanguageField(
+        identifier=DatasetIdentifiers.NAME.value,
+        display_name="Navn",
+        description="Oppgi navn på datasettet. Navnet skal være forståelig for mennesker slik at det er søkbart.",
         obligatory=True,
-        editable=False,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
+    ),
+    DatasetIdentifiers.CONTAINS_PERSONAL_DATA: MetadataCheckboxField(
+        identifier=DatasetIdentifiers.CONTAINS_PERSONAL_DATA.value,
+        display_name="Inneholder personopplysninger",
+        description="Oppgi om datasettet inneholder personopplysninger. All informasjon som entydig kan knyttes til en fysisk person (f.eks. fødselsnummer og adresse), er personopplysninger. Pseudonymiserte personopplysninger er fortsatt personopplysninger. Næringsdata om enkeltpersonforetak (ENK) skal imidlertid ikke regnes som personopplysninger.",
+        obligatory=True,
+    ),
+    DatasetIdentifiers.DESCRIPTION: MetadataMultiLanguageField(
+        identifier=DatasetIdentifiers.DESCRIPTION.value,
+        display_name="Beskrivelse",
+        description="Beskrivelse av datasettet",
+        obligatory=True,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
     DatasetIdentifiers.ASSESSMENT: MetadataDropdownField(
         identifier=DatasetIdentifiers.ASSESSMENT.value,
@@ -122,6 +135,37 @@ DISPLAY_DATASET: dict[
         options_getter=functools.partial(
             get_enum_options,
             Assessment,
+        ),
+    ),
+    DatasetIdentifiers.POPULATION_DESCRIPTION: MetadataMultiLanguageField(
+        identifier=DatasetIdentifiers.POPULATION_DESCRIPTION.value,
+        display_name="Populasjon",
+        description='Oppgi populasjonen datasettet dekker. Beskrivelsen skal inkludere enhetstype, geografisk dekningsområde og tidsperiode, f.eks.  "Personer bosatt  i Norge 1990-2020"',
+        obligatory=True,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
+    ),
+    DatasetIdentifiers.USE_RESTRICTION: MetadataDropdownField(
+        identifier=DatasetIdentifiers.USE_RESTRICTION.value,
+        display_name="Bruksrestriksjon",
+        description="Oppgi om det er knyttet noen bruksrestriksjoner til datasettet, f.eks. krav om sletting/anonymisering.",
+        options_getter=functools.partial(
+            get_enum_options,
+            UseRestriction,
+        ),
+    ),
+    DatasetIdentifiers.USE_RESTRICTION_DATE: MetadataDateField(
+        identifier=DatasetIdentifiers.USE_RESTRICTION_DATE.value,
+        display_name="Bruksrestriksjonsdato",
+        description='Oppgi ev. "tiltaksdato" for bruksrestriksjoner, f.eks. frist for sletting/anonymisering. Noen bruksrestriksjoner vil ikke ha en slik dato, f.eks. vil en behandlingsbegrensning normalt være permanent/tidsuavhengig.',
+    ),
+    DatasetIdentifiers.DATASET_STATE: MetadataDropdownField(
+        identifier=DatasetIdentifiers.DATASET_STATE.value,
+        display_name="Datatilstand",
+        description="Datasettets datatilstand der en av de følgende er mulige: kildedata, inndata, klargjorte data, statistikk og utdata.",
+        obligatory=True,
+        options_getter=functools.partial(
+            get_enum_options,
+            DataSetState,
         ),
     ),
     DatasetIdentifiers.DATASET_STATUS: MetadataDropdownField(
@@ -134,29 +178,36 @@ DISPLAY_DATASET: dict[
         ),
         obligatory=True,
     ),
-    DatasetIdentifiers.DATASET_STATE: MetadataDropdownField(
-        identifier=DatasetIdentifiers.DATASET_STATE.value,
-        display_name="Datatilstand",
-        description="Datasettets datatilstand der en av de følgende er mulige: kildedata, inndata, klargjorte data, statistikk og utdata.",
+    DatasetIdentifiers.UNIT_TYPE: MetadataDropdownField(
+        identifier=DatasetIdentifiers.UNIT_TYPE.value,
+        display_name="Enhetstype",
+        description="Den eller de enhetstypen(e) datasettet inneholder informasjon om. Eksempler på enhetstyper er person, foretak og eiendom.",
+        options_getter=get_unit_type_options,
         obligatory=True,
-        options_getter=functools.partial(
-            get_enum_options,
-            DataSetState,
-        ),
     ),
-    DatasetIdentifiers.NAME: MetadataMultiLanguageField(
-        identifier=DatasetIdentifiers.NAME.value,
-        display_name="Navn",
-        description="Oppgi navn på datasettet. Navnet skal være forståelig for mennesker slik at det er søkbart.",
+    DatasetIdentifiers.CONTAINS_DATA_FROM: MetadataPeriodField(
+        identifier=DatasetIdentifiers.CONTAINS_DATA_FROM.value,
+        display_name="Inneholder data f.o.m.",
+        description="Oppgi hvilken dato datasettet inneholder data f.o.m. ÅÅÅÅ-MM-DD",
         obligatory=True,
-        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
+        editable=True,
+        id_type=DATASET_METADATA_DATE_INPUT,
     ),
-    DatasetIdentifiers.DESCRIPTION: MetadataMultiLanguageField(
-        identifier=DatasetIdentifiers.DESCRIPTION.value,
-        display_name="Beskrivelse",
-        description="Beskrivelse av datasettet",
+    DatasetIdentifiers.CONTAINS_DATA_UNTIL: MetadataPeriodField(
+        identifier=DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
+        display_name="Inneholder data t.o.m.",
+        description="Oppgi hvilken dato datasettet inneholder data t.o.m. ÅÅÅÅ-MM-DD",
         obligatory=True,
-        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
+        editable=True,
+        id_type=DATASET_METADATA_DATE_INPUT,
+    ),
+    DatasetIdentifiers.OWNER: MetadataDropdownField(
+        identifier=DatasetIdentifiers.OWNER.value,
+        display_name="Eier",
+        description="Oppgi datasettets eier, dvs. ansvarlig seksjon i SSB.",
+        obligatory=True,
+        editable=True,
+        options_getter=get_owner_options,
     ),
     DatasetIdentifiers.DATA_SOURCE: MetadataDropdownField(
         identifier=DatasetIdentifiers.DATA_SOURCE.value,
@@ -164,34 +215,6 @@ DISPLAY_DATASET: dict[
         description="Oppgi kilden til datasettet (på etat-/organisasjonsnivå). Dersom flere variabler i datasettet har ulik datakilde, kan disse dokumenteres på variabelnivå.",
         obligatory=True,
         options_getter=get_data_source_options,
-    ),
-    DatasetIdentifiers.POPULATION_DESCRIPTION: MetadataMultiLanguageField(
-        identifier=DatasetIdentifiers.POPULATION_DESCRIPTION.value,
-        display_name="Populasjon",
-        description='Oppgi populasjonen datasettet dekker. Beskrivelsen skal inkludere enhetstype, geografisk dekningsområde og tidsperiode, f.eks.  "Personer bosatt  i Norge 1990-2020"',
-        obligatory=True,
-        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
-    ),
-    DatasetIdentifiers.VERSION: MetadataInputField(
-        identifier=DatasetIdentifiers.VERSION.value,
-        display_name="Versjon",
-        description="Oppgi hvilken versjon av datasettet dette er (versjonering av datasett er beskrevet i Dapla-manualen).",
-        obligatory=True,
-        type="number",
-    ),
-    DatasetIdentifiers.VERSION_DESCRIPTION: MetadataMultiLanguageField(
-        identifier=DatasetIdentifiers.VERSION_DESCRIPTION.value,
-        display_name="Versjonsbeskrivelse",
-        description="Beskriv kort årsaken til at denne versjonen av datasettet ble laget.",
-        obligatory=True,
-        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
-    ),
-    DatasetIdentifiers.UNIT_TYPE: MetadataDropdownField(
-        identifier=DatasetIdentifiers.UNIT_TYPE.value,
-        display_name="Enhetstype",
-        description="Den eller de enhetstypen(e) datasettet inneholder informasjon om. Eksempler på enhetstyper er person, foretak og eiendom.",
-        options_getter=get_unit_type_options,
-        obligatory=True,
     ),
     DatasetIdentifiers.TEMPORALITY_TYPE: MetadataDropdownField(
         identifier=DatasetIdentifiers.TEMPORALITY_TYPE.value,
@@ -216,6 +239,20 @@ DISPLAY_DATASET: dict[
         description="Her kan en oppgi nøkkelord som beskriver datasettet, og som kan brukes i søk. Nøkkelordene må legges inn som en kommaseparert streng. F.eks. befolkning, skatt, arbeidsledighet",
         value_getter=get_comma_separated_string,
     ),
+    DatasetIdentifiers.VERSION: MetadataInputField(
+        identifier=DatasetIdentifiers.VERSION.value,
+        display_name="Versjon",
+        description="Oppgi hvilken versjon av datasettet dette er (versjonering av datasett er beskrevet i Dapla-manualen).",
+        obligatory=True,
+        type="number",
+    ),
+    DatasetIdentifiers.VERSION_DESCRIPTION: MetadataMultiLanguageField(
+        identifier=DatasetIdentifiers.VERSION_DESCRIPTION.value,
+        display_name="Versjonsbeskrivelse",
+        description="Beskriv kort årsaken til at denne versjonen av datasettet ble laget.",
+        obligatory=True,
+        id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
+    ),
     DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION: MetadataMultiLanguageField(
         identifier=DatasetIdentifiers.SPATIAL_COVERAGE_DESCRIPTION.value,
         display_name="Geografisk dekningsområde",
@@ -223,20 +260,19 @@ DISPLAY_DATASET: dict[
         obligatory=True,
         id_type=DATASET_METADATA_MULTILANGUAGE_INPUT,
     ),
+    DatasetIdentifiers.SHORT_NAME: MetadataInputField(
+        identifier=DatasetIdentifiers.SHORT_NAME.value,
+        display_name="Kortnavn",
+        description="Datasettets tekniske kortnavn (uten versjonsnummer og filendelse).",
+        obligatory=True,
+        editable=False,
+    ),
     DatasetIdentifiers.ID: MetadataInputField(
         identifier=DatasetIdentifiers.ID.value,
         display_name="ID",
         description="Den unike SSB-identifikatoren for datasettet.",
         obligatory=True,
         editable=False,
-    ),
-    DatasetIdentifiers.OWNER: MetadataDropdownField(
-        identifier=DatasetIdentifiers.OWNER.value,
-        display_name="Eier",
-        description="Oppgi datasettets eier, dvs. ansvarlig seksjon i SSB.",
-        obligatory=True,
-        editable=True,
-        options_getter=get_owner_options,
     ),
     DatasetIdentifiers.FILE_PATH: MetadataInputField(
         identifier=DatasetIdentifiers.FILE_PATH.value,
@@ -273,42 +309,6 @@ DISPLAY_DATASET: dict[
         obligatory=True,
         editable=False,
     ),
-    DatasetIdentifiers.CONTAINS_DATA_FROM: MetadataPeriodField(
-        identifier=DatasetIdentifiers.CONTAINS_DATA_FROM.value,
-        display_name="Inneholder data f.o.m.",
-        description="Oppgi hvilken dato datasettet inneholder data f.o.m. ÅÅÅÅ-MM-DD",
-        obligatory=True,
-        editable=True,
-        id_type=DATASET_METADATA_DATE_INPUT,
-    ),
-    DatasetIdentifiers.CONTAINS_DATA_UNTIL: MetadataPeriodField(
-        identifier=DatasetIdentifiers.CONTAINS_DATA_UNTIL.value,
-        display_name="Inneholder data t.o.m.",
-        description="Oppgi hvilken dato datasettet inneholder data t.o.m. ÅÅÅÅ-MM-DD",
-        obligatory=True,
-        editable=True,
-        id_type=DATASET_METADATA_DATE_INPUT,
-    ),
-    DatasetIdentifiers.USE_RESTRICTION: MetadataDropdownField(
-        identifier=DatasetIdentifiers.USE_RESTRICTION.value,
-        display_name="Bruksrestriksjon",
-        description="Oppgi om det er knyttet noen bruksrestriksjoner til datasettet, f.eks. krav om sletting/anonymisering.",
-        options_getter=functools.partial(
-            get_enum_options,
-            UseRestriction,
-        ),
-    ),
-    DatasetIdentifiers.USE_RESTRICTION_DATE: MetadataDateField(
-        identifier=DatasetIdentifiers.USE_RESTRICTION_DATE.value,
-        display_name="Bruksrestriksjonsdato",
-        description='Oppgi ev. "tiltaksdato" for bruksrestriksjoner, f.eks. frist for sletting/anonymisering. Noen bruksrestriksjoner vil ikke ha en slik dato, f.eks. vil en behandlingsbegrensning normalt være permanent/tidsuavhengig.',
-    ),
-    DatasetIdentifiers.CONTAINS_PERSONAL_DATA: MetadataCheckboxField(
-        identifier=DatasetIdentifiers.CONTAINS_PERSONAL_DATA.value,
-        display_name="Inneholder personopplysninger",
-        description="Oppgi om datasettet inneholder personopplysninger. All informasjon som entydig kan knyttes til en fysisk person (f.eks. fødselsnummer og adresse), er personopplysninger. Pseudonymiserte personopplysninger er fortsatt personopplysninger. Næringsdata om enkeltpersonforetak (ENK) skal imidlertid ikke regnes som personopplysninger.",
-        obligatory=True,
-    ),
 }
 
 MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS = [
@@ -317,37 +317,43 @@ MULTIPLE_LANGUAGE_DATASET_IDENTIFIERS = [
     if isinstance(m, MetadataMultiLanguageField)
 ]
 
-OBLIGATORY_EDITABLE_DATASET_METADATA = [
-    m for m in DISPLAY_DATASET.values() if m.obligatory and m.editable
+EDITABLE_DATASET_METADATA_LEFT = [
+    m
+    for m in DISPLAY_DATASET.values()
+    if m.editable and isinstance(m, MetadataMultiLanguageField)
 ]
 
-OPTIONAL_DATASET_METADATA = [
-    m for m in DISPLAY_DATASET.values() if not m.obligatory and m.editable
+EDITABLE_DATASET_METADATA_LEFT.insert(3, DISPLAY_DATASET[DatasetIdentifiers.VERSION])
+
+
+EDITABLE_DATASET_METADATA_RIGHT = [
+    m
+    for m in DISPLAY_DATASET.values()
+    if m.editable
+    and not isinstance(m, MetadataMultiLanguageField)
+    and m.identifier != DatasetIdentifiers.VERSION
 ]
+
 
 NON_EDITABLE_DATASET_METADATA = [m for m in DISPLAY_DATASET.values() if not m.editable]
 
-
 # The order of this list MUST match the order of display components, as defined in DatasetTab.py
 DISPLAYED_DATASET_METADATA: list[FieldTypes] = (
-    OBLIGATORY_EDITABLE_DATASET_METADATA
-    + OPTIONAL_DATASET_METADATA
+    EDITABLE_DATASET_METADATA_LEFT
+    + EDITABLE_DATASET_METADATA_RIGHT
     + NON_EDITABLE_DATASET_METADATA
 )
 
 DROPDOWN_DATASET_METADATA: list[MetadataDropdownField] = [
     m for m in DISPLAYED_DATASET_METADATA if isinstance(m, MetadataDropdownField)
 ]
+
 DROPDOWN_DATASET_METADATA_IDENTIFIERS: list[str] = [
     m.identifier for m in DROPDOWN_DATASET_METADATA
 ]
 
 TIMEZONE_AWARE_METADATA_IDENTIFIERS = [
     m.identifier for m in DISPLAYED_DATASET_METADATA if isinstance(m, MetadataDateField)
-]
-
-OBLIGATORY_DATASET_METADATA_IDENTIFIERS: list[str] = [
-    m.identifier for m in DISPLAY_DATASET.values() if m.obligatory and m.editable
 ]
 
 OBLIGATORY_DATASET_METADATA_IDENTIFIERS_AND_DISPLAY_NAME: list[tuple] = [
