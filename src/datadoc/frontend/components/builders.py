@@ -100,6 +100,7 @@ def build_input_field_section(
     metadata_fields: list[FieldTypes],
     side: str,
     variable: model.Variable,
+    field_id: str,
 ) -> dbc.Form:
     """Create form with input fields for variable workspace."""
     return dbc.Form(
@@ -114,7 +115,7 @@ def build_input_field_section(
             )
             for i in metadata_fields
         ],
-        id=f"{VARIABLES_METADATA_INPUT}-{side}",
+        id=f"{VARIABLES_METADATA_INPUT}-{side}-{field_id}",
         className="edit-section-form",
     )
 
@@ -127,7 +128,7 @@ def build_edit_section(
     return html.Section(
         id={"type": "edit-section"},
         children=[
-            build_input_field_section(inputs, side, variable)
+            build_input_field_section(inputs, side, variable, field_id="editable")
             for inputs, side in zip(metadata_inputs, ["left", "right"])
         ],
         className="edit-section",
@@ -148,6 +149,7 @@ def build_variables_machine_section(
                 metadata_inputs,
                 "left",
                 variable,
+                field_id="machine",
             ),
         ],
         className="variable-machine-section",
