@@ -69,6 +69,7 @@
     max-width: 50%;
     width: 100%;
     gap: 2rem;
+    padding-top: 0.5rem;
 }
 
 #dataset-metadata-input-right{
@@ -98,4 +99,8 @@
     max-width: 50%;
     width: 100%;
     padding: 0 1rem;
+}
+
+#dataset-metadata-input-Maskingenerert{
+    justify-content: space-between;
 }

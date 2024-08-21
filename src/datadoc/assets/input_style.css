@@ -24,6 +24,7 @@
 
 label.form-check-label{
     padding-left: 1rem;
+    font-size: 1.2rem;
 }
 
 .ssb-glossary.info-glossary{
@@ -191,4 +192,13 @@ label.form-check-label{
     max-width: 700px;
     width: 100%;
     padding: 0 1rem;
+}
+
+@media only screen and (max-width: 1900px) {
+    #variables-metadata-input-left-machine > .ssb-input.input-component{
+        max-width: 45%;
+    }
+    #dataset-metadata-input-Maskingenerert > .ssb-input.input-component{
+        width: 45%;
+    }
 }
