@@ -76,11 +76,6 @@
     flex-direction: column;
 }
 
-#variables-metadata-input-left{
-    max-width: 50%;
-    width: 100%;
-}
-
 #variables-metadata-input-right{
     max-width: 50%;
     width: 100%;
@@ -90,4 +85,14 @@
     max-width: unset;
     width: 100%;
     justify-content: center;
+}
+
+#variables-metadata-input-left-editable{
+    max-width: 50%;
+    width: 100%;
+}
+
+#variables-metadata-input-right-editable{
+    max-width: 50%;
+    width: 100%;
 }
