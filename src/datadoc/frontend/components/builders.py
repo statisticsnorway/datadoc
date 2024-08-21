@@ -100,7 +100,7 @@ def build_input_field_section(
     metadata_fields: list[FieldTypes],
     side: str,
     variable: model.Variable,
-    field_id: str,
+    field_id: str = "",
 ) -> dbc.Form:
     """Create form with input fields for variable workspace."""
     return dbc.Form(
