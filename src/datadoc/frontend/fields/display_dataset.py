@@ -323,10 +323,14 @@ EDITABLE_DATASET_METADATA_LEFT = [
     if m.editable and isinstance(m, MetadataMultiLanguageField)
 ]
 
+EDITABLE_DATASET_METADATA_LEFT.insert(2, DISPLAY_DATASET[DatasetIdentifiers.VERSION])
+
 EDITABLE_DATASET_METADATA_RIGHT = [
     m
     for m in DISPLAY_DATASET.values()
-    if m.editable and not isinstance(m, MetadataMultiLanguageField)
+    if m.editable
+    and not isinstance(m, MetadataMultiLanguageField)
+    and m.identifier != DatasetIdentifiers.VERSION
 ]
 
 

@@ -134,7 +134,7 @@ NEW_INPUT_DATA_BUILD_DATASET_SECTION = [
         {"type": "dataset-edit-section", "id": "obligatory-en"},
     ),
     (
-        [[], []],
+        None,
         model.Dataset(short_name="last_dataset"),
         {},
     ),
