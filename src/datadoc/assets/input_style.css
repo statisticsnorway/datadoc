@@ -58,6 +58,10 @@ label.form-check-label{
     bottom: 5px;
 }
 
+.ssb-dropdown.dropdown-component > .ssb-glossary.info-glossary > .glossary-popup {
+    background-image: none;
+}
+
 .ssb-dropdown.dropdown-component > .ssb-glossary.info-glossary > .glossary-popup::after {
     left: -10px;
     margin-left: -10px;
@@ -104,6 +108,7 @@ label.form-check-label{
 
 .multilanguage-fieldset > .ssb-glossary.legend-glossary > .glossary-button{
     padding: 0 0.3rem;
+    background-image: none;
 }
 
 .multilanguage-fieldset:focus{
@@ -194,6 +199,17 @@ label.form-check-label{
     padding: 0 1rem;
 }
 
+.ssb-dropdown.dropdown-component > .ssb-glossary.glossary-button {
+    background-image: none;
+}
+
+.ssb-input.input-component > .ssb-glossary.info-glossary > .glossary-button {
+    background-image: none;
+}
+
+.ssb-glossary .glossary-button{
+    background-image: none;
+}
 @media only screen and (max-width: 1900px) {
     #variables-metadata-input-left-machine > .ssb-input.input-component{
         max-width: 45%;
