@@ -68,12 +68,14 @@
 #dataset-metadata-input-left{
     max-width: 50%;
     width: 100%;
+    gap: 2rem;
 }
 
 #dataset-metadata-input-right{
     max-width: 50%;
     width: 100%;
     flex-direction: column;
+    gap: 2rem;
 }
 
 #variables-metadata-input-right{
@@ -95,4 +97,16 @@
 #variables-metadata-input-right-editable{
     max-width: 50%;
     width: 100%;
+    padding: 0 1rem;
+}
+
+#dataset-metadata-input-Maskingenerert > .ssb-input.input-component{
+    max-width: 650px;
+    width: 100%;
+}
+
+#variables-metadata-input-left-machine > .ssb-input.input-component{
+    max-width: 650px;
+    width: 100%;
+    padding: 0 1rem;
 }
