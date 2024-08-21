@@ -35,17 +35,12 @@
     padding: 1rem;
 }
 
-#variables-metadata-input-right{
-    max-width: 500px;
-    width: 100%;
-}
-
 .edit-section{
     display: flex;
     flex-direction: row;
-    gap: 1rem;
+    gap: 2rem;
     width: 100%;
-    padding: 1rem 0;
+    padding: 1rem;
 }
 
 .edit-section-form{
@@ -79,4 +74,20 @@
     max-width: 50%;
     width: 100%;
     flex-direction: column;
+}
+
+#variables-metadata-input-left{
+    max-width: 50%;
+    width: 100%;
+}
+
+#variables-metadata-input-right{
+    max-width: 50%;
+    width: 100%;
+}
+
+.variable-machine-section >.edit-section.dataset-machine-section{
+    max-width: unset;
+    width: 100%;
+    justify-content: center;
 }
