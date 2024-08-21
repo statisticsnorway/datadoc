@@ -65,29 +65,14 @@
     flex-direction: column;
 }
 
+#dataset-metadata-input-left, #dataset-metadata-input-right{
+    max-width: 50%;
+    width: 100%;
+    gap: 2rem;
+}
+
 #dataset-metadata-input-left{
-    max-width: 50%;
-    width: 100%;
-    gap: 2rem;
     padding-top: 0.5rem;
-}
-
-#dataset-metadata-input-right{
-    max-width: 50%;
-    width: 100%;
-    flex-direction: column;
-    gap: 2rem;
-}
-
-#variables-metadata-input-right{
-    max-width: 50%;
-    width: 100%;
-}
-
-.variable-machine-section >.edit-section.dataset-machine-section{
-    max-width: unset;
-    width: 100%;
-    justify-content: center;
 }
 
 #variables-metadata-input-left-editable{
@@ -102,6 +87,16 @@
     padding: 0 1rem;
 }
 
+.variable-machine-section >.edit-section.dataset-machine-section{
+    max-width: unset;
+    width: 100%;
+    justify-content: center;
+}
+
 #dataset-metadata-input-Maskingenerert{
+    justify-content: space-between;
+}
+
+#variables-metadata-input-left-machine{
     justify-content: space-between;
 }
