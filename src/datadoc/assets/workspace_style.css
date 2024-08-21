@@ -48,11 +48,6 @@
     padding: 1rem 0;
 }
 
-#dataset-metadata-input-right{
-    max-width: 500px;
-    width: 100%;
-}
-
 .edit-section-form{
     display: flex;
     flex-wrap: wrap;
@@ -72,5 +67,16 @@
 }
 
 .variables-machine-section{
+    flex-direction: column;
+}
+
+#dataset-metadata-input-left{
+    max-width: 50%;
+    width: 100%;
+}
+
+#dataset-metadata-input-right{
+    max-width: 50%;
+    width: 100%;
     flex-direction: column;
 }
