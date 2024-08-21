@@ -199,15 +199,14 @@ label.form-check-label{
     padding: 0 1rem;
 }
 
+/*This is a solution for removing all traces of background images behind glossary buttons.
+Could be improved.
+*/
 .ssb-dropdown.dropdown-component > .ssb-glossary.glossary-button {
     background-image: none;
 }
 
 #dataset-metadata-input-Maskingenerert > .ssb-input .input-component > .ssb-glossary > .glossary-button {
-    background-image: none;
-}
-
-#dataset-metadata-input-Maskingenerert > div:nth-child(1) > span > span > button{
     background-image: none;
 }
 
@@ -234,9 +233,11 @@ label.form-check-label{
     background-image: none;
 }
 
-.ssb-glossary .glossary-button{
+.ssb-dropdown.dropdown-component > .ssb-glossary.glossary-button
+{
     background-image: none;
 }
+
 @media only screen and (max-width: 1900px) {
     #variables-metadata-input-left-machine > .ssb-input.input-component{
         max-width: 45%;

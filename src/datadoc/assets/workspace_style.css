@@ -93,6 +93,7 @@
 #variables-metadata-input-left-editable{
     max-width: 50%;
     width: 100%;
+    padding-top: 0.5rem;
 }
 
 #variables-metadata-input-right-editable{
