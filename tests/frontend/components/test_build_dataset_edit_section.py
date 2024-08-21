@@ -94,8 +94,8 @@ def test_build_dataset_section_is_html_section(
                 model.Dataset(short_name="dataset"),
                 {"type": "dataset-edit-section", "id": "dataset-nb"},
             ),
-            5,
-            15,
+            6,
+            14,
         ),
     ],
 )
@@ -134,7 +134,7 @@ NEW_INPUT_DATA_BUILD_DATASET_SECTION = [
         {"type": "dataset-edit-section", "id": "obligatory-en"},
     ),
     (
-        None,
+        [[], []],
         model.Dataset(short_name="last_dataset"),
         {},
     ),
