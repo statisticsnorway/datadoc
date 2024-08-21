@@ -329,33 +329,26 @@ EDITABLE_DATASET_METADATA_RIGHT = [
     if m.editable and not isinstance(m, MetadataMultiLanguageField)
 ]
 
-OPTIONAL_DATASET_METADATA = [
-    m for m in DISPLAY_DATASET.values() if not m.obligatory and m.editable
-]
 
 NON_EDITABLE_DATASET_METADATA = [m for m in DISPLAY_DATASET.values() if not m.editable]
-
 
 # The order of this list MUST match the order of display components, as defined in DatasetTab.py
 DISPLAYED_DATASET_METADATA: list[FieldTypes] = (
     EDITABLE_DATASET_METADATA_LEFT
-    + OPTIONAL_DATASET_METADATA
+    + EDITABLE_DATASET_METADATA_RIGHT
     + NON_EDITABLE_DATASET_METADATA
 )
 
 DROPDOWN_DATASET_METADATA: list[MetadataDropdownField] = [
     m for m in DISPLAYED_DATASET_METADATA if isinstance(m, MetadataDropdownField)
 ]
+
 DROPDOWN_DATASET_METADATA_IDENTIFIERS: list[str] = [
     m.identifier for m in DROPDOWN_DATASET_METADATA
 ]
 
 TIMEZONE_AWARE_METADATA_IDENTIFIERS = [
     m.identifier for m in DISPLAYED_DATASET_METADATA if isinstance(m, MetadataDateField)
-]
-
-OBLIGATORY_DATASET_METADATA_IDENTIFIERS: list[str] = [
-    m.identifier for m in DISPLAY_DATASET.values() if m.obligatory and m.editable
 ]
 
 OBLIGATORY_DATASET_METADATA_IDENTIFIERS_AND_DISPLAY_NAME: list[tuple] = [
