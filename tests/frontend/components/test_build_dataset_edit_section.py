@@ -79,7 +79,6 @@ def test_build_dataset_section_is_html_section(
     assert edit_section.id == key
 
 
-# TODO: Gjør om slik at man tester begge sider
 @pytest.mark.usefixtures("_code_list_fake_classifications")
 @pytest.mark.usefixtures("_statistic_subject_mapping_fake_subjects")
 @pytest.mark.parametrize(

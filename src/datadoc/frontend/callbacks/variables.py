@@ -60,8 +60,7 @@ def populate_variables_workspace(
             variable.short_name or "",
             children=[
                 build_edit_section(
-                    [VARIABLES_METADATA_LEFT, VARIABLES_METADATA_RIGHT],
-                    "",
+                    [VARIABLES_METADATA_LEFT, VARIABLES_METADATA_RIGHT],  # type: ignore [list-item]
                     variable,
                 ),
                 build_variables_machine_section(

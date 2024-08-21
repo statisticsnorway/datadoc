@@ -121,12 +121,11 @@ def build_input_field_section(
 
 def build_edit_section(
     metadata_inputs: list[list[FieldTypes]],
-    title: str,
     variable: model.Variable,
 ) -> html.Section:
     """Create input section for variable workspace."""
     return html.Section(
-        id={"type": "edit-section", "title": title},
+        id={"type": "edit-section"},
         children=[
             build_input_field_section(inputs, side, variable)
             for inputs, side in zip(metadata_inputs, ["left", "right"])
