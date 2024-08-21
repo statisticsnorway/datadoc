@@ -37,10 +37,10 @@
 
 .edit-section{
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    flex-direction: row;
+    gap: 2rem;
     width: 100%;
-    padding: 1rem 0;
+    padding: 1rem;
 }
 
 .edit-section-form{
@@ -55,5 +55,48 @@
     border-bottom: 2px solid #62919A;
     margin-bottom: 1rem;
     padding-bottom: 1rem;
+}
 
+.dataset-machine-section{
+    flex-direction: column;
+}
+
+.variables-machine-section{
+    flex-direction: column;
+}
+
+#dataset-metadata-input-left, #dataset-metadata-input-right{
+    max-width: 50%;
+    width: 100%;
+    gap: 2rem;
+}
+
+#dataset-metadata-input-left{
+    padding-top: 0.5rem;
+}
+
+#variables-metadata-input-left-editable{
+    max-width: 50%;
+    width: 100%;
+    padding-top: 0.5rem;
+}
+
+#variables-metadata-input-right-editable{
+    max-width: 50%;
+    width: 100%;
+    padding: 0 1rem;
+}
+
+.variable-machine-section >.edit-section.dataset-machine-section{
+    max-width: unset;
+    width: 100%;
+    justify-content: center;
+}
+
+#dataset-metadata-input-Maskingenerert{
+    justify-content: space-between;
+}
+
+#variables-metadata-input-left-machine{
+    justify-content: space-between;
 }

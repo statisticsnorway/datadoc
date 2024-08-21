@@ -64,13 +64,6 @@ DISPLAY_VARIABLES: dict[
     VariableIdentifiers,
     FieldTypes,
 ] = {
-    VariableIdentifiers.SHORT_NAME: MetadataInputField(
-        identifier=VariableIdentifiers.SHORT_NAME.value,
-        display_name="Kortnavn",
-        description="Fysisk navn på variabelen i datasettet. Bør tilsvare anbefalt kortnavn.",
-        obligatory=True,
-        editable=False,
-    ),
     VariableIdentifiers.NAME: MetadataMultiLanguageField(
         identifier=VariableIdentifiers.NAME.value,
         display_name="Navn",
@@ -78,31 +71,17 @@ DISPLAY_VARIABLES: dict[
         obligatory=True,
         id_type=VARIABLES_METADATA_MULTILANGUAGE_INPUT,
     ),
-    VariableIdentifiers.DATA_TYPE: MetadataDropdownField(
-        identifier=VariableIdentifiers.DATA_TYPE.value,
-        display_name="Datatype",
-        description="Velg en av følgende datatyper: tekst, heltall, desimaltall, datotid eller boolsk. Dersom variabelen er knyttet til et kodeverk i Klass, velges datatype tekst.",
-        obligatory=True,
-        options_getter=functools.partial(
-            get_enum_options,
-            DataType,
-        ),
-    ),
-    VariableIdentifiers.VARIABLE_ROLE: MetadataDropdownField(
-        identifier=VariableIdentifiers.VARIABLE_ROLE.value,
-        display_name="Variabelens rolle",
-        description="Oppgi hvilken rolle variabelen har i datasettet. De ulike rollene er identifikator ( identifiserer de ulike enhetene, f.eks. fødselsnummer og organisasjonsnummer), målevariabel ( beskriver egenskaper, f.eks. sivilstand og omsetning), startdato (beskriver startdato for variabler som har et forløp, eller måletidspunkt for tverrsnittdata), stoppdato(beskriver stoppdato for variabler som har et forløp) og attributt (brukes i tifeller der SSB utvider datasettet med egen informasjon, f.eks. datakvalitet eller editering)",
-        obligatory=True,
-        options_getter=functools.partial(
-            get_enum_options,
-            VariableRole,
-        ),
-    ),
     VariableIdentifiers.DEFINITION_URI: MetadataInputField(
         identifier=VariableIdentifiers.DEFINITION_URI.value,
         display_name="Definition URI",
         description="Oppgi lenke (URI) til tilhørende variabel i VarDef.",
         obligatory=False,
+    ),
+    VariableIdentifiers.COMMENT: MetadataMultiLanguageField(
+        identifier=VariableIdentifiers.COMMENT.value,
+        display_name="Kommentar",
+        description="Kommentaren har to funksjoner. Den skal brukes til å beskrive variabelforekomsten dersom denne ikke har lenke til VarDef (gjelder klargjorte data, statistikk og utdata), og den kan brukes til å gi ytterligere presiseringer av variabelforekomstens definisjon dersom variabelforekomsten er lenket til VarDef",
+        id_type=VARIABLES_METADATA_MULTILANGUAGE_INPUT,
     ),
     VariableIdentifiers.IS_PERSONAL_DATA: MetadataDropdownField(
         identifier=VariableIdentifiers.IS_PERSONAL_DATA.value,
@@ -114,23 +93,50 @@ DISPLAY_VARIABLES: dict[
             IsPersonalData,
         ),
     ),
-    VariableIdentifiers.DATA_SOURCE: MetadataDropdownField(
-        identifier=VariableIdentifiers.DATA_SOURCE.value,
-        display_name="Datakilde",
-        description="Oppgi datakilden til variabelen (på etat-/organisasjonsnivå) dersom denne ikke allerede er satt på  datasettnivå. Brukes hovedsakelig når variabler i et datasett har ulike datakilder.",
-        options_getter=get_data_source_options,
-    ),
     VariableIdentifiers.POPULATION_DESCRIPTION: MetadataMultiLanguageField(
         identifier=VariableIdentifiers.POPULATION_DESCRIPTION.value,
         display_name="Populasjonen",
         description="Populasjonen settes på datasettnivå, men kan spesifiseres eller overskrives (hvis variabelen har en annen populasjon enn de fleste andre variablene i datasettet) her.",
         id_type=VARIABLES_METADATA_MULTILANGUAGE_INPUT,
     ),
-    VariableIdentifiers.COMMENT: MetadataMultiLanguageField(
-        identifier=VariableIdentifiers.COMMENT.value,
-        display_name="Kommentar",
-        description="Kommentaren har to funksjoner. Den skal brukes til å beskrive variabelforekomsten dersom denne ikke har lenke til VarDef (gjelder klargjorte data, statistikk og utdata), og den kan brukes til å gi ytterligere presiseringer av variabelforekomstens definisjon dersom variabelforekomsten er lenket til VarDef",
+    VariableIdentifiers.MEASUREMENT_UNIT: MetadataDropdownField(
+        identifier=VariableIdentifiers.MEASUREMENT_UNIT.value,
+        display_name="Måleenhet",
+        description="Dersom variabelen er kvantitativ, skal den ha en måleenhet, f.eks. kilo eller kroner.",
+        options_getter=get_measurement_unit_options,
+    ),
+    VariableIdentifiers.INVALID_VALUE_DESCRIPTION: MetadataMultiLanguageField(
+        identifier=VariableIdentifiers.INVALID_VALUE_DESCRIPTION.value,
+        display_name="Ugyldige verdier",
+        description="Feltet brukes til å beskrive ugyldige verdier som inngår i variabelen - dersom spesialverdiene ikke er tilstrekkelige eller ikke kan benyttes.",
         id_type=VARIABLES_METADATA_MULTILANGUAGE_INPUT,
+    ),
+    VariableIdentifiers.MULTIPLICATION_FACTOR: MetadataInputField(
+        identifier=VariableIdentifiers.MULTIPLICATION_FACTOR.value,
+        display_name="Multiplikasjonsfaktor",
+        description="Multiplikasjonsfaktoren er den numeriske verdien som multipliseres med måleenheten, f.eks. når en skal vise store tall i en tabell, eksempelvis 1000 kroner.",
+        type="number",
+    ),
+    VariableIdentifiers.VARIABLE_ROLE: MetadataDropdownField(
+        identifier=VariableIdentifiers.VARIABLE_ROLE.value,
+        display_name="Variabelens rolle",
+        description="Oppgi hvilken rolle variabelen har i datasettet. De ulike rollene er identifikator ( identifiserer de ulike enhetene, f.eks. fødselsnummer og organisasjonsnummer), målevariabel ( beskriver egenskaper, f.eks. sivilstand og omsetning), startdato (beskriver startdato for variabler som har et forløp, eller måletidspunkt for tverrsnittdata), stoppdato(beskriver stoppdato for variabler som har et forløp) og attributt (brukes i tifeller der SSB utvider datasettet med egen informasjon, f.eks. datakvalitet eller editering)",
+        obligatory=True,
+        options_getter=functools.partial(
+            get_enum_options,
+            VariableRole,
+        ),
+    ),
+    VariableIdentifiers.CLASSIFICATION_URI: MetadataInputField(
+        identifier=VariableIdentifiers.CLASSIFICATION_URI.value,
+        display_name="Kodeverkets URI",
+        description="Lenke (URI) til gyldige kodeverk (klassifikasjon eller kodeliste) i KLASS eller Klass-uttrekk. Variabelforekomster skal generelt knyttes til tilhørende kodeverk via relevant variabeldefinisjon i Vardef. Unntaksvis kan den imidlertid knyttes direkte til Klass via dette feltet (i tilfeller der det ikke er hensiktsmessig å definere variabelen i Vardef).",
+    ),
+    VariableIdentifiers.DATA_SOURCE: MetadataDropdownField(
+        identifier=VariableIdentifiers.DATA_SOURCE.value,
+        display_name="Datakilde",
+        description="Oppgi datakilden til variabelen (på etat-/organisasjonsnivå) dersom denne ikke allerede er satt på  datasettnivå. Brukes hovedsakelig når variabler i et datasett har ulike datakilder.",
+        options_getter=get_data_source_options,
     ),
     VariableIdentifiers.TEMPORALITY_TYPE: MetadataDropdownField(
         identifier=VariableIdentifiers.TEMPORALITY_TYPE.value,
@@ -141,33 +147,10 @@ DISPLAY_VARIABLES: dict[
             TemporalityTypeType,
         ),
     ),
-    VariableIdentifiers.MEASUREMENT_UNIT: MetadataDropdownField(
-        identifier=VariableIdentifiers.MEASUREMENT_UNIT.value,
-        display_name="Måleenhet",
-        description="Dersom variabelen er kvantitativ, skal den ha en måleenhet, f.eks. kilo eller kroner.",
-        options_getter=get_measurement_unit_options,
-    ),
     VariableIdentifiers.FORMAT: MetadataInputField(
         identifier=VariableIdentifiers.FORMAT.value,
         display_name="Format",
         description="Verdienes format (fysisk format eller regulært uttrykk) i maskinlesbar form ifm validering, f.eks.  ISO 8601 som datoformat. Dette feltet kan benyttes som en ytterligere presisering av datatype i tilfellene der det er relevant.",
-    ),
-    VariableIdentifiers.CLASSIFICATION_URI: MetadataInputField(
-        identifier=VariableIdentifiers.CLASSIFICATION_URI.value,
-        display_name="Kodeverkets URI",
-        description="Lenke (URI) til gyldige kodeverk (klassifikasjon eller kodeliste) i KLASS eller Klass-uttrekk. Variabelforekomster skal generelt knyttes til tilhørende kodeverk via relevant variabeldefinisjon i Vardef. Unntaksvis kan den imidlertid knyttes direkte til Klass via dette feltet (i tilfeller der det ikke er hensiktsmessig å definere variabelen i Vardef).",
-    ),
-    VariableIdentifiers.INVALID_VALUE_DESCRIPTION: MetadataMultiLanguageField(
-        identifier=VariableIdentifiers.INVALID_VALUE_DESCRIPTION.value,
-        display_name="Ugyldige verdier",
-        description="Feltet brukes til å beskrive ugyldige verdier som inngår i variabelen - dersom spesialverdiene ikke er tilstrekkelige eller ikke kan benyttes.",
-        id_type=VARIABLES_METADATA_MULTILANGUAGE_INPUT,
-    ),
-    VariableIdentifiers.IDENTIFIER: MetadataInputField(
-        identifier=VariableIdentifiers.IDENTIFIER.value,
-        display_name="ID",
-        description="Unik SSB identifikator for variabelforekomsten i datasettet",
-        editable=False,
     ),
     VariableIdentifiers.CONTAINS_DATA_FROM: MetadataPeriodField(
         identifier=VariableIdentifiers.CONTAINS_DATA_FROM.value,
@@ -181,16 +164,33 @@ DISPLAY_VARIABLES: dict[
         description="Variabelen inneholder data til og med denne datoen.",
         id_type=VARIABLES_METADATA_DATE_INPUT,
     ),
+    VariableIdentifiers.SHORT_NAME: MetadataInputField(
+        identifier=VariableIdentifiers.SHORT_NAME.value,
+        display_name="Kortnavn",
+        description="Fysisk navn på variabelen i datasettet. Bør tilsvare anbefalt kortnavn.",
+        obligatory=True,
+        editable=False,
+    ),
+    VariableIdentifiers.DATA_TYPE: MetadataDropdownField(
+        identifier=VariableIdentifiers.DATA_TYPE.value,
+        display_name="Datatype",
+        description="Velg en av følgende datatyper: tekst, heltall, desimaltall, datotid eller boolsk. Dersom variabelen er knyttet til et kodeverk i Klass, velges datatype tekst.",
+        obligatory=True,
+        options_getter=functools.partial(
+            get_enum_options,
+            DataType,
+        ),
+    ),
     VariableIdentifiers.DATA_ELEMENT_PATH: MetadataInputField(
         identifier=VariableIdentifiers.DATA_ELEMENT_PATH.value,
         display_name="Dataelementsti",
         description="For hierarkiske datasett (JSON) må sti til dataelementet oppgis i tillegg til kortnavn (shortName)",
     ),
-    VariableIdentifiers.MULTIPLICATION_FACTOR: MetadataInputField(
-        identifier=VariableIdentifiers.MULTIPLICATION_FACTOR.value,
-        display_name="Multiplikasjonsfaktor",
-        description="Multiplikasjonsfaktoren er den numeriske verdien som multipliseres med måleenheten, f.eks. når en skal vise store tall i en tabell, eksempelvis 1000 kroner.",
-        type="number",
+    VariableIdentifiers.IDENTIFIER: MetadataInputField(
+        identifier=VariableIdentifiers.IDENTIFIER.value,
+        display_name="ID",
+        description="Unik SSB identifikator for variabelforekomsten i datasettet",
+        editable=False,
     ),
 }
 
@@ -200,12 +200,20 @@ MULTIPLE_LANGUAGE_VARIABLES_METADATA = [
     if isinstance(m, MetadataMultiLanguageField)
 ]
 
-OBLIGATORY_VARIABLES_METADATA = [
-    m for m in DISPLAY_VARIABLES.values() if m.obligatory and m.editable
+VARIABLES_METADATA_LEFT = [
+    m
+    for m in DISPLAY_VARIABLES.values()
+    if (isinstance(m, MetadataMultiLanguageField) and m.editable)
 ]
 
-OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS = [
-    m.identifier for m in DISPLAY_VARIABLES.values() if m.obligatory and m.editable
+VARIABLES_METADATA_RIGHT = [
+    m
+    for m in DISPLAY_VARIABLES.values()
+    if not isinstance(m, MetadataMultiLanguageField) and m.editable
+]
+
+OBLIGATORY_VARIABLES_METADATA = [
+    m for m in DISPLAY_VARIABLES.values() if m.obligatory and m.editable
 ]
 
 OPTIONAL_VARIABLES_METADATA = [

@@ -12,5 +12,8 @@
     ],
     "python.testing.pytestEnabled": true,
     "python.testing.unittestEnabled": false,
-    "ruff.lint.run": "onType"
+    "ruff.lint.run": "onType",
+    "cSpell.words": [
+        "multilanguage"
+    ]
 }

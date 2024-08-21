@@ -288,7 +288,7 @@ def test_accept_variable_metadata_date_input(
         )
 
 
-@pytest.mark.usefixtures("_code_list_fake_classifications_variables")
+@pytest.mark.usefixtures("_code_list_fake_classifications")
 @pytest.mark.parametrize(
     ("search_query", "expected_length"),
     [

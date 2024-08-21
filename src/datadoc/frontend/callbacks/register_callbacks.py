@@ -33,6 +33,7 @@ from datadoc.frontend.callbacks.variables import populate_variables_workspace
 from datadoc.frontend.callbacks.variables import variables_control
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_dataset_edit_section
+from datadoc.frontend.components.builders import build_dataset_machine_section
 from datadoc.frontend.components.builders import build_ssb_alert
 from datadoc.frontend.components.identifiers import ACCORDION_WRAPPER_ID
 from datadoc.frontend.components.identifiers import SECTION_WRAPPER_ID
@@ -43,9 +44,9 @@ from datadoc.frontend.fields.display_base import DATASET_METADATA_MULTILANGUAGE_
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_DATE_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_INPUT
 from datadoc.frontend.fields.display_base import VARIABLES_METADATA_MULTILANGUAGE_INPUT
+from datadoc.frontend.fields.display_dataset import EDITABLE_DATASET_METADATA_LEFT
+from datadoc.frontend.fields.display_dataset import EDITABLE_DATASET_METADATA_RIGHT
 from datadoc.frontend.fields.display_dataset import NON_EDITABLE_DATASET_METADATA
-from datadoc.frontend.fields.display_dataset import OBLIGATORY_EDITABLE_DATASET_METADATA
-from datadoc.frontend.fields.display_dataset import OPTIONAL_DATASET_METADATA
 from datadoc.frontend.fields.display_dataset import DatasetIdentifiers
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
 
@@ -262,29 +263,22 @@ def register_callbacks(app: Dash) -> None:
         logger.debug("Populating dataset workspace")
         return [
             build_dataset_edit_section(
-                "Obligatorisk",
-                OBLIGATORY_EDITABLE_DATASET_METADATA,
+                [
+                    EDITABLE_DATASET_METADATA_LEFT,
+                    EDITABLE_DATASET_METADATA_RIGHT,
+                ],
                 state.metadata.dataset,
                 {
                     "type": "dataset-edit-section",
                     "id": f"obligatory-{dataset_opened_counter}",
                 },
             ),
-            build_dataset_edit_section(
-                "Anbefalt",
-                OPTIONAL_DATASET_METADATA,
-                state.metadata.dataset,
-                {
-                    "type": "dataset-edit-section",
-                    "id": f"recommended-{dataset_opened_counter}",
-                },
-            ),
-            build_dataset_edit_section(
+            build_dataset_machine_section(
                 "Maskingenerert",
                 NON_EDITABLE_DATASET_METADATA,
                 state.metadata.dataset,
                 {
-                    "type": "dataset-edit-section",
+                    "type": "dataset-machine-section",
                     "id": f"machine-{dataset_opened_counter}",
                 },
             ),

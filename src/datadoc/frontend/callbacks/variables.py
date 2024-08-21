@@ -18,6 +18,7 @@ from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_edit_section
 from datadoc.frontend.components.builders import build_ssb_accordion
 from datadoc.frontend.components.builders import build_ssb_alert
+from datadoc.frontend.components.builders import build_variables_machine_section
 from datadoc.frontend.constants import INVALID_DATE_ORDER
 from datadoc.frontend.constants import INVALID_VALUE
 from datadoc.frontend.fields.display_variables import DISPLAY_VARIABLES
@@ -25,11 +26,11 @@ from datadoc.frontend.fields.display_variables import (
     MULTIPLE_LANGUAGE_VARIABLES_METADATA,
 )
 from datadoc.frontend.fields.display_variables import NON_EDITABLE_VARIABLES_METADATA
-from datadoc.frontend.fields.display_variables import OBLIGATORY_VARIABLES_METADATA
 from datadoc.frontend.fields.display_variables import (
     OBLIGATORY_VARIABLES_METADATA_IDENTIFIERS_AND_DISPLAY_NAME,
 )
-from datadoc.frontend.fields.display_variables import OPTIONAL_VARIABLES_METADATA
+from datadoc.frontend.fields.display_variables import VARIABLES_METADATA_LEFT
+from datadoc.frontend.fields.display_variables import VARIABLES_METADATA_RIGHT
 from datadoc.frontend.fields.display_variables import VariableIdentifiers
 
 if TYPE_CHECKING:
@@ -59,16 +60,10 @@ def populate_variables_workspace(
             variable.short_name or "",
             children=[
                 build_edit_section(
-                    OBLIGATORY_VARIABLES_METADATA,
-                    "Obligatorisk",
+                    [VARIABLES_METADATA_LEFT, VARIABLES_METADATA_RIGHT],  # type: ignore [list-item]
                     variable,
                 ),
-                build_edit_section(
-                    OPTIONAL_VARIABLES_METADATA,
-                    "Anbefalt",
-                    variable,
-                ),
-                build_edit_section(
+                build_variables_machine_section(
                     NON_EDITABLE_VARIABLES_METADATA,
                     "Maskingenerert",
                     variable,

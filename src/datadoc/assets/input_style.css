@@ -23,7 +23,8 @@
 }
 
 label.form-check-label{
-    padding-left: 0.5rem;
+    padding-left: 1rem;
+    font-size: 1.2rem;
 }
 
 .ssb-glossary.info-glossary{
@@ -55,6 +56,10 @@ label.form-check-label{
     left: unset;
     top: unset;
     bottom: 5px;
+}
+
+.ssb-dropdown.dropdown-component > .ssb-glossary.info-glossary > .glossary-popup {
+    background-image: none;
 }
 
 .ssb-dropdown.dropdown-component > .ssb-glossary.info-glossary > .glossary-popup::after {
@@ -103,6 +108,7 @@ label.form-check-label{
 
 .multilanguage-fieldset > .ssb-glossary.legend-glossary > .glossary-button{
     padding: 0 0.3rem;
+    background-image: none;
 }
 
 .multilanguage-fieldset:focus{
@@ -154,4 +160,88 @@ label.form-check-label{
 
 .ssb-glossary.legend-glossary > .glossary-popup .content-box > .glossary-closing{
     margin-top: 1.8rem;
+}
+
+.multilanguage-fieldset{
+    max-width: unset;
+    margin-right: 1rem;
+}
+
+.ssb-input.multilanguage-input-component{
+    max-width: unset;
+}
+
+.metadata-checkbox-field{
+    width: 100%;
+}
+
+.ssb-dropdown.dropdown-component {
+    max-width: unset;
+    width: 100%;
+}
+
+.ssb-input.input-component{
+    max-width: unset;
+}
+
+#input_version-dataset-metadata-input{
+    margin-right: 1rem;
+}
+
+#dataset-metadata-input-Maskingenerert > .ssb-input.input-component{
+    max-width: 700px;
+    width: 100%;
+}
+
+#variables-metadata-input-left-machine > .ssb-input.input-component{
+    max-width: 700px;
+    width: 100%;
+    padding: 0 1rem;
+}
+
+/*This is a solution for removing all traces of background images behind glossary buttons.
+Could be improved.
+*/
+.ssb-dropdown.dropdown-component > .ssb-glossary.glossary-button {
+    background-image: none;
+}
+
+#dataset-metadata-input-Maskingenerert > .ssb-input .input-component > .ssb-glossary > .glossary-button {
+    background-image: none;
+}
+
+#dataset-metadata-input-Maskingenerert > div > span > span > button{
+    background-image: none;
+}
+
+#dataset-metadata-input-right > div > span > span > button{
+    background-image: none;
+}
+
+#dataset-metadata-input-left > div > span > span > button{
+    background-image: none;
+}
+#dropdown_owner-dataset-metadata-input > span > button{
+    background-image: none;
+}
+
+#dropdown_use_restriction-dataset-metadata-input > span > button{
+    background-image: none;
+}
+
+#variables-metadata-input-left-machine > div > span > span > button{
+    background-image: none;
+}
+
+.ssb-dropdown.dropdown-component > .ssb-glossary.glossary-button{
+    background-image: none;
+}
+
+@media only screen and (max-width: 1900px) {
+    #variables-metadata-input-left-machine > .ssb-input.input-component{
+        max-width: 45%;
+    }
+    #dataset-metadata-input-Maskingenerert > .ssb-input.input-component{
+        width: 45%;
+    }
 }
