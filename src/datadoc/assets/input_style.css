@@ -179,3 +179,7 @@ label.form-check-label{
 .ssb-input.input-component{
     max-width: unset;
 }
+
+#input_version-dataset-metadata-input{
+    margin-right: 1rem;
+}
