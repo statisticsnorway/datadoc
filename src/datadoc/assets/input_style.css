@@ -155,3 +155,27 @@ label.form-check-label{
 .ssb-glossary.legend-glossary > .glossary-popup .content-box > .glossary-closing{
     margin-top: 1.8rem;
 }
+
+.multilanguage-fieldset{
+
+    max-width: unset;
+    margin-right: 1rem;
+}
+
+.ssb-input.multilanguage-input-component{
+    max-width: unset;
+}
+
+.metadata-checkbox-field{
+    width: 100%;
+}
+
+.ssb-dropdown.dropdown-component {
+    /*max-width: 500px;*/
+    max-width: unset;
+    width: 100%;
+}
+
+.ssb-input.input-component{
+    max-width: unset;
+}
