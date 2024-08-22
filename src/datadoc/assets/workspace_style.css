@@ -1,3 +1,5 @@
+/*Style for workspace sections for dataset and variables*/
+
 .workspace-page-wrapper{
     display: flex;
     flex-wrap: wrap;
@@ -99,4 +101,20 @@
 
 #variables-metadata-input-left-machine{
     justify-content: space-between;
+}
+
+
+#dataset-metadata-input-Maskingenerert > div > span > span > button{
+    background-image: none;
+}
+
+#dataset-metadata-input-right > div > span > span > button{
+    background-image: none;
+}
+
+#dataset-metadata-input-left > div > span > span > button{
+    background-image: none;
+}
+#dropdown_owner-dataset-metadata-input > span > button{
+    background-image: none;
 }
