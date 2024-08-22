@@ -6,8 +6,6 @@ import json
 import logging
 from typing import TYPE_CHECKING
 
-from pydantic import ValidationError
-
 from datadoc import state
 from datadoc.constants import CHECK_OBLIGATORY_METADATA_VARIABLES_MESSAGE
 from datadoc.constants import MISSING_METADATA_WARNING
@@ -143,7 +141,7 @@ def accept_variable_metadata_input(
             metadata_field,
             new_value,
         )
-    except (ValidationError, ValueError):
+    except ValueError:
         logger.exception(
             "Validation failed for %s, %s, %s:",
             metadata_field,
@@ -192,13 +190,13 @@ def accept_variable_metadata_date_input(
         )
 
         # Save both values to the model if they pass validation.
-        state.metadata.variables_lookup[
-            variable_short_name
-        ].contains_data_from = parsed_contains_data_from
-        state.metadata.variables_lookup[
-            variable_short_name
-        ].contains_data_until = parsed_contains_data_until
-    except (ValidationError, ValueError) as e:
+        state.metadata.variables_lookup[variable_short_name].contains_data_from = (
+            parsed_contains_data_from
+        )
+        state.metadata.variables_lookup[variable_short_name].contains_data_until = (
+            parsed_contains_data_until
+        )
+    except ValueError as e:
         logger.exception(
             "Validation failed for %s, %s, %s: %s, %s: %s",
             variable_identifier,
