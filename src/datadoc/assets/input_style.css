@@ -1,35 +1,4 @@
-
-.ssb-input.input-component{
-    max-width: 500px;
-    width: 100%;
-}
-
-.ssb-dropdown.dropdown-component {
-    max-width: 500px;
-    width: 100%;
-}
-
-.dropdown-wrapper{
-    max-width: 500px;
-    width: 100%;
-}
-
-.form-check.ssb-checkbox{
-    align-self: center;
-}
-
-.form-check{
-    padding-left: 0;
-}
-
-label.form-check-label{
-    padding-left: 1rem;
-    font-size: 1.2rem;
-}
-
-.ssb-glossary.info-glossary{
-    max-width: fit-content;
-}
+/*Style for input components and checkbox components*/
 
 .ssb-input.input-component > span > .ssb-glossary.info-glossary > .glossary-popup {
     margin-left: 20px;
@@ -47,37 +16,6 @@ label.form-check-label{
     -webkit-transform: rotate(-90deg);
 }
 
-.ssb-glossary.datadoc-glossary > .glossary-popup .content-box > .glossary-closing{
-    margin-top: 1.8rem;
-}
-
-.ssb-dropdown.dropdown-component > .ssb-glossary.info-glossary > .glossary-popup {
-    margin-left: 20px;
-    left: unset;
-    top: unset;
-    bottom: 5px;
-}
-
-.ssb-dropdown.dropdown-component > .ssb-glossary.info-glossary > .glossary-popup {
-    background-image: none;
-}
-
-.ssb-dropdown.dropdown-component > .ssb-glossary.info-glossary > .glossary-popup::after {
-    left: -10px;
-    margin-left: -10px;
-    top: unset;
-    bottom: 5px;
-    transform: rotateX(-90deg);
-    -webkit-transform: rotate(-90deg);
-}
-
-.ssb-glossary.info-glossary > .glossary-button  > .glossary-textwrap > .ssb-dropdown label, .ssb-dropdown .dropdown-label{
-    margin-bottom: 0;
-}
-
-.ssb-input-label{
-    margin-bottom: 0;
-}
 .ssb-input.input-component input[readonly]{
     border: 1px solid #274247 !important;
     outline: unset !important;
@@ -96,152 +34,66 @@ label.form-check-label{
     outline-offset: unset !important;
 }
 
-.multilanguage-fieldset{
-    border: 1px solid #274247;
-    outline: #274247;
-    padding: 1rem;
-    max-width: 500px;
-    width: 100%;
-    position: relative;
-    margin-top: 1.5rem;
+.ssb-input.input-component{
+    max-width: unset;
+    margin: 0;
 }
 
-.multilanguage-fieldset > .ssb-glossary.legend-glossary > .glossary-button{
-    padding: 0 0.3rem;
-    background-image: none;
+.ssb-input-label{
+    margin-bottom: 0;
+}
+div > .ssb-input.input-component{
+    margin: 0;
 }
 
-.multilanguage-fieldset:focus{
-    border: 1px solid #00824d;
-    outline: 1px solid #00824d;
-    outline-offset: 0;
-}
-.multilanguage-fieldset:hover{
-    border: 1px solid #00824d;
-    outline: 1px solid #00824d;
-    outline-offset: 0;
-}
-.multilanguage-legend{
-    width: fit-content;
-    font-size: 1rem;
-}
-
-.ssb-glossary.legend-glossary{
-    position: absolute;
-    z-index: 10;
-    top: -20px;
-}
-
-.legend-glossary{
-    background-color: white;
-    padding-top: 0;
-    margin: 0.3rem;
-}
-.ssb-input.multilanguage-input-component{
-    max-width: 450px;
+#dataset-metadata-input-Maskingenerert > .ssb-input.input-component,
+#variables-metadata-input-left-machine > .ssb-input.input-component{
+    max-width: 720px;
     width: 100%;
 }
 
-.multilanguage-fieldset > .ssb-glossary.legend-glossary > .glossary-popup {
-    margin-left: 20px;
-    left: unset;
-    top: unset;
-    bottom: 5px;
-}
-
-.multilanguage-fieldset > .ssb-glossary.legend-glossary > .glossary-popup::after {
-    left: -10px;
-    margin-left: -10px;
-    top: unset;
-    bottom: 5px;
-    transform: rotateX(-90deg);
-    -webkit-transform: rotate(-90deg);
-}
-
-.ssb-glossary.legend-glossary > .glossary-popup .content-box > .glossary-closing{
-    margin-top: 1.8rem;
-}
-
-.multilanguage-fieldset{
-    max-width: unset;
-    margin-right: 1rem;
-}
-
-.ssb-input.multilanguage-input-component{
-    max-width: unset;
+#variables-metadata-input-left-machine > .ssb-input.input-component{
+    padding: 0 1rem;
 }
 
 .metadata-checkbox-field{
     width: 100%;
 }
 
-.ssb-dropdown.dropdown-component {
-    max-width: unset;
-    width: 100%;
+.form-check.ssb-checkbox{
+    align-self: center;
 }
 
-.ssb-input.input-component{
-    max-width: unset;
+.form-check{
+    padding-left: 0;
+}
+
+label.form-check-label{
+    padding-left: 1rem;
+    font-size: 1.2rem;
 }
 
 #input_version-dataset-metadata-input{
     margin-right: 1rem;
 }
 
-#dataset-metadata-input-Maskingenerert > .ssb-input.input-component{
-    max-width: 700px;
-    width: 100%;
+
+.ssb-glossary.info-glossary{
+    max-width: fit-content;
 }
 
-#variables-metadata-input-left-machine > .ssb-input.input-component{
-    max-width: 700px;
-    width: 100%;
-    padding: 0 1rem;
+.ssb-glossary.datadoc-glossary > .glossary-popup .content-box > .glossary-closing{
+    margin-top: 1.8rem;
 }
 
-/*This is a solution for removing all traces of background images behind glossary buttons.
-Could be improved.
-*/
-.ssb-dropdown.dropdown-component > .ssb-glossary.glossary-button {
-    background-image: none;
-}
-
-#dataset-metadata-input-Maskingenerert > .ssb-input .input-component > .ssb-glossary > .glossary-button {
-    background-image: none;
-}
-
-#dataset-metadata-input-Maskingenerert > div > span > span > button{
-    background-image: none;
-}
-
-#dataset-metadata-input-right > div > span > span > button{
-    background-image: none;
-}
-
-#dataset-metadata-input-left > div > span > span > button{
-    background-image: none;
-}
-#dropdown_owner-dataset-metadata-input > span > button{
-    background-image: none;
-}
-
-#dropdown_use_restriction-dataset-metadata-input > span > button{
-    background-image: none;
-}
-
-#variables-metadata-input-left-machine > div > span > span > button{
-    background-image: none;
-}
-
-.ssb-dropdown.dropdown-component > .ssb-glossary.glossary-button{
+#dataset-metadata-input-Maskingenerert > .ssb-input .input-component > .ssb-glossary > .glossary-button,
+#variables-metadata-input-left-machine > div > span > span > button {
     background-image: none;
 }
 
 @media only screen and (max-width: 1900px) {
-    #variables-metadata-input-left-machine > .ssb-input.input-component{
-        max-width: 45%;
-    }
-    #dataset-metadata-input-Maskingenerert > .ssb-input.input-component{
-        width: 45%;
+    #variables-metadata-input-left-machine > .ssb-input.input-component,
+    #dataset-metadata-input-Maskingenerert > .ssb-input.input-component {
+        max-width: 46%;
     }
 }
