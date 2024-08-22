@@ -18,9 +18,9 @@ from datadoc import enums
 from datadoc import state
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_date_input
 from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
-from datadoc.frontend.callbacks.dataset import dataset_control
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.dataset import process_special_cases
+from datadoc.frontend.callbacks.utils import dataset_control
 from datadoc.frontend.constants import INVALID_DATE_ORDER
 from datadoc.frontend.constants import INVALID_VALUE
 from datadoc.frontend.fields.display_dataset import DISPLAY_DATASET

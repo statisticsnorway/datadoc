@@ -16,6 +16,7 @@ from pydantic_core import Url
 
 from datadoc import enums
 from datadoc import state
+from datadoc.frontend.callbacks.utils import variables_control
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
@@ -28,7 +29,6 @@ from datadoc.frontend.callbacks.variables import (
 from datadoc.frontend.callbacks.variables import (
     set_variables_values_inherit_dataset_values,
 )
-from datadoc.frontend.callbacks.variables import variables_control
 from datadoc.frontend.constants import INVALID_DATE_ORDER
 from datadoc.frontend.constants import INVALID_VALUE
 from datadoc.frontend.fields.display_base import get_metadata_and_stringify
