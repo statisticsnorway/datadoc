@@ -63,26 +63,21 @@
     flex-direction: column;
 }
 
-#dataset-metadata-input-left, #dataset-metadata-input-right{
+#variables-metadata-input-left-editable,
+#variables-metadata-input-right-editable,
+#dataset-metadata-input-left,
+#dataset-metadata-input-right{
     max-width: 50%;
     width: 100%;
+}
+
+#dataset-metadata-input-left, #dataset-metadata-input-right{
     gap: 2rem;
 }
 
-#dataset-metadata-input-left{
-    padding-top: 0.5rem;
-}
-
+#dataset-metadata-input-left,
 #variables-metadata-input-left-editable{
-    max-width: 50%;
-    width: 100%;
     padding-top: 0.5rem;
-}
-
-#variables-metadata-input-right-editable{
-    max-width: 50%;
-    width: 100%;
-    padding: 0 1rem;
 }
 
 .variable-machine-section >.edit-section.dataset-machine-section{
@@ -91,23 +86,13 @@
     justify-content: center;
 }
 
-#dataset-metadata-input-Maskingenerert{
+#dataset-metadata-input-Maskingenerert, #variables-metadata-input-left-machine{
     justify-content: space-between;
 }
 
-#variables-metadata-input-left-machine{
-    justify-content: space-between;
-}
-
-
-#dataset-metadata-input-Maskingenerert > div > span > span > button{
-    background-image: none;
-}
-
-#dataset-metadata-input-right > div > span > span > button{
-    background-image: none;
-}
-
-#dataset-metadata-input-left > div > span > span > button{
+#dataset-metadata-input-Maskingenerert > div > span > span > button,
+#dataset-metadata-input-right > div > span > span > button,
+#dataset-metadata-input-left > div > span > span > button
+{
     background-image: none;
 }
