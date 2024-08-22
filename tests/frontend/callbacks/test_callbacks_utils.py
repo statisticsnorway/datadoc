@@ -84,12 +84,6 @@ def test_switch_tabs():
     assert select_tabs(keydown_left, "variables") == "dataset"
 
 
-# if none metadata missing: only save alert
-# if dataset missing ->  ObligatoryDatasetWarning
-# if variables missing -> ObligatoryVariableWarning
-# if another warning -> message
-# if not n_clicks ?
-# if n_clicks and n_clicks > 0 ?
 def test_save_and_generate_alerts():
     mock_metadata = mock.Mock()
     mock_metadata.variables = [
@@ -103,5 +97,5 @@ def test_save_and_generate_alerts():
 
     num_list_of_alerts = 3
     assert len(result) == num_list_of_alerts
-    assert result[2] is None
+    assert (result[1] and result[2]) is None
     assert isinstance(result[0], dbc.Alert)
