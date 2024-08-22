@@ -1,5 +1,25 @@
 /*Style for multilanguage fields*/
 
+.multilanguage-fieldset{
+    border: 1px solid #274247;
+    outline: #274247;
+    padding: 1rem;
+    width: 100%;
+    position: relative;
+    margin: 1.5rem 1rem 0 0;
+}
+
+.legend-glossary{
+    background-color: white;
+    padding-top: 0;
+    margin: 0.3rem;
+}
+
+.multilanguage-legend{
+    width: fit-content;
+    font-size: 1rem;
+}
+
 .multilanguage-fieldset > .ssb-glossary.legend-glossary > .glossary-button{
     padding: 0 0.3rem;
     background-image: none;
@@ -16,10 +36,6 @@
     outline: 1px solid #00824d;
     outline-offset: 0;
 }
-.multilanguage-legend{
-    width: fit-content;
-    font-size: 1rem;
-}
 
 .ssb-glossary.legend-glossary{
     position: absolute;
@@ -27,15 +43,9 @@
     top: -20px;
 }
 
-.legend-glossary{
-    background-color: white;
-    padding-top: 0;
-    margin: 0.3rem;
-}
 .ssb-input.multilanguage-input-component{
-    max-width: 450px;
-    width: 100%;
     max-width: unset;
+    width: 100%;
 }
 
 .multilanguage-fieldset > .ssb-glossary.legend-glossary > .glossary-popup {
@@ -56,17 +66,4 @@
 
 .ssb-glossary.legend-glossary > .glossary-popup .content-box > .glossary-closing{
     margin-top: 1.8rem;
-}
-
-
-.multilanguage-fieldset{
-    border: 1px solid #274247;
-    outline: #274247;
-    padding: 1rem;
-    /*max-width: 500px;*/
-    width: 100%;
-    position: relative;
-    margin: 1.5rem 1rem 0 0;
-    /*max-width: unset;*/
-    /* margin-right: 1rem;*/
 }

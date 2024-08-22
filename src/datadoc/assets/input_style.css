@@ -91,15 +91,7 @@ label.form-check-label{
     background-image: none;
 }
 
-#dropdown_use_restriction-dataset-metadata-input > span > button{
-    background-image: none;
-}
-
 #variables-metadata-input-left-machine > div > span > span > button{
-    background-image: none;
-}
-
-.ssb-dropdown.dropdown-component > .ssb-glossary.glossary-button{
     background-image: none;
 }
 

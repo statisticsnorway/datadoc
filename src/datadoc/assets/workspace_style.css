@@ -59,11 +59,7 @@
     padding-bottom: 1rem;
 }
 
-.dataset-machine-section{
-    flex-direction: column;
-}
-
-.variables-machine-section{
+.dataset-machine-section, .variables-machine-section{
     flex-direction: column;
 }
 
@@ -113,8 +109,5 @@
 }
 
 #dataset-metadata-input-left > div > span > span > button{
-    background-image: none;
-}
-#dropdown_owner-dataset-metadata-input > span > button{
     background-image: none;
 }
