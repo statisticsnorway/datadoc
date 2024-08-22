@@ -1,0 +1,402 @@
+{
+    "document_version": "0.0.1",
+    "datadoc": {
+        "percentage_complete": 100,
+        "document_version": "4.0.0",
+        "dataset": {
+            "short_name": "person_testdata",
+            "assessment": "PROTECTED",
+            "dataset_status": "DRAFT",
+            "dataset_state": "PROCESSED_DATA",
+            "name": [
+                {
+                    "languageCode": "nb",
+                    "languageText": "Test persondata"
+                },
+                {
+                    "languageCode": "nn",
+                    "languageText": "Test persondata"
+                },
+                {
+                    "languageCode": "en",
+                    "languageText": "Test personal data"
+                }
+            ],
+            "description": [
+                {
+                    "languageCode": "nb",
+                    "languageText": "Data er kun for test formål"
+                },
+                {
+                    "languageCode": "nn",
+                    "languageText": "Data er kun for test formål"
+                },
+                {
+                    "languageCode": "en",
+                    "languageText": "For testing purposes only"
+                }
+            ],
+            "data_source": "23",
+            "population_description": [
+                {
+                    "languageCode": "nb",
+                    "languageText": "Syntetisk"
+                },
+                {
+                    "languageCode": "nn",
+                    "languageText": "Syntetisk"
+                },
+                {
+                    "languageCode": "en",
+                    "languageText": "Synthetic"
+                }
+            ],
+            "version": "1",
+            "version_description": [
+                {
+                    "languageCode": "nb",
+                    "languageText": "Initiell versjon"
+                },
+                {
+                    "languageCode": "nn",
+                    "languageText": "Initiell versjon"
+                },
+                {
+                    "languageCode": "en",
+                    "languageText": "Initial version"
+                }
+            ],
+            "unit_type": "17",
+            "temporality_type": "ACCUMULATED",
+            "subject_field": "al04",
+            "keyword": [
+                "sykepenger",
+                "inntekt"
+            ],
+            "spatial_coverage_description": [
+                {
+                    "languageCode": "nb",
+                    "languageText": "Norge"
+                },
+                {
+                    "languageCode": "nn",
+                    "languageText": "Noreg"
+                },
+                {
+                    "languageCode": "en",
+                    "languageText": "Norway"
+                }
+            ],
+            "contains_personal_data": true,
+            "use_restriction": "PROCESS_LIMITATIONS",
+            "use_restriction_date": "2024-12-31T23:59:59Z",
+            "custom_type": null,
+            "id": "77346986-a2b4-4211-8d74-817e8b1f99d4",
+            "owner": "320",
+            "file_path": "None",
+            "metadata_created_date": "2024-07-09T09:47:28.347248Z",
+            "metadata_created_by": "@cbi",
+            "metadata_last_updated_date": "2022-01-01T00:00:00Z",
+            "metadata_last_updated_by": "default_user@ssb.no",
+            "contains_data_from": "2021-12-31",
+            "contains_data_until": "2021-12-31"
+        },
+        "variables": [
+            {
+                "short_name": "fnr",
+                "data_element_path": null,
+                "name": [
+                    {
+                        "languageCode": "nb",
+                        "languageText": "Fødselsnummer"
+                    },
+                    {
+                        "languageCode": "nn",
+                        "languageText": "Fødselsnummer"
+                    },
+                    {
+                        "languageCode": "en",
+                        "languageText": "Personal number"
+                    }
+                ],
+                "data_type": "STRING",
+                "variable_role": "MEASURE",
+                "definition_uri": null,
+                "is_personal_data": "PSEUDONYMISED_ENCRYPTED_PERSONAL_DATA",
+                "data_source": "23",
+                "population_description": [
+                    {
+                        "languageCode": "nb",
+                        "languageText": "Syntetisk"
+                    },
+                    {
+                        "languageCode": "nn",
+                        "languageText": "Syntetisk"
+                    },
+                    {
+                        "languageCode": "en",
+                        "languageText": "Synthetic"
+                    }
+                ],
+                "comment": null,
+                "temporality_type": "ACCUMULATED",
+                "measurement_unit": null,
+                "multiplication_factor": null,
+                "format": null,
+                "classification_uri": null,
+                "special_value": null,
+                "invalid_value_description": null,
+                "custom_type": null,
+                "id": "3ba32371-0900-4b3e-b67a-6907146f86fb",
+                "contains_data_from": "2021-12-31",
+                "contains_data_until": "2021-12-31"
+            },
+            {
+                "short_name": "sivilstand",
+                "data_element_path": null,
+                "name": [
+                    {
+                        "languageCode": "nb",
+                        "languageText": "Sivilstand"
+                    },
+                    {
+                        "languageCode": "nn",
+                        "languageText": "Sivilstand"
+                    },
+                    {
+                        "languageCode": "en",
+                        "languageText": "Marital status"
+                    }
+                ],
+                "data_type": "STRING",
+                "variable_role": "MEASURE",
+                "definition_uri": null,
+                "is_personal_data": "NON_PSEUDONYMISED_ENCRYPTED_PERSONAL_DATA",
+                "data_source": "23",
+                "population_description": [
+                    {
+                        "languageCode": "nb",
+                        "languageText": "Syntetisk"
+                    },
+                    {
+                        "languageCode": "nn",
+                        "languageText": "Syntetisk"
+                    },
+                    {
+                        "languageCode": "en",
+                        "languageText": "Synthetic"
+                    }
+                ],
+                "comment": null,
+                "temporality_type": "ACCUMULATED",
+                "measurement_unit": null,
+                "multiplication_factor": null,
+                "format": null,
+                "classification_uri": null,
+                "special_value": null,
+                "invalid_value_description": null,
+                "custom_type": null,
+                "id": "9ac9002d-84de-4d10-8d08-7e1e3b592bcf",
+                "contains_data_from": "2021-12-31",
+                "contains_data_until": "2021-12-31"
+            },
+            {
+                "short_name": "bostedskommune",
+                "data_element_path": null,
+                "name": [
+                    {
+                        "languageCode": "nb",
+                        "languageText": "Bostedskommune"
+                    },
+                    {
+                        "languageCode": "nn",
+                        "languageText": "Bostedskommune"
+                    },
+                    {
+                        "languageCode": "en",
+                        "languageText": "County of residence"
+                    }
+                ],
+                "data_type": "STRING",
+                "variable_role": "MEASURE",
+                "definition_uri": null,
+                "is_personal_data": "NON_PSEUDONYMISED_ENCRYPTED_PERSONAL_DATA",
+                "data_source": "23",
+                "population_description": [
+                    {
+                        "languageCode": "nb",
+                        "languageText": "Syntetisk"
+                    },
+                    {
+                        "languageCode": "nn",
+                        "languageText": "Syntetisk"
+                    },
+                    {
+                        "languageCode": "en",
+                        "languageText": "Synthetic"
+                    }
+                ],
+                "comment": null,
+                "temporality_type": "ACCUMULATED",
+                "measurement_unit": null,
+                "multiplication_factor": null,
+                "format": null,
+                "classification_uri": null,
+                "special_value": null,
+                "invalid_value_description": null,
+                "custom_type": null,
+                "id": "24788fd2-3891-4326-a051-d113d91ebe92",
+                "contains_data_from": "2021-12-31",
+                "contains_data_until": "2021-12-31"
+            },
+            {
+                "short_name": "inntekt",
+                "data_element_path": null,
+                "name": [
+                    {
+                        "languageCode": "nb",
+                        "languageText": "Inntekt"
+                    },
+                    {
+                        "languageCode": "nn",
+                        "languageText": "Inntekt"
+                    },
+                    {
+                        "languageCode": "en",
+                        "languageText": "Income"
+                    }
+                ],
+                "data_type": "INTEGER",
+                "variable_role": "MEASURE",
+                "definition_uri": null,
+                "is_personal_data": "NOT_PERSONAL_DATA",
+                "data_source": "23",
+                "population_description": [
+                    {
+                        "languageCode": "nb",
+                        "languageText": "Syntetisk"
+                    },
+                    {
+                        "languageCode": "nn",
+                        "languageText": "Syntetisk"
+                    },
+                    {
+                        "languageCode": "en",
+                        "languageText": "Synthetic"
+                    }
+                ],
+                "comment": null,
+                "temporality_type": "ACCUMULATED",
+                "measurement_unit": "12.02",
+                "multiplication_factor": null,
+                "format": null,
+                "classification_uri": null,
+                "special_value": null,
+                "invalid_value_description": null,
+                "custom_type": null,
+                "id": "d6dfe816-9a86-4614-a064-569a73e9a7f9",
+                "contains_data_from": "2021-12-31",
+                "contains_data_until": "2021-12-31"
+            },
+            {
+                "short_name": "bankinnskudd",
+                "data_element_path": null,
+                "name": [
+                    {
+                        "languageCode": "nb",
+                        "languageText": "Bankinnskudd"
+                    },
+                    {
+                        "languageCode": "nn",
+                        "languageText": "Bankinnskudd"
+                    },
+                    {
+                        "languageCode": "en",
+                        "languageText": "Bank deposits"
+                    }
+                ],
+                "data_type": "INTEGER",
+                "variable_role": "MEASURE",
+                "definition_uri": null,
+                "is_personal_data": "NOT_PERSONAL_DATA",
+                "data_source": "23",
+                "population_description": [
+                    {
+                        "languageCode": "nb",
+                        "languageText": "Syntetisk"
+                    },
+                    {
+                        "languageCode": "nn",
+                        "languageText": "Syntetisk"
+                    },
+                    {
+                        "languageCode": "en",
+                        "languageText": "Synthetic"
+                    }
+                ],
+                "comment": null,
+                "temporality_type": "ACCUMULATED",
+                "measurement_unit": "12.02",
+                "multiplication_factor": null,
+                "format": null,
+                "classification_uri": null,
+                "special_value": null,
+                "invalid_value_description": null,
+                "custom_type": null,
+                "id": "e445135a-74b2-4a6f-99bc-058be6458802",
+                "contains_data_from": "2021-12-31",
+                "contains_data_until": "2021-12-31"
+            },
+            {
+                "short_name": "dato",
+                "data_element_path": null,
+                "name": [
+                    {
+                        "languageCode": "nb",
+                        "languageText": "Dato"
+                    },
+                    {
+                        "languageCode": "nn",
+                        "languageText": "Dato"
+                    },
+                    {
+                        "languageCode": "en",
+                        "languageText": "Date"
+                    }
+                ],
+                "data_type": "STRING",
+                "variable_role": "MEASURE",
+                "definition_uri": null,
+                "is_personal_data": "NOT_PERSONAL_DATA",
+                "data_source": "23",
+                "population_description": [
+                    {
+                        "languageCode": "nb",
+                        "languageText": "Syntetisk"
+                    },
+                    {
+                        "languageCode": "nn",
+                        "languageText": "Syntetisk"
+                    },
+                    {
+                        "languageCode": "en",
+                        "languageText": "Synthetic"
+                    }
+                ],
+                "comment": null,
+                "temporality_type": "ACCUMULATED",
+                "measurement_unit": null,
+                "multiplication_factor": null,
+                "format": null,
+                "classification_uri": null,
+                "special_value": null,
+                "invalid_value_description": null,
+                "custom_type": null,
+                "id": "1da549ab-fe39-4ead-859b-91d137a96ded",
+                "contains_data_from": "2021-12-31",
+                "contains_data_until": "2021-12-31"
+            }
+        ]
+    },
+    "pseudonymization": null
+}
