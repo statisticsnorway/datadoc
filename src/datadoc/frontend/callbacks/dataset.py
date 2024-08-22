@@ -11,7 +11,6 @@ import arrow
 from dapla_metadata.datasets import DaplaDatasetPathInfo
 from dapla_metadata.datasets import Datadoc
 from dash import no_update
-from pydantic import ValidationError
 
 from datadoc import config
 from datadoc import state
@@ -207,7 +206,7 @@ def accept_dataset_metadata_input(
             value,
         )
         set_variables_values_inherit_dataset_values(value, metadata_identifier)
-    except (ValidationError, ValueError):
+    except ValueError:
         show_error = True
         error_explanation = INVALID_VALUE
         logger.exception("Error while reading in value for %s", metadata_identifier)
@@ -252,7 +251,7 @@ def accept_dataset_metadata_date_input(
             state.metadata.dataset.contains_data_from = parsed_contains_data_from
         if parsed_contains_data_until:
             state.metadata.dataset.contains_data_until = parsed_contains_data_until
-    except (ValidationError, ValueError) as e:
+    except ValueError as e:
         logger.exception(
             "Validation failed for %s, %s, %s: %s, %s",
             dataset_identifier,
