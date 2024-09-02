@@ -246,16 +246,6 @@ def render_tabs(tab: str) -> html.Article | None:
     return None
 
 
-def select_tabs(keydown: dict, current_tab: str) -> str:
-    """Return correct tab based on keydown."""
-    if keydown:
-        if keydown["key"] == "ArrowRight":
-            return "variables" if current_tab == "dataset" else "dataset"
-        if keydown["key"] == "ArrowLeft":
-            return "dataset" if current_tab == "variables" else "variables"
-    return current_tab
-
-
 def _has_exact_word(word: str, text: str) -> bool:
     """Return True if excact word matches text."""
     return bool(re.search(rf"\b{word}\b", text))

@@ -23,7 +23,6 @@ from datadoc.frontend.callbacks.dataset import accept_dataset_metadata_input
 from datadoc.frontend.callbacks.dataset import open_dataset_handling
 from datadoc.frontend.callbacks.utils import render_tabs
 from datadoc.frontend.callbacks.utils import save_metadata_and_generate_alerts
-from datadoc.frontend.callbacks.utils import select_tabs
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_date_input
 from datadoc.frontend.callbacks.variables import accept_variable_metadata_input
 from datadoc.frontend.callbacks.variables import populate_variables_workspace
@@ -175,21 +174,6 @@ def register_callbacks(app: Dash) -> None:
     def callback_render_tabs(tab: html.Article) -> html.Article | None:
         """Return correct tab content."""
         return render_tabs(tab)
-
-    @app.callback(
-        Output("tabs", "value"),
-        Input("keyboard", "keydown"),
-        Input("tabs", "value"),
-    )
-    def switch_tabs(keydown: dict, current_tab: str) -> str:
-        """Handle keyboard events and switch tabs.
-
-        This callback is designed to make Dash core component Tabs
-        with children Tab focusable and keyboard interactive,
-        enhancing accessibility by allowing users to navigate between tabs
-        using the arrow keys.
-        """
-        return select_tabs(keydown, current_tab)
 
     @app.callback(
         Output(VARIABLES_INFORMATION_ID, "children"),
