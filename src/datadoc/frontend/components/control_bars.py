@@ -14,6 +14,7 @@ header = ssb.Header(
         ssb.Link(
             "Dokumentasjon",
             href="https://manual.dapla.ssb.no/statistikkere/datadoc.html",
+            isExternal=True,
         ),
     ],
     className="datadoc-header",
