@@ -33,7 +33,6 @@ python-dotenv = ">=1.0.1"
 ssb-dash-components = ">=0.8.1"
 dapla-toolbelt-metadata = ">=0.2.0"
 gunicorn = ">=23.0.0"
-dash-extensions = "^1.0.18"
 
 [tool.poetry.group.dev.dependencies]
 mypy = ">=0.950"
