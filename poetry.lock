@@ -360,17 +360,6 @@ files = [
 ]
 
 [[package]]
-name = "cachelib"
-version = "0.9.0"
-description = "A collection of cache libraries in the same API interface."
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "cachelib-0.9.0-py3-none-any.whl", hash = "sha256:811ceeb1209d2fe51cd2b62810bd1eccf70feba5c52641532498be5c675493b3"},
-    {file = "cachelib-0.9.0.tar.gz", hash = "sha256:38222cc7c1b79a23606de5c2607f4925779e37cdcea1c2ad21b8bae94b5425a5"},
-]
-
-[[package]]
 name = "cachetools"
 version = "5.5.0"
 description = "Extensible memoizing collections and decorators"
@@ -910,29 +899,6 @@ files = [
 ]
 
 [[package]]
-name = "dash-extensions"
-version = "1.0.18"
-description = "Extensions for Plotly Dash."
-optional = false
-python-versions = "<4,>=3.9"
-files = [
-    {file = "dash_extensions-1.0.18-py3-none-any.whl", hash = "sha256:17f4469670bd70ce12fac1a05baaae119fb65eee7b012af47aff7377d0399eeb"},
-    {file = "dash_extensions-1.0.18.tar.gz", hash = "sha256:a6b6c0952b3af7ae84c418fea4b43cbd0bd4e82f20d91f1573380b8a3d90df0a"},
-]
-
-[package.dependencies]
-dash = ">=2.17.0"
-dataclass-wizard = ">=0.22.2,<0.23.0"
-Flask-Caching = ">=2.1.0,<3.0.0"
-jsbeautifier = ">=1.14.3,<2.0.0"
-more-itertools = ">=10.2.0,<11.0.0"
-pydantic = ">=2.7.1,<3.0.0"
-ruff = ">=0.4.5,<0.5.0"
-
-[package.extras]
-mantine = ["dash-mantine-components (>=0.14.3,<0.15.0)"]
-
-[[package]]
 name = "dash-html-components"
 version = "2.0.0"
 description = "Vanilla HTML components for Dash"
@@ -953,22 +919,6 @@ files = [
     {file = "dash_table-5.0.0-py3-none-any.whl", hash = "sha256:19036fa352bb1c11baf38068ec62d172f0515f73ca3276c79dee49b95ddc16c9"},
     {file = "dash_table-5.0.0.tar.gz", hash = "sha256:18624d693d4c8ef2ddec99a6f167593437a7ea0bf153aa20f318c170c5bc7308"},
 ]
-
-[[package]]
-name = "dataclass-wizard"
-version = "0.22.3"
-description = "Marshal dataclasses to/from JSON. Use field properties with initial values. Construct a dataclass schema with JSON input."
-optional = false
-python-versions = "*"
-files = [
-    {file = "dataclass-wizard-0.22.3.tar.gz", hash = "sha256:4c46591782265058f1148cfd1f54a3a91221e63986fdd04c9d59f4ced61f4424"},
-    {file = "dataclass_wizard-0.22.3-py2.py3-none-any.whl", hash = "sha256:63751203e54b9b9349212cc185331da73c1adc99c51312575eb73bb5c00c1962"},
-]
-
-[package.extras]
-dev = ["Sphinx (==5.3.0)", "bump2version (==1.0.1)", "coverage (>=6.2)", "dataclass-factory (==2.12)", "dataclasses-json (==0.5.6)", "flake8 (>=3)", "jsons (==1.6.1)", "pip (>=21.3.1)", "pytest (==7.0.1)", "pytest-cov (==3.0.0)", "pytest-mock (>=3.6.1)", "pytimeparse (==1.1.8)", "sphinx-issues (==3.0.1)", "sphinx-issues (==4.0.0)", "tox (==3.24.5)", "twine (==3.8.0)", "watchdog[watchmedo] (==2.1.6)", "wheel (==0.37.1)", "wheel (==0.42.0)"]
-timedelta = ["pytimeparse (>=1.1.7)"]
-yaml = ["PyYAML (>=5.3)"]
 
 [[package]]
 name = "decorator"
@@ -1038,16 +988,6 @@ python-versions = ">=3.9"
 files = [
     {file = "docutils-0.21.2-py3-none-any.whl", hash = "sha256:dafca5b9e384f0e419294eb4d2ff9fa826435bf15f15b7bd45723e8ad76811b2"},
     {file = "docutils-0.21.2.tar.gz", hash = "sha256:3a6b18732edf182daa3cd12775bbb338cf5691468f91eeeb109deff6ebfa986f"},
-]
-
-[[package]]
-name = "editorconfig"
-version = "0.12.4"
-description = "EditorConfig File Locator and Interpreter for Python"
-optional = false
-python-versions = "*"
-files = [
-    {file = "EditorConfig-0.12.4.tar.gz", hash = "sha256:24857fa1793917dd9ccf0c7810a07e05404ce9b823521c7dce22a4fb5d125f80"},
 ]
 
 [[package]]
@@ -1154,21 +1094,6 @@ Werkzeug = ">=3.0.0"
 [package.extras]
 async = ["asgiref (>=3.2)"]
 dotenv = ["python-dotenv"]
-
-[[package]]
-name = "flask-caching"
-version = "2.3.0"
-description = "Adds caching support to Flask applications."
-optional = false
-python-versions = ">=3.8"
-files = [
-    {file = "Flask_Caching-2.3.0-py3-none-any.whl", hash = "sha256:51771c75682e5abc1483b78b96d9131d7941dc669b073852edfa319dd4e29b6e"},
-    {file = "flask_caching-2.3.0.tar.gz", hash = "sha256:d7e4ca64a33b49feb339fcdd17e6ba25f5e01168cf885e53790e885f83a4d2cf"},
-]
-
-[package.dependencies]
-cachelib = ">=0.9.0,<0.10.0"
-Flask = "*"
 
 [[package]]
 name = "flask-healthz"
@@ -2055,20 +1980,6 @@ opt = ["PyJWT", "filemagic (>=1.6)", "requests-jwt", "requests-kerberos"]
 test = ["MarkupSafe (>=0.23)", "PyYAML (>=5.1)", "docutils (>=0.12)", "flaky", "oauthlib", "parameterized (>=0.8.1)", "pytest (>=6.0.0)", "pytest-cache", "pytest-cov", "pytest-instafail", "pytest-sugar", "pytest-timeout (>=1.3.1)", "pytest-xdist (>=2.2)", "requests-mock", "requires.io", "tenacity", "wheel (>=0.24.0)", "yanc (>=0.3.3)"]
 
 [[package]]
-name = "jsbeautifier"
-version = "1.15.1"
-description = "JavaScript unobfuscator and beautifier."
-optional = false
-python-versions = "*"
-files = [
-    {file = "jsbeautifier-1.15.1.tar.gz", hash = "sha256:ebd733b560704c602d744eafc839db60a1ee9326e30a2a80c4adb8718adc1b24"},
-]
-
-[package.dependencies]
-editorconfig = ">=0.12.2"
-six = ">=1.13.0"
-
-[[package]]
 name = "jsonpointer"
 version = "3.0.0"
 description = "Identify specific nodes in a JSON document (RFC 6901)"
@@ -2518,17 +2429,6 @@ python-versions = ">=3.7"
 files = [
     {file = "mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8"},
     {file = "mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"},
-]
-
-[[package]]
-name = "more-itertools"
-version = "10.4.0"
-description = "More routines for operating on iterables, beyond itertools"
-optional = false
-python-versions = ">=3.8"
-files = [
-    {file = "more-itertools-10.4.0.tar.gz", hash = "sha256:fe0e63c4ab068eac62410ab05cccca2dc71ec44ba8ef29916a0090df061cf923"},
-    {file = "more_itertools-10.4.0-py3-none-any.whl", hash = "sha256:0f7d9f83a0a8dcfa8a2694a770590d98a67ea943e3d9f5298309a484758c4e27"},
 ]
 
 [[package]]
@@ -5375,4 +5275,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "9ee5d7d21c84d66750ec4a60cb639f9e84fd20b22ffa2567f926e8aa7013662f"
+content-hash = "680594f088f20a75afe08bf2d6b3572326217db8c163887d417f15e774636857"
