@@ -3265,13 +3265,13 @@ test = ["cffi", "hypothesis", "pandas", "pytest", "pytz"]
 
 [[package]]
 name = "pyarrow-stubs"
-version = "20240830"
+version = "17.1"
 description = "Type annotations for pyarrow"
 optional = false
 python-versions = "<4,>=3.8"
 files = [
-    {file = "pyarrow_stubs-20240830-py3-none-any.whl", hash = "sha256:4e6ef42ef3f68f5574614dd9e22d4e034c9895e7b729eb1cdb7fb46fc52eaece"},
-    {file = "pyarrow_stubs-20240830.tar.gz", hash = "sha256:741311fdf14a71fd7729c63a867421157435b59b961a28deb0ffc6a7988a5968"},
+    {file = "pyarrow_stubs-17.1-py3-none-any.whl", hash = "sha256:6b96a27e7b1ade28ee180d1dd9ddca3adb8bfeee76f1bae794cce8c7fc4f883f"},
+    {file = "pyarrow_stubs-17.1.tar.gz", hash = "sha256:1cffb6ddab9e317ccf526fee536db9cebd0e2ad40af8fd67cd90e85caa090329"},
 ]
 
 [package.dependencies]
