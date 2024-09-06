@@ -56,13 +56,13 @@ typeguard = ">=2.13.3"
 xdoctest = { extras = ["colors"], version = ">=0.15.10" }
 myst-parser = { version = ">=0.16.1" }
 pandas-stubs = "*"
-pyarrow-stubs = ">=10.0.1.9"
 types-Pygments = "*"
 types-colorama = "*"
 types-setuptools = "*"
 types-beautifulsoup4 = "*"
 requests-mock = "*"
 faker = "*"
+pyarrow-stubs = ">=10.0.1.9"
 
 
 [tool.pytest.ini_options]
