@@ -15,10 +15,10 @@ metadata:
 spec:
   type: service
   owner: dapla-metadata-developers
-  lifecycle: experimental
+  lifecycle: production
   dependsOn:
-    - system:dapla-beta
-    - component:ssb-datadoc-model
+    - system:dapla-lab
+    - component:dapla-toolbelt-metadata
     - component:ssb-dash-components
   consumesApis:
     - api:klass-api
