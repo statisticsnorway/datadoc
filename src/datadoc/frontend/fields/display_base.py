@@ -156,7 +156,7 @@ class DisplayMetadata(ABC):
         metadata: BaseModel,
     ) -> Component:
         """Build a component."""
-        self.url_encode_shortname_ids(component_id)
+        ...
 
 
 @dataclass
