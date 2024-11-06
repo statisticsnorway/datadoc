@@ -26,7 +26,9 @@ from datadoc import state
 
 from .utils import TEST_EXISTING_METADATA_DIRECTORY
 from .utils import TEST_PARQUET_FILE_NAME
+from .utils import TEST_PARQUET_FILE_NAME_ILLEGAL_SHORTNAMES
 from .utils import TEST_PARQUET_FILEPATH
+from .utils import TEST_PARQUET_FILEPATH_ILLEGAL_SHORTNAMES
 from .utils import TEST_RESOURCES_DIRECTORY
 
 if TYPE_CHECKING:
@@ -85,6 +87,23 @@ def metadata(
     shutil.copy(TEST_PARQUET_FILEPATH, tmp_path / TEST_PARQUET_FILE_NAME)
     return Datadoc(
         str(tmp_path / TEST_PARQUET_FILE_NAME),
+        statistic_subject_mapping=subject_mapping_fake_statistical_structure,
+    )
+
+
+@pytest.fixture()
+def metadata_illegal_shortnames(
+    _mock_timestamp: None,
+    _mock_user_info: None,
+    subject_mapping_fake_statistical_structure: StatisticSubjectMapping,
+    tmp_path: Path,
+) -> Datadoc:
+    shutil.copy(
+        TEST_PARQUET_FILEPATH_ILLEGAL_SHORTNAMES,
+        tmp_path / TEST_PARQUET_FILE_NAME_ILLEGAL_SHORTNAMES,
+    )
+    return Datadoc(
+        str(tmp_path / TEST_PARQUET_FILE_NAME_ILLEGAL_SHORTNAMES),
         statistic_subject_mapping=subject_mapping_fake_statistical_structure,
     )
 

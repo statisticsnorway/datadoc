@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from unittest import mock
 
 import dash_bootstrap_components as dbc
@@ -76,16 +77,39 @@ def test_render_tabs(tab: str, identifier: str):
 
 def test_save_and_generate_alerts():
     mock_metadata = mock.Mock()
+
+    @dataclass
+    class Variable:
+        short_name: str
+
     mock_metadata.variables = [
-        "var1",
-        "var2",
+        Variable(short_name="var"),
+        Variable(short_name="var"),
     ]
     state.metadata = mock_metadata
     result = save_metadata_and_generate_alerts(
         mock_metadata,
     )
+    assert (result[1] and result[2] and result[3]) is None
+    assert isinstance(result[0], dbc.Alert)
 
-    num_list_of_alerts = 3
-    assert len(result) == num_list_of_alerts
+
+def test_save_and_generate_illegal_shortname_alert():
+    mock_metadata = mock.Mock()
+
+    @dataclass
+    class MockVariable:
+        short_name: str
+
+    mock_metadata.variables = [
+        MockVariable(short_name="var illegal"),
+        MockVariable(short_name="rådyr"),
+    ]
+    state.metadata = mock_metadata
+    result = save_metadata_and_generate_alerts(
+        mock_metadata,
+    )
     assert (result[1] and result[2]) is None
     assert isinstance(result[0], dbc.Alert)
+    assert isinstance(result[3], dbc.Alert)
+    assert result[3].color == "warning"
