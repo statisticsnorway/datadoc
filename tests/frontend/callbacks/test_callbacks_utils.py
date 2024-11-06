@@ -98,12 +98,12 @@ def test_save_and_generate_illegal_shortname_alert():
     mock_metadata = mock.Mock()
 
     @dataclass
-    class Variable:
+    class MockVariable:
         short_name: str
 
     mock_metadata.variables = [
-        Variable(short_name="var illegal"),
-        Variable(short_name="rådyr"),
+        MockVariable(short_name="var illegal"),
+        MockVariable(short_name="rådyr"),
     ]
     state.metadata = mock_metadata
     result = save_metadata_and_generate_alerts(
