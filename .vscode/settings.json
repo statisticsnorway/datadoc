@@ -15,6 +15,5 @@
     "ruff.lint.run": "onType",
     "cSpell.words": [
         "multilanguage",
-        "SHORTNAMES"
     ]
 }
