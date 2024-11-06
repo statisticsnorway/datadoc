@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import urllib.parse
 from typing import TYPE_CHECKING
 
 from datadoc import state
@@ -84,7 +85,7 @@ def handle_multi_language_metadata(
 
     if isinstance(new_value, str):
         return find_existing_language_string(
-            state.metadata.variables_lookup[updated_row_id],
+            state.metadata.variables_lookup[urllib.parse.unquote(updated_row_id)],
             new_value,
             metadata_field,
             language,
@@ -128,7 +129,7 @@ def accept_variable_metadata_input(
 
         # Write the value to the variables structure
         setattr(
-            state.metadata.variables_lookup[variable_short_name],
+            state.metadata.variables_lookup[urllib.parse.unquote(variable_short_name)],
             metadata_field,
             new_value,
         )
@@ -181,12 +182,12 @@ def accept_variable_metadata_date_input(
         )
 
         # Save both values to the model if they pass validation.
-        state.metadata.variables_lookup[
-            variable_short_name
-        ].contains_data_from = parsed_contains_data_from
-        state.metadata.variables_lookup[
-            variable_short_name
-        ].contains_data_until = parsed_contains_data_until
+        state.metadata.variables_lookup[variable_short_name].contains_data_from = (
+            parsed_contains_data_from
+        )
+        state.metadata.variables_lookup[variable_short_name].contains_data_until = (
+            parsed_contains_data_until
+        )
     except ValueError as e:
         logger.exception(
             "Validation failed for %s, %s, %s: %s, %s: %s",

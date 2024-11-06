@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import urllib
 from abc import ABC
 from abc import abstractmethod
 from dataclasses import dataclass
@@ -141,6 +142,13 @@ class DisplayMetadata(ABC):
     obligatory: bool = False
     editable: bool = True
 
+    def url_encode_shortname_ids(self, component_id: dict) -> None:
+        """Encodes id to hanlde non ascii values."""
+        if "variable_short_name" in component_id:
+            component_id["variable_short_name"] = urllib.parse.quote(
+                component_id["variable_short_name"],
+            )
+
     @abstractmethod
     def render(
         self,
@@ -148,7 +156,7 @@ class DisplayMetadata(ABC):
         metadata: BaseModel,
     ) -> Component:
         """Build a component."""
-        ...
+        self.url_encode_shortname_ids(component_id)
 
 
 @dataclass
@@ -164,6 +172,7 @@ class MetadataInputField(DisplayMetadata):
         metadata: BaseModel,
     ) -> ssb.Input:
         """Build an Input component."""
+        self.url_encode_shortname_ids(component_id)
         return ssb.Input(
             label=self.display_name,
             id=component_id,
@@ -189,6 +198,7 @@ class MetadataDropdownField(DisplayMetadata):
         metadata: BaseModel,
     ) -> ssb.Dropdown:
         """Build Dropdown component."""
+        self.url_encode_shortname_ids(component_id)
         return ssb.Dropdown(
             header=self.display_name,
             id=component_id,
@@ -211,6 +221,7 @@ class MetadataDateField(DisplayMetadata):
         metadata: BaseModel,
     ) -> ssb.Input:
         """Build Input date component."""
+        self.url_encode_shortname_ids(component_id)
         return ssb.Input(
             label=self.display_name,
             id=component_id,
@@ -240,6 +251,7 @@ class MetadataPeriodField(DisplayMetadata):
     ) -> ssb.Input:
         """Build Input date component."""
         component_id["type"] = self.id_type
+        self.url_encode_shortname_ids(component_id)
         return ssb.Input(
             label=self.display_name,
             id=component_id,
@@ -269,6 +281,7 @@ class MetadataMultiLanguageField(DisplayMetadata):
         metadata: BaseModel,
     ) -> html.Section:
         """Build section with Input components for each language."""
+        self.url_encode_shortname_ids(component_id)
         if "variable_short_name" in component_id:
             return html.Section(
                 children=[
@@ -353,6 +366,7 @@ class MetadataCheckboxField(DisplayMetadata):
         metadata: BaseModel,
     ) -> ssb.Checkbox:
         """Build Checkbox component."""
+        self.url_encode_shortname_ids(component_id)
         return ssb.Checkbox(
             label=self.display_name,
             id=component_id,

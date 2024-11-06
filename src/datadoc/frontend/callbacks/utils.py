@@ -22,6 +22,8 @@ from datadoc import config
 from datadoc import state
 from datadoc.constants import CHECK_OBLIGATORY_METADATA_DATASET_MESSAGE
 from datadoc.constants import CHECK_OBLIGATORY_METADATA_VARIABLES_MESSAGE
+from datadoc.constants import ILLEGAL_SHORTNAME_WARNING
+from datadoc.constants import ILLEGAL_SHORTNAME_WARNING_MESSAGE
 from datadoc.constants import MISSING_METADATA_WARNING
 from datadoc.frontend.components.builders import AlertTypes
 from datadoc.frontend.components.builders import build_ssb_alert
@@ -364,6 +366,31 @@ def variables_control(error_message: str | None, variables: list) -> dbc.Alert |
     )
 
 
+def check_variable_names(
+    variables: list,
+) -> dbc.Alert | None:
+    """Checks if a variable shortname complies with the naming standard.
+
+    Returns:
+        An ssb alert with a message saying that what names dont comply with the naming standard.
+    """
+    illegal_names: list = [
+        v.short_name
+        for v in variables
+        if not re.match(r"^[a-z0-9_]{3,}$", v.short_name)
+    ]
+
+    if not illegal_names:
+        return None
+    return build_ssb_alert(
+        AlertTypes.WARNING,
+        ILLEGAL_SHORTNAME_WARNING,
+        ILLEGAL_SHORTNAME_WARNING_MESSAGE,
+        None,
+        illegal_names,
+    )
+
+
 def save_metadata_and_generate_alerts(metadata: Datadoc) -> list:
     """Save the metadata document to disk and check obligatory metadata.
 
@@ -397,4 +424,5 @@ def save_metadata_and_generate_alerts(metadata: Datadoc) -> list:
         success_alert,
         dataset_control(missing_obligatory_dataset),
         variables_control(missing_obligatory_variables, metadata.variables),
+        check_variable_names(metadata.variables),
     ]

@@ -634,3 +634,24 @@ def test_variables_metadata_control_dont_return_alert(metadata: Datadoc):
             missing_metadata = str(w[0].message)
     result = variables_control(missing_metadata, metadata.variables)
     assert result is None
+
+
+def test_accept_variable_metadata_input_when_shortname_is_non_ascii(
+    metadata_illegal_shortnames: Datadoc,
+):
+    state.metadata = metadata_illegal_shortnames
+    assert metadata_illegal_shortnames.variables[-1].short_name == "rådyr"
+    assert (
+        accept_variable_metadata_input(
+            "Format value",
+            metadata_illegal_shortnames.variables[-1].short_name,
+            metadata_field=VariableIdentifiers.FORMAT.value,
+            language="nb",
+        )
+        is None
+    )
+
+    assert (
+        getattr(state.metadata.variables[-1], VariableIdentifiers.FORMAT.value)
+        == "Format value"
+    )
