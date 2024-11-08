@@ -111,5 +111,21 @@ def test_illegal_shortname(shortname: str):
         short_name: str
 
     mock_metadata = mock.Mock(variables=[MockVariable(short_name=shortname)])
-
     assert isinstance(check_variable_names(mock_metadata.variables), dbc.Alert)
+
+
+@pytest.mark.parametrize(
+    ("shortname"),
+    [
+        ("var"),
+        ("var1"),
+        ("var_2"),
+    ],
+)
+def test_legal_shortname(shortname: str):
+    @dataclass
+    class MockVariable:
+        short_name: str
+
+    mock_metadata = mock.Mock(variables=[MockVariable(short_name=shortname)])
+    assert check_variable_names(mock_metadata.variables) is None
