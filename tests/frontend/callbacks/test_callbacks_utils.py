@@ -7,6 +7,7 @@ from dapla_metadata.datasets import model
 from dash import html
 
 from datadoc import state
+from datadoc.frontend.callbacks.utils import check_variable_names
 from datadoc.frontend.callbacks.utils import find_existing_language_string
 from datadoc.frontend.callbacks.utils import render_tabs
 from datadoc.frontend.callbacks.utils import save_metadata_and_generate_alerts
@@ -84,26 +85,7 @@ def test_save_and_generate_alerts():
 
     mock_metadata.variables = [
         Variable(short_name="var"),
-        Variable(short_name="var"),
-    ]
-    state.metadata = mock_metadata
-    result = save_metadata_and_generate_alerts(
-        mock_metadata,
-    )
-    assert (result[1] and result[2] and result[3]) is None
-    assert isinstance(result[0], dbc.Alert)
-
-
-def test_save_and_generate_illegal_shortname_alert():
-    mock_metadata = mock.Mock()
-
-    @dataclass
-    class MockVariable:
-        short_name: str
-
-    mock_metadata.variables = [
-        MockVariable(short_name="var illegal"),
-        MockVariable(short_name="rådyr"),
+        Variable(short_name="var illegal"),
     ]
     state.metadata = mock_metadata
     result = save_metadata_and_generate_alerts(
@@ -112,4 +94,22 @@ def test_save_and_generate_illegal_shortname_alert():
     assert (result[1] and result[2]) is None
     assert isinstance(result[0], dbc.Alert)
     assert isinstance(result[3], dbc.Alert)
-    assert result[3].color == "warning"
+
+
+@pytest.mark.parametrize(
+    ("shortname"),
+    [
+        ("rådyr"),
+        ("Var"),
+        ("Var illegal"),
+        ("V"),
+    ],
+)
+def test_illegal_shortname(shortname: str):
+    @dataclass
+    class MockVariable:
+        short_name: str
+
+    mock_metadata = mock.Mock(variables=[MockVariable(short_name=shortname)])
+
+    assert isinstance(check_variable_names(mock_metadata.variables), dbc.Alert)
