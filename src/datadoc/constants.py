@@ -8,4 +8,4 @@ DAPLA_MANUAL_TEXT = "Dapla manual navnestandard"
 ILLEGAL_SHORTNAME_WARNING = (
     "Noen av variablene i datasetter følger ikke navnestandard for kortnavn"
 )
-ILLEGAL_SHORTNAME_WARNING_MESSAGE = "Følgende navnestandard er utarbeidet for variabler: Alfanumerisk begrenset til a-z, A-Z, 0-9, - (bindestrek) og  (understrek). Kortnavn som ikke følger standarden:"
+ILLEGAL_SHORTNAME_WARNING_MESSAGE = "Følgende navnestandard er utarbeidet for variabler: Alfanumerisk begrenset til a-z (kun små bokstaver), 0-9 og _ (understrek). Kortnavn som ikke følger standarden:"
