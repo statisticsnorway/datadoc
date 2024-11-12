@@ -41,7 +41,9 @@ pipx install ssb-datadoc
 
 ## Usage
 
-Please see the [Reference Guide] for details.
+Datadoc is available on [Dapla Lab](https://lab.dapla.ssb.no/) and works best there.
+
+Usage instructions: https://manual.dapla.ssb.no/statistikkere/datadoc.html
 
 ## Contributing
 
