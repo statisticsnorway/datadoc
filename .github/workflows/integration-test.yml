@@ -77,11 +77,13 @@ jobs:
     name: Deploy to NAIS
     runs-on: ubuntu-latest
     needs: docker-build
+    permissions:
+      contents: "read"
+      id-token: "write"
     steps:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: test
           RESOURCE: .nais/test-pr.yaml
           VAR: image=${{ needs.docker-build.outputs.image-tag }},pr-number=${{github.event.number}}
@@ -102,6 +104,6 @@ jobs:
         with:
           application-id: ${{ secrets.DATADOC_MABL_APPLICATION_ID }}
           environment-id: ${{ secrets.DATADOC_MABL_ENVIRONMENT_ID }}
-          uri: https://datadoc-pr-${{github.event.number}}.external.test.ssb.cloud.nais.io
+          uri: https://datadoc-pr-${{github.event.number}}.test.ssb.no
           mabl-branch: ${{ github.head_ref }}
           plan-labels: Datadoc
