@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
+import sys
 from pathlib import Path
 from pprint import pformat
 from typing import Literal
@@ -15,7 +16,7 @@ from dotenv import load_dotenv
 from datadoc.constants import DAPLA_MANUAL_TEXT
 from datadoc.frontend.components.builders import build_link_object
 
-logging.basicConfig(level=logging.DEBUG, force=True)
+logging.basicConfig(level=logging.DEBUG, force=True, stream=sys.stdout)
 
 logger = logging.getLogger(__name__)
 

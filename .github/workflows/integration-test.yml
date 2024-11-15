@@ -7,6 +7,7 @@ on:
       - "poetry.lock"
       - ".nais/test-pr.yaml"
       - ".github/workflows/integration-test.yml"
+      - "gunicorn.conf.py"
 
 env:
   REGISTRY: europe-north1-docker.pkg.dev/nais-management-b3a7/dapla-metadata
