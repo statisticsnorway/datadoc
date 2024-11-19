@@ -403,22 +403,34 @@ def save_metadata_and_generate_alerts(metadata: Datadoc) -> list:
 
     with warnings.catch_warnings(record=True) as w:
         warnings.simplefilter("always")
-        metadata.write_metadata_document()
-        success_alert = build_ssb_alert(
-            AlertTypes.SUCCESS,
-            "Lagret metadata",
-        )
-
-        for warning in w:
-            if issubclass(warning.category, ObligatoryDatasetWarning):
-                missing_obligatory_dataset = str(warning.message)
-            elif issubclass(warning.category, ObligatoryVariableWarning):
-                missing_obligatory_variables = str(warning.message)
-            else:
-                logger.warning(
-                    "An unexpected warning was caught: %s",
-                    warning.message,
+        try:
+            metadata.write_metadata_document()
+            success_alert = build_ssb_alert(
+                AlertTypes.SUCCESS,
+                "Lagret metadata",
+            )
+            for warning in w:
+                if issubclass(warning.category, ObligatoryDatasetWarning):
+                    missing_obligatory_dataset = str(warning.message)
+                elif issubclass(warning.category, ObligatoryVariableWarning):
+                    missing_obligatory_variables = str(warning.message)
+                else:
+                    logger.warning(
+                        "An unexpected warning was caught: %s",
+                        warning.message,
+                    )
+        except (ValueError, FileNotFoundError) as e:
+            if isinstance(e, ValueError):
+                logger.exception("Unable to save metadata document, no dataset found")
+            elif isinstance(e, FileNotFoundError):
+                logger.exception(
+                    "Unable to save metadata document, file %s not found",
+                    metadata.dataset_path,
                 )
+            success_alert = build_ssb_alert(
+                AlertTypes.ERROR,
+                "Kunne ikke lagre metadata",
+            )
 
     return [
         success_alert,
