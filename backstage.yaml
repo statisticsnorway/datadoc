@@ -1,8 +1,8 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: datadoc
-  title: Datadoc
+  name: datadoc editor
+  title: Datadoc Editor
   description: |
     Create and edit documentation for datasets at Statistics Norway
   tags:
