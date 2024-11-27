@@ -11,7 +11,7 @@ metadata:
     - python
     - dash
   annotations:
-    github.com/project-slug: statisticsnorway/datadoc
+    github.com/project-slug: statisticsnorway/datadoc-editor
 spec:
   type: service
   owner: dapla-metadata-developers

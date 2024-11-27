@@ -5,9 +5,9 @@ description = "Document dataset metadata. For use in Statistics Norway's metadat
 authors = ["Statistics Norway <stat-dev@ssb.no>"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/statisticsnorway/datadoc"
-repository = "https://github.com/statisticsnorway/datadoc"
-documentation = "https://statisticsnorway.github.io/datadoc"
+homepage = "https://github.com/statisticsnorway/datadoc-editor"
+repository = "https://github.com/statisticsnorway/datadoc-editor"
+documentation = "https://statisticsnorway.github.io/datadoc-editor"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Framework :: Dash",
@@ -20,7 +20,7 @@ packages = [{ include = "datadoc", from = "src" }]
 datadoc = 'datadoc.app:main'
 
 [tool.poetry.urls]
-Changelog = "https://github.com/statisticsnorway/datadoc/releases"
+Changelog = "https://github.com/statisticsnorway/datadoc-editor/releases"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
