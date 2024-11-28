@@ -64,7 +64,6 @@ requests-mock = "*"
 faker = "*"
 pyarrow-stubs = ">=10.0.1.9"
 
-
 [tool.pytest.ini_options]
 pythonpath = ["src/datadoc"]
 
