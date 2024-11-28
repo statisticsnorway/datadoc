@@ -12,7 +12,7 @@ import dash_bootstrap_components as dbc
 import pytest
 from dapla_metadata.datasets import ObligatoryVariableWarning
 from dapla_metadata.datasets import model
-from pydantic_core import Url
+from pydantic import AnyUrl
 
 from datadoc import enums
 from datadoc import state
@@ -71,7 +71,7 @@ if TYPE_CHECKING:
         (
             VariableIdentifiers.DEFINITION_URI,
             "https://www.example.com",
-            Url("https://www.example.com"),
+            AnyUrl("https://www.example.com"),
         ),
         (
             VariableIdentifiers.IS_PERSONAL_DATA,
@@ -125,7 +125,7 @@ if TYPE_CHECKING:
         (
             VariableIdentifiers.CLASSIFICATION_URI,
             "https://www.example.com",
-            Url("https://www.example.com"),
+            AnyUrl("https://www.example.com"),
         ),
         (
             VariableIdentifiers.INVALID_VALUE_DESCRIPTION,

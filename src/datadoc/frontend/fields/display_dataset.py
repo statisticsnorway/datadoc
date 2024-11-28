@@ -201,14 +201,6 @@ DISPLAY_DATASET: dict[
         editable=True,
         id_type=DATASET_METADATA_DATE_INPUT,
     ),
-    DatasetIdentifiers.OWNER: MetadataDropdownField(
-        identifier=DatasetIdentifiers.OWNER.value,
-        display_name="Eier",
-        description="Oppgi datasettets eier, dvs. ansvarlig seksjon i SSB.",
-        obligatory=True,
-        editable=True,
-        options_getter=get_owner_options,
-    ),
     DatasetIdentifiers.DATA_SOURCE: MetadataDropdownField(
         identifier=DatasetIdentifiers.DATA_SOURCE.value,
         display_name="Datakilde",
@@ -306,6 +298,13 @@ DISPLAY_DATASET: dict[
         identifier=DatasetIdentifiers.METADATA_LAST_UPDATED_BY.value,
         display_name="Oppdatert av",
         description="Navnet på personen som sist oppdaterte metadataene.",
+        obligatory=True,
+        editable=False,
+    ),
+    DatasetIdentifiers.OWNER: MetadataInputField(
+        identifier=DatasetIdentifiers.OWNER.value,
+        display_name="Eier",
+        description="Navnet på teamet som eier datasettet",
         obligatory=True,
         editable=False,
     ),

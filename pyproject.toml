@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ssb-datadoc"
-version = "1.0.6"
+version = "1.0.7"
 description = "Document dataset metadata. For use in Statistics Norway's metadata system."
 authors = ["Statistics Norway <stat-dev@ssb.no>"]
 license = "MIT"
@@ -63,7 +63,6 @@ types-beautifulsoup4 = "*"
 requests-mock = "*"
 faker = "*"
 pyarrow-stubs = ">=10.0.1.9"
-
 
 [tool.pytest.ini_options]
 pythonpath = ["src/datadoc"]
