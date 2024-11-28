@@ -304,7 +304,7 @@ DISPLAY_DATASET: dict[
     DatasetIdentifiers.OWNER: MetadataInputField(
         identifier=DatasetIdentifiers.OWNER.value,
         display_name="Eier",
-        description="Navnet på teamet som eier metadataene om datasettet",
+        description="Navnet på teamet som eier datasettet",
         obligatory=True,
         editable=False,
     ),
