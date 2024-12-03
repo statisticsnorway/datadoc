@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ssb-datadoc"
-version = "1.0.7"
+version = "1.0.8"
 description = "Document dataset metadata. For use in Statistics Norway's metadata system."
 authors = ["Statistics Norway <stat-dev@ssb.no>"]
 license = "MIT"
@@ -160,6 +160,9 @@ max-complexity = 15
 
 [tool.ruff.lint.pydocstyle]
 convention = "google" # You can also use "numpy".
+
+[tool.ruff.lint.flake8-pytest-style]
+fixture-parentheses = false
 
 [tool.ruff.lint.pep8-naming]
 classmethod-decorators = [
